@@ -502,15 +502,15 @@
   \begin{center}
     \Large\bf
     {%
-      \scshape\@titre%
-      \if@soustitre{\\[.5cm]\large}%
+      \scshape\@title%
+      \if@subtitle{\\[.5cm]\large}%
     }\par
     \vspace*{.25cm}\par
     \rule{3cm}{.1mm}\par
     \vspace*{.25cm}
     \Large\bf
-    \textit{\@title}
-    \if@subtitle{\\[.3cm]\large\bfseries\itshape} \par
+    \textit{\@titre}
+    \if@soustitre{\\[.3cm]\large\bfseries\itshape} \par
     \vspace{1.5cm}
     \@firstname\ \IFmiddlename \@lastname
     \par
@@ -1437,7 +1437,7 @@
 
 
 
-\newcommand{\acknowledgementname}{Remerciements}
+\newcommand{\acknowledgementname}{Acknowledgements}
 \newenvironment{remerciements}{%
   \if@openright\cleardoublepage\else\clearpage\fi
   \chapter*{\acknowledgementname}}{\vfill\thispagestyle{empty}}
@@ -1737,14 +1737,7 @@
   \enlargethispage{2cm}
   \vspace*{-2.5cm}
 }{
-  \begin{center}\Large\bf \@titre\end{center}
-
-  \noindent\unvcopy\fourth@coverGlobB
-  \ifx\@motscles\@empty\else
-    \smallskip
-    \noindent\textbf{Mots-clés :} \@motscles
-  \fi
-  \vspace{1cm}
+ 
   \begin{center}\Large\bf \@title\end{center}
   \smallskip
   \noindent\unvcopy\fourth@coverGlobA
@@ -1753,6 +1746,13 @@
     \noindent\textbf{Keywords:} \foreignlanguage{english}{\@keywords}
   \fi
   \vspace{1cm}
+  \begin{center}\Large\bf \@titre\end{center}
+
+  \noindent\unvcopy\fourth@coverGlobB
+  \ifx\@motscles\@empty\else
+    \smallskip
+    \noindent\textbf{Mots-clés :} \@motscles
+  \fi
   \unvcopy\@classificationBoxGlobal
   \newpage}
 

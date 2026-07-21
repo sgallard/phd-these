@@ -1,0 +1,84 @@
+%\documentclass{these-ISSS} % Pour la version finale
+\documentclass{these-ISSS} % Pour une version brouillon
+%\documentclass[gray]{these-ISSS} % Pour une version en grayscale
+
+\usepackage{sty/mesmacros}
+\usepackage{import}
+\usepackage{apacite}
+\usepackage{lipsum}
+
+% Biblio pour les pages webs
+\newcites{web}{Web Pages}
+% Biblio pour mes publications
+\newcites{mine}{My Publications}
+
+\def\mytt#1{\small\texttt{#1}}
+
+\input{title}
+
+
+\begin{document}
+\pagenumbering{roman}
+
+\input{jury}
+
+\maketitle
+
+\begin{dedicace}
+  To the reader
+\end{dedicace}
+
+\cleardoublepage
+
+\input{resume}
+
+\input{remerciements}
+
+\tableofcontents
+
+\mainmatter
+
+\import{chapters/context}{main}
+
+\import{chapters/dataset}{main}
+
+
+%\input{introduction/introduction}
+%\input{notations}
+
+%\Part{État de l'art}
+%\import{patisserie/}{main}
+%\import{macaron/}{main}
+
+%\Part{Contributions}
+%\import{chapitre4/}{main}
+%\import{chapitre5/}{main}
+
+\input{chapters/conclusion/conclusion}
+
+\backmatter
+
+\renewcommand{\bibtitle}{\bibchapter}
+\bibliographystyle{apacite}
+\bibliography{biblio}
+
+\renewcommand{\bibtitle}{\section*{\refname}}
+\bibliographystyleweb{apacite}
+\bibliographyweb{biblio}
+
+\listoffigures
+% \listoftables
+
+%\renewcommand{\listtheoremname}{List of Theorems}
+%\listoftheorems[ignoreall,show={definition}]
+
+%\renewcommand{\listtheoremname}{List of Examples}
+%\listoftheorems[ignoreall,show={example}]
+
+\listofalgorithms
+
+
+%\appendix
+%\input{annexe/annexe}
+
+\end{document}

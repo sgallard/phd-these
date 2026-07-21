@@ -13,21 +13,21 @@
 \usetikzlibrary{decorations.text}
 
 \usepackage{xspace} % Pour gérer les espacements
-\usepackage[french,draft]{varioref}
+\usepackage[draft]{varioref}
 
 \usepackage{subcaption}
 
-\usepackage{theoremNames} % Définition des théorèmes et de leur noms
+\usepackage{sty/theoremNames} % Définition des théorèmes et de leur noms
 
-\usepackage{francisation} % Traduction des noms de listes, de sections, chapitres....  
-\usepackage{theoremList} % Macro pour effectuer des listes de théorèmes
+\usepackage{sty/francisation} % Traduction des noms de listes, de sections, chapitres....  
+\usepackage{sty/theoremList} % Macro pour effectuer des listes de théorèmes
 
-\usepackage{couleurs} % Définitions de couleurs pour ce manuscript
+\usepackage{sty/couleurs} % Définitions de couleurs pour ce manuscript
 
 
 \usepackage[plain, chapter]{algorithm}
-\usepackage{algo} % Pour l'utilisation du package algorithmic avec les termes en français
-\usepackage{colorationSyntaxique} % Pour l'utilisation du package lstlistings
+%\usepackage{algo} % Pour l'utilisation du package algorithmic avec les termes en français
+%\usepackage{colorationSyntaxique} % Pour l'utilisation du package lstlistings
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Pour l'entête des pages  %
@@ -49,22 +49,21 @@
 \fancyhead[RE]{\textsl{\leftmark}} % Sur les pages paire à droite (RE), on met le chapitre courant (CHAPITRE 2 -- La Pâtisserie)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Macros customisées  %
+% CUSTOM PACKAGES  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\eg}{\textit{e.g.,\xspace}}
-\newcommand{\wrt}{w.r.t.\xspace}
 
-\newcommand{\ssi}{si et seulement si\xspace}
 
-\def\mB#1{\ensuremath{\mathbb{#1}}}
-\def\mC#1{\ensuremath{\mathcal{#1}}}
 
-\newcommand{\eme}{\ensuremath{^{\grave{e}me}}}
-\newcommand{\ere}{\ensuremath{^{\acute{e}re}}}
-\newcommand{\er}{\ensuremath{^{er}}}
 
-\def\ojo#1{{\color{alert}#1}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CUSTOM MACROS  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{sty/custom/macros}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
