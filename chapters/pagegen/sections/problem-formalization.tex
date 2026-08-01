@@ -1,0 +1,203 @@
+\section{Problem definition}
+
+The following definitions relies on establishing a mapping between web articles and templates. Within this formulation, the problem is defined through the interaction of three core entities: articles, templates, and the page. 
+
+Consequently, the proposed problem consists of \textbf{concurrently solving a template assignment challenge and a two-dimensional packing problem}. For a given set of input articles, a valid solution requires mapping each article to an appropriate template from the catalog, and discovering an optimal spatial configuration on the page space that prevents overlaps, respects page boundaries, and maximizes visual quality.
+
+
+Given this setting, a specific problem instance input is denoted as $\instance = \langle \page, \articleset \rangle$, which encapsulates both the global page canvas $\page$ and the dynamic stream of articles $\articleset$ to be packed. While the physical page dimensions and the article array constitute the input instance, there is also a static template catalog $\templatecatalog$ available to resolve the layout.
+
+
+\subsection{Decision Variables and Search Space Complexity}
+\subsubsection{Decision Variables}
+\label{sec:decision-variables}
+
+Formally, a complete layout solution \solution\ is defined as the unified configuration that aggregates the individual choices made for all articles. To construct a valid page layout configuration \solution\ from the input instance, a set of three interdependent decision variables must be resolved for each individual article $\articleobj{i} \in \articleset$:
+
+\begin{enumerate}
+    \item \textbf{Template Selection (\templatesel{i}):} A discrete decision variable that assigns a specific template from the global catalog \templatecatalog\ to the article.
+    \begin{equation}
+    \templatesel{i} \in \{1, 2, \dots, \catalogsize\}, \quad \forall i \in \{1, \dots, \numarticles\}
+    \end{equation}
+    
+    \item \textbf{Spatial Allocation (\posvar{i}):} A tuple defining the exact geometric placement of the selected template's bounding box onto the page canvas.
+    \begin{equation}
+    \posvar{i} = (\xcoord{i}, \ycoord{i}, \pageindex{i}), \quad \forall i \in \{1, \dots, \numarticles\}
+    \end{equation}
+    Where $\xcoord{i} \in \mathbb{R}^+$ and $\ycoord{i} \in \mathbb{R}^+$ represent the horizontal and vertical coordinates of the top-left corner of the article relative to the page origin, respectively, and $\pageindex{i} \in \mathbb{Z}^+$ signifies the specific page number where the article was allocated.
+    
+    \item \textbf{Vertical Elasticity (\elasticity{i}):} A discrete scaling level that governs the proportional vertical adjustment applied to the assigned template. Vertical elasticity is introduced to mimic real-world editorial workflows, where designers subtly compress or expand template geometries to manage layout tightness. Mathematically, this flexibility serves as a optimization mechanism to eliminate empty white space and structurally drive the layout to compress into the page. The parameter space restricts this choice to discrete percentage scaling adjustments:
+    \begin{equation}
+    \elasticity{i} \in \{-15, -10, -5, 0, 5, 10, 15\}, \quad \forall i \in \{1, \dots, \numarticles\}
+    \end{equation}
+\end{enumerate}
+
+The vertical elasticity directly alters the physical height of the template's bounding box. Given the nominal baseline height $\Htemp{\templatesel{i}}$ dictated by the internal zoning of the chosen template \templatesel{i}, the final effectively scaled height \Hscaled{i}\ of the article on the page canvas is formally defined as:
+\begin{equation}
+\label{equation:h-scaled}
+\Hscaled{i} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right)
+\end{equation}
+
+Conversely, horizontal elasticity (compression or expansion) is strictly prohibited within this formulation. Professional newspaper pages adhere to a rigid horizontal grid structure, defined by columns and an inter-column gutter. Because every template $\templateobj{j} \in \templatecatalog$ within the catalog is already pre-engineered to perfectly match these standard column constraints, any valid spatial placement on the page implicitly satisfies the horizontal grid requirements without requiring scaling adjustments. Consequently, omitting horizontal elasticity variables significantly reduces the dimensionality of the decision space while preserving grid-based alignment by design.
+
+\subsubsection{Search Space Complexity}
+The mathematical coupling of these decision variables generates a massive combinatorial optimization space. For \numarticles\ input articles, the simultaneous evaluation of template choices, sequence-dependent packing permutations (determining the spatial ordering), and discrete elasticity adjustments scales the theoretical search space complexity to:
+\begin{equation}
+\mathcal{O}\left(\catalogsize^\numarticles \cdot \numarticles! \cdot 7^\numarticles\right)
+\end{equation}
+This exponential growth establishes the NP-hard nature of the proposed task, proving that exact global optimization quickly becomes intractable as \numarticles\ increases and justifying the use of advanced metaheuristics.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%% Constraints and Feasibility space %%%%%%%%%%%%%%%
+
+\subsection{Hard Constraints (Feasibility Criteria)}
+\label{sec:constraints_space}
+
+To partition the global combinatorial search space into feasible and infeasible domains, the problem formulation enforces a series of rules.
+
+A layout solution is classified as strictly infeasible and is rejected by the optimization framework if it violates any of the following conditions:
+
+\paragraph{Page Budget Allocation:}
+The primary optimization domain restricts the layout canvas to a single-page target to satisfy standard print requirements. Let \pageindex{i}\ be the page index assigned to article \articleobj{i}. The solution space strictly enforces that all articles must fit onto the first page canvas:
+\begin{equation}
+\pageindex{i} = 1, \quad \forall i \in \{1, \dots, \numarticles\}
+\end{equation}
+Multi-page configurations (where $\max_{i} \pageindex{i} > 1$) are treated as structurally infeasible and are mathematically permitted by the underlying framework strictly as a fallback mechanism if and only if the physical volume of the input assets makes a single-page solution geometrically impossible.
+
+\paragraph{Image Allocation Integrity:}
+The chosen template \templatesel{i}\ for any article \articleobj{i}\ must natively feature an internal zoning topology $\zoning{\templatesel{i}}$ capable of hosting the exact number of photographs \Nimg{i}\ requested by the article's content. Therefore, the template's maximum image capacity $\Nimgmax{\templatesel{i}}$ acts as an upper bound:
+\begin{equation}
+\Nimg{i} \le \Nimgmax{\templatesel{i}}, \quad \forall i \in \{1, \dots, \numarticles\}
+\end{equation}
+When this condition is satisfied, the number of active images selected during layout generation is set to exactly $\kactive{i} = \Nimg{i}$, allowing any remaining $\Nimgmax{\templatesel{i}} - \kactive{i}$ unused slots to be omitted so the text block can absorb the remaining area.
+
+\paragraph{Title Consistency:}
+A template layout must strictly match the headline requirements specified by the article content attributes \Tlart{i}. A solution is infeasible if an article requiring a headline is mapped to a template without a title block, or vice versa. This structural compatibility requires that:
+\begin{equation}
+\Tlart{i} = \Tltemp{\templatesel{i}}, \quad \forall i \in \{1, \dots, \numarticles\}
+\end{equation}
+Where $\Tltemp{\templatesel{i}} \in \{0, 1\}$ denotes the explicit presence ($1$) or absence ($0$) of a dedicated structural title block inside the template's zoning $\zoning{\templatesel{i}}$.
+
+\paragraph{No-overlap:}
+Articles arranged on the same page canvas cannot intersect or overlap their allocated physical spaces. Let \bbox{i}\ represent the two-dimensional bounding box of article \articleobj{i}\ on the page, bounded horizontally by $[\xcoord{i}, \xcoord{i} + \Wtemp{\templatesel{i}}]$ and vertically by $[\ycoord{i}, \ycoord{i} + \Hscaled{i}]$. For every pair of distinct articles, their bounding rectangles must yield an empty intersection set:
+\begin{equation}
+\bbox{i} \cap \bbox{j} = \emptyset, \quad \forall i, j \in \{1, \dots, \numarticles\} \quad \text{such that} \quad i \neq j
+\end{equation}
+
+\paragraph{Page limits:}
+Every allocated article bounding box \bbox{i}\ must be entirely contained within the physical confines of the effective page width (\Weff) and height (\Heff), preventing elements from clipping into the outer sheet margins:
+\begin{align}
+\xcoord{i} \ge 0 \quad &\text{and} \quad \xcoord{i} + \Wtemp{\templatesel{i}} \le \Weff, \quad \forall i \in \{1, \dots, \numarticles\} \\
+\ycoord{i} \ge 0 \quad &\text{and} \quad \ycoord{i} + \Hscaled{i} \le \Heff, \quad \forall i \in \{1, \dots, \numarticles\}
+\end{align}
+
+
+%%%%%%%%%%%%%%% Multiobjective optimization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Multi-Objective Optimization Formulation}
+\label{sec:objective_formulation}
+
+The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). The optimization goal is to approximate a Pareto-optimal frontier of layout configurations by simultaneously evaluating a vector of four distinct and conflicting objective functions:
+\begin{equation}
+\objvector{\solution} = [\objone(\solution), \objtwo(\solution), \objthree(\solution), \objfour(\solution)]
+\end{equation}
+These functions mathematically evaluate spatial page occupation efficiency, historical editorial alignment, template text capacity integrity, and geometric alignment criteria.
+
+
+\subsubsection{\objone: Page occupation}
+
+\objone\ evaluates the efficiency of the layout configuration in terms of page occupation. The mathematical goal is to minimize the total unallocated empty white space.
+
+The total physical area occupied by an individual article \articleobj{i}\ under its assigned template \templatesel{i}\ and vertical elasticity level \elasticity{i}\ is given by $\Wtemp{\templatesel{i}} \cdot \Hscaled{i}$. The objective function accumulates the total residual empty space:
+
+\begin{equation}
+\objone = (\Weff \cdot \Heff) - \sum_{i=1}^{\numarticles} \left( \Wtemp{\templatesel{i}} \cdot \Hscaled{i} \right)
+\end{equation}
+
+By minimizing \objone, the optimization process directly drives the articles to pack tightly, maximizing layout density. Additionally, in the rare event that the single-page constraint must be relaxed due to the absolute lack of any feasible single-page configuration, \objone\ scales to represent the cumulative sum of empty white space across all utilized pages.
+
+\subsubsection{\objtwo: Template editorial style}
+
+The second objective function, \objtwo, evaluates the editorial quality of the layout solution $\solution$ by measuring how well the assigned templates align with historical  designs. Because newspaper layouts rely on tacit structural dependencies where the choice of a template for a given article inherently depends on its neighboring articles, this objective must be evaluated within a global page context.
+
+Let $\Omega(\articleobj{i}, \templatesel{i} \mid \solution) \in [0, 1]$ be an abstract \textit{editorial suitability function} that quantifies the compliance of mapping article \articleobj{i}\ to template \templatesel{i}\ given the complete context of the layout solution \solution. A value of $1$ represents a perfect match according to historical editorial criteria, while a value of $0$ indicates a complete editorial mismatch. 
+
+Since the optimization vector $\objvector{\solution}$ is formulated as a minimization problem, \objtwo\ is mathematically defined as the minimization of the aggregate editorial suitability across all arranged articles:
+
+\begin{equation}
+\objtwo = \sum_{i=1}^{\numarticles} \left( 1 - \Omega(\articleobj{i}, \templatesel{i} \mid \solution) \right)
+\end{equation}
+
+By minimizing \objtwo, the optimization process drives the configuration toward layouts that preserve the signature visual identity and human design choices of templates.
+
+
+\subsubsection{\objthree: Text Capacity integrity}
+
+$\objthree$ evaluates the character count of the body text fit between the article's requirements and the dynamic text capacity range of its assigned template. For each article \articleobj{i}, the character count $\Cart{i}$ must ideally fall within the permissible capacity interval $[\Cmin{\templatesel{i}}{\kactive{i}}, \Cmax{\templatesel{i}}{\kactive{i}}]$ dictated by the selected template $\templatesel{i}$ and the number of active images $\kactive{i} = \Nimg{i}$. 
+
+This evaluation is modeled as a piece-wise quadratic deviation penalty function. Let $\epsilon=0.1$ be a tolerance factor that broadens the acceptable threshold bounds. The text capacity penalty $\penobjthree{i}$ for an individual article $\articleobj{i}$ is formally defined as:
+
+\begin{equation}
+\penobjthree{i} = \begin{cases} 
+0 & \text{if } (1-\epsilon)\Cmin{\templatesel{i}}{\kactive{i}} \le \Cart{i} \le (1+\epsilon)\Cmax{\templatesel{i}}{\kactive{i}} \\ 
+K_{lower} \cdot \left( \frac{\Cmin{\templatesel{i}}{\kactive{i}}}{\Cart{i}} - 1.0 \right)^2 & \text{if } \Cart{i} < (1-\epsilon)\Cmin{\templatesel{i}}{\kactive{i}} \quad \text{and} \quad \Cart{i} > 0 \\ 
+K_{upper} \cdot \left( \frac{\Cart{i}}{\Cmax{\templatesel{i}}{\kactive{i}}} - 1.0 \right)^2 & \text{if } \Cart{i} > (1+\epsilon)\Cmax{\templatesel{i}}{\kactive{i}} \\ 
+K_{lower} & \text{if } \Cart{i} = 0 \quad \text{and} \quad \Cmin{\templatesel{i}}{\kactive{i}} > 0 
+\end{cases}
+\end{equation}
+
+Where $K_{lower}$ and $K_{upper}$ represent strictly positive penalty coefficients assigned to scale the lower and upper capacity violations, respectively. The constant penalty state $K_{lower}$ is explicitly enforced when an article contains no body text ($\Cart{i} = 0$) but is assigned to a template with a text block ($\Cmin{\templatesel{i}}{\kactive{i}} > 0$), effectively bypassing the division-by-zero singularity while allowing the layout to eliminate the unused box, but with the corresponding penalty of $\penobjthree{i} = K_{lower}$.
+
+The global text integrity objective function $\objthree$ aggregates the capacity deviations across all $\numarticles$ input elements:
+\begin{equation}
+\objthree = \sum_{i=1}^{\numarticles} \penobjthree{i}
+\end{equation}
+
+By minimizing \objthree, the optimization frontier prioritizes layout configurations where text blocks are neither heavily clipped due to lack of space nor excessively sparse due to oversized containers.
+
+\subsubsection{\objfour: Alignment and privileged zone}
+
+$\objfour$ penalizes vertical edge misalignments between adjacent containers and improper positioning of the main article. This objective is formulated as a linear combination of two independent penalty terms: the Heading Critical Zone penalty (\HCZ), which governs main article positioning, and the Vertical Alignment penalty (\VA), which penalizes edge misalignments:
+\begin{equation}
+\objfour = \HCZ + \betaweight \cdot \VA
+\end{equation}
+Where \betaweight\ is a strictly positive weighting parameter utilized to balance the two aesthetic criteria.
+
+\paragraph{Privileged Critical Zone Penalty (\HCZ)} 
+To respect journalistic hierarchy, the article designated as main ($\Mainart{i} = 1$) must be positioned within a privileged geometric region of the canvas, defined by default as the upper-center portion of the page (the first vertical third of the effective height). The coordinate space of this critical zone is defined by \Zcrit:
+\begin{equation}
+\Zcrit = [0, \Weff] \times \left[0, \frac{1}{3}\Heff\right]
+\end{equation}
+The penalty evaluates the spatial coverage deficit of the main article relative to its total scaled area. The \HCZ\ penalty is mathematically defined as:
+\begin{equation}
+\HCZ = \sum_{i=1}^{\numarticles} \Mainart{i} \cdot \left( 1 - \frac{\Area{\bbox{i} \cap \Zcrit}}{\Area{\bbox{i}}} \right)
+\end{equation}
+This formulation yields a penalty of $0$ if the main article bounding box \bbox{i}\ is fully contained within \Zcrit, and approaches $1$ as the content is pushed outside the privileged zone.
+
+\paragraph{Vertical Alignment Penalty (\VA)}
+
+The alignment evaluation is restricted to the set of unique pairs exhibiting lateral adjacency, defined as $\mathcal{P}_{adj} = \{(i,j) \mid 1 \le i < j \le \numarticles \}$, where articles \articleobj{i}\ and \articleobj{j}\ share a vertical projection overlap on the page space. 
+
+Let \deltaytop{i}{j}\ and \deltaybottom{i}{j}\ be the absolute top and bottom edge distances between adjacent articles, respectively. The alignment quality of an individual edge distance $d$ is governed by a piecewise function with fixed numerical thresholds proportional to the effective page height \Heff. Specifically, the model enforces a tolerance zone of $0.006\Heff$  and a maximum separation threshold of $0.19\Heff$:
+\begin{equation}
+q(d) = \begin{cases} 
+1.0 & \text{if } d \le 0.006\Heff \\ 
+-\frac{\alignmentScalingParameter}{\alignmentScalingParameter + d} & \text{if } 0.006\Heff < d \le 0.19\Heff \\ 
+0.0 & \text{if } d > 0.19\Heff 
+\end{cases}
+\end{equation}
+Where $\alignmentScalingParameter \in \mathbb{R}^+$ is a scaling parameter that penalizes configurations within the alignment noise zone. The rationale behind this piecewise formulation is rooted in professional layout discipline: near-perfect edge alignments are rewarded with a maximum quality score of $1.0$ to prevent artificial penalties on imperceptible variations. Conversely, small misalignments within the noise zone represent highly distracting visual defects that mimic accidental design mistakes, and are thus heavily penalized. As the distance increases, this penalty decays because the strict expectation of alignment diminishes. Finally, for distances exceeding $0.19\Heff$, the function returns a neutral score of $0.0$, treating wide separations as independent articles and preventing artificial metric degradation on visually cohesive pages. 
+
+To track active misalignments, let $\mathbb{I}(d)$ be an indicator function such that $\mathbb{I}(d) = 1$ if $d \le 0.19\Heff$, and $0$ otherwise. 
+
+The top edge alignment quality score $\mathcal{Q}_{top}$ is computed as the normalized average over active comparisons:
+\begin{equation}
+\mathcal{Q}_{top} = \begin{cases} \frac{\sum_{(i,j) \in \mathcal{P}_{adj}} q(\deltaytop{i}{j})}{\sum_{(i,j) \in \mathcal{P}_{adj}} \mathbb{I}(\deltaytop{i}{j})} & \text{if } \sum \mathbb{I}(\deltaytop{i}{j}) > 0 \\ 1.0 & \text{otherwise} \end{cases}
+\end{equation}
+The bottom edge quality score $\mathcal{Q}_{bottom}$ is derived identically using \deltaybottom{i}{j}. \VA\ is defined as the inversion of the equally weighted edge quality scores:
+\begin{equation}
+\VA = 1.0 - \left( 0.5 \cdot \mathcal{Q}_{top} + 0.5 \cdot \mathcal{Q}_{bottom} \right)
+\end{equation}
+Note that horizontal alignment is omitted because all templates within the catalog are pre-engineered to adhere to a standardized multi-column grid. Consequently, horizontal grid discipline is implicitly inherited from the template geometry rather than explicitly enforced during the optimization process.

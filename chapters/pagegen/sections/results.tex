@@ -1,0 +1,570 @@
+\section{Experiments and Results}
+\label{sec:results}
+
+\subsection{Experimental Setup and Implementation Details}
+
+\subsubsection{Implementation and Hardware Details}
+\label{sec:implementation_details}
+
+The primary optimization infrastructure and the evolutionary many-objective engine are developed in Python, utilizing the \texttt{pymoo} optimization library~\cite{pymoo} to manage the uniform exploration and preference-guided genetic search paradigms, chromosome populations, reference direction meshes, and selection mechanics. 
+
+Concurrently, all deep learning pipelines are powered by the \textit{PyTorch}~\cite{pytorch} ecosystem. Additionally, to improve runtime efficiency, the resulting layout coordinates for the solution~$\solution$ are  structured into a single unified sequence tensor, and evaluated by the PyTorch Transformer encoder in a single massive inference batch per generation. This mechanism restricts deep learning inference overhead to exactly one forward pass per evolutionary generation, significantly accelerating the algorithmic execution timeline.
+
+The sequence-preserving prefix packing decoder (Algorithm~\ref{alg:packing_decoder}) and the exhaustive backtracking recursive spatial placement solver (Algorithm~\ref{alg:solve_recursive}) are fully implemented in native \textit{C++} to improve performance of the method that requires many decoding process per generation. To minimize algorithmic complexity and prevent concurrent race conditions during the search, the geometric packing routine processes individual candidate solutions sequentially. 
+
+The computational environments are strictly partitioned according to their operational and memory demands:
+\begin{itemize}
+    \item Online Optimization: The evolutionary search, chromosome manipulations, and sequential backtracking packing evaluations were executed on a local workstation equipped with an 8-core CPU architecture and 32 GB of system RAM.
+    
+    \item Offline Training: The  training phase for the relational Transformer was conducted on the same dedicated high-performance GPU computing cluster node indicated in Chapter~\ref{sec:gwes-evaluation}.
+\end{itemize}
+
+
+
+\subsection{Dataset and Instance Setup}
+\label{subsec:dataset_characterization}
+
+To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using the same dataset indicated in Chapter~\ref{sec:gwes-evaluation}, coming from the french newspaper group La Provence~\cite{laprovence}. This dataset  serves a dual purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
+
+
+%%%%%%%%% Hyperparameters U%%%%%%%%%%%%%
+\subsection{Hyperparameter Configuration}
+\label{subsec:hyperparameter_calibration}
+
+The operational parameters governing the evolutionary engine were calibrated through extensive empirical pilot studies and operational stress tests over the specified dataset. 
+
+The finalized calibrated parameters are structured in Table~\ref{tab:algorithmic_parameters}.
+
+\begin{table}[htbp]
+\centering
+
+\begin{tabularx}{\widthForParametersTable}{Xcc}
+\hline
+\textbf{Parameter Description} & \textbf{Symbol / Notation} & \textbf{Calibrated Value} \\ \hline
+\multicolumn{3}{l}{\textit{A. Objective Function \& Penalty Coefficients}} \\ \hline
+Weight parameter for \objfour & \betaweight & 0.5 \\
+Lower capacity text penalty coef. & $K_{\text{lower}}$ & 5 \\
+Upper capacity text penalty coef. & $K_{\text{upper}}$ & 10 \\
+Edge-alignment scaling parameter & $\alignmentScalingParameter$ & 5 \\
+LayoutGMN kernel smoothing parameter & $\sigmagmn$ & 0.5 \\ \hline
+\multicolumn{3}{l}{\textit{B. NSGA-III/RNSGA-III Parameters}} \\ \hline
+Number of reference directions for  \methodNameUniform & --- & 10 \\
+Population size for \methodNameUniform & \popsize & 286 \\
+Radius around aspiration points in \methodName & $\RNSGAradius$ & 0.15 \\
+Total Population size for  \methodName & $\popsize_{R}$ &  330 \\
+Number of Generations & $\ngen$ &  300\\
+Crossover prob. & $p_{\text{cross}}$ & 0.5 \\  
+Global mutation prob. & $\globalmutationprob$ & 0.4 \\
+Perm. Reverse mutation prob. & $\mutationprob{1}$ & 0.2\\
+5-most similar template mutation prob. & $\mutationprob{2}$ & 0.25\\
+Textual integrity mutation prob. & $\mutationprob{3}$ & 0.25\\
+Bernoulli resampling mutation prob. & $\mutationprob{4}$ & 0.05\\
+Random template substitution mutation prob. & $\mutationprob{5}$ & 0.05\\
+Elasticity mutation prob. & $\mutationprob{6}$ & 0.2\\
+\end{tabularx}
+
+\caption{Calibrated algorithmic and structural hyperparameters for the \methodName\ method.}
+\label{tab:algorithmic_parameters}
+\end{table}
+
+The asymmetric population sizes reported in Table~\ref{tab:algorithmic_parameters} ($\popsize = 286$ versus $\popsize_R = 330$) are not arbitrary hyperparameter selections; rather, they are strictly dictated by the underlying combinatorial requirements of the reference direction generation methods inside the \texttt{pymoo} framework:
+\begin{enumerate}
+    \item For \methodNameUniform, deploying the canonical Das-Dennis boundary intersection method with $10$ structured partitions across the $4$-dimensional objective space mathematically yields exactly $\binom{4 + 10 - 1}{10} = 286$ unique reference vectors, necessitating an identical population size to guarantee niche coverage. 
+    \item Conversely, \methodName\ projects a structured mesh of $8$ internal partitions around each of the $2$ extracted historical aspiration points (the 25th and 50th percentiles of empirical human designs), which generates exactly $165$ localized reference lines per target zone, culminating in a combined population tracking space of $165 \times 2 = 330$ individuals to preserve directional diversity. The deliberate selection of $8$ internal partitions for the preference-guided approach was specifically enforced to maintain an equitable computational budget and search capacity per generation, thereby ensuring a balanced comparative analysis between both paradigms.
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%% Results %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%% NSGA ANALYSIS %%%%%%%%%%%%%%%%%%%%%
+
+\subsection{\methodNameUniform\ vs. Alternative Baselines}
+
+This subsection presents a quantitative evaluation of the proposed \methodNameUniform\ framework, that is, the uniform variant of the proposed method. The analysis focuses first on this unbiased formulation to thoroughly assess its global solution space coverage and demonstrate its fundamental superiority over other design paradigms. 
+
+\subsubsection{Experimental Setup and Instances}
+\label{subsec:experimental_setup}
+
+To conduct a rigorous comparative evaluation of the uniform \methodNameUniform\ framework against baselines, a benchmark suite comprising 30 production-grade instances was established. To ensure strict validation integrity and prevent data leakage, these instances were sampled exclusively from the independent test set defined in Chapter~\ref{sec:gwes}. The experimental corpus covers a wide spectrum of visual complexities by varying the number of articles per page ($\numarticles$), ranging from low-density configurations to the practical upper bound common in professional CMS. The structural distribution of the evaluation suite is detailed in Table~\ref{tab:instance_distribution}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\linewidth}{Xcc}
+\hline
+\textbf{Complexity} & \textbf{Articles per Page ($\numarticles$)} & \textbf{Instance Count} \\ \hline
+Low Density & 2 & 7 \\
+            & 3 & 7 \\ \hline
+Medium Density & 4 & 10 \\
+               & 5 & 4 \\ \hline
+High Density   & 6 & 1 \\
+               & 8 & 1 \\ \hline
+\textbf{Total Number of Instances} & & \textbf{30} \\ \hline
+\end{tabularx}
+\caption{Structural composition and article density distribution of the 30 production layout instances utilized.}
+\label{tab:instance_distribution}
+\end{table}
+
+The sample frequencies for $n=6$ and $n=8$ reflect the exact availability limits within the  test set, rather than an arbitrary choice. The evaluation ceiling is strictly capped at $n=8$ articles; layouts exceeding this threshold represent extreme, anomalous editorial edge cases that fall outside the operational scope of the required task. 
+
+For each selected instance, the geometric coordinates, positions, and final template allocations selected by human designers were completely stripped from the metadata. The baseline models and the evolutionary framework were provided exclusively with the article's content and constraints that define the formal input vector $\instance = \langle \page, \articleset \rangle$.  This configuration forces a true blind evaluation, challenging the algorithms to synthesize professional-grade layouts purely from raw content specifications.
+
+To account for the stochastic nature of the evolutionary operators and ensure statistical significance, all comparative experiments across the 30 benchmark instances were executed over 30 independent runs, each utilizing a unique random seed.
+
+
+\subsubsection{Baseline Methods}
+\label{subsubsec:baselines}
+
+To validate the performance of the integrated \methodNameUniform\ framework, five competitive baselines ($\baseline{1}$ to $\baseline{5}$) were constructed. These models isolate different architectural paradigms. The baselines are formally defined below:
+
+\begin{description}
+    \item[$\baseline{1}$ (Blind Random with Bottom-Left Packer):] Establishes the absolute lower bound of performance. It processes articles using their canonical entry order and assigns random feasible templates from the catalog $\templatecatalog$. Elasticity is fixed to 0. Packing is executed via a traditional Top-Left heuristic, which is simply Bottom-Left~\cite{chazelle-bl} but mirrored vertically.
+    
+    \item[$\baseline{2}$ (Heuristic Selection with Fixed Order):] A decoupled sequential approach. Template selection is purely deterministic, choosing the feasible candidate that minimizes the text capacity penalty ($\objthree$) in isolation. Articles are packed using their canonical entry order  using the packing decoder engine, the same that \methodNameUniform\ uses.
+    
+    \item[$\baseline{3}$ (Heuristic Selection with Exact Permutation Backtracking):] Another decoupled sequential approach. Template selection isolates and minimizes $\objthree$. For the packing stage, an exact backtracking search evaluates all $\numarticles!$ article permutations, minimizing a scalarized fitness function defined as $W = 4\objone + \objtwo + 0\objthree + 4\objfour$. Setting the weight of $\objthree$ to 0 avoids redundant optimization, while $\objtwo$ is minimized as a low-priority target given the fixed templates. This assigns equal dominant weight to $\objone$ and $\objfour$, mirroring the implicit balancing mechanism of \methodNameUniform. Elasticity is fixed to 0, and packing is handled by the packing decoder engine.
+    
+    \item[$\baseline{4}$ (Transformer-Assisted Selection with Exact Backtracking):] A decoupled sequential approach enhanced by deep learning. Template selection is guided by the Top-1 probabilities of the Transformer Encoder, previously filtered by a Top-$K$ text-capacity threshold ($\objthree$). The parameter $K$ is set to $0.2$ (retaining the top 20\% best candidates), balancing neural design exploration with structural heuristic text integrity safety. Packing executes the exact permutation backtracking as in $\baseline{3}$, with zero elasticity over the packing decoder engine.
+    
+    \item[$\baseline{5}$ (Ablated NSGA-III):] A simultaneous optimization baseline that shares the exact mechanisms as the proposed \methodNameUniform, but acts as a structural ablation by deactivating the template editorial style objective $\objtwo$.
+\end{description}
+
+\subsubsection{Execution Time Evaluation}
+
+The computational execution time across the evaluated instances, as shown in Table~\ref{tab:exec_time_analysis}, reveals three trends:
+
+\begin{itemize}
+    \item $\baseline{1}$ and $\baseline{2}$ are naturally instantaneous since they completely bypass global combinatorial search.
+    \item $\baseline{3}$ and $\baseline{4}$, while fast for small pages, their runtime increases considerably in the largest instance ($\numarticles=8$) due to the $\numarticles!$ permutation bottleneck. At this scale, they approach the execution times of population-based methods, making exact backtracking less attractive for high-density layouts.
+    \item Evolutionary frameworks ($\baseline{5}$ and Proposed NSGA-III) demand more computational effort. The proposed \methodNameUniform exhibits the highest execution time due to the online neural inference required by \neuralmethod. 
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+
+\begin{tabular}{lll}
+\toprule
+$\numarticles$ & Method & Time \\
+\midrule
+\multirow[c]{6}{*}{2} & B1 & \bfseries 0.003s $\pm$ 0.001s \\
+ & B2 & 0.004s $\pm$ 0.001s \\
+ & B3 & 0.004s $\pm$ 0.000s \\
+ & B4 & 0.006s $\pm$ 0.001s \\
+ & B5 & 24.720s $\pm$ 1.330s \\
+ & \methodNameUniform & 56.191s $\pm$ 1.052s \\
+ \hline
+\multirow[c]{6}{*}{3} & B1 & \bfseries0.004s $\pm$ 0.000s \\
+ & B2 & \bfseries0.004s $\pm$ 0.000s \\
+ & B3 & 0.007s $\pm$ 0.001s \\
+ & B4 & 0.009s $\pm$ 0.001s \\
+ & B5 & 28.467s $\pm$ 1.072s \\
+ & \methodNameUniform & 59.333s $\pm$ 1.659s \\
+  \hline
+\multirow[c]{6}{*}{4} & B1 & \bfseries0.004s $\pm$ 0.001s \\
+ & B2 & 0.005s $\pm$ 0.000s \\
+ & B3 & 0.019s $\pm$ 0.002s \\
+ & B4 & 0.022s $\pm$ 0.003s \\
+ & B5 & 32.902s $\pm$ 1.473s \\
+ & \methodNameUniform & 64.299s $\pm$ 1.435s \\
+  \hline
+\multirow[c]{6}{*}{5} & B1 &\bfseries 0.005s $\pm$ 0.000s \\
+ & B2 & \bfseries0.005s $\pm$ 0.000s \\
+ & B3 & 0.098s $\pm$ 0.013s \\
+ & B4 & 0.100s $\pm$ 0.012s \\
+ & B5 & 35.909s $\pm$ 0.796s \\
+ & \methodNameUniform & 76.739s $\pm$ 1.799s \\
+  \hline
+\multirow[c]{6}{*}{6} & B1 & 0.006s $\pm$ 0.003s \\
+ & B2 & \bfseries0.005s $\pm$ 0.000s \\
+ & B3 & 0.709s $\pm$ 0.020s \\
+ & B4 & 0.722s $\pm$ 0.025s \\
+ & B5 & 39.517s $\pm$ 0.694s \\
+ & \methodNameUniform & 80.614s $\pm$ 0.832s \\
+  \hline
+\multirow[c]{6}{*}{8} & B1 & \bfseries0.006s $\pm$ 0.000s \\
+ & B2 & 0.007s $\pm$ 0.000s \\
+ & B3 & 52.710s $\pm$ 0.652s \\
+ & B4 & 31.929s $\pm$ 0.521s \\
+ & B5 & 48.272s $\pm$ 0.550s \\
+ & \methodNameUniform & 90.456s $\pm$ 1.839s \\
+\bottomrule
+\end{tabular}
+
+\caption{Computational runtime performance across different \numarticles\ strata.}
+\label{tab:exec_time_analysis}
+\end{table}
+
+Despite this overhead, the execution time remains well within standard industry tolerances, as newspaper layout synthesis does not require real-time processing. As demonstrated in the following analysis, this time investment is highly justified by the superior quality and diverse set of alternative Pareto solutions generated, moving away from rigid single-solution outputs. Additionally, potential runtime optimization strategies are deferred to the discussion section.
+
+\subsubsection{Knee-Point Evaluation: Multi-Objective Methods vs. Decoupled Single-Solution Baselines}
+
+Unlike  decoupled approaches that yield a single solution, multi-objective evolutionary algorithms preserve a diverse set of trade-offs along a Pareto front. To perform a fair quantitative comparison against single-solution baselines ($\baseline{1}$ to $\baseline{4}$), a representative decision-making vector must be extracted from the non-dominated sets generated by the Ablated NSGA-III ($\baseline{5}$) and the proposed \methodNameUniform. For this purpose, the knee-point formulation was selected.
+
+Mathematically, the knee-point represents the best-compromise solution within a Pareto front. Geometrically, because all objective functions ($\objone, \objtwo, \objthree, \objfour$) are formulated as minimization targets, it is strictly defined as the solution that minimizes the normalized Euclidean distance to the ideal point $(0, 0, 0, 0)$. The macro-aggregated objective scores across the different \numarticles strata are summarized in Table~\ref{tab:knee_point_metrics}.
+
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lllllll}
+\toprule
+$\numarticles$ & Method & $N_{pages}$ & F1 & F2 & F3 & F4 \\
+\midrule
+\multirow[c]{6}{*}{2} & B1 & 1.62 $\pm$ 0.49 & 0.81 $\pm$ 0.31 & 1.71 $\pm$ 0.37 & 1.89 $\pm$ 1.67 & 0.38 $\pm$ 0.25 \\
+ & B2 & \bfseries1.00 $\pm$ 0.00 & 0.29 $\pm$ 0.10 & 1.87 $\pm$ 0.17 & \bfseries0.00 $\pm$ 0.00 & 0.59 $\pm$ 0.13 \\
+ & B3 & \bfseries1.00 $\pm$ 0.00 & 0.29 $\pm$ 0.10 & 1.84 $\pm$ 0.17 & \bfseries0.00 $\pm$ 0.00 & 0.59 $\pm$ 0.13 \\
+ & B4 & 1.14 $\pm$ 0.35 & 0.30 $\pm$ 0.30 & 1.41 $\pm$ 0.44 & 0.11 $\pm$ 0.07 & 0.05 $\pm$ 0.12 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \bfseries 0.02 $\pm$ 0.04 & 1.10 $\pm$ 0.36 & 0.11 $\pm$ 0.16 & \bfseries0.00 $\pm$ 0.00 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & 0.04 $\pm$ 0.07 & \bfseries0.32 $\pm$ 0.17 & 0.18 $\pm$ 0.13 & 0.01 $\pm$ 0.05 \\
+  \hline
+\multirow[c]{6}{*}{3} & B1 & 2.28 $\pm$ 0.73 & 1.11 $\pm$ 0.48 & 2.55 $\pm$ 0.41 & 2.37 $\pm$ 1.38 & 0.47 $\pm$ 0.30 \\
+ & B2 & 1.14 $\pm$ 0.35 & 0.36 $\pm$ 0.36 & 2.56 $\pm$ 0.28 & \bfseries0.00 $\pm$ 0.00 & 0.66 $\pm$ 0.18 \\
+ & B3 & 1.14 $\pm$ 0.35 & 0.36 $\pm$ 0.36 & 2.50 $\pm$ 0.28 & \bfseries0.00 $\pm$ 0.00 & 0.66 $\pm$ 0.18 \\
+ & B4 & 1.57 $\pm$ 0.50 & 0.81 $\pm$ 0.45 & 1.92 $\pm$ 0.38 & 0.19 $\pm$ 0.18 & 0.38 $\pm$ 0.31 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & 0.04 $\pm$ 0.03 & 1.60 $\pm$ 0.40 & 0.29 $\pm$ 0.40 & 0.14 $\pm$ 0.20 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \bfseries0.04 $\pm$ 0.02 & \bfseries0.64 $\pm$ 0.23 & 0.26 $\pm$ 0.13 & \bfseries0.09 $\pm$ 0.13 \\
+   \hline
+\multirow[c]{6}{*}{4} & B1 & 2.87 $\pm$ 0.82 & 1.39 $\pm$ 0.49 & 3.43 $\pm$ 0.47 & 2.58 $\pm$ 0.96 & 0.54 $\pm$ 0.33 \\
+ & B2 & 1.40 $\pm$ 0.49 & 0.65 $\pm$ 0.45 & 3.12 $\pm$ 0.38 &\bfseries 0.01 $\pm$ 0.03 & 0.65 $\pm$ 0.16 \\
+ & B3 & 1.40 $\pm$ 0.49 & 0.65 $\pm$ 0.45 & 2.85 $\pm$ 0.35 & \bfseries0.01 $\pm$ 0.03 & 0.65 $\pm$ 0.16 \\
+ & B4 & 1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.50 & 2.34 $\pm$ 0.42 & 0.85 $\pm$ 0.33 & 0.53 $\pm$ 0.26 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \bfseries0.06 $\pm$ 0.03 & 2.55 $\pm$ 0.51 & 0.38 $\pm$ 0.42 & 0.23 $\pm$ 0.23 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & 0.08 $\pm$ 0.03 & \bfseries1.24 $\pm$ 0.32 & 0.44 $\pm$ 0.27 & \bfseries0.23 $\pm$ 0.15 \\
+  \hline
+\multirow[c]{6}{*}{5} & B1 & 3.54 $\pm$ 0.98 & 1.70 $\pm$ 0.62 & 4.33 $\pm$ 0.47 & 2.81 $\pm$ 0.81 & 0.56 $\pm$ 0.32 \\
+ & B2 & 1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.48 & 4.00 $\pm$ 0.33 & \bfseries0.07 $\pm$ 0.09 & 0.83 $\pm$ 0.04 \\
+ & B3 & 1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.48 & 3.39 $\pm$ 0.32 & \bfseries0.07 $\pm$ 0.09 & 0.81 $\pm$ 0.06 \\
+ & B4 & 1.50 $\pm$ 0.50 & 0.63 $\pm$ 0.37 & 2.26 $\pm$ 0.37 & 1.37 $\pm$ 0.32 & 0.50 $\pm$ 0.12 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \bfseries0.06 $\pm$ 0.04 & 3.46 $\pm$ 0.54 & 0.77 $\pm$ 0.63 & 0.35 $\pm$ 0.27 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & 0.08 $\pm$ 0.03 & \bfseries1.85 $\pm$ 0.46 & 0.49 $\pm$ 0.27 & \bfseries0.26 $\pm$ 0.16 \\
+  \hline
+\multirow[c]{6}{*}{6} & B1 & 4.10 $\pm$ 1.09 & 1.94 $\pm$ 0.64 & 5.22 $\pm$ 0.46 & 3.01 $\pm$ 0.63 & 0.57 $\pm$ 0.33 \\
+ & B2 & 2.00 $\pm$ 0.00 & 1.22 $\pm$ 0.00 & 4.86 $\pm$ 0.00 & \bfseries0.00 $\pm$ 0.00 & 0.51 $\pm$ 0.00 \\
+ & B3 & 2.00 $\pm$ 0.00 & 1.22 $\pm$ 0.00 & 4.67 $\pm$ 0.00 & \bfseries0.00 $\pm$ 0.00 & 0.51 $\pm$ 0.00 \\
+ & B4 & 2.00 $\pm$ 0.00 & 1.06 $\pm$ 0.00 & 4.03 $\pm$ 0.00 & 1.41 $\pm$ 0.00 & 0.34 $\pm$ 0.00 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \bfseries0.06 $\pm$ 0.04 & 4.91 $\pm$ 0.51 & 0.73 $\pm$ 0.56 & \bfseries0.24 $\pm$ 0.22 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & 0.12 $\pm$ 0.02 &\bfseries 2.44 $\pm$ 0.51 & 0.44 $\pm$ 0.24 & 0.26 $\pm$ 0.16 \\
+  \hline
+\multirow[c]{6}{*}{8} & B1 & 4.63 $\pm$ 1.38 & 2.07 $\pm$ 0.79 & 7.02 $\pm$ 0.63 & 3.25 $\pm$ 0.73 & 0.57 $\pm$ 0.30 \\
+ & B2 & 2.00 $\pm$ 0.00 & 1.15 $\pm$ 0.00 & 5.94 $\pm$ 0.00 & \bfseries0.00 $\pm$ 0.00 & 0.60 $\pm$ 0.00 \\
+ & B3 & 2.00 $\pm$ 0.00 & 1.15 $\pm$ 0.00 & 5.87 $\pm$ 0.00 & \bfseries0.00 $\pm$ 0.00 & 0.60 $\pm$ 0.00 \\
+ & B4 & \bfseries1.00 $\pm$ 0.00 & 0.10 $\pm$ 0.00 & \bfseries1.25 $\pm$ 0.00 & 1.41 $\pm$ 0.00 & \bfseries0.17 $\pm$ 0.00 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & 0.09 $\pm$ 0.05 & 5.53 $\pm$ 0.77 & 0.54 $\pm$ 0.78 & 0.30 $\pm$ 0.24 \\
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \bfseries0.08 $\pm$ 0.01 & 2.25 $\pm$ 0.46 & 0.20 $\pm$ 0.10 & 0.18 $\pm$ 0.04 \\
+\bottomrule
+\end{tabular}
+
+\caption{Quantitative knee-point evaluation of multi-objective frameworks ($\baseline{5}$ and \methodNameUniform) against decoupled single-solution baselines ($\baseline{1}$--$\baseline{4}$) across different article counts ($\numarticles$). Metrics express the $\text{mean} \pm \text{standard deviation}$ computed over all runs and instances in the corresponding stratum. Bold entries indicate the best-performing method within each complexity tier for each individual objective (all formulated as minimization targets).}
+\label{tab:knee_point_metrics}
+\end{table}
+
+The aggregated scores in Table~\ref{tab:knee_point_metrics} highlight the structural limitations of sequential design. While the evolutionary approaches ($\baseline{5}$ and \methodNameUniform) maintain absolute number of pages feasibility ($1.00 \pm 0.00$), the decoupled backtracking baselines ($\baseline{3}$ and $\baseline{4}$) frequently overflow into two pages as article density scales ($n \ge 6$). Even though $\baseline{3}$ and $\baseline{4}$ utilize exact permutation searches to minimize \objone, freezing the template selection beforehand forces the packing engine to operate over a fundamentally flawed geometric space, proving that decoupled pipelines cannot guarantee basic number of pages feasibility. A Friedman test confirms this variation is significant ($\chi^2 = 104.39, p < 0.001$, effect size $W = 0.70$) . Post-hoc Wilcoxon signed-rank tests with Bonferroni correction indicate no statistically significant difference between $\baseline{5}$ and \methodNameUniform\ in page counts.
+
+The aggregated scores in Table~\ref{tab:knee_point_metrics} highlight the structural limitations of sequential design. While the evolutionary approaches ($\baseline{5}$ and \methodNameUniform) maintain absolute number of pages feasibility ($1.00 \pm 0.00$), the decoupled backtracking baselines ($\baseline{3}$ and $\baseline{4}$) frequently overflow into two pages as article density scales ($n \ge 6$). Even though $\baseline{3}$ and $\baseline{4}$ utilize exact permutation searches to minimize \objone, freezing the template selection beforehand forces the packing engine to operate over a fundamentally flawed geometric space, proving that decoupled pipelines cannot guarantee basic number of pages feasibility. A Friedman test confirms these variations are highly significant for both page count ($\chi^2 = 104.39, p < 0.001$, effect size $W = 0.70$) and \objone\ ($\chi^2 = 126.16, p < 0.001, W = 0.84$). Post-hoc Wilcoxon signed-rank tests with Bonferroni correction indicate no statistically significant difference between $\baseline{5}$ and \methodNameUniform\ in page counts, while $\baseline{5}$ holds a slight but significant advantage in purely minimizing layout height (\objone).
+
+When evaluating the entire objective space $\objvector$, a clear and strong trade-off effect characterizes the decoupled baselines ($\baseline{2}$, $\baseline{3}$, and $\baseline{4}$). These methods excel in isolated dimensions but collapse in others: $\baseline{2}$ and $\baseline{3}$ achieve near-perfect text capacity ($\objthree \approx 0.00$) at the expense of editorial styling ($\objtwo$), whereas $\baseline{4}$ improves $\objtwo$ but sacrifices text integrity ($\objthree$). Conversely, the simultaneous optimization paradigm proves its structural superiority through both the ablated baseline ($\baseline{5}$) and the proposed \methodNameUniform\ framework, as both maintain a stable, harmonic balance across their active targets. While $\baseline{5}$ naturally exhibits high penalty scores in $\objtwo$ by design, since it serves as an ablation with this specific objective deactivated, it closely mirrors the proposed framework in achieving exceptional scores in all objectives, validating the core strength of population-based multi-objective search. This global behavior is validated by the Friedman test across $\objone$ ($\chi^2 = 126.16, p < 0.001, W = 0.84$), $\objtwo$ ($\chi^2 = 117.68, p < 0.001, W = 0.78$), $\objthree$ ($\chi^2 = 126.44, p < 0.001, W = 0.84$), and $\objfour$ ($\chi^2 = 119.25, p < 0.001, W = 0.80$). Pairwise post-hoc comparisons confirm that \methodNameUniform\ significantly outperforms $\baseline{5}$ in editorial historical alignment ($\objtwo$), while $\baseline{5}$ holds a slight but significant advantage in minimizing $\objone$. No statistically significant differences are detected between them for $\objthree$ and $\objfour$.
+
+
+\subsubsection{Pareto Dominance over Decoupled Single-Solution Baselines}
+
+To formally assess the multi-objective superiority of \methodNameUniform, the generated fronts are evaluated using the criterion of Pareto dominance. In this multi-objective minimization problem governed by the objective vector $\objvector$, a solution  $\solution_A$ strictly dominates another one $\solution_B$ ($\solution_A \succ \solution_B$) if and only if:
+
+\begin{equation}
+\forall i \in \{1, \dots, 4\}: f_i(\solution_A) \le f_i(\solution_B) \quad \land \quad \exists j \in \{1, \dots, 4\}: f_j(\solution_A) < f_j(\solution_B)
+\end{equation}
+
+By mapping the single-solution outputs produced by the decoupled baselines ($\baseline{1}$ to $\baseline{4}$) against the non-dominated frontiers of \methodNameUniform, this verification determines whether the evolutionary search yields layout alternatives that are unconditionally superior, improving at least one objective without degrading any other.
+
+\begin{table}[htbp]
+\centering
+
+
+\begin{tabular}{llllll}
+\toprule
+ & $\numarticles$& $\baseline{1}$ & $\baseline{2}$ & $\baseline{3}$ & $\baseline{4}$ \\
+ &  &  &  &  &  \\
+\midrule
+%\multirow[c]{6}{*}{\textbf{$\baseline{5}$}} & 2 & 87.1\% & 83.8\% & 83.8\% & 63.8\% \\
+% & 3 & 91.0\% & 68.1\% & 63.8\% & 39.5\% \\
+% & 4 & 79.7\% & 52.7\% & 37.0\% & 34.0\% \\
+% & 5 & 75.8\% & 38.3\% & 10.8\% & 3.3\% \\
+% & 6 & 66.7\% & 0.0\% & 0.0\% & 3.3\% \\
+% & 8 & 93.3\% & 30.0\% & 30.0\% & 0.0\% \\
+% \hline
+\multirow[c]{6}{*}{\textbf{\methodNameUniform}} & 2 & 99.5\% & 95.2\% & 95.2\% & 94.8\% \\
+ & 3 & 99.5\% & 99.0\% & 99.0\% & 99.5\% \\
+ & 4 & 93.3\% & 95.7\% & 91.3\% & 99.7\% \\
+ & 5 & 91.7\% & 97.5\% & 84.2\% & 99.2\% \\
+ & 6 & 96.7\% & 73.3\% & 70.0\% & 100.0\% \\
+ & 8 & 96.7\% & 100.0\% & 100.0\% & 13.3\% \\
+\bottomrule
+\end{tabular}
+
+\caption{Pareto dominance of \methodNameUniform\ over decoupled single-solution baselines. Percentage of optimization runs (seeds) where the multi-objective frameworks successfully discover solutions that dominate the decoupled baselines ($\baseline{1}$--$\baseline{4}$), stratified by article count ($n$).}
+\label{tab:pareto_dominance_metrics}
+\end{table}
+
+An examination of the empirical results in Table~\ref{tab:pareto_dominance_metrics} reveals that the proposed \methodNameUniform\ framework establishes near-absolute dominance over decoupled methods. For all configurations up to $\numarticles = 6$, the stability rates consistently hover between 70.0\% and 100.0\%,  confirming that the multi-obective search engine reliably discovers layouts that strictly outperform the isolated heuristics across all objectives at once.The only notable exception occurs at the highest complexity stratum ($\numarticles = 8$) against $\baseline{4}$, where the dominance rate drops to 13.3\%. This localized drop reflects the inherent challenge of simultaneous multi-objective scaling within high-density search spaces. As observed in the preceding knee-point analysis (Table~\ref{tab:knee_point_metrics}), a heuristic heavily driven by the Transformer model, such as $\baseline{4}$, can intensely concentrate its search on \objtwo, managing to outperform \methodNameUniform. Because $\baseline{4}$ secures better values in these specific dimensions for certain instances, it mathematically resists Pareto coverage. Nevertheless, the simultaneous framework still maintains its architectural equilibrium, significantly outperforming $\baseline{4}$ in text capacity ($\objthree$) and wasted space ($\objone$), which prevents the specialized baseline from offering a truly balanced alternative.
+
+\subsubsection{\neuralmethod\ Impact on Pareto Frontier Quality}
+
+To isolate and quantify the exact architectural contribution of the deep learning component within the optimization engine, a rigorous ablation analysis is conducted between the ablated framework ($\baseline{5}$) and the proposed \methodNameUniform. Since both methods operate under the multi-objective paradigm and generate full Pareto frontiers rather than single solutions, traditional scalar metrics are insufficient. Instead, their performance is evaluated directly in their multi-objective domain using Hypervolume~\cite{hv} metric (HV), to measure both convergence toward the true Pareto optimal front and solution diversity, and the Coverage Metric ($\mathcal{C}$-metric), which quantifies the directional dominance of one non-dominated front over another.
+
+\paragraph{Convergence}
+
+First, it is necessary to evaluate the overall convergence of both evolutionary approaches. Figure~\ref{fig:convergence_analysis} tracks the hypervolume trajectory over 300 generations for a representative large-scale instance ($\numarticles = 8$).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\widthForOneImage]{img/results/convergence_curve.png} 
+\caption{Generational convergence analysis tracking the full hypervolume over 300 generations for a highly constrained instance ($\numarticles=8$). Solid lines represent the mean trajectory across all independent runs, while the shaded regions denote the standard deviation.}
+\label{fig:convergence_analysis}
+\end{figure}
+
+As illustrated in Figure~\ref{fig:convergence_analysis}, both frameworks reach a stable optimization plateau well before the 300-generation threshold, confirming that the generation limit provides a conservative  margin. Interestingly, for this specific high-density instance, the ablated baseline ($\baseline{5}$) converges toward a higher average hypervolume in the late evolutionary phases. However, it is critical to note that this localized behavior does not reflect the general performance trend of the experiments, as will be demonstrated in the following subsection.
+
+\paragraph{Frontier Size and Hypervolume}
+
+
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lll}
+\toprule
+\numarticles & $\baseline{5}$ & \methodNameUniform \\
+\midrule
+2 & 2.0 $\pm$ 1.1 & \bfseries25.0 $\pm$ 8.7 \\
+3 & 6.0 $\pm$ 2.6 & \bfseries61.6 $\pm$ 22.2 \\
+4 & 10.3 $\pm$ 5.4 & \bfseries98.9 $\pm$ 17.3 \\
+5 & 17.2 $\pm$ 7.9 & \bfseries95.7 $\pm$ 28.5 \\
+6 & 18.9 $\pm$ 6.3 & \bfseries123.0 $\pm$ 12.9 \\
+8 & 25.9 $\pm$ 10.4 & \bfseries77.0 $\pm$ 18.6 \\
+\bottomrule
+\end{tabular}
+
+
+\caption{Pareto non-dominated frontier size. Number of unique non-dominated solutions. Metrics express the $\text{mean} \pm \text{standard deviation}$ stratified by article count ($\numarticles$).}
+\label{tab:frontier-size}
+\end{table}
+
+As shown in Table~\ref{tab:frontier-size}, transitioning from the ablated baseline ($\baseline{5}$) to \methodNameUniform\ expands non-dominated frontier cardinality across all strata, peaking at $123.0 \pm 12.9$ solutions for $n = 6$. This increase is the mathematical consequence of the objective tension introduced by \neuralmethod\ ($\objtwo$). Unlike $\baseline{5}$ (that focuses on $\objone$, $\objthree$ and $\objfour$), optimizing human editorial style directly conflicts with tight layout configurations, generating a vast space of valid localized trade-offs.  While uniform selection in \methodNameUniform\ preserves this diversity, an oversized frontier might introduce a massive cognitive overhead onto users. This practical bottleneck directly motivates the introduction of a reference-point-guided variant (\methodName), detailed in Section~\ref{sec:rnsga-vs-nsga}.
+
+
+
+\begin{table}[htbp]
+\centering
+
+\begin{tabular}{lcc}
+\toprule
+$\numarticles$ & $\baseline{5}$ & \methodNameUniform \\
+\midrule
+\multicolumn{3}{l}{\textbf{Full 4D Objective Space ($\objvector$)}} \\
+2 & 0.58 $\pm$ 0.36 & \bfseries 1.32 $\pm$ 0.77 \\
+3 & 2.95 $\pm$ 1.57 & \bfseries 5.63 $\pm$ 2.72 \\
+4 & 4.02 $\pm$ 1.40 & \bfseries 8.43 $\pm$ 1.77 \\
+5 & 5.03 $\pm$ 2.18 & \bfseries 10.99 $\pm$ 2.55 \\
+6 & 5.85 $\pm$ 1.97 & \bfseries 17.17 $\pm$ 0.95 \\
+8 & 4.42 $\pm$ 0.91 & \bfseries 9.77 $\pm$ 0.64 \\
+\midrule
+\multicolumn{3}{l}{\textbf{3D Objective Space (Excluding $\objtwo$)}} \\
+2 & \bfseries 0.72 $\pm$ 0.41 & \bfseries 0.72 $\pm$ 0.41 \\
+3 & 1.93 $\pm$ 0.92 & \bfseries 1.96 $\pm$ 0.94 \\
+4 & 2.40 $\pm$ 0.47 & \bfseries 2.45 $\pm$ 0.52 \\
+5 & 2.64 $\pm$ 0.62 & \bfseries 2.73 $\pm$ 0.60 \\
+6 & 3.77 $\pm$ 0.24 & \bfseries 3.85 $\pm$ 0.19 \\
+8 & \bfseries 1.53 $\pm$ 0.15 & 1.49 $\pm$ 0.07 \\
+\bottomrule
+\end{tabular}
+
+\caption{Hypervolume (HV) quality analysis. The upper block evaluates the full 4D objective space. The lower block projects the solutions onto the ablated 3D space (excluding $\objtwo$) to assess whether optimizing for editorial style compromises performance. Metrics express the $\text{mean} \pm \text{standard deviation}$.}
+\label{tab:hv-comparison}
+\end{table}
+
+Table~\ref{tab:hv-comparison} outlines the Hypervolume (HV) distributions to evaluate frontier convergence and diversity. In the full 4D objective space $(\objone, \objtwo, \objthree, \objfour)$, \methodNameUniform\ exhibits absolute dominance over $\baseline{5}$ across all complexity strata, a direct consequence of successfully integrating the neural editorial style score. A Wilcoxon signed-rank test statistically confirms this disparity, yielding an absolute rejection of the null hypothesis ($W = 0.00$, $p < 0.001$, effect size $r = 1.10$).
+
+Crucially, the lower block isolates both frameworks by projecting their non-dominated frontiers exclusively onto the reduced 3D objective subspace $(\objone, \objthree, \objfour)$ for which $\baseline{5}$ was originally designed. The empirical results demonstrate that \methodNameUniform\ consistently matches or outperforms $\baseline{5}$. This outperformance is similarly validated by a Wilcoxon signed-rank test ($W = 102.00$, $p = 0.0366$, effect size $r = 0.38$), which demonstrates a statistically significant edge in favor of \methodNameUniform. This mathematically confirms that embedding the deep-learned editorial metric ($\objtwo$) into the evolutionary search loop does not compromise geometric or text integrity convergence. Instead, the multi-objective tension introduced by $\objtwo$ acts as an effective regularizer, forcing the population to discover highly efficient design co-dependencies that $\baseline{5}$ fails to exploit. 
+
+%\paragraph{$\mathcal{C}$-metric}
+
+
+
+%\begin{table}[]
+  %  \centering
+  %  \begin{tabular}{lll}
+%\toprule
+ %\numarticles & $\mathcal{C}(\text{\methodNameUniform}, \baseline{5})$ & $\mathcal{C}(\baseline{5}, \text{\methodNameUniform})$ \\
+%\midrule
+%2 & 30.9\% $\pm$ 38.1\% & 1.3\% $\pm$ 3.2\% \\
+%3 & 37.1\% $\pm$ 32.7\% & 1.6\% $\pm$ 3.6\% \\
+%4 & 35.5\% $\pm$ 31.7\% & 2.4\% $\pm$ 4.9\% \\
+%5 & 54.3\% $\pm$ 33.2\% & 1.1\% $\pm$ 2.9\% \\
+%6 & 35.4\% $\pm$ 27.6\% & 2.3\% $\pm$ 4.1\% \\
+%8 & 48.4\% $\pm$ 32.7\% & 0.1\% $\pm$ 0.8\% \\
+%\bottomrule
+%\end{tabular}
+%\caption{Coverage Metric ($\mathcal{C}$-metric) directional analysis. $\mathcal{C}(A, B)$ expresses the mean percentage of layout solutions in frontier $B$ that are strictly dominated by at least one solution in frontier $A$. Metrics express the $\text{mean} \pm \text{standard deviation}$.}
+ %   \label{tab:c_metric_comparison}
+%\end{table}
+
+%To finalize the frontier quality evaluation, Table~\ref{tab:c_metric_comparison} presents the bidirectional Coverage Metric ($\mathcal{C}$-metric) to quantify the precise extent of directional dominance between both simultaneous frameworks. The empirical data reveals a massive asymmetry between the two non-dominated sets. The coverage vector $\mathcal{C}(\text{\methodNameUniform}, \baseline{5})$ consistently invalidates a large proportion of $\baseline{5}$'s generated solutions. 
+
+%This behavior completes the diagnostic established by the previous metrics: \methodNameUniform\ does not simply expand the cardinality of the trade-off set by multiplying redundant configurations, nor does it achieve higher HV by merely pushing boundaries in a single dimension. Instead, \methodNameUniform\  establishes a clear structural dominance over $\baseline{5}$ objective space. The solutions found by embedding the Transformer-guided style score ($\objtwo$) consistently reach coordinates that are unconditionally superior, proving that layouts optimized alongside the space of objectives hold a absolute evolutionary advantage.
+
+
+\subsection{\methodName\ vs \methodNameUniform}
+
+While \methodNameUniform\ effectively maps the multi-objective space, its uniform selection triggers a combinatorial explosion of the non-dominated frontier. In a production environment, this vast volume of non-dominates solutions imposes a considerable cognitive overhead on human users. To resolve this operational bottleneck, \methodName\ introduces a preference-guided evolutionary paradigm. 
+
+To evaluate both approaches pragmatically, a multi-dimensional Region of Interest (ROI) was defined, which serves as an ``envelope'' for solutions that achieves acceptable scores in all objectives, conditioned on the active artile count $\numarticles$. Rather than relying on arbitrary thresholds, the boundaries of the ROI are empirically derived by calculating the 90th percentile ($0.9$ quantile) of the empirical historical distributions for each individual objective ($\objone, \objtwo, \objthree, \objfour$). This section evaluates the total number of generated solutions alongside the exact percentage that successfully falls within the defined ROI.
+
+
+\subsubsection{Pareto Frontier Cardinality}
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lll}
+\toprule
+$\numarticles$ & \methodNameUniform & \methodName \\
+\midrule
+2 & 25.0 $\pm$ 8.7 & \bfseries5.5 $\pm$ 2.2 \\
+3 & 61.6 $\pm$ 22.2 & \bfseries 8.1 $\pm$ 2.9 \\
+4 & 98.9 $\pm$ 17.3 & \bfseries13.7 $\pm$ 6.0 \\
+5 & 95.7 $\pm$ 28.5 &\bfseries 11.5 $\pm$ 6.5 \\
+6 & 123.0 $\pm$ 12.9 & \bfseries17.9 $\pm$ 11.4 \\
+8 & 77.0 $\pm$ 18.6 & \bfseries6.2 $\pm$ 2.8 \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of non-dominated frontier cardinality (number of solutions). Metrics express the $\text{mean} \pm \text{standard deviation}$, stratified by article count ($\numarticles$).}    \label{tab:frontier_cardinality_comparison}
+\end{table}
+
+As outlined in Table~\ref{tab:frontier_cardinality_comparison}, transitioning from the uniform approach to \methodName\ triggers a drastic compression of the non-dominated frontier cardinality across all complexity strata. While \methodNameUniform\ peaks at an average of $123.0 \pm 12.9$ layouts for $\numarticles=6$,the preference-guided mechanism restricts the frontier to a lean, manageable portfolio ranging from $5.5 \pm 2.2$ to $17.9 \pm 11.4$ solutions. 
+
+This sharp contraction is the direct mathematical manifestation of \methodName's reference-point pruning. By explicitly weighting the evolutionary survival selection toward the historical aspirations, \methodName\ systematically discards operationally unviable areas of the search space. Consequently, this targeted reduction eliminates the severe cognitive overhead imposed on human editors, transforming the multi-objective algorithm from an overwhelming theoretical generator into a highly specialized decision-making tool.
+
+
+\subsubsection{\% of Pareto Frontier within the ROI}
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{lll}
+\toprule
+$\numarticles$ & \methodNameUniform & \methodName \\
+\midrule
+2 & 53.8\% $\pm$ 18.5\% & \bfseries74.4\% $\pm$ 20.4\% \\
+3 & 68.9\% $\pm$ 18.2\% & \bfseries86.0\% $\pm$ 12.1\% \\
+4 & 24.7\% $\pm$ 11.2\% & \bfseries73.5\% $\pm$ 14.2\% \\
+5 & 7.5\% $\pm$ 10.5\% & \bfseries34.7\% $\pm$ 26.4\% \\
+6 & 6.7\% $\pm$ 3.3\% & \bfseries58.1\% $\pm$ 17.8\% \\
+8 & 9.2\% $\pm$ 7.2\% & \bfseries47.1\% $\pm$ 24.3\% \\
+\bottomrule
+\end{tabular}
+\caption{\% pareto frontier within the Region of Interest (ROI). Metrics express the $\text{mean} \pm \text{standard deviation}$ of the percentage of final non-dominated solutions.}    \label{tab:roi_density_comparison}
+\end{table}
+
+The density of solutions within the ROI in Table~\ref{tab:roi_density_comparison} confirm the exact mechanism behind the frontier compression. As instance complexity scales ($\numarticles \ge 4$), the uniform paradigm suffers a severe convergence collapse, with its ROI density dropping to single-digit efficiency. This drop mathematically proves that standard uniform environmental selection wastes massive computational budget exploring unviable regions.
+
+
+Conversely, \methodName\ successfully counteracts this. By anchoring the survival selection around preference-derived aspiration points, the guided framework concentrates its population within the target zone, maintaining remarkably high densities ($58.1\%$ at $\numarticles=6$ and $47.1\%$ at $\numarticles=8$). When cross-referenced with the cardinality reduction shown in Table~\ref{tab:frontier_cardinality_comparison}, these results deliver a definitive conclusion: \methodName\ does not suffer from a loss of valuable diversity, but rather performs a highly targeted pruning of non-viable space, ensuring the generated alternatives are strictly tailored to the newsroom's operational requirements. To confirm this behavioral shift, a Wilcoxon signed-rank test across all instances was conducted. The test decisively rejects the null hypothesis ($W = 5.0$, $p < 0.001$, effect size of $r = 1.03$), validating that the ROI density superiority of \methodName\ is statistically significant.
+
+
+\begin{figure}[htbp]
+\centering
+    \begin{subfigure}{\columnwidth}
+      \centering
+      \includegraphics[width=\widthForOneImage]{img/results/nsga_parallel_coordinates_521112_seed_84.png} 
+      \caption{\methodNameUniform}
+      \label{fig:parallel_uniform}
+    \end{subfigure}
+    \vspace{0.3cm} % Espaciado controlado entre ambos paneles
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=\widthForOneImage]{img/results/rnsga_parallel_coordinates_521112_seed_84.png} % Reemplaza con el nombre de tu archivo R-NSGA-III
+      \caption{\methodName}
+      \label{fig:parallel_rnsga}
+    \end{subfigure}
+\caption{Visual trade-off comparison using parallel coordinates for a representative medium-complexity instance ($\numarticles=5$) under shared global axis scaling. The gray shaded region represents the ROI, while the black lines denote the active aspiration points targeted by \methodName. The color gradient reflects the performance on $\objone$}
+\label{fig:parallel_coordinates_comparison}
+\end{figure}
+
+
+To visually map both the differences in frontier size and its density within the ROI, Figure~\ref{fig:parallel_coordinates_comparison} contrasts the final non-dominated populations of both paradigms on a representative instance ($\numarticles=5$). As illustrated in Figure~\ref{fig:parallel_uniform}, \methodNameUniform\ yields a chaotic pattern. Solutions are wildly scattered across the entire objective space, forcing a massive portion of the trajectories to escape the gray acceptability envelope (ROI), particularly along the historical editorial style ($\objtwo$). 
+
+In contrast, Figure~\ref{fig:parallel_rnsga} demonstrates the precise mechanics of \methodName's targeted pruning. The chaotic web completely collapses into a few highly curated design paths that strictly adhere to the lower, viable regions of the axes. By systematically eliminating operationally useless layouts, the preference engine successfully bridges the gap between multi-objective theoretical optimality and real-world decision spaces.
+
+
+\subsection{Qualitative Results of \methodName}
+
+To complement the quantitative evaluation, this section provides a few examlpes of the pages synthesized by the framework. Figure~\ref{fig:qualitative_layouts_grid} presents a 2$\times$2 grid showcasing finalized layout alternatives across two representative instances of varying complexity, visually illustrating the structural diversity and design plasticity achieved by \methodName.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.36\widthForOneImage}
+  \centering
+  \includegraphics[width=\widthForOneImage]{img/results/ex_518820_4_arts.png}
+\caption{Instance 1 $\numarticles=4$: Design Alternative A}  \label{fig:layout_1a}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.36\widthForOneImage}
+  \centering
+  \includegraphics[width=\widthForOneImage]{img/results/ex2_518820_4_arts.png}
+\caption{Instance 1 ($\numarticles=4$): Design Alternative B}  \label{fig:layout_1b}
+\end{subfigure}
+
+\vspace{0.3cm} 
+
+\begin{subfigure}{0.36\widthForOneImage}
+  \centering
+  \includegraphics[width=\widthForOneImage]{img/results/ex_529441_8_arts.png}
+\caption{Instance 2 ($\numarticles=8$): Design Alternative A}  \label{fig:layout_2a}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.36\widthForOneImage}
+  \centering
+  \includegraphics[width=\widthForOneImage]{img/results/ex2_529441_8_arts.png}
+\caption{Instance 2 ($\numarticles=8$): Design Alternative B}  \label{fig:layout_2b}
+\end{subfigure}
+
+% --- SI AGREGAS UNA TERCERA INSTANCIA, DESCOMENTA ESTE BLOQUE (Hará la grilla 3x2) ---
+% \vspace{0.4cm}
+% \begin{subfigure}{0.48\textwidth}
+%   \centering
+%   \includegraphics[width=\textwidth]{layout_instC_sol1.png}
+%   \caption{Instance 3 ($n=Z$): Aesthetic-focused}
+%   \label{fig:layout_3a}
+% \end{subfigure}
+% \hfill
+% \begin{subfigure}{0.48\textwidth}
+%   \centering
+%   \includegraphics[width=\textwidth]{layout_instC_sol2.png}
+%   \caption{Instance 3 ($n=Z$): Packing-focused}
+%   \label{fig:layout_3b}
+% \end{subfigure}
+
+\caption{Layout designs generated by \methodName\ across different complexity strata. The figure illustrates the visual diversity and structural plasticity achieved within the same targeted non-dominated frontier, providing editors with distinctly different compositions. Note that internal layout metadata overlays (e.g., block IDs and technical properties) are selectively omitted in the larger instance solely for rendering clarity.}
+\label{fig:qualitative_layouts_grid}
+\end{figure}
+
+ A qualitative inspection reveals \methodName\ consistently maximizes page utilization, dynamically selecting template/position configurations that jointly optimize all objectives. For the medium-complexity case ($n=4$),  two structurally similar alternatives (\ref{fig:layout_1a} and \ref{fig:layout_1b}) were selected to highlight the framework's capacity for fine-grained variations; these layouts share a global arrangement but diverge in micro-structural elasticity,as explicitly indicated by the text-scaling percentages, and template assignments. 
+
+Conversely, for the large-scale instance, two radically different designs were selected to showcase macro-structural plasticity of \methodName. While Alternative~\ref{fig:layout_2a} presents a valid fluid distribution, Alternative~\ref{fig:layout_2b} achieves one of the lowest editorial style scores ($\objtwo$) on the frontier by mirroring a highly authentic, structured newspaper grid that completely discards irregular, ``Tetris-like'' geometric partitioning.
+
+Additionally, the architectural synergy embedded within \neuralmethod\ gives rise to a compelling dual phenomenon regarding learned design criteria:
+\begin{enumerate}
+    \item Lateral Weight Shifting: The evolutionary selection of templates using \neuralmethod\ forces the visual mass of the page toward one of its lateral margins. This behavior perfectly captures the aesthetic constraints of historical physical print, where facing pages in a double-page spread (book-like opening) are inherently weighted to one side. 
+    \item Homogenous Template Replication: Visible in the lower tier of the large-scale Alternative~\ref{fig:layout_2b}, \methodName\ tends to group multiple secondary articles by repeating the exact same template. This replication directly replicates standard journalistic design practices used to build clean, tabular sections.
+\end{enumerate}
+Crucially, the system learns and deploys these complex, real-world layout rules spontaneously through preference-guided reference points and a surrogate deep-learning model (\neuralmethod) without requiring explicit procedural constraints, confirming its utility as a flexible layout generation method.
+
+\section{Discussion}
+
+While the empirical and qualitative findings validate the efficacy of \methodName, two primary aspects require a critical analysis regarding its  industrial deployment, and architectural extensibility.
+
+\subsection{Computational Performance and Scalability}
+Execution time represents the primary computational bottleneck of \methodName. Nevertheless, several optimization vectors can be deployed to mitigate this overhead in production environments. First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) provides an immediate mechanism to accelerate response times without compromising frontier quality. 
+
+Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodName\ are already operationally viable and fully acceptable within the specific industrial newsroom production environment targeted by this investigation.
+
+\subsection{Architectural Extensibility to Advertisement Placement}
+The current implementation of \methodName\ omits the placement of advertisement elements. This omission stems strictly from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.
+
+To integrate advertisements, these assets can be modeled as static, fixed-size bounding boxes within the chromosome representation. Unlike standard articles, advertisement blocks would bypass the template selection layer,as their aspect ratios are  predetermined, and feed directly into the spatial packing decoder. Furthermore, to guide their placement, a localized spatial penalty function can be formulated. This function would operate analogously to the main article zone objective ($\HCZ$ in $\objfour$), penalizing configurations that displace advertisements outside of the newspaper's historically preferred advertising quadrants. Beyond this parameterization, the core mechanisms of \methodName\ remain robust and inherently scalable.

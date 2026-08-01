@@ -835,7 +835,7 @@
   \if&\partTitle&
   \rhead[\leftmark]{\thepage}
   \else
-  \rhead[\textsc{Partie}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
+  \rhead[\textsc{Part}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
   \fi
   \else
   \rhead[\leftmark]{\thepage}
@@ -844,12 +844,12 @@
   \lhead[\thepage]{\thesection~--~\rightmark}
   \if@withParts
   \if&\partTitle&
-  \rhead[\textsc{Chapitre}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
+  \rhead[\textsc{Chapter}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
   \else
-  \rhead[\textsc{Partie}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
+  \rhead[\textsc{Part}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
   \fi
   \else
-  \rhead[\textsc{Chapitre}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
+  \rhead[\textsc{Chapter}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
   \fi
   \fi\fi\fi
   \global\@topnum\z@
@@ -1529,11 +1529,11 @@
     \clearpage
   \fi
   \pagestyle{fancy}
-  \lhead[\thepage]{\textsc{Chapitre}\hskip1ex\thechapter~---~\chapterTitle}
+  \lhead[\thepage]{\textsc{Chapter}\hskip1ex\thechapter~---~\chapterTitle}
   \if@withParts
-    \rhead[\textsc{Partie}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
+    \rhead[\textsc{Part}\hskip1ex\thepart~---~\partTitle\relax]{\thepage}
   \else
-    \rhead[\textsc{Chapitre}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
+    \rhead[\textsc{Chapter}\hskip1ex\thechapter~---~\chapterTitle]{\thepage}
   \fi
   \lfoot[]{}
   \rfoot[]{}

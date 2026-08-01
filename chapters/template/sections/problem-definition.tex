@@ -1,0 +1,25 @@
+\section{Automatic template retrieval: a dual challenge}
+
+Talk about why is important to optimize this process, focusing 
+here only on the retrieval of templates, not the whole generation and
+pipeline presented before
+
+Define formally the problem, which requires to obtain a single or a set of templates 
+that follow the web article content/requirements, and also that are both not 
+so similar between them and also follow's historical usage (popularity).
+
+To check if they are similar between them, it requires to understand, model and create a 
+similarity metric of templates based on their internal organization (topology)
+
+This task can be solved in two different contexts:
+
+\begin{enumerate}
+    \item Retrieve templates  in an isolated setup, i.e. a single template for a single article, following the requirements above.
+    This works as a retrieval system to assist the selection of templates, in a stage where no full page is planned yet, or as a isolated
+    module to deploy in \melody.
+
+    \item Retrieve templates, but this time in a global page-aware context,
+     where the choice of one article impacts the other articles in the same page. 
+     This is the context where our page generation method  and the web to print pipeline 
+     works.
+\end{enumerate}

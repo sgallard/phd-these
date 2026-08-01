@@ -27,5 +27,5 @@ auto/
 
 
 # Build files
-*.pdf
+main.pdf
 *.xmpi

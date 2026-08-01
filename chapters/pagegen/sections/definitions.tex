@@ -1,0 +1,11 @@
+\section{Formal Definitions}
+
+The following definitions relies on establishing a mapping between unstructured articles and templates. Within this formulation, the problem is defined through the interaction of three core entities: articles, templates, and the page canvas. 
+
+An article represents the raw content, considering different element types (body text, title, images, etc), but completely lacking any pre-defined spatial dimensions or topology. 
+
+Conversely, a template acts as a structured predefined layout selected from a catalog; it provides the structural skeleton (or zoning topology) that dictates how headlines, images, and text columns are arranged relative to each other.
+
+Consequently, the proposed problem consists of \textbf{concurrently solving a template assignment challenge and a two-dimensional packing problem}. For a given set of input articles, a valid solution requires mapping each article to an appropriate template from the catalog, and discovering an optimal spatial configuration on the page space that prevents overlaps, respects page boundaries, and maximizes visual quality.
+
+

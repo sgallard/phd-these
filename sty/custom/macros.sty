@@ -1,0 +1,214 @@
+\newcommand{\melody}{\emph{Melody}\xspace}
+\newcommand{\laprovence}{\emph{La Provence}\xspace}
+\newcommand{\publihebdos}{\emph{Publihebdos}\xspace}
+
+
+%Sizes
+%% For images
+\newcommand{\widthForOneImage}{\columnwidth}
+\newcommand{\widthForTwoImages}{0.49\columnwidth}
+\newcommand{\widthForThreeImages}{0.32\columnwidth}
+\newcommand{\widthForFourImages}{0.23\columnwidth}
+\newcommand{\widthForFiveImages}{0.18\columnwidth}
+\newcommand{\widthForSixImages}{0.16\columnwidth}
+\newcommand{\widthForThisImage}{\widthForThreeImages}
+
+% For tables and graphs
+
+\newcommand{\widthForParametersTable}{\widthForOneImage}
+\newcommand{\widthForAnovaTable}{0.55\widthForOneImage}
+\newcommand{\widthForBigPairwiseTable}{\widthForAnovaTable}
+\newcommand{\widthForOneBoxplot}{0.7\widthForOneImage}
+\newcommand{\widthForTwoBoxplot}{\widthForTwoImages}
+
+%DEFINITIONS
+
+% --- 1. Global Instances, Sets and Sizes ---
+\newcommand{\instance}{\ensuremath{\mathcal{I}}}                % Problem instance I
+\newcommand{\page}{\ensuremath{P}}                         % Page configuration P
+\newcommand{\articleset}{\ensuremath{A}}                      % Set of articles A
+\newcommand{\templatecatalog}{\ensuremath{T}\xspace}                  % Template catalog T
+\newcommand{\numarticles}{\ensuremath{n}}                      % Number of articles n
+\newcommand{\catalogsize}{\ensuremath{|T|}}                    % Size of catalog |T|
+\newcommand{\solution}{\ensuremath{\mathcal{S}}}               % Solution layout S
+
+% --- 2. Global Page Canvas Geometry ---
+\newcommand{\Wpage}{\ensuremath{W_{pg}}}                       % Total page width
+\newcommand{\Hpage}{\ensuremath{H_{pg}}}                       % Total page height
+\newcommand{\mtop}{\ensuremath{m_{top}}}                       % Top margin
+\newcommand{\mbottom}{\ensuremath{m_{bottom}}}                 % Bottom margin
+\newcommand{\mleft}{\ensuremath{m_{left}}}                     % Left margin
+\newcommand{\mright}{\ensuremath{m_{right}}}                   % Right margin
+\newcommand{\Weff}{\ensuremath{W_{eff}}}                       % Effective printable width
+\newcommand{\Heff}{\ensuremath{H_{eff}}}                       % Effective printable height
+
+% --- 3. Input Article Attributes (Argument: Article Index 'i') ---
+\newcommand{\articleobjnoindex}{\ensuremath{a}}
+\newcommand{\articleobj}[1]{\ensuremath{a_{#1}}}               % Article object a_i
+\newcommand{\Cart}[1]{\ensuremath{C_{art}^{(#1)}}}             % Character count of body text
+\newcommand{\Nimg}[1]{\ensuremath{N_{img}^{(#1)}}}             % Real number of images
+\newcommand{\Tlart}[1]{\ensuremath{Tl^{(#1)}}}                 % Boolean title flag for article
+\newcommand{\Stlart}[1]{\ensuremath{Stl^{(#1)}}}               % Boolean subtitle flag for article
+\newcommand{\Mainart}[1]{\ensuremath{M^{(#1)}}}                 % Hierarchy flag (Lead story)
+
+% --- 4. Template and Zoning Attributes (Argument: Template Index 'j' or '\tau_i') ---
+\newcommand{\templateobj}[1]{\ensuremath{t_{#1}}}             % Template object t_j
+\newcommand{\Wtemp}[1]{\ensuremath{W_{#1}}}                    % Template nominal width
+\newcommand{\Htemp}[1]{\ensuremath{H_{#1}}}                    % Template nominal height
+\newcommand{\zoning}[1]{\ensuremath{\mathcal{Z}_{#1}}}         % Zoning topology Z_j
+\newcommand{\capacity}[1]{\ensuremath{\mathcal{C}^{(#1)}}}     % Text capacity mapping C^(j)
+\newcommand{\Nimgmax}[1]{\ensuremath{N_{m}^{(#1)}}}            % Maximum image slots
+\newcommand{\Tltemp}[1]{\ensuremath{Tl_{temp}^{(#1)}}}         % Template title block flag
+
+% --- 5. Internal Zoning Blocks ---
+\newcommand{\zblock}[2]{\ensuremath{b}^{(#1)}_{#2}}                           % Internal block b
+\newcommand{\blockgeom}[1]{\ensuremath{\mathcal{G}_{#1}}}      % Block geometric shape G_b
+\newcommand{\blockfeat}[1]{\ensuremath{\mathcal{F}_{#1}}}      % Block semantic feature F_b
+
+
+
+
+
+
+
+%Chapter: templates
+\newcommand{\tdiou}[2]{tdIoU(#1, #2)\xspace}
+\newcommand{\gmnNetwork}{\emph{LayoutGMN}\xspace}
+\newcommand{\gmn}[2]{tGMN(#1, #2)\xspace}
+
+\newcommand{\diou}[2]{dIoU(#1, #2)\xspace}
+\newcommand{\diouplusone}[2]{dIoU'(#1, #2)\xspace}
+
+\newcommand{\zblockrescaled}[2]{\ensuremath{\tilde{b}}^{(#1)}_{#2}\xspace}                      
+
+\newcommand{\clusterthreshold}{\omega\xspace}
+
+\newcommand{\tdiouclusterthreshold}{\omega^{(tdIoU)}\xspace}
+\newcommand{\gmnclusterthreshold}{\omega^{(tGMN)}\xspace}
+
+
+\newcommand{\tdiouclusters}{\mathcal{C}_{tdIoU}\xspace}
+\newcommand{\gmnclusters}{\mathcal{C}_{tGMN}\xspace}
+
+\newcommand{\clusters}{\mathcal{C}\xspace}
+
+\newcommand{\topsize}{N\xspace}
+
+\newcommand{\trs}{TRS\xspace}
+
+\newcommand{\cwthreshold}{CW_{th}} % added by pk
+
+\newcommand{\cluster}[1]{\mathcal{C}_{#1}}
+
+\newcommand{\indexforadmissibletemplates}{A}
+\newcommand{\admissibletemplates}{\templatecatalog^\indexforadmissibletemplates}
+
+\newcommand{\templateincluster}[2]{\ensuremath{t}_{#1,#2}}
+\newcommand{\admissibletemplatesincluster}[1]{\admissibletemplates_{#1}}
+\newcommand{\extendedtemplates}{\templatecatalog^{+}}
+\newcommand{\recolist}[1]{L^{#1}}
+
+\newcommand{\LTP}{$LTP$\xspace}
+\newcommand{\ODD}{ODD\xspace}
+\newcommand{\ISD}{ISD\xspace}
+
+%% Baseline algorithms % added by pk
+\newcommand{\mostpopular}{\emph{MostPopular}\xspace}
+\newcommand{\classicclusdiv}{\emph{CClusDiv}\xspace}
+\newcommand{\adaptedclusdiv}{\emph{AClusDiv}\xspace}
+
+\newcommand{\templateutilization}[1]{u_{#1}}
+
+
+%Chapter: NSGA
+
+
+% --- 6. Decision Variables (Argument: Article Index 'i') ---
+\newcommand{\templatesel}[1]{\ensuremath{\tau_{#1}}}           % Chosen template ID \tau_i
+\newcommand{\posvar}[1]{\ensuremath{p_{#1}}}                   % Spatial position tuple p_i
+\newcommand{\xcoord}[1]{\ensuremath{\xi_{#1}}}                 % Continuous x coordinate \xi_i
+\newcommand{\ycoord}[1]{\ensuremath{\eta_{#1}}}                 % Continuous y coordinate \eta_i
+\newcommand{\pageindex}[1]{\ensuremath{\kappa_{#1}}}           % Page index assignment \kappa_i
+\newcommand{\elasticity}[1]{\ensuremath{e_{#1}}}               % Vertical elasticity level e_i
+\newcommand{\kactive}[1]{\ensuremath{k_{#1}}}                 % Selected active images count k_i
+
+% --- 7. Derived Layout Variables (Argument: Article Index 'i') ---
+\newcommand{\Hscaled}[1]{\ensuremath{H'_{#1}}}                 % Effectively scaled height H'_i
+\newcommand{\bbox}[1]{\ensuremath{\mathcal{R}_{#1}}}           % 2D Bounding box rectangle R_i
+
+% --- 8. Multi-Objective Vectors and Functions ---
+\newcommand{\objvector}[1]{\ensuremath{\mathbf{F}(#1)}}        % Vector of objectives F(S)
+\newcommand{\objone}{\ensuremath{f_1}}                         % Objective f_1 (Page occupation)
+\newcommand{\objtwo}{\ensuremath{f_2}}                         % Objective f_2 (Editorial/GWES)
+\newcommand{\objthree}{\ensuremath{f_3}}                       % Objective f_3 (Text capacity)
+\newcommand{\objfour}{\ensuremath{f_4}}                        % Objective f_4 (Alignment/Zoning)
+
+% --- 9. Dynamic Capacity Bounds (Arguments: Template Index 'j', Active Images 'k') ---
+\newcommand{\Cmin}[2]{\ensuremath{C_{min}^{(#1, #2)}}}         % Lower bound text capacity
+\newcommand{\Cmax}[2]{\ensuremath{C_{max}^{(#1, #2)}}}         % Upper bound text capacity
+
+\newcommand{\penobjthree}[1]{P_{text}^{(#1)}}
+% --- \objfour (Alignment and privileged zone) ---
+
+% Penalizaciones principales y pesos
+\newcommand{\HCZ}{\ensuremath{\text{HCZ}}}                     % Penalty Heading Critical Zone
+\newcommand{\VA}{\ensuremath{\text{VA}}}                       % Penalty Vertical Alignment
+\newcommand{\betaweight}{\ensuremath{\beta}}                   % beta weight
+
+% Zona Crítica y Funciones de Área
+\newcommand{\Zcrit}{\ensuremath{\mathcal{Z}_{crit}}}           % Critical zone
+\newcommand{\Area}[1]{\ensuremath{\text{Area}\left(#1\right)}} % Area function of polygon/box
+
+% Distances
+\newcommand{\deltaytop}[2]{\ensuremath{\Delta y_{top}(#1,#2)}}       %top distance
+\newcommand{\deltaybottom}[2]{\ensuremath{\Delta y_{bottom}(#1,#2)}} %bottom distance
+
+\newcommand{\threshalign}{\ensuremath{\theta}}                 % theta threshold
+\newcommand{\deltaalign}[1]{\ensuremath{\delta\left(#1\right)}} % delta(d)
+
+\newcommand{\alignmentScalingParameter}{A}
+
+
+\newcommand{\methodNameLong}{Preference-Guided Hybrid RNSGA-III\xspace}
+\newcommand{\methodNameUniformLong}{Uniform Hybrid NSGA-III\xspace}
+
+\newcommand{\methodName}{Hybrid RNSGA-III\xspace}
+\newcommand{\methodNameUniform}{Hybrid NSGA-III\xspace}
+
+\newcommand{\neuralmethod}{GWES\xspace}
+\newcommand{\NeuralMethod}{Geometric-Weighted Editorial Score\xspace}
+
+
+\newcommand{\gmnMatrix}{\mathbf{M}_{\text{GMN}}}
+\newcommand{\sigmagmn}{\sigma_{\text{GMN}}}
+
+\newcommand{\chromosome}{\mathbf{c}}
+\newcommand{\chromosomeTemplateSegment}{\mathbf{t}}
+\newcommand{\chromosomePermutationSegment}{\boldsymbol{\pi}}
+\newcommand{\chromosomeElasticitySegment}{\mathbf{e}}
+
+
+\newcommand{\popsize}{P}
+
+\newcommand{\ngen}{N_{gen}}
+
+
+%%%%%% MUtation
+
+\newcommand{\globalmutationprob}{w_{\text{mut}}}
+\newcommand{\mutationprob}[1]{w_{#1}}
+
+
+
+%%%%%%%% RNSGA %%%%%
+
+\newcommand{\RNSGAradius}{\mu}
+
+%%%%%%%%% packing engine %%%%%%
+
+\newcommand{\gutter}[1]{g_{#1}}
+
+
+%%%%%%% results %%%%%%
+\newcommand{\baseline}[1]{B_{#1}}
+

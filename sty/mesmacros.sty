@@ -11,6 +11,8 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{arrows}
 \usetikzlibrary{decorations.text}
+\usetikzlibrary{matrix}
+\usetikzlibrary{decorations.pathreplacing}
 
 \usepackage{xspace} % Pour gérer les espacements
 \usepackage[draft]{varioref}
@@ -25,7 +27,10 @@
 \usepackage{sty/couleurs} % Définitions de couleurs pour ce manuscript
 
 
-\usepackage[plain, chapter]{algorithm}
+\usepackage[chapter]{algorithm}
+\usepackage{algorithmic}
+
+
 %\usepackage{algo} % Pour l'utilisation du package algorithmic avec les termes en français
 %\usepackage{colorationSyntaxique} % Pour l'utilisation du package lstlistings
 
@@ -55,9 +60,9 @@
 
 
 
-
-
-
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CUSTOM MACROS  %

@@ -1,0 +1,105 @@
+\section{Modelling template topology and similarity}
+
+As explained before, a key requirement of in template retrieval is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. In this context, standard metrics such as Intersection-over-Union (IoU) or Jaccard index~\cite{jaccard2021} are insufficient: they are sensitive to small misalignments, and in cases with no overlap they provide zero gradients, making optimization difficult~\cite{patil_layoutgmn_2021}. 
+
+
+\subsection{template- and distance-based Intersection over Union}
+
+To address these limitations, an analytical and geometrical measure is defined as a first approximation to measure similarity between layouts. This similarity metric, coined Template- and distance-based Intersection over Union ($\tdiou{\cdot}{\cdot}$), which adapts the Distance-IoU loss~\cite{zheng_distance-iou_2019} to multi-element layouts, considers both the overlap between regions and the distance between their centers, providing a continuous measure of geometric alignment.
+
+The computation of $\tdiou{\cdot}{\cdot}$ involves three steps: rescaling templates for fair comparison, matching elements of the same class, and summing the similarity of matched elements. Formally, for templates $\templateobj{1}$ and $\templateobj{2}$:
+\begin{equation}
+\tdiou{\templateobj{1}}{\templateobj{2}} = C_S \, C_M \, \frac{\sum_{(\zblock{1}{j},\zblockrescaled{2}{k}) \in M} \diouplusone{\zblock{1}{j}}{\zblockrescaled{2}{k}}}{|M|},
+\label{eq:tdiou}
+\end{equation}
+where $\zblockrescaled{2}{k}$ are elements of $\tilde{\templateobj{2}}$, which corresponds to $\templateobj{2}$ rescaled to match $\templateobj{1}$ ($\Htemp{\tilde{\templateobj{2}}} = \Htemp{\templateobj{1}} $, $\Wtemp{\tilde{\templateobj{2}}} = \Wtemp{\templateobj{1}}$), $M$ is the set of matched element pairs, $C_S$ penalizes dimensional differences, and $C_M$ accounts for unmatched elements. The rest of this section gives more details about the different terms and notions introduced here.  
+
+\subsubsection*{Similarity Measure (\diouplusone{\templateobj{1}}{\templateobj{2}})}
+\label{sec:tdiou:diouplusone}
+Starting from \diou{\templateobj{1}}{\templateobj{2}}~\cite{zheng_distance-iou_2019} in $[-1,1]$, we define:
+\[
+\diouplusone{\templateobj{1}}{\templateobj{2}} = \diou{\templateobj{1}}{\templateobj{2}} + 1,
+\]
+ensuring non-negative values. Implementation uses CGAL~\cite{cgal} for polygon operations.
+
+\subsubsection*{Rescaling and Dimensional Penalty}
+\label{sec:tdiou:rescaling}
+Templates are rescaled for element-wise comparison. Let $\tilde{\templateobj{2}}$ denote $\templateobj{2}$ rescaled to match $\templateobj{1}$. The penalty factor $C_S$ reduces similarity when $\templateobj{2}$ differs substantially from $\templateobj{1}$ in area, aspect ratio, or orientation:
+\begin{align*} 
+    C_S =& f_{\sigma_{1},\gamma_1}(\Htemp{\templateobj{1}}\Wtemp{\templateobj{1}} - \Htemp{\templateobj{2}}\Wtemp{\templateobj{2}}) \,
+           f_{\sigma_2,\gamma_2}(\arctan(\Htemp{\templateobj{1}}/\Wtemp{\templateobj{1}}) - \arctan(\Htemp{\templateobj{2}}/\Wtemp{\templateobj{2}})) \nonumber\\
+         & \, g_{\sigma_3,\gamma_3}((\arctan(\Htemp{\templateobj{1}}/\Wtemp{\templateobj{1}}) - \pi/4)(\arctan(\Htemp{\templateobj{2}}/\Wtemp{\templateobj{2}}) - \pi/4)),
+\end{align*}
+with
+\[
+f_{\sigma,\gamma}(t) = \exp\left(-\frac{(t/\gamma)^2}{2\sigma^2}\right), \quad
+g_{\sigma,\gamma}(t) =
+\begin{cases}
+\exp\left(\frac{t/\gamma}{\sigma}\right), & t < 0,\\
+1, & t \ge 0.
+\end{cases}
+\]
+
+\subsubsection*{Element Matching and Penalty}
+\label{sec:tdiou:matching}
+Elements $\zblock{1}{j} \in \templateobj{1}$ and $\zblockrescaled{2}{k} \in \tilde{\templateobj{2}}$ are matched based on $\diouplusone{\templateobj{1}}{\templateobj{2}}$ similarity and class correspondence, formulated as an assignment problem solvable with the Hungarian algorithm~\cite{hungarian}. The set of matched pairs is $M$. Unmatched elements are penalized via:
+\[
+C_M = \frac{1}{2 \, \Htemp{\templateobj{1}}\Wtemp{\templateobj{1}}} \sum_{(\zblock{1}{j},\zblockrescaled{2}{k}) \in M} \big( area(\zblock{1}{j} + area(\zblockrescaled{2}{k}) \big).
+\]
+This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched element quality and structural differences.
+
+\subsection{template-based Graph Matching Network}
+
+ As a step further, to capture layout topology,  a Graph Matching Network (GMN) architecture~\cite{patil_layoutgmn_2021}, here referred to as \gmnNetwork, was implemented and retrained for the purpose of this work. This network learns a similarity metric by modeling pairs of templates as graphs and computing an embedding vector for each template. Consequently, \gmnNetwork produces a similarity function, denoted $\gmn{\cdot}{\cdot}$, that can be applied to any pair of templates $\templateobj{1}$ and $\templateobj{2}$. This measure captures structural (topological) similarity, is always negative, and satisfies $\gmn{\templateobj{1}}{\templateobj{2}} = 0$ if the templates are identical.
+
+ EXPLAIN IN DETAIL USING PATIL REFERENCE
+
+ FINISH DEFINING GMN AS A 0,1, METRIC
+
+
+\subsection{Empirical comparison between both methods}
+
+To assess which similarity measure better reflects human perception, an online study with $42$ participants recruited via \emph{Prolific}~\cite{prolific} was conducted. Each trial consisted of: (1) a reference template $\templateobj{R}$ shown for 2 seconds, followed by (2) a selection scene where participants chose the template most similar to $\templateobj{R}$ between two options $\templateobj{O_1}$ and $\templateobj{O_2}$.
+
+\subsubsection*{Clustering using both methods}
+
+Using the distance $d(\cdot,\cdot)$ defined by:
+\begin{equation}
+d_{tdIoU}(\templateobj{1},\templateobj{2}) = |\tdiou{\templateobj{1}}{\templateobj{2}}|,
+\label{eq:clustering-distance-definition}
+\end{equation}
+templates are organized via agglomerative clustering with a threshold $\tdiouclusterthreshold$. Starting from singleton clusters, pairs of clusters are merged when their average inter-template distance is below $\tdiouclusterthreshold$. This produces a set of clusters $\tdiouclusters$.
+
+At the same time, a set of clusters $\gmnclusters$ can be generated using an analog distance $d_{tGMN}$ but using $\gmn{\templateobj{1}}{\templateobj{2}}$, and the corresponding inter-template maximum average distance of $\gmnclusterthreshold$.
+
+Note that both $\tdiouclusterthreshold$ and $\gmnclusterthreshold$ were tuned to produce a reasonable, but also equivalent and comparable number of clusters between the methods. Specifically, $\tdiouclusterthreshold = 1.1$ and $\gmnclusterthreshold=2.8$, producing $|\tdiouclusters| = 80$ and $|\gmnclusters| = 81$ respectively, with a similar distribution. 
+
+\subsection*{Triplet definition}
+Each trial involved a triplet $(R,O_1,O_2)$. $\templateobj{O_1}$ was chosen as a neighbor of $\templateobj{R}$ according to \tdiou{\templateobj{R}}{\templateobj{O_1}} but not \gmn{\templateobj{R}}{\templateobj{O_1}}, and $O_2$ as a neighbor according to \gmn{\templateobj{R}}{\templateobj{O_2}} but not \tdiou{\templateobj{R}}{\templateobj{O_2}}.  40 randomnly-selected triplets were generated this rule (examples in Fig.~\ref{fig:online_experiment}(b)).
+
+\subsection*{Experimental protocol}
+Participants completed a short questionnaire on reading habits, followed by four blocks of 40 trials each, and a post-experiment questionnaire on their experience. Responses were collected via \emph{Labvanced}~\cite{labvanced}, yielding $42 \times 4$ votes per triplet.
+
+\subsection*{Analysis}
+Across all trials and participants, votes were evenly split between $O_1$ and $O_2$, resulting in a global 50:50 ratio between both methods. This indicates that neither similarity measure dominates when results are aggregated.
+
+However, a finer-grained analysis at the triplet level reveals a more structured pattern. Figure~\ref{fig:online_experiment}(a) shows the percentage of $O_2$ (GMN) selections for each triplet, along with the interquartile range defined by Q1 and Q3 (25\%--75\% of responses). Only six triplets ($15\%$) fall (in average) within the 40\%--60\% range, indicating near-indifference between the two measures. In contrast, most triplets exhibit a clear preference, as reflected by asymmetric interquartile ranges.
+
+Focusing on the interquartile interval, $45\%$ of the triplets (triplets $\{23,\dots,40\}$) show a majority preference for $\gmn{\cdot}{\cdot}$, while $40\%$ of the triplets (triplets $\{1,\dots,15\}$) favor $\tdiou{\cdot}{\cdot}$. This suggests that participant judgments are highly dependent on the specific structural and geometric characteristics of the templates involved.
+
+To better understand these differences, two representative triplets (10 and 35) are illustrated in Fig.~\ref{fig:online_experiment}(b). In triplet 10, participants predominantly selected $O_1$, consistent with the high geometric overlap captured by $\tdiou{\cdot}{\cdot}$, despite differences in the presence of small layout elements. Conversely, in triplet 35, participants favored $O_2$, where $\gmn{\cdot}{\cdot}$ captures higher structural similarity, while $\tdiou{\cdot}{\cdot}$ is more strongly influenced by variations in the size of dominant elements such as the main image and body text.
+
+Finally, how familiarity with newspaper layouts influences similarity perception was investigated. Participants who reported frequent newspaper reading (11 participants) selected $\gmn{\cdot}{\cdot}$ more often than those who read newspapers rarely or never (9 participants).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/online_experiment.pdf}
+    \caption{\label{fig:online_experiment} 
+Results of the online experiment.
+(a) Percentage of $O_2$  selections for each of the 40 triplets. Each point represents the average percentage of $O_2$ selections, with the shaded area indicating the interquartile range ($Q1$–$Q3$). Two groups are highlighted: triplets \{1,\dots,15\} (green), where participants mainly selected $O_1$ (\tdiou), and triplets \{23,\dots,40\} (orange), where participants mainly selected $O_2$ (GMN). A central band ($40\%$–$60\%$) where no clear preference was established. The marginal histogram (right) counts the frequency of triplets in $10\%$ intervals, where each block represents a single triplet. The bold percentage labels indicate the total proportion of the triplets falling into each of the three categories.
+(b) Example triplets from each group. Individual participant choices are represented by a human-shaped icon.
+    }
+\end{figure}
+
+
+In conclusion, this analysis lead to the selection of $\gmn{\cdot}{\cdot}$ as the main similarity measure to be used in this work.
