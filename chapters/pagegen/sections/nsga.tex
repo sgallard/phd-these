@@ -3,7 +3,7 @@
 \subsection{\methodName: Overview}
 \label{sec:method-overview}
 
-The proposed layout generation method, coined \methodName\ and illustrated in Figure~\ref{fig:method-overview}, is engineered as a hybrid framework that blends deep learning template-to-graph modeling with many-objective evolutionary optimization engine. The primary objective of this architecture is to resolve the highly constrained combinatorial challenge of spatial article packing while simultaneously satisfying non-analytical human editorial preferences. 
+The proposed layout generation method, coined \methodName\ and illustrated in \figref{fig:method-overview}, is engineered as a hybrid framework that blends deep learning template-to-graph modeling with many-objective evolutionary optimization engine. The primary objective of this architecture is to resolve the highly constrained combinatorial challenge of spatial article packing while simultaneously satisfying non-analytical human editorial preferences. 
 
 \begin{figure}[h]
     \centering
@@ -34,7 +34,7 @@ The evolutionary engine optimizes layout configurations across the four-dimensio
 \subsubsection{Chromosome Representation}
 \label{sec:chromosome_representation}
 
-Each candidate layout $\solution$ is encoded as a three-part chromosome vector $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in Figure~\ref{fig:chromosome_representation}:
+Each candidate layout $\solution$ is encoded as a three-part chromosome vector $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in \figref{fig:chromosome_representation}:
 
 \begin{enumerate}
     \item \textbf{Template Assignment Segment} $\chromosomeTemplateSegment = [t_1, t_2, \dots, t_{\numarticles}]$: A discrete vector where each gene $t_i \in \{1, \dots, \catalogsize\}$ defines the specific template assigned to article $\articleobj{i}$ from \templatecatalog.

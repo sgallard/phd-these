@@ -3,6 +3,9 @@
 \newcommand{\publihebdos}{\emph{Publihebdos}\xspace}
 
 
+
+\newcommand{\figref}[1]{Fig.~\ref{#1}\xspace}
+\newcommand{\secref}[1]{Sec.~\ref{#1}\xspace}
 %Sizes
 %% For images
 \newcommand{\widthForOneImage}{\columnwidth}
@@ -211,4 +214,50 @@
 
 %%%%%%% results %%%%%%
 \newcommand{\baseline}[1]{B_{#1}}
+
+
+%%%% CHAPTER: USER STUDY
+
+% Scenarios - no sentsitve language
+    \newcommand{\NV}{with normal vision\xspace}
+    \newcommand{\LV}{with low vision\xspace}
+    
+    %%Scenarios - shortened version
+    \newcommand{\nv}{pts with NV\xspace}
+    \newcommand{\lv}{pts with LV\xspace}
+    
+    %% hypothesis
+    \newcommand{\hyp}{$\mathcal{H}$}
+    \newcommand{\hypperformance}{\hyp1\xspace}
+    \newcommand{\hyppath}{\hyp2\xspace}
+    \newcommand{\hypfindingperformance}{\hyp3\xspace}
+    \newcommand{\hypfindingpositions}{\hyp4\xspace}
+    \newcommand{\hyppreference}{\hyp5\xspace}
+    
+    %% method
+    \newcommand{\panzoom}{pan-and-zoom\xspace}
+    % Baseline condition
+    \newcommand{\condzero}{baseline\xspace}
+    \newcommand{\condzeronot}{{\tt B}\xspace}
+    % GB condition
+    \newcommand{\condone}{original edition with gesture-based magnification\xspace}
+    \newcommand{\condonenot}{{\tt GB}\xspace}  %{\condone (GB)\xspace}
+    % LP condition
+    \newcommand{\condtwo}{large-print edition with direct access\xspace}
+    \newcommand{\condtwonot}{{\tt LP}\xspace}  %{\condtwo (LP)\xspace}
+    
+    
+    %% misc
+    \newcommand{\NYT}{\emph{New York Times}\xspace}
+    \newcommand{\layoutset}{\mathcal{L}}
+    \newcommand{\contentset}{\mathcal{C}}
+    \newcommand{\largeprintset}{\layoutset'}
+    \newcommand{\CVAS}{CVAS\xspace}
+    \newcommand{\seconds}{\,s}
+    \newcommand{\comparison}[2]{(\condonenot:~#1; \condtwonot:~#2)\xspace}
+    
+    \newcommand{\statreport}[5]{$p #4, \eta_p^2 = #5$}
+    \newcommand{\statreportlong}[5]{$F(#1, #2) = #3, p #4, \eta_p^2 = #5$}
+    
+    \newcommand{\citeignore}[1]{}
 

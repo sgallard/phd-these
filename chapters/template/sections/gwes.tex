@@ -107,7 +107,7 @@ The final dataset consider instances containing a variable count of between $1$ 
 
 \paragraph{Template Catalog}
 
-The structural template catalog $\templatecatalog$ is composed by  $\catalogsize = 345$ designs. Each blueprint specifies all elements described in Chapter~\ref{chapter:definitions} for a given template: dimensions ($W_j, H_j$), internal zoning $\zoning{j}$ and text capacity mapping $\capacity{j}$. 
+The structural template catalog $\templatecatalog$ is composed by  $\catalogsize = 345$ designs from \laprovence. Each blueprint specifies all elements described in Chapter~\ref{chapter:definitions} for a given template: dimensions ($W_j, H_j$), internal zoning $\zoning{j}$ and text capacity mapping $\capacity{j}$. 
 
 
 \subsubsection{$\gmnMatrix$ calculation}
@@ -159,7 +159,7 @@ The model was trained using cross-entropy loss over a maximum of $3,000$ epochs 
 \label{fig:loss-curves}
 \end{figure}
 
-As illustrated in Figure~\ref{fig:loss-curves}, the  oscillations observed in the training loss curve are driven by the intentional feature-dropout protocol applied to the spatial coordinates and zoning matrices during the forward training pass, which introduces controlled batch-level variance. Conversely, during the validation phase, this is not the case and the curve is exceptionally smooth. 
+As illustrated in \figref{fig:loss-curves}, the  oscillations observed in the training loss curve are driven by the intentional feature-dropout protocol applied to the spatial coordinates and zoning matrices during the forward training pass, which introduces controlled batch-level variance. Conversely, during the validation phase, this is not the case and the curve is exceptionally smooth. 
 
 The stabilization of the validation loss at approximately $3.1$ reflects the intrinsic ambiguity of selecting a single exact template from a domain of $\catalogsize = 345$ choices, where multiple configurations can be equally appropriate for the same content. Because cross-entropy heavily penalizes this, the validation loss serves primarily as an internal training convergence guide. Consequently, the true evaluation of the network's performance shifts to the Top-$K$ accuracy rates over the test set and subsequent ablations.
 
@@ -223,10 +223,10 @@ The metrics detailed in Table~\ref{tab:gmn_impact} confirm that the topological 
 \end{figure}
 
 
-This behavioral characteristic is qualitatively illustrated in Figure~\ref{fig:gwes-vs-transformer}. As shown in this representative example, the human-selected target template (\texttt{T:594763}) is successfully identified as the top rank by both paradigms. However, the standalone Transformer exhibits a rigid, steep probability drop-off immediately after its first choice, collapsing from $0.478$ down to $0.106$ and $0.035$ for the subsequent positions. This extreme polarization penalizes structurally similar alternatives, severely limiting the exploration capacity of the evolutionary engine if the top candidate encounters conflicts.
+This behavioral characteristic is qualitatively illustrated in \figref{fig:gwes-vs-transformer}. As shown in this representative example, the human-selected target template (\texttt{T:594763}) is successfully identified as the top rank by both paradigms. However, the standalone Transformer exhibits a rigid, steep probability drop-off immediately after its first choice, collapsing from $0.478$ down to $0.106$ and $0.035$ for the subsequent positions. This extreme polarization penalizes structurally similar alternatives, severely limiting the exploration capacity of the evolutionary engine if the top candidate encounters conflicts.
 
 
-Conversely, the unified \neuralmethod\ metric leverages the graph-matching prior to build a cooperative, high-utility plateau. To reflect the true operational reality of the evolutionary process, the values displayed for \neuralmethod\ in Figure~\ref{fig:gwes-vs-transformer} correspond to the raw, non-normalized affinity scores rather than formal probabilities. Under this framework, \neuralmethod\ actively expands the search space by shifting values; the target template achieves a dominant affinity score of $0.619$, while its direct visual twin (\texttt{T:594765}) is elevated to an equivalent utility level of $0.605$, and alternative valid blueprints like \texttt{T:594748} are uncovered at $0.541$.
+Conversely, the unified \neuralmethod\ metric leverages the graph-matching prior to build a cooperative, high-utility plateau. To reflect the true operational reality of the evolutionary process, the values displayed for \neuralmethod\ in \figref{fig:gwes-vs-transformer} correspond to the raw, non-normalized affinity scores rather than formal probabilities. Under this framework, \neuralmethod\ actively expands the search space by shifting values; the target template achieves a dominant affinity score of $0.619$, while its direct visual twin (\texttt{T:594765}) is elevated to an equivalent utility level of $0.605$, and alternative valid blueprints like \texttt{T:594748} are uncovered at $0.541$.
 
 
 

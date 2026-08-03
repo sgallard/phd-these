@@ -312,7 +312,7 @@ To isolate and quantify the exact architectural contribution of the deep learnin
 
 \paragraph{Convergence}
 
-First, it is necessary to evaluate the overall convergence of both evolutionary approaches. Figure~\ref{fig:convergence_analysis} tracks the hypervolume trajectory over 300 generations for a representative large-scale instance ($\numarticles = 8$).
+First, it is necessary to evaluate the overall convergence of both evolutionary approaches. \figref{fig:convergence_analysis} tracks the hypervolume trajectory over 300 generations for a representative large-scale instance ($\numarticles = 8$).
 
 \begin{figure}[htbp]
 \centering
@@ -321,7 +321,7 @@ First, it is necessary to evaluate the overall convergence of both evolutionary 
 \label{fig:convergence_analysis}
 \end{figure}
 
-As illustrated in Figure~\ref{fig:convergence_analysis}, both frameworks reach a stable optimization plateau well before the 300-generation threshold, confirming that the generation limit provides a conservative  margin. Interestingly, for this specific high-density instance, the ablated baseline ($\baseline{5}$) converges toward a higher average hypervolume in the late evolutionary phases. However, it is critical to note that this localized behavior does not reflect the general performance trend of the experiments, as will be demonstrated in the following subsection.
+As illustrated in \figref{fig:convergence_analysis}, both frameworks reach a stable optimization plateau well before the 300-generation threshold, confirming that the generation limit provides a conservative  margin. Interestingly, for this specific high-density instance, the ablated baseline ($\baseline{5}$) converges toward a higher average hypervolume in the late evolutionary phases. However, it is critical to note that this localized behavior does not reflect the general performance trend of the experiments, as will be demonstrated in the following subsection.
 
 \paragraph{Frontier Size and Hypervolume}
 
@@ -347,7 +347,7 @@ As illustrated in Figure~\ref{fig:convergence_analysis}, both frameworks reach a
 \label{tab:frontier-size}
 \end{table}
 
-As shown in Table~\ref{tab:frontier-size}, transitioning from the ablated baseline ($\baseline{5}$) to \methodNameUniform\ expands non-dominated frontier cardinality across all strata, peaking at $123.0 \pm 12.9$ solutions for $n = 6$. This increase is the mathematical consequence of the objective tension introduced by \neuralmethod\ ($\objtwo$). Unlike $\baseline{5}$ (that focuses on $\objone$, $\objthree$ and $\objfour$), optimizing human editorial style directly conflicts with tight layout configurations, generating a vast space of valid localized trade-offs.  While uniform selection in \methodNameUniform\ preserves this diversity, an oversized frontier might introduce a massive cognitive overhead onto users. This practical bottleneck directly motivates the introduction of a reference-point-guided variant (\methodName), detailed in Section~\ref{sec:rnsga-vs-nsga}.
+As shown in Table~\ref{tab:frontier-size}, transitioning from the ablated baseline ($\baseline{5}$) to \methodNameUniform\ expands non-dominated frontier cardinality across all strata, peaking at $123.0 \pm 12.9$ solutions for $n = 6$. This increase is the mathematical consequence of the objective tension introduced by \neuralmethod\ ($\objtwo$). Unlike $\baseline{5}$ (that focuses on $\objone$, $\objthree$ and $\objfour$), optimizing human editorial style directly conflicts with tight layout configurations, generating a vast space of valid localized trade-offs.  While uniform selection in \methodNameUniform\ preserves this diversity, an oversized frontier might introduce a massive cognitive overhead onto users. This practical bottleneck directly motivates the introduction of a reference-point-guided variant (\methodName), detailed in \secref{sec:rnsga-vs-nsga}.
 
 
 
@@ -487,14 +487,14 @@ Conversely, \methodName\ successfully counteracts this. By anchoring the surviva
 \end{figure}
 
 
-To visually map both the differences in frontier size and its density within the ROI, Figure~\ref{fig:parallel_coordinates_comparison} contrasts the final non-dominated populations of both paradigms on a representative instance ($\numarticles=5$). As illustrated in Figure~\ref{fig:parallel_uniform}, \methodNameUniform\ yields a chaotic pattern. Solutions are wildly scattered across the entire objective space, forcing a massive portion of the trajectories to escape the gray acceptability envelope (ROI), particularly along the historical editorial style ($\objtwo$). 
+To visually map both the differences in frontier size and its density within the ROI, \figref{fig:parallel_coordinates_comparison} contrasts the final non-dominated populations of both paradigms on a representative instance ($\numarticles=5$). As illustrated in \figref{fig:parallel_uniform}, \methodNameUniform\ yields a chaotic pattern. Solutions are wildly scattered across the entire objective space, forcing a massive portion of the trajectories to escape the gray acceptability envelope (ROI), particularly along the historical editorial style ($\objtwo$). 
 
-In contrast, Figure~\ref{fig:parallel_rnsga} demonstrates the precise mechanics of \methodName's targeted pruning. The chaotic web completely collapses into a few highly curated design paths that strictly adhere to the lower, viable regions of the axes. By systematically eliminating operationally useless layouts, the preference engine successfully bridges the gap between multi-objective theoretical optimality and real-world decision spaces.
+In contrast, \figref{fig:parallel_rnsga} demonstrates the precise mechanics of \methodName's targeted pruning. The chaotic web completely collapses into a few highly curated design paths that strictly adhere to the lower, viable regions of the axes. By systematically eliminating operationally useless layouts, the preference engine successfully bridges the gap between multi-objective theoretical optimality and real-world decision spaces.
 
 
 \subsection{Qualitative Results of \methodName}
 
-To complement the quantitative evaluation, this section provides a few examlpes of the pages synthesized by the framework. Figure~\ref{fig:qualitative_layouts_grid} presents a 2$\times$2 grid showcasing finalized layout alternatives across two representative instances of varying complexity, visually illustrating the structural diversity and design plasticity achieved by \methodName.
+To complement the quantitative evaluation, this section provides a few examlpes of the pages synthesized by the framework. \figref{fig:qualitative_layouts_grid} presents a 2$\times$2 grid showcasing finalized layout alternatives across two representative instances of varying complexity, visually illustrating the structural diversity and design plasticity achieved by \methodName.
 
 \begin{figure}[htbp]
 \centering

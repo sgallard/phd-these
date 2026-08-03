@@ -1,4 +1,394 @@
 \section{Population and data collected}
 
+\subsection{Population}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+24 participants were recruited: 19 participants with normal or corrected-to-normal vision and 5 participants \LV. The sample size meets SIGCHI standards for behavioral studies~\cite{caine-2016}. The number of participants \LV ($n=5$) is considered acceptable when conducting research with users with disabilities~\cite{lazar-hci-2017}
+
+ Participants \NV were mainly recruited through an open survey, while participants \LV were recruited from the CHU Pasteur ophthalmology department in Nice, France. All participants took part voluntarily. Demographic details for both groups are provided in Table~\ref{tab:population}.
+
+\begin{table}[htbp]
+    \centering
+
+
+\begin{tabularx}{\columnwidth}{rlllll}
+\toprule
+ID & \makecell[b]{Age group} & Gender & \makecell[b]{CPS  (LogMAR)} & \makecell[b]{Reading  frequency}  & Diagnosis \\
+\midrule
+1 & 20-35 & Male & 0.15 & Daily & NA \\
+2 & 20-35 & Female & 0.1 & Rarely & NA \\
+3 & 20-35 & Female & 0.1 & Never & NA \\
+4 & 20-35 & Male & 0.15 & Daily & NA \\
+5 & 20-35 & Male & 0.1 & Daily & NA \\
+7 & 20-35 & Male & 0.15 & Daily & NA \\
+8 & 20-35 & Female & 0.2 & Daily & NA \\
+9 & 36-65 & Male & 0.15 & Daily & NA \\
+10 & 20-35 & Male & 0.1 & Weekly & NA \\
+11 & 20-35 & Male & 0.2 & Rarely & NA \\
+12 & 20-35 & Male & 0.1 & Rarely & NA \\
+13 & 36-65 & Female & 0.1 & Daily & NA \\
+14 & 36-65 & Male & 0.1 & Daily & NA \\
+15 & 20-35 & Female & 0.1 & Weekly & NA \\
+16 & 20-35 & Male & 0.1 & Weekly & NA \\
+17 & 20-35 & Male & 0.08 & Weekly & NA \\
+18 & 66-80 & Male & 0.1 & Daily & NA \\
+19 & 36-65 & Female & 0.2 & Daily & NA \\
+20 & 66+ & Female & 0.15  & Daily &  NA\\
+\rowcolor{gray!25}21 & 80+ & Male & 0.8 & Daily & Glaucoma \\
+\rowcolor{gray!25}22 & 80+ & Male & 0.5 & Daily & Glaucoma \\
+\rowcolor{gray!25}23 & 80+ & Male & 0.45 & Weekly & Glaucoma \\
+\rowcolor{gray!25}24 & 66-80 & Female & 0.9 & Never & AMD %(both eyes)
+\\
+\rowcolor{gray!25}25 & 66-80 & Female & 0.9 &Daily &  AMD \\
+\bottomrule
+\end{tabularx}
+    \caption{
+    Participant demographics, CPS, and newspaper reading frequency. The last column lists diagnoses for participants \LV, with corresponding rows shaded in light gray. Skipped ID corresponds to a dropped participant because of unusable data.} 
+    \label{tab:population}   
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data collected and measures}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+For each participant, the following data were recoreded during the experiment to provide a multidimensional assessment of the quality of experience:
+\begin{itemize}
+    \item \textbf{Pre-experiment questionnaire responses:} Age group, gender (optional), and news reading habits.
+    \item \textbf{Critical Print Size:} CPS in logMAR units, obtained from the MNREAD reading test.
+    \item \textbf{Task timing:} Total duration of each task in each trial (reading headlines, finding target articles), measured in seconds by the application.
+    \item \textbf{Task success:} For each trial, the percentage of read articles in task 1, and also a boolean indicator for whether the participant correctly found the target article in task 2. Both of these for each trial. 
+    \item \textbf{Voice recordings:} Audio of participants reading aloud headlines, enabling reconstruction of reading order.
+    \item \textbf{Screen interactions:} For \condonenot trials, detailed logs of gestures, including zoom level, pan position, timestamps, and sequence, allowing reconstruction of reading paths.
+    \item \textbf{Subjective workload:} Responses to the NASA-TLX questionnaire were proposed after each condition.
+    \item \textbf{Overall condition preference:} Participant choice between \condonenot and \condtwonot, or both equally preferred.
+\end{itemize}
+For participants \LV, time limits and adapted trial sequences were applied as described in \secref{subsection:overview-study}, and all data were recorded consistently across conditions to enable fair comparisons.
+
+Note that, except for voice recordings, no personal data was collected. Voice recordings were stored temporarily on an encrypted laptop and processed locally using a semi-automatic speech-to-text service to extract reading order and timestamps. Once transcription was completed, the recordings were permanently deleted.
+
+
+
+
+
 
 \section{Results}
+
+The analysis presented in this section tests hypotheses \hypperformance-\hyppreference.  First, the statistical model is described, then results for Task 1 and Task 2 are reported, and finally subjective workload and user preference are analyzed using the NASA-TLX questionnaire together with overall preference.
+
+\subsection{Statistical model}
+
+Collected data were analyzed using a linear mixed-effects model with Participant ID as a random effect. The fixed effects are detailed in Table~\ref{tab:lmm}. An ANOVA test was used to check for significance using the F-statistic, setting the p-value threshold at $p < 0.05$. All reported values are model estimates (i.e., estimated marginal means) rather than raw data. 
+
+The following sections report exact p-values and effect sizes for significant main effects and interactions. Complete model statistics—including F-values, degrees of freedom, and detailed pairwise comparisons—are provided in the supplementary tables in the Appendix~\ref{TODO} of this thesis. Not significant effects and interactions are not reported.
+
+\begin{table}[htbp]
+\centering
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\columnwidth}{lXXX}
+\toprule
+\textbf{\#} & \textbf{Factor (\#Levels)} & \textbf{Levels} & \textbf{Interactions} \\
+\midrule
+% --- Main Factors of Interest ---
+1 & Condition (2) & \condonenot, \condtwonot & With \#2, \#3, \#4, \#5, \#8 \\
+2 & NewspaperID (6) & 1,...,6 & With \#1, \#3 \\
+3 & \CVAS (2) & Small Screen, Low Vision & With \#1, \#2 \\
+%\midrule
+% --- Control Factors / Covariates ---
+\rowcolor{gray!20} % Start of shaded area for control variables
+4 & Reading frequency (4) & Daily, Weekly, Rarely, Never & With \#1 \\
+\rowcolor{gray!20}
+5 & Target headline zone (3) & Top, Middle, Bottom & With \#1 \\
+\rowcolor{gray!20}
+6 & Trial index (6) & 1,$\ldots$, 6 & Main effect only \\
+\rowcolor{gray!20}
+7 & Content version (3) & 1, 2, 3 & Main effect only \\
+\rowcolor{gray!20}
+8 & Condition order (2) & \condonenot{} first, \condtwonot{} first & With \#1 \\
+\bottomrule
+\end{tabularx}
+\caption{
+Fixed effects of the Linear Mixed-Effects Model (LMM) used in this study. Factor of interests are shown with a white background; secondary or control factors in gray.}
+\label{tab:lmm}
+\end{table}
+
+\subsection{Task 1 analysis}
+Participants’ audio recordings were transcribed using WhisperX~\cite{whisperX}, reconstructing a task timeline for each participant. Each timeline was segmented into reading (R) and transition (T) periods (see \figref{fig:taskone-timeline}). From this timeline,  four metrics to test hypotheses \hypperformance and \hyppath were derived:
+\begin{enumerate}
+    \item Success ratio: The proportion of correctly read articles out of the total (e.g., 5/6=$83.3\%$ in \figref{fig:taskone-timeline}). Note that a headline was considered correctly read if its transcription was phonetically equivalent to the source text, which we verified using the \emph{phonetic-fr} Python library.
+    \item Completion time: The total task duration, from stimulus onset to completion ($t_e - t_0$ in \figref{fig:taskone-timeline}). 
+    \item Reading path: The sequence in which articles were read (e.g., 1-3-2-6-5 in \figref{fig:taskone-timeline}).
+    \item Reading and transition time: The durations of individual reading and transition periods.
+\end{enumerate}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/taskone-timeline.pdf}
+    \caption{
+Task 1 timeline.  
+After stimulus onset (time $t_0$, when the newspaper page is displayed), participants alternate between transition periods for locating the next headline (T) and reading periods (R, with white boxes indicating the headline index). The task ends at time $t_e$, when the participant indicates they have read all headlines—even if some were missed, as illustrated in this example where headline 4 was skipped. 
+    }
+    \label{fig:taskone-timeline}
+\end{figure}
+
+\subsubsection{Success ratio}
+The analysis revealed significant effects for three factor considering success ratio:
+\begin{itemize}
+\item {NewspaperID:} Although significant differences existed between newspapers (\statreport{5}{215.94}{5.72}{<.001}{0.12}), performance was consistently high, with the lowest-performing newspaper still achieving a $93.4\%$ success ratio.
+\item {CVAS:} Participants \NV achieved a higher success ratio ($100\%$) than participants \LV ($93.4\%$), consistent with the reduced vision in the latter group (\statreport{1}{23.71}{20.92}{<.001}{0.55}).
+\item {Content version:} A significant difference was found between Content \#1 ($96.2\%$) and \#3 ($98.6\%$), but both yielded high success ratios (\statreport{2}{223.45}{3.72}{=.025}{0.03}).
+\item A significant interaction between CVAS and NewspaperID (\statreport{5}{216.1}{3.83}{=.002}{0.08}) indicated that the performance gap due to vision loss was layout-dependent, something not present in Layouts 16 and 17.
+\end{itemize}
+
+Most importantly, there was no significant effect of Condition, indicating that neither \condonenot nor \condtwonot affected the participants' ability to read headlines correctly.
+
+
+\subsubsection{Completion time}
+Our analysis revealed significant effects for all our factors of interest:
+\begin{itemize}
+    \item {Condition:} The main result is that, as anticipated due to the reduction in navigational overhead, \condtwonot had $37\%$ lower completion time than \condonenot \comparison{$71.7$\seconds}{$45.2$\seconds} (\statreport{1}{209.43}{116.5}{<.001}{0.42}). An interaction with \CVAS (\statreport{1}{209.18}{146.3}{<.001}{0.41}) showed that this improvement was larger for  participants \LV, with a $42\%$ reduction \comparison{$114.7$\seconds}{$66.3$\seconds} compared to a reduction of $16\%$ for participants \NV \comparison{$28.6$\seconds}{$24.1$\seconds}). This finding supports Hypothesis~\hypperformance.
+
+    \item {\CVAS}: Individuals \NV (average of $26.3$\seconds) had $70\%$ lower completion times than readers \LV (average of $90.5$\seconds), consistent with the reduced vision in the latter group (\statreport{1}{18.61}{50.19}{<.001}{0.73}). 
+
+    \item {NewspaperID:} Layout \#17, featuring a feed-like format (i.e., articles displayed as a stack of rectangles, as commonly seen in social media feeds) had significantly shorter completion time (avg. $48.9$\seconds) than the others (avg. $60.3$\seconds) (\statreport{5}{209.89}{9.57}{<.001}{0.19}). While effective, this is considered a special case with limited generalization (further discussed in \secref{subsection:preferences}).
+
+    \item {Content version:} A significant difference (\statreport{2}{213.5}{3.21}{=.04}{0.03}) was found between version \#1 (avg. $55.9$\seconds) and \#3 (avg. $61$\seconds), likely due to subtle variations in content complexity that influenced processing time or even induce more mistakes.
+
+\end{itemize}
+
+\subsubsection{Reading path}
+
+To analyze reading paths, a reference reading strategy in \condzeronot trials was identified. Visual inspection initially suggested a left-to-right, top-to-bottom reading pattern in \condzeronot trials. Then, the similarity between each path and this candidate pattern is quantified using a Levenshtein-based similarity measure~\cite{levenshtein2007}: given two paths $p_1$ and $p_2$, the similarity is defined as $Sim(p_1,p_2) = 100*(1.0 - levenshtein(p_1,p_2)/max(length(p_1), length(p_2)))
+$, using the Levenshtein distance~\cite{levenshtein2007}. The similarity  $Sim(p_1,p_2)$ ranges from 0, indicating completely different paths, to 100, indicating $p_1 = p_2$. An ANOVA test confirmed no significant deviation between this left-to-right, top-to-bottom strategy and \condzeronot trials. Based on this validation,  the {\itshape reference path} is defined as the theoretical left-to-right, top-to-bottom reading order implied by the page layout, independent of any experimental data.
+
+Using the reference paths, the similarity of \condonenot and \condtwonot reading paths against reference paths induced over the corresponding layouts are computed.  To enable sequence comparison,  articles were indexed in each condition (\condonenot and \condtwonot) according to the reference strategy (e.g., Article \#1 is the top-leftmost). Consequently, a path adhering to the reference strategy results in the canonical sequence [1,2,...,n], while any deviation will be captured by the similarity measure.
+
+It is important to note that any deviation from this reference path are not considered a performance failure or a "negative" outcome. Rather,  such deviations are interpreted as behavioral evidence of a strategic shift in reading, quantifying the extent to which each condition disrupts the structural perception of the 2D layout.
+
+The analysis revealed three significant factors:
+
+\begin{itemize}
+    \item {Condition:} The main effect observed was that reading paths in \condtwonot were significantly more similar to the reference than in \condonenot \comparison{$69.3\%$}{$87.5\%$} (\statreport{1}{210.75}{11.98}{<.001}{0.14}). This effect was present for both participants \NV \comparison{$72.3\%$}{$88.9\%$} and for participants \LV \comparison{$66.2\%$}{$86.1\%$}. The lower similarity in \condonenot reveals a measurable behavioral cost: while manual interaction provides control, the navigational overhead required to manage successive zoomed-in fragments disrupts the reader's ability to maintain their natural exploration strategy.
+    This effect is visible in \figref{fig:example-screen-gestures}, where participants exhibited reading paths guided by their screen interactions (i.e., panning movements), and in particular, participants \LV required substantially more gestures, reflecting the greater effort. This observation supports hypothesis~\hyppath.
+
+    \item {NewspaperID:} Layout influenced the reading path (\statreport{5}{212.51}{6.15}{<.001}{0.13}). While \condtwonot generally produced paths more similar to the reference, a significant interaction showed that (\statreport{5}{209.19}{8.93}{<.001}{0.18}) layout \#19 (\figref{fig:newspaper-pages}) was a notable exception, where \condonenot scored slightly higher \comparison{$72.2\%$}{$68.6\%$}. This may be due to its unique vertical organization. However, the main effect of \condtwonot superiority held across all other layouts.
+
+    \item {Reading frequency:} We found an interaction between condition and reading habits (\statreport{3}{212.49}{5.94}{<.001}{0.08}). In \condonenot, frequent readers (daily or weekly) adhered more closely to the reference path than infrequent readers (who averaged only $51.4\%$ similarity). In contrast, \condtwonot paths were highly similar to the reference (over $83\%$) across all reading frequencies, demonstrating their robustness.
+    
+\end{itemize}
+
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{ccc}
+    \includegraphics[width=\widthForThreeImages]{img/baseline-path.pdf}&  \includegraphics[width=\widthForThreeImages]{img/pinchzoom-path.pdf}& \includegraphics[width=\widthForThreeImages]{img/magn-path.pdf}\\[-1mm]
+    (a) \condzeronot & (b) \condonenot & (c) \condtwonot\\[-1mm]
+    \end{tabular}
+    \caption{
+    \label{fig:example-reading-path}
+    Examples of reading path corresponding to the same participant and layout in all conditions. 
+    (a) \condzeronot path, reassembling always the reference path (top-to-bottom, left-to-right). 
+    (b) \condonenot path, with the screen interactions i.e., panning movements (in blue). Zoom level is not shown to simplify the figure and emphasize gesture patterns.
+    (c) \condtwonot path.
+    }
+    
+%\end{figure}
+\ \\[2mm]
+%\begin{figure}[htpb]
+   \centering
+    \begin{tabular}{cccc}
+    \includegraphics[width=\widthForFourImages]{img/gestures/User 13 - Layout 17.pdf} & 
+    \includegraphics[width=\widthForFourImages]{img/gestures/User 19 - Layout 17.pdf} &
+    \includegraphics[width=\widthForFourImages]{img/gestures/User 22 - Layout 17.pdf} & 
+    \includegraphics[width=\widthForFourImages]{img/gestures/User 24 - Layout 17.pdf} \\[-1mm]
+    (a) & (b) & (c) & (d)
+    \end{tabular}
+    \caption{\label{fig:example-screen-gestures}
+    Four examples of \condonenot reading paths (black) with screen interactions (panning movements in blue) for the same layout (\#17). In \condonenot, reading follows panning gestures, which do not necessarily align with the reference path. (a,b) show two different participants \NV. (c,d) show two participants \LV, exhibiting similar behavior but with considerably more gestures, indicating that the task is more demanding for this group.
+    }
+\end{figure}
+
+
+\subsubsection{Participant-level performance}
+
+To visualize individual performance, \figref{fig:phaseone} plots reading path similarity against completion time for each participant, separated by \CVAS to account for different data ranges. The absolute performance plots (a,c) confirm that \condtwonot resulted in shorter times and paths more similar to the reference compared to \condonenot. The relative improvement plots (b, d) make these performance gains explicit. The plots also highlight that the improvements in both metrics were substantially larger for participants \LV than for participants \NV.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{ccc}
+    & {\bf Absolute} & {\bf Relative}\\[1mm]
+    \raisebox{25pt}[0pt][0pt]{\rotatebox{90}{{\bf \nv}}} &
+    \includegraphics[width=0.45\widthForOneImage]{img/normal-vision/normal-taskone-absolute.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img/normal-vision/normal-taskone-relative.pdf} \\[-1mm]
+    & (a) & (b) \\[1mm]
+    \raisebox{25pt}[0pt][0pt]{\rotatebox{90}{{\bf \lv}}} &
+    \includegraphics[width=0.45\widthForOneImage]{img/low-vision/low-taskone-absolute.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img/low-vision/low-taskone-relative.pdf} \\[-1mm]
+    & (c) & (d) \\[1mm]
+     &
+    \includegraphics[width=0.45\widthForOneImage]{img/legend_gb.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img/legend_lp.pdf} \\[-1mm]
+    \end{tabular}
+    \caption{
+    Average similarity to reference path vs average completion time per participant. 
+    Absolute (left column) and relative (right column) performance plots for participants with normal vision (top row) and low vision (bottom row). Absolute plots (a,c) show the average similarity to the reference path as a function of average completion time per participant, for both \condonenot (blue circles) and \condtwonot (red diamonds). Relative plots (b,d) show the gains in similarity and the change in completion time when using \condtwonot (red diamonds) relative to \condonenot (blue circles).
+    }
+    \label{fig:phaseone}
+\end{figure}
+
+\subsubsection{Reading and transition times}
+\label{section:reading-transition}
+
+Analysis of reading time revealed four significant factors: 
+\begin{itemize}
+
+    \item {Condition}: There is a significant difference (\statreport{1}{209.24}{6.02}{=.01}{0.05}) between \condtwonot and \condonenot \comparison{$4.18$\seconds}{$3.80$\seconds}. However, due to the small effect size, it is not possible to confirm that reading time is the primary factor influencing the difference in completion time. 
+    Additionally, a significant effect in the interaction with NewspaperID (\statreport{5}{209.02}{4.97}{<.001}{0.11}) was found. Post-hoc analysis indicated that the reading speed advantage of \condtwonot was isolated to specific layouts (Layouts \#13 and \#18, both $p<.001$), while no significant differences were found in the others. This indicates that the benefit on reading time is not universal, but highly dependent on specific structural arrangements.
+
+    \item {\CVAS:} Participants \LV had lower reading times (avg. $5.29$\seconds) than participants \NV (avg. $2.68$\seconds) (\statreport{1}{18.3}{15.50}{<.001}{0.46}).
+
+    \item {Trial index:} There is a significant but minor fatigue effect, with participants' reading times increasing in later trials, indicated by a positive slope $(0.05)$ for this factor in the LMM-model. (\statreport{1}{209.13}{7.66}{=.006}{0.04}).
+
+    \item {Content version:} A minor but significant difference (\statreport{2}{211.57}{3.72}{=.02}{0.03}) occurred between version \#1 (avg. $3.84$\seconds) and version \#2 (avg. $4.0$\seconds), likely due to subtle variations in content complexity.
+\end{itemize}
+
+Our analysis of transition time revealed four significant factors:
+\begin{itemize}
+    \item {Condition}: There is a significant difference (\statreport{1}{210.09}{73.568}{<.001}{0.29}) between \condonenot and \condtwonot \comparison{$4.13$\seconds}{$1.83$\seconds}. This effect size confirms that the transition time is the primary factor influencing completion time. However, the significant interaction with \CVAS (\statreport{1}{209.47}{113.82}{<.001}{0.35}), and the corresponding post-hoc analysis showed that this significant effect occurred only for participants \LV ($p <.001$), who had $57\%$ lower transition time in \condtwonot \comparison{$8.0$\seconds}{$3.47$\seconds}. This reduction was an expected mechanical consequence of eliminating time-consuming manual interaction adjustments and facilitated direct access of the layout, allowing for immediate transition between headlines. In contrast, no significant difference was found for participants \NV ($p = 0.75$), likely due to their high efficiency and device familiarity in both conditions. This result supports \hypperformance.
+
+    \item {\CVAS:} As expected, there was a large performance gap between groups (\statreport{1}{19.58}{71.60}{<.001}{0.80}), with participants \NV (avg. $0.214$\seconds) transitioning with a $96\%$ shorter time than participants \LV (avg. $5.74$\seconds).
+
+    \item {NewspaperID:} There is a significant difference (\statreport{5}{211.23}{7.45}{<.001}{0.15}), driven by Layout \#13 which  was significantly slower in transition time (avg. $4.05$\seconds) than the others (avg. $2.76$\seconds), likely due to a unique layout with a central article surrounded by the others, which might make the reading task more difficult. In any case, the main effect of \condtwonot superiority held in this layout, as well as in all the others.
+
+    \item {Trial Index:} Unlike reading time, a significant (but minor) reduction in transition time across trials was found, indicated by a negative slope $(-0.09)$ for this factor in the LMM-model  (\statreport{1}{209.62}{4.38}{=.037}{0.02}). This suggests a learning effect regarding the experimental setup: participants became more proficient as the experiment progressed, even as reading fatigue set in.
+\end{itemize}
+
+\figref{fig:phaseone-reading-transition} visualizes the average reading and transition times for each participant, separated by \CVAS. The plots confirm that both reading times (a, c) and transition times (b, d) were shorter with \condtwonot than with \condonenot.
+
+Moreover, the transition time plots (b, d) reveal that the difference is primarily driven by the first and last transitions. This reflects the initial setup time required in \condonenot for participants to adjust the zoom and pan to the first article. This effect was particularly pronounced for participants \LV, who were less familiar with touch gestures. These graphs underscore how layouts that eliminate manual interaction can significantly improve reading performance for users in \CVAS.
+
+
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{ccc}
+    & {\bf Reading time} & {\bf Transition time}\\[1mm]
+    \raisebox{25pt}[0pt][0pt]{\rotatebox{90}{{\bf \nv}}} &
+    \includegraphics[width=0.45\widthForOneImage]{img/normal-vision/taskone-reading-time.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img/normal-vision/taskone-transition-time.pdf} \\[-1mm]
+    & (a) & (b) \\[1mm]
+    \raisebox{25pt}[0pt][0pt]{\rotatebox{90}{{\bf \lv}}} &
+    \includegraphics[width=0.45\widthForOneImage]{img/low-vision/low-taskone-reading-time.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img/low-vision/low-taskone-transition-time.pdf} \\[-1mm]
+    & (c) & (d)
+    \end{tabular}
+    \caption{
+    Reading and transition time per condition (Task 1). Reading time (left column) and transition time (right column) boxplots for participants \NV (top row) and \LV (bottom row).
+    (a, c)  shows reading time boxplots. (b, d) shows transition time boxplot, separated by transition type: first transition (from stimulus onset to first headline), average of middle transitions (between headlines) and last transition (from last article to end of task). Outliers were removed to improve visualization}
+    \label{fig:phaseone-reading-transition}
+\end{figure}
+
+
+\subsection{Task 2 analysis}
+Regarding Task 2, two metrics to test hypotheses \hypfindingperformance and \hypfindingpositions were derived:
+\begin{enumerate}
+    \item Success ratio: for this task, the success ratio was a binary measure (1 = target headline found, 0 = not found).
+    \item Completion time: The total task duration, from stimulus onset to completion. 
+\end{enumerate}
+
+
+\subsubsection{Success ratio}
+
+The analysis revealed a significant effect of NewspaperID (\statreport{5}{219.47}{4.10}{= 0.001}{0.09}), and an interaction between NewspaperID and \CVAS  (\statreport{5}{219.66}{ 3.30}{= .006}{0.07}) related to one specific newspaper layout (\#13). This was traced to a single participant \LV who, likely due to fatigue on his final trials, failed to find the target in either condition. Given the small sample size, this single failure disproportionately skewed the result for that specific case ($48.9\%$ success ratio).
+
+Apart from this statistical artifact, no other factors had a significant effect on the success ratio. Overall, participants performed very well, achieving a success rate of over 90\% in both the \condonenot and \condtwonot conditions.
+
+\subsubsection{Completion time}
+
+Completion time for each trial, measured in seconds, was extracted. The corresponding analysis identified two significant factors:
+\begin{itemize}
+    \item {Condition:} There is a significant difference between conditions (\statreport{1}{212.63}{15.06}{<.001}{0.12}). Overall, participants had $50\%$ shorter completion time with \condtwonot than with \condonenot \comparison{$18.7$\seconds}{$9.2$\seconds}. This effect was observed across both \CVAS  as shown by the significance of the interaction (\statreport{1}{210.63}{14.81}{<.001}{0.07}), with a $51\%$ improvement for participants \NV  \comparison{$6.91$\seconds}{$3.36$\seconds} and a $50\%$ improvement for participants \LV \comparison{$30.37$\seconds}{$15.03$\seconds}. This was attributed to the navigational cost of manual interaction: in \condonenot, the effort required to manage the interaction distracts from the structural retrieval task. In contrast, \condtwonot allows for direct perception of the layout, reducing the time spent on interface management. This result provides strong support for \hypfindingperformance.
+
+     \item {\CVAS: }Participants \NV located the target considerably faster (avg. $5.14$\seconds) than participants \LV (avg. $22.7$\seconds) (\statreport{1}{23.55}{47.20}{<.001}{0.71}).
+\end{itemize}
+
+These results are illustrated in \figref{fig:phasetwo}.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{cc}
+    {\bf \nv} & {\bf \lv}\\[1mm]
+     
+    \includegraphics[width=0.45\widthForOneImage]{img//normal-vision/tasktwo-time.pdf} & 
+    \includegraphics[width=0.45\widthForOneImage]{img//low-vision/low-tasktwo-time.pdf} \\[-1mm]
+     (a) & (b) \\[1mm]
+    \end{tabular}
+    \caption{
+    Completion time per condition (Task 2), only successful cases.
+    Boxplots showing participants’ distributions, with (a) normal vision and (b) low vision.}
+    \label{fig:phasetwo}
+\end{figure}
+
+
+\subsubsection{Headline zone in Task 2}
+
+Finally, the influence of the target headline's location ("zone") in task completion time was analyzed. The analysis revealed no statistically significant effect (\statreport{2}{209.75}{2.73}{=.067}{0.03}) and therefore is not possible to confirm the hypothesis \hypfindingpositions.
+
+\subsection{Participants preferences}
+\label{subsection:preferences}
+
+To test \hyppreference,  NASA-TLX scores, a direct preference question, and qualitative feedback were analized.
+
+NASA-TLX results (\figref{fig:nasa}) showed that participants \NV favored \condtwonot across all dimensions. In contrast, participants \LV reported higher physical and mental demand, together with more frustration for \condtwonot. Further analysis revealed this was driven by participants with the most severe visual impairments (i.e., higher CPS). This finding requires careful contextualization: while producing \condtwonot based on CPS is ecologically valid, our strict requirement to render full headlines for experimental fairness between conditions imposed a magnification ceiling that frustrated these participants. In a real-world deployment, this could be mitigated by summarizing or truncating content to allow even higher magnification levels. However, for extreme visual constraints requiring extreme magnification levels, preserving a spatial 2D layout will inevitably become unfeasible, necessitating a shift to alternative solutions such as linear presentations (feed-like formats), as explored in prior work~\cite{almeraj_user_2019}.
+
+
+These findings were triangulated with objective performance (the sum of Task 1 and 2 completion times) and subjective overall preference. Based on total time, all participants ($100\%$) performed better with \condtwonot. The final preference question aligned with NASA-TLX results for most participants (75\%), though some discrepancies arose (25\%). These discrepancies are not surprising, as NASA-TLX is a non-comparative tool known to be sensitive to task order and subjective recall. This subjectivity is likely amplified in participants \LV, for whom the tasks were generally much more demanding, leading to less consistent ratings across conditions. To address this, additionally a direct question was asked to participants \LV at the end of the study to indicate, for each NASA-TLX dimension, which condition they preferred. This post-hoc lower-granularity comparative measure captured their subjective preference per dimension, giving in fact a preference for \condtwonot for all NASA-TLX questions except effort and frustration, where there is no preference for either condition. This reinforces the overall advantage of \condtwonot. Nevertheless, a dedicated comparative workload assessment would provide a more reliable metric in future studies. 
+
+Finally, qualitative feedback provided additional insights:
+\begin{enumerate}
+    \item Comfort and Focus: Participants favored \condtwonot for a more comfortable and focused experience. Several participants \LV even changed their preference from \condonenot to \condtwonot over the course of the experiment.
+
+    \item Layout constraints: Even if they overall prefer \condtwonot, they do not like to read headlines with too many lines and/or word breaks, which is something the relayouting method~\cite{gallardo} minimizes. This comment reinforces the idea of doing a relayouting over the original newspaper page while increasing font size and not just the latter, but also opens opportunities to improve the related algorithms.
+
+    \item Desire for control: A small minority ($3$ of $24$, or $12.5\%$, which corresponds to the participants with the highest CPS) preferred \condonenot despite their lower performance. This finding highlights that a subset of users may prioritize the sense of control provided by manual interaction, even when it imposes a significantly higher behavioral and performance cost by disrupting the structural perception of the layout.
+
+    \item Feed-like layouts: Participants enjoyed the vertical, feed-like layouts possible in \condtwonot. However, the goal is to support the complex, aesthetic layouts of realistic newspapers, for which simple feed-like designs are not a scalable solution, especially when ads or images are present, since they cannot be shrunk.
+
+\end{enumerate}
+
+
+Taken together, these quantitative and qualitative results confirm hypothesis \hyppreference.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{tabular}{cc}
+    {\bf \nv} & {\bf \lv}\\[1mm]
+     
+    \includegraphics[width=\widthForTwoImages]{img//normal-vision/normal-nasa.pdf} & 
+    \includegraphics[width=\widthForTwoImages]{img//low-vision/low-nasa.pdf} \\[-0.5mm]
+     (a) & (b) \\[1mm]
+    \includegraphics[width=0.2\widthForOneImage]{img//nasa_legend_gb.pdf} & 
+    \includegraphics[width=0.2\widthForOneImage]{img//nasa_legend_lp.pdf} \\[-1mm]
+    \end{tabular}
+    \caption{
+    NASA-TLX average scores for each question, for both \condonenot and \condtwonot, collected after completing the experiment. For all dimensions, lower scores indicate better perceived workload, except for performance, where higher scores are better.
+(a) Participants \NV show a clear advantage for \condtwonot.
+(b) Participants \LV show similar trends, though results should be interpreted cautiously due to the small sample size, which can skew the results, and higher subjectivity of their responses, as tasks were generally more demanding and ratings less consistent across conditions (see text for more details).}
+\label{fig:nasa}
+    
+\end{figure}
+
+
+\subsection{Summary}
+Based on the previous results, a summary focused in each hypothesis is presented:
+\begin{itemize}
+    \item[\hypperformance]Supported. \condtwonot significantly improved mechanical efficiency, with faster completion times and more efficient transitions between articles compared to the navigational overhead of \condonenot.
+
+    \item[\hyppath]Supported. The reference path based on \condzeronot trials was analyzed, which followed a left-to-right, top-to-bottom reading order. In both \CVAS, \condtwonot paths were significantly more similar to the reference path than \condonenot paths. This confirms that \condtwonot preserves the behavioral integrity of the reading process, whereas manual interaction forces a shift in the reader’s exploration strategy.
+
+    \item[\hypfindingperformance]Supported. Locating a specific target headline was faster using \condtwonot, demonstrating the advantage of direct structural access in eliminating the navigational overhead and cost of fragmented manual interaction.
+
+    \item[\hypfindingpositions]Not supported. While there is a non-significant trend related to target position, the analysis did not find sufficient statistical evidence to support this hypothesis.
+
+    \item[\hyppreference]Supported. NASA-TLX scores, a direct preference question, and qualitative feedback all converged to show a strong overall user preference for \condtwonot.
+\end{itemize}
