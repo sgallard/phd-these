@@ -1,5 +1,5 @@
 \section{Modelling template topology and similarity}
-
+\label{section:modelling-similarity}
 As explained before, a key requirement of in template retrieval is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. In this context, standard metrics such as Intersection-over-Union (IoU) or Jaccard index~\cite{jaccard2021} are insufficient: they are sensitive to small misalignments, and in cases with no overlap they provide zero gradients, making optimization difficult~\cite{patil_layoutgmn_2021}. 
 
 
@@ -16,7 +16,7 @@ where $\zblockrescaled{2}{k}$ are elements of $\tilde{\templateobj{2}}$, which c
 
 \subsubsection*{Similarity Measure (\diouplusone{\templateobj{1}}{\templateobj{2}})}
 \label{sec:tdiou:diouplusone}
-Starting from \diou{\templateobj{1}}{\templateobj{2}}~\cite{zheng_distance-iou_2019} in $[-1,1]$, we define:
+Starting from \diou{\templateobj{1}}{\templateobj{2}}~\cite{zheng_distance-iou_2019} in $[-1,1]$, \diouplusone{\templateobj{1}}{\templateobj{2}} is defined as:
 \[
 \diouplusone{\templateobj{1}}{\templateobj{2}} = \diou{\templateobj{1}}{\templateobj{2}} + 1,
 \]

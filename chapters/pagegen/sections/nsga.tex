@@ -12,14 +12,14 @@ The proposed layout generation method, coined \methodName\ and illustrated in \f
     \label{fig:method-overview}
 \end{figure}
 
-The global workflow of \methodName is executed across three interconnected pillars:
-\begin{itemize}
-    \item \textbf{Neural \objtwo\ Evaluation (\neuralmethod\ metric):} Operating dynamically within the fitness evaluation loop, this module serves as the neural approximation of the abstract function $\Omega(\articleobj{i}, \templatesel{i} \mid \solution)$. For each candidate solution, the page-aware scoring function \NeuralMethod\ (\neuralmethod) defined in Chapter~\ref{sec:gwes} is used to resolve the historical editorial-alignment objective (\objtwo).
+The global workflow of \methodName is executed across three interconnected pillars, as illustrated in \figref{fig:method-overview}:
+%\begin{itemize}
+  %  \item \textbf{Neural \objtwo\ Evaluation (\neuralmethod\ metric):} Operating dynamically within the fitness evaluation loop, this module serves as the neural approximation of the abstract function $\Omega(\articleobj{i}, \templatesel{i} \mid \solution)$. For each candidate solution, the page-aware scoring function \NeuralMethod\ (\neuralmethod) defined in Chapter~\ref{sec:gwes} is used to resolve the historical editorial-alignment objective (\objtwo).
     
-    \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating on the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}, this framework is responsible for the exploration and exploitation of candidate layout configurations. Depending on the operational phase, the engine can deploy two distinct paradigms: a data-driven RNSGA-III~\cite{rnsga-iii}, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2} for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
+   % \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating on the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}, this framework is responsible for the exploration and exploitation of candidate layout configurations. Depending on the operational phase, the engine can deploy two distinct paradigms: a data-driven RNSGA-III~\cite{rnsga-iii}, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2} for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
     
-    \item \textbf{Packing Decoder:} While a spatial decoder is fundamentally required to map the symbolic chromosome representation into a layout that represents \solution, \methodName\ deliberately eschew approximate greedy packing heuristics~\cite{lodi-packing-survey, chazelle-bl, burke-bf}. Given the constrained scale of the operational editorial domain, where page instances consistently involve a small number of articles ($\numarticles < 9$), resolving the pure spatial packing subproblem (conditioned on the specific template selections and elasticities fixed by the chromosome) remains computationally tractable. Consequently, the decoder takes the combinatorial sequences, template assignments, and text elasticities proposed by the evolutionary chromosomes and physically arranges the blocks on the page canvas, explicitly handling hard overlap and  boundaries through an extreme-points backtracking routine~\cite{crainic-extreme-points}.
-\end{itemize}
+   % \item \textbf{Packing Decoder:} While a spatial decoder is fundamentally required to map the symbolic chromosome representation into a layout that represents \solution, \methodName\ deliberately eschew approximate greedy packing heuristics~\cite{lodi-packing-survey, chazelle-bl, burke-bf}. Given the constrained scale of the operational editorial domain, where page instances consistently involve a small number of articles ($\numarticles < 9$), resolving the pure spatial packing subproblem (conditioned on the specific template selections and elasticities fixed by the chromosome) remains computationally tractable. Consequently, the decoder takes the combinatorial sequences, template assignments, and text elasticities proposed by the evolutionary chromosomes and physically arranges the blocks on the page canvas, explicitly handling hard overlap and  boundaries through an extreme-points backtracking routine~\cite{crainic-extreme-points}.
+%\end{itemize}
 
 By decoupling the strategic combinatorial search (steered by the evolutionary engine) from the data-driven evaluation of historical designs (approximated by \neuralmethod), \methodName\ ensures that the framework can generate production-ready layout configurations within industrial time limits while maintaining absolute adherence to historical editorial standards.
 
@@ -138,23 +138,26 @@ This sequence preservation is fundamental to the multi-objective nature of the o
 On the contrary, once a specific sequence $\chromosomePermutationSegment$ is fixed by the evolutionary operators, the packing engine's sole responsibility is to evaluate its geometric feasibility. By coupling a fixed linear sequence with a complete, exhaustive backtracking technique, the decoder guarantees that if a valid spatial configuration exists for that specific permutation, it will be found.
 
 \subsubsection{Dimensions Definition}
-Before triggering the packing routine, the engine maps the active chromosome genes into  physical attributes for each article $\articleobj{i}$. The template gene $t_i \in \chromosomeTemplateSegment$ fixes the width $\Wtemp{\templatesel{i}}$ of the article based on its template assignment $\templatesel{i}$ in the catalog $\templatecatalog$. Concurrently, the discrete text elasticity step $e_i$ is retrieved from $\chromosomeElasticitySegment$ to compute the effectively scaled height $\Hscaled{\templatesel{i}}$ that the engine will attempt to allocate, as described in Equation~\ref{equation:h-scaled}:
+Before triggering the packing routine, the engine maps the active chromosome genes into  physical attributes for each article $\articleobj{i}$. The template gene $\templatesel{i} \in \chromosomeTemplateSegment$ fixes the width $\Wtemp{\templatesel{i}}$ of the article based on its template assignment $\templatesel{i}$ in the catalog $\templatecatalog$. Concurrently, the discrete text elasticity step $\elasticity{i}$ is retrieved from $\chromosomeElasticitySegment$ to compute the effectively scaled height $\Hscaled{\templatesel{i}}$ that the engine will attempt to allocate, as described in Equation~\ref{eq:h-scaled}:
 
-\begin{equation*}
+\begin{equation}
 \Hscaled{\templatesel{i}} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right)
-\end{equation*}
+\tag{\ref{eq:h-scaled}}
+\end{equation}
 
 \subsubsection{Extreme Points-based Packing Engine}
 
-Spatial allocation inside the page canvas builds upon the foundational Extreme Points (EPs) paradigm introduced by Crainic et al.~\cite{crainic-extreme-points}. In its standard formulation, when a rectangular item is packed, new insertion candidates are generated by projecting its top and right coordinates along the orthogonal axes until they intersect either the boundaries of an adjacent item or the container walls. 
+Spatial allocation inside the page canvas builds upon the foundational Extreme Points (EPs) paradigm introduced by Crainic et al.~\cite{crainic-extreme-points}. In its standard formulation, when a rectangular item is packed, new insertion candidates are generated by projecting its top and right coordinates along the orthogonal axes until they intersect either the boundaries of an adjacent item or the container walls.
 
-In \methodName, this step needs to be adapted to consider the implicit page grid. To ensure that the dynamically computed positions adhere perfectly to the pre-engineered structural rules of the template catalog, the engine introduces a localized alignment shift during point generation. Specifically, when an article $i$ is successfully committed at coordinates $(x, y)$, the baseline extreme points are shifted by horizontal and vertical separation offsets, also known as \emph{gutters} in the newspaper design industry ($\gutter{x}, \gutter{y}$):
+First, the list of available Extreme Points $\extremepointset$ is initially seeded with the page origin $\extremepointset = \{(0,0)\}$. 
+
+To maintain a valid and compact search space, the candidate point list $\extremepointset$ is continuously pruned by eliminating coordinates that fall outside the page bounds $(\Weff, \Heff)$ or land inside already allocated articles. The remaining valid points within $\extremepointset$ are sorted following a canonical Bottom-Left priority sequence: any generic candidate point $P = (x_P, y_P) \in \extremepointset$ is ordered ascending by its vertical coordinate $y_P$, breaking ties by its horizontal coordinate $x_P$.
+
+While the previous formulation corresponds to the standard approach proposed by Crainic et al.~\cite{crainic-extreme-points}, in \methodName, this step needs to be adapted to consider the grid imposed by $\colsize$ and $\gutter$. This is already taken into account by the template dimensions (as mentioned in \secref{sec:template-definition}), but is also necessary that the packing decoder engine introduces a localized alignment shift during point generation to respect the $\gutter$. Specifically, when an article $\articleobj{i}$ is successfully committed to an x-coordinate $\xcoord{i}$, the baseline extreme points are shifted by the $\gutter$ offset:
 \begin{equation}
-P_1 = (x + \Wtemp{\templatesel{i}} + \gutter{x}, y), \quad P_2 = (x, y + \Hscaled{\templatesel{i}} + \gutter{y})
+\xcoorgutter{i} = (\xcoord{i} + \Wtemp{\templatesel{i}} + \gutter, y)
 \end{equation}
-The list of available Extreme Points $\mathcal{P}$ is initially seeded with the page origin $\mathcal{P} = \{(0,0)\}$. 
 
-To maintain a valid and compact search space, the candidate point list $\mathcal{P}$ is continuously pruned by eliminating coordinates that fall outside the page bounds $(\Weff, \Heff)$ or land inside already allocated articles. The remaining valid points within $\mathcal{P}$ are sorted following a canonical Bottom-Left priority sequence: any generic candidate point $P = (x_P, y_P) \in \mathcal{P}$ is ordered ascending by its vertical coordinate $y_P$, breaking ties by its horizontal coordinate $x_P$.
 
 
 
@@ -164,7 +167,7 @@ To maintain a valid and compact search space, the candidate point list $\mathcal
 The packing engine strictly enforces the sequential order dictated by the evolutionary permutation segment $\chromosomePermutationSegment$. Considering this, the packing decoder engine processes the sequence through a dynamic prefix-slicing mechanism, as formalized in Algorithm~\ref{alg:packing_decoder}. At any point during execution, a tracking index divides the permutation into already packed items and a sub-sequence of remaining unplaced articles. The engine's objective is to isolate and accommodate the largest possible continuous block/prefix of these remaining articles in the page canvas, starting exactly from the tracking index. Crucially, maximizing this prefix size directly minimizes empty or unallocated remnants on the page canvas, thereby significantly optimizing the wasted space objective ($\objone$).
 
 
-To determine if a targeted prefix can fit within the current page, the engine invokes an exhaustive recursive backtracking solver, structured in Algorithm~\ref{alg:solve_recursive}. For a given batch, the solver processes the articles sequentially, evaluating them against the sorted extreme points list $\mathcal{P}$. It attempts to position the current item on the first available candidate point; if the item respects the page boundaries and yields zero spatial overlap, the placement is provisionally committed. The extreme points list $\mathcal{P}$ is then updated, and the solver recursively calls itself to place the next article in the batch. If a downstream article cannot be accommodated on any valid point, the routine backtracks, uncommitting the immediate predecessor to explore alternative spatial configurations across $\mathcal{P}$. If the solver exhaustively explores all combinations and returns a global failure for that prefix, the outer loop decrementally reduces the batch size by one article and re-tests this smaller prefix on the same page, as outlined in Algorithm~\ref{alg:packing_decoder}. This decremental reduction repeats until a viable prefix successfully converges. Once a batch is committed, if there are still remaining unplaced items left in $\chromosomePermutationSegment$, the engine instantiates a new empty page, updates the tracking index, and restarts the cycle.
+To determine if a targeted prefix can fit within the current page, the engine invokes an exhaustive recursive backtracking solver, structured in Algorithm~\ref{alg:solve_recursive}. For a given batch, the solver processes the articles sequentially, evaluating them against the sorted extreme points list $\extremepointset$. It attempts to position the current item on the first available candidate point; if the item respects the page boundaries and yields zero spatial overlap, the placement is provisionally committed. The extreme points list $\extremepointset$ is then updated, and the solver recursively calls itself to place the next article in the batch. If a downstream article cannot be accommodated on any valid point, the routine backtracks, uncommitting the immediate predecessor to explore alternative spatial configurations across $\extremepointset$. If the solver exhaustively explores all combinations and returns a global failure for that prefix, the outer loop decrementally reduces the batch size by one article and re-tests this smaller prefix on the same page, as outlined in Algorithm~\ref{alg:packing_decoder}. This decremental reduction repeats until a viable prefix successfully converges. Once a batch is committed, if there are still remaining unplaced items left in $\chromosomePermutationSegment$, the engine instantiates a new empty page, updates the tracking index, and restarts the cycle.
 
 Crucially, the total number of pages is simply reported as an output of the decoding phase; the responsibility of enforcing the hard constraints and discarding or penalizing the solution for exceeding the single-page limit rests exclusively with the evolutionary optimization engine. Also, this recursive mechanism remains computationally tractable in practice because the linear $\mathcal{O}(n)$ extreme-point update sequence operates over a strictly bounded number of articles per page ($n < 9$ within the operational editorial domain).
 
@@ -188,10 +191,10 @@ Crucially, the total number of pages is simply reported as an output of the deco
     
     \WHILE{$\text{batch\_size} > 0$ \AND \NOT $\text{success}$}
         \STATE $\text{batch} \leftarrow \chromosomePermutationSegment[\text{tracking\_index} \dots \text{tracking\_index} + \text{batch\_size} - 1]$
-        \STATE $\mathcal{P} \leftarrow \{(0,0)\}$ \COMMENT{Page origin}
+        \STATE $\extremepointset \leftarrow \{(0,0)\}$ \COMMENT{Page origin}
         \STATE $\text{page\_layout} \leftarrow \emptyset$
         
-        \STATE $\text{success} \leftarrow \textsc{SolveRecursive}(1, \text{batch}, \text{page\_layout}, \mathcal{P}, \text{page\_count})$
+        \STATE $\text{success} \leftarrow \textsc{SolveRecursive}(1, \text{batch}, \text{page\_layout}, \extremepointset, \text{page\_count})$
         
         \IF{$\text{success}$}
             \STATE $\mathcal{S} \leftarrow \mathcal{S} \cup \text{page\_layout}$
@@ -214,7 +217,7 @@ Crucially, the total number of pages is simply reported as an output of the deco
 \caption{Recursive Spatial Placement Solver (\textsc{SolveRecursive})}
 \label{alg:solve_recursive}
 \begin{algorithmic}[1]
-\REQUIRE Input index $\text{idx}$, targeted $\text{batch}$, current $\text{page\_layout}$, sorted extreme points list $\mathcal{P}$, and $\text{page\_id}$.
+\REQUIRE Input index $\text{idx}$, targeted $\text{batch}$, current $\text{page\_layout}$, sorted extreme points list $\extremepointset$, and $\text{page\_id}$.
 \ENSURE $\text{TRUE}$ if configuration is successful, $\text{FALSE}$ otherwise.
 
 \IF{$\text{idx} > |\text{batch}|$}
@@ -225,7 +228,7 @@ Crucially, the total number of pages is simply reported as an output of the deco
 \STATE $w \leftarrow \Wtemp{\templatesel{i}}$
 \STATE $h \leftarrow \Hscaled{\templatesel{i}}$
 
-\FORALL{candidate point $P = (x_P, y_P) \in \mathcal{P}$}
+\FORALL{candidate point $P = (x_P, y_P) \in \extremepointset$}
     \IF{$x_P + w \le \Weff$ \AND $y_P + h \le \Heff$}
         \IF{\NOT $\textsc{CheckCollision}(x_P, y_P, w, h, \text{page\_layout}, \gutter{x}, \gutter{y})$}
             \STATE $\text{placement} \leftarrow \langle i, \text{page\_id}, x_P, y_P, w, h \rangle$
@@ -233,10 +236,10 @@ Crucially, the total number of pages is simply reported as an output of the deco
             
             \STATE $P_1 \leftarrow (x_P + w + \gutter{x}, y_P)$
             \STATE $P_2 \leftarrow (x_P, y_P + h + \gutter{y})$
-            \STATE $\mathcal{P}_{\text{next}} \leftarrow \mathcal{P} \cup \{P_1, P_2\}$
-            \STATE $\mathcal{P}_{\text{next}} \leftarrow \textsc{PruneAndSort}(\mathcal{P}_{\text{next}}, \text{page\_layout}, \Weff, \Heff)$
+            \STATE $\extremepointset_{\text{next}} \leftarrow \extremepointset \cup \{P_1, P_2\}$
+            \STATE $\extremepointset_{\text{next}} \leftarrow \textsc{PruneAndSort}(\extremepointset_{\text{next}}, \text{page\_layout}, \Weff, \Heff)$
             
-            \IF{$\textsc{SolveRecursive}(\text{idx} + 1, \text{batch}, \text{page\_layout}, \mathcal{P}_{\text{next}}, \text{page\_id})$}
+            \IF{$\textsc{SolveRecursive}(\text{idx} + 1, \text{batch}, \text{page\_layout}, \extremepointset_{\text{next}}, \text{page\_id})$}
                 \STATE \RETURN $\text{TRUE}$
             \ENDIF
             

@@ -25,48 +25,50 @@
 \newcommand{\widthForTwoBoxplot}{\widthForTwoImages}
 
 %DEFINITIONS
-
+% super script -> indicate something, use \text{}. sub script -> index.
 % --- 1. Global Instances, Sets and Sizes ---
 \newcommand{\instance}{\ensuremath{\mathcal{I}}}                % Problem instance I
 \newcommand{\page}{\ensuremath{P}}                         % Page configuration P
-\newcommand{\articleset}{\ensuremath{A}}                      % Set of articles A
-\newcommand{\templatecatalog}{\ensuremath{T}\xspace}                  % Template catalog T
-\newcommand{\numarticles}{\ensuremath{n}}                      % Number of articles n
-\newcommand{\catalogsize}{\ensuremath{|T|}}                    % Size of catalog |T|
-\newcommand{\solution}{\ensuremath{\mathcal{S}}}               % Solution layout S
+\newcommand{\articleset}{\ensuremath{\mathcal{A}}}                      % Set of articles A
+\newcommand{\templatecatalog}{\ensuremath{\mathcal{T}}\xspace}                  % Template catalog T
+\newcommand{\numarticles}{\ensuremath{|\articleset|}}                      % Number of articles n
+\newcommand{\catalogsize}{\ensuremath{|\templatecatalog|}}                    % Size of catalog |\mathcal{T}|
+\newcommand{\solution}{\ensuremath{S}}              % Solution layout S
 
 % --- 2. Global Page Canvas Geometry ---
-\newcommand{\Wpage}{\ensuremath{W_{pg}}}                       % Total page width
-\newcommand{\Hpage}{\ensuremath{H_{pg}}}                       % Total page height
-\newcommand{\mtop}{\ensuremath{m_{top}}}                       % Top margin
-\newcommand{\mbottom}{\ensuremath{m_{bottom}}}                 % Bottom margin
-\newcommand{\mleft}{\ensuremath{m_{left}}}                     % Left margin
-\newcommand{\mright}{\ensuremath{m_{right}}}                   % Right margin
-\newcommand{\Weff}{\ensuremath{W_{eff}}}                       % Effective printable width
-\newcommand{\Heff}{\ensuremath{H_{eff}}}                       % Effective printable height
+\newcommand{\Wpage}{\ensuremath{W}}                       % Total page width
+\newcommand{\Hpage}{\ensuremath{H}}                       % Total page height
+\newcommand{\mtop}{\ensuremath{M^{\text{top}}}}                       % Top margin
+\newcommand{\mbottom}{\ensuremath{M^{\text{bottom}}}}                 % Bottom margin
+\newcommand{\mleft}{\ensuremath{M^{\text{left}}}}                    % Left margin
+\newcommand{\mright}{\ensuremath{M^{\text{right}}}}                   % Right margin
+\newcommand{\Weff}{\ensuremath{W^{\text{eff}}}}                       % Effective printable width
+\newcommand{\Heff}{\ensuremath{H^{\text{eff}}}}                       % Effective printable height
+\newcommand{\colsize}{\ensuremath{G^{\text{col}}}}                       % Column width
+\newcommand{\gutter}{\ensuremath{G^{\text{gutter}}}}                       % Inter-column gutter
 
 % --- 3. Input Article Attributes (Argument: Article Index 'i') ---
 \newcommand{\articleobjnoindex}{\ensuremath{a}}
 \newcommand{\articleobj}[1]{\ensuremath{a_{#1}}}               % Article object a_i
-\newcommand{\Cart}[1]{\ensuremath{C_{art}^{(#1)}}}             % Character count of body text
-\newcommand{\Nimg}[1]{\ensuremath{N_{img}^{(#1)}}}             % Real number of images
-\newcommand{\Tlart}[1]{\ensuremath{Tl^{(#1)}}}                 % Boolean title flag for article
-\newcommand{\Stlart}[1]{\ensuremath{Stl^{(#1)}}}               % Boolean subtitle flag for article
-\newcommand{\Mainart}[1]{\ensuremath{M^{(#1)}}}                 % Hierarchy flag (Lead story)
+\newcommand{\Cart}[1]{\ensuremath{c_{#1}}}             % Character count of body text
+\newcommand{\Nimg}[1]{\ensuremath{n_{#1}}}             % Real number of images
+\newcommand{\Tlart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{tit}}}}    % Indicator title flag for article
+\newcommand{\Stlart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{sub}}}}   % Indicator subtitle flag for article
+\newcommand{\Mainart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{main}}}} % Indicator hierarchy flag (Lead story)
 
 % --- 4. Template and Zoning Attributes (Argument: Template Index 'j' or '\tau_i') ---
 \newcommand{\templateobj}[1]{\ensuremath{t_{#1}}}             % Template object t_j
-\newcommand{\Wtemp}[1]{\ensuremath{W_{#1}}}                    % Template nominal width
-\newcommand{\Htemp}[1]{\ensuremath{H_{#1}}}                    % Template nominal height
-\newcommand{\zoning}[1]{\ensuremath{\mathcal{Z}_{#1}}}         % Zoning topology Z_j
-\newcommand{\capacity}[1]{\ensuremath{\mathcal{C}^{(#1)}}}     % Text capacity mapping C^(j)
-\newcommand{\Nimgmax}[1]{\ensuremath{N_{m}^{(#1)}}}            % Maximum image slots
-\newcommand{\Tltemp}[1]{\ensuremath{Tl_{temp}^{(#1)}}}         % Template title block flag
+\newcommand{\Wtemp}[1]{\ensuremath{w_{#1}}}                    % Template nominal width
+\newcommand{\Htemp}[1]{\ensuremath{h_{#1}}}                    % Template nominal height
+\newcommand{\zoning}[1]{\ensuremath{\mathbf{z}_{#1}}}         % Zoning topology Z_j
+\newcommand{\capacity}[1]{\ensuremath{\mathbf{C}_{#1}}}     % Text capacity matrix C^(j)
+\newcommand{\Nimgmax}[1]{\ensuremath{n^{\text{max}}_{#1}}}            % Maximum image slots
+\newcommand{\Tltemp}[1]{\ensuremath{\bar{\mathbf{1}}_{#1}^{\mathrm{tit}}}} % Indicator template title block flag%
 
-% --- 5. Internal Zoning Blocks ---
+
 \newcommand{\zblock}[2]{\ensuremath{b}^{(#1)}_{#2}}                           % Internal block b
-\newcommand{\blockgeom}[1]{\ensuremath{\mathcal{G}_{#1}}}      % Block geometric shape G_b
-\newcommand{\blockfeat}[1]{\ensuremath{\mathcal{F}_{#1}}}      % Block semantic feature F_b
+\newcommand{\blockgeom}[1]{\ensuremath{(\tilde{x}_k^{(#1)}, \tilde{y}_k^{(#1)})_k}}
+\newcommand{\blockfeat}[1]{\ensuremath{\mathrm{class}_{#1}}}      % Block semantic feature F_b
 
 
 
@@ -129,44 +131,51 @@
 % --- 6. Decision Variables (Argument: Article Index 'i') ---
 \newcommand{\templatesel}[1]{\ensuremath{\tau_{#1}}}           % Chosen template ID \tau_i
 \newcommand{\posvar}[1]{\ensuremath{p_{#1}}}                   % Spatial position tuple p_i
-\newcommand{\xcoord}[1]{\ensuremath{\xi_{#1}}}                 % Continuous x coordinate \xi_i
-\newcommand{\ycoord}[1]{\ensuremath{\eta_{#1}}}                 % Continuous y coordinate \eta_i
+\newcommand{\xcoord}[1]{\ensuremath{x_{#1}}}                 % Continuous x coordinate \xi_i
+\newcommand{\ycoord}[1]{\ensuremath{y_{#1}}}                 % Continuous y coordinate \eta_i
 \newcommand{\pageindex}[1]{\ensuremath{\kappa_{#1}}}           % Page index assignment \kappa_i
 \newcommand{\elasticity}[1]{\ensuremath{e_{#1}}}               % Vertical elasticity level e_i
+\newcommand{\elasticityset}{\mathcal{E}}                   % Elasticity set E
 \newcommand{\kactive}[1]{\ensuremath{k_{#1}}}                 % Selected active images count k_i
 
 % --- 7. Derived Layout Variables (Argument: Article Index 'i') ---
-\newcommand{\Hscaled}[1]{\ensuremath{H'_{#1}}}                 % Effectively scaled height H'_i
-\newcommand{\bbox}[1]{\ensuremath{\mathcal{R}_{#1}}}           % 2D Bounding box rectangle R_i
+\newcommand{\Hscaled}[1]{\ensuremath{\eta_{#1}}}                 % Effectively scaled height H'_i
+\newcommand{\bbox}[1]{\ensuremath{\textrm{bbox}_{#1}}}           % 2D Bounding box rectangle R_i
 
 % --- 8. Multi-Objective Vectors and Functions ---
-\newcommand{\objvector}[1]{\ensuremath{\mathbf{F}(#1)}}        % Vector of objectives F(S)
-\newcommand{\objone}{\ensuremath{f_1}}                         % Objective f_1 (Page occupation)
-\newcommand{\objtwo}{\ensuremath{f_2}}                         % Objective f_2 (Editorial/GWES)
-\newcommand{\objthree}{\ensuremath{f_3}}                       % Objective f_3 (Text capacity)
-\newcommand{\objfour}{\ensuremath{f_4}}                        % Objective f_4 (Alignment/Zoning)
+\newcommand{\objvector}[1]{\ensuremath{\mathbf{f}(#1)}}        % Vector of objectives F(S)
+\newcommand{\objone}{\ensuremath{f^{\textrm{cov}}}}                         % Objective f_1 (Page occupation)
+\newcommand{\objtwo}{\ensuremath{f^{\textrm{sty}}}}                         % Objective f_2 (Editorial/GWES)
+\newcommand{\objthree}{\ensuremath{f^{\textrm{cap}}}}                       % Objective f_3 (Text capacity)
+\newcommand{\objfour}{\ensuremath{f^{\textrm{pos}}}}                        % Objective f_4 (Positioning)
 
 % --- 9. Dynamic Capacity Bounds (Arguments: Template Index 'j', Active Images 'k') ---
-\newcommand{\Cmin}[2]{\ensuremath{C_{min}^{(#1, #2)}}}         % Lower bound text capacity
-\newcommand{\Cmax}[2]{\ensuremath{C_{max}^{(#1, #2)}}}         % Upper bound text capacity
+%\newcommand{\Cmin}[2]{\ensuremath{C^{\textrm{min}}_{(#1, #2)}}}         % Lower bound text capacity
+%\newcommand{\Cmax}[2]{\ensuremath{C^{\textrm{max}}_{(#1, #2)}}}         % Upper bound text capacity
 
-\newcommand{\penobjthree}[1]{P_{text}^{(#1)}}
+\newcommand{\penobjthree}[1]{\ensuremath{\objthree_{#1}}}
+\newcommand{\objthreeepsilon}{\ensuremath{\epsilon^{\textrm{cap}}}} % Tolerance factor for text capacity penalty
+
+\newcommand{\Klower}{\ensuremath{K^{\textrm{lower}}}} % Lower capacity penalty coefficient
+\newcommand{\Kupper}{\ensuremath{K^{\textrm{upper}}}} % Upper capacity penalty coefficient
 % --- \objfour (Alignment and privileged zone) ---
 
 % Penalizaciones principales y pesos
-\newcommand{\HCZ}{\ensuremath{\text{HCZ}}}                     % Penalty Heading Critical Zone
-\newcommand{\VA}{\ensuremath{\text{VA}}}                       % Penalty Vertical Alignment
-\newcommand{\betaweight}{\ensuremath{\beta}}                   % beta weight
+\newcommand{\HCZ}{\ensuremath{f^{\textrm{hcz}}}}                     % Penalty Heading Critical Zone
+\newcommand{\VA}{\ensuremath{f^{\textrm{va}}}}                       % Penalty Vertical Alignment
+\newcommand{\betaweight}{\ensuremath{\beta^{\textrm{pos}}}}                   % beta weight
 
 % Zona Crítica y Funciones de Área
 \newcommand{\Zcrit}{\ensuremath{\mathcal{Z}_{crit}}}           % Critical zone
-\newcommand{\Area}[1]{\ensuremath{\text{Area}\left(#1\right)}} % Area function of polygon/box
+\newcommand{\Area}[1]{\ensuremath{\textrm{Area}\left(#1\right)}} % Area function of polygon/box
 
 % Distances
 \newcommand{\deltaytop}[2]{\ensuremath{\Delta y_{top}(#1,#2)}}       %top distance
 \newcommand{\deltaybottom}[2]{\ensuremath{\Delta y_{bottom}(#1,#2)}} %bottom distance
 
-\newcommand{\threshalign}{\ensuremath{\theta}}                 % theta threshold
+\newcommand{\threshalignlower}{\ensuremath{\theta^{\textrm{lower}}}}         
+\newcommand{\threshalignupper}{\ensuremath{\theta^{\textrm{upper}}}}             
+
 \newcommand{\deltaalign}[1]{\ensuremath{\delta\left(#1\right)}} % delta(d)
 
 \newcommand{\alignmentScalingParameter}{A}
@@ -181,9 +190,9 @@
 \newcommand{\neuralmethod}{GWES\xspace}
 \newcommand{\NeuralMethod}{Geometric-Weighted Editorial Score\xspace}
 
-
-\newcommand{\gmnMatrix}{\mathbf{M}_{\text{GMN}}}
-\newcommand{\sigmagmn}{\sigma_{\text{GMN}}}
+\newcommand{\transformerMatrix}{\mathbf{M}^{\textrm{TE}}}
+\newcommand{\gmnMatrix}{\mathbf{M}^{\textrm{GMN}}}
+\newcommand{\sigmagmn}{\sigma^{\textrm{GMN}}}
 
 \newcommand{\chromosome}{\mathbf{c}}
 \newcommand{\chromosomeTemplateSegment}{\mathbf{t}}
@@ -191,17 +200,23 @@
 \newcommand{\chromosomeElasticitySegment}{\mathbf{e}}
 
 
-\newcommand{\popsize}{P}
+\newcommand{\popsize}{\ensuremath{t^{\textrm{pop}}}}
 
-\newcommand{\ngen}{N_{gen}}
+\newcommand{\ngen}{\ensuremath{n^{\textrm{gen}}}}
 
 
 %%%%%% MUtation
 
-\newcommand{\globalmutationprob}{w_{\text{mut}}}
+\newcommand{\globalmutationprob}{w_{\textrm{mut}}}
 \newcommand{\mutationprob}[1]{w_{#1}}
 
+%%%%%%% decoder engine
 
+\newcommand{\xcoorgutter}[1]{(\xcoord{#1})^{\gutter}}
+\newcommand{\ycoorgutter}[1]{(\ycoord{#1})^{\gutter}}
+
+
+\newcommand{\extremepointset}{\mathcal{X}}
 
 %%%%%%%% RNSGA %%%%%
 
@@ -209,7 +224,6 @@
 
 %%%%%%%%% packing engine %%%%%%
 
-\newcommand{\gutter}[1]{g_{#1}}
 
 
 %%%%%%% results %%%%%%

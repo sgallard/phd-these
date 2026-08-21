@@ -24,14 +24,14 @@ The computational environments are strictly partitioned according to their opera
 \subsection{Dataset and Instance Setup}
 \label{subsec:dataset_characterization}
 
-To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using the same dataset indicated in Chapter~\ref{sec:gwes-evaluation}, coming from the french newspaper group La Provence~\cite{laprovence}. This dataset  serves a dual purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
+To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using \laprovence archive (\secref{sec:laprovence}). This dataset  serves a dual purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
 
 
 %%%%%%%%% Hyperparameters U%%%%%%%%%%%%%
 \subsection{Hyperparameter Configuration}
 \label{subsec:hyperparameter_calibration}
 
-The operational parameters governing the evolutionary engine were calibrated through extensive empirical pilot studies and operational stress tests over the specified dataset. 
+The operational parameters governing the evolutionary engine were calibrated through extensive empirical pilot studies, operational stress tests, and more importantly, definitions coming from focus-groups with \melody experts. 
 
 The finalized calibrated parameters are structured in Table~\ref{tab:algorithmic_parameters}.
 
@@ -42,14 +42,18 @@ The finalized calibrated parameters are structured in Table~\ref{tab:algorithmic
 \hline
 \textbf{Parameter Description} & \textbf{Symbol / Notation} & \textbf{Calibrated Value} \\ \hline
 \multicolumn{3}{l}{\textit{A. Objective Function \& Penalty Coefficients}} \\ \hline
-Weight parameter for \objfour & \betaweight & 0.5 \\
-Lower capacity text penalty coef. & $K_{\text{lower}}$ & 5 \\
-Upper capacity text penalty coef. & $K_{\text{upper}}$ & 10 \\
+Elasticity set & $\elasticityset$ & $\{-15, -10, -5, 0, 5, 10, 15\}$ \\
+Epsilon tolerance for \objthree & $\objthreeepsilon$ & 0.1 \\
+Weight parameter for \objfour & $\betaweight$ & 0.5 \\
+Lower capacity text penalty coef. & $\Klower$ & 5 \\
+Upper capacity text penalty coef. & $\Kupper$ & 10 \\
 Edge-alignment scaling parameter & $\alignmentScalingParameter$ & 5 \\
+Lower threshold for alignment penalization zone & $\threshalignlower$ & 0.006 \\
+Upper threshold for alignment penalization zone & $\threshalignupper$ & 0.3 \\ \hline
 LayoutGMN kernel smoothing parameter & $\sigmagmn$ & 0.5 \\ \hline
 \multicolumn{3}{l}{\textit{B. NSGA-III/RNSGA-III Parameters}} \\ \hline
 Number of reference directions for  \methodNameUniform & --- & 10 \\
-Population size for \methodNameUniform & \popsize & 286 \\
+Population size for \methodNameUniform & $\popsize$& 286 \\
 Radius around aspiration points in \methodName & $\RNSGAradius$ & 0.15 \\
 Total Population size for  \methodName & $\popsize_{R}$ &  330 \\
 Number of Generations & $\ngen$ &  300\\

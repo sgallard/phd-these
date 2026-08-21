@@ -1,11 +1,19 @@
-\section{Formal Definitions}
+\section{Automated page layout generation: a multi-objective challenge}
+\label{sec:pagegen-challenge}
 
-The following definitions relies on establishing a mapping between unstructured articles and templates. Within this formulation, the problem is defined through the interaction of three core entities: articles, templates, and the page canvas. 
+While Chapter~\ref{chapter:template} focused on retrieving templates in two contexts (isolated-article and page-aware template assignment), an automated newspaper production workflow requires not only that, but also synthesizing an entire array of unstructured web articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ onto a  page canvas $\page$. Automating this process accelerates production cycles and reduces manual pre-press overhead. However, generating professionally balanced multi-article pages automatically presents computational challenges that far exceed single-article selection.
 
-An article represents the raw content, considering different element types (body text, title, images, etc), but completely lacking any pre-defined spatial dimensions or topology. 
+At its core, this problem relies on establishing a structural mapping between unstructured web articles and templates. Within this formulation, the page layout generation process is defined through the interaction of three core entities:
+\begin{itemize}
+    \item \textbf{Articles ($\articleobj{i} \in \articleset$):} An article represents the raw content, considering different element types (body text, headline, subtitle, images, main article flag), but completely lacking any pre-defined spatial dimensions or layout topology.
+    \item \textbf{Templates ($\templateobj{j} \in \templatecatalog$):} A template acts as a structured predefined layout selected from a catalog; it provides the structural geometry and semantic classes that dictates how headlines, images, and text columns are arranged relative to each other.
+    \item \textbf{Page Canvas ($\page$):} The page canvas defines the physical target spread and grid boundaries where articles must be placed and rendered.
+\end{itemize}
 
-Conversely, a template acts as a structured predefined layout selected from a catalog; it provides the structural skeleton (or zoning topology) that dictates how headlines, images, and text columns are arranged relative to each other.
+Consequently, the proposed problem consists of \textbf{concurrently solving a template assignment challenge and a two-dimensional packing problem}. For a given set of input articles $\articleset$, a valid solution requires mapping each article $\articleobj{i}$ to an appropriate template $\templateobj{j}$ from the catalog $\templatecatalog$, and discovering an optimal spatial configuration on the page canvas $\page$ that prevents overlaps, respects page boundaries, and maximizes visual quality.
 
-Consequently, the proposed problem consists of \textbf{concurrently solving a template assignment challenge and a two-dimensional packing problem}. For a given set of input articles, a valid solution requires mapping each article to an appropriate template from the catalog, and discovering an optimal spatial configuration on the page space that prevents overlaps, respects page boundaries, and maximizes visual quality.
+Compounding this dual challenge is the fact that page layout quality cannot be evaluated through a single scalar metric. Page synthesis is inherently governed by multiple, conflicting design criteria. A production-ready page must simultaneously maximize spatial page occupation efficiency, preserve historical editorial selection of templates, maintain character text capacity integrity $\capacity{i}$, and enforce journalistic hierarchy alongside geometric edge alignments. Optimizing one criterion frequently degrades another; for instance, tightly packing containers to eliminate unallocated white space may force the main lead article out of a desired privileged position, or assign a template that severely violates body text capacity bounds $\capacity{i}$.
+
+Because coupling discrete template selections with a two-dimensional packing problem induces an exponential combinatorial explosion, exact global optimization quickly becomes intractable. To address this NP-hard challenge, this chapter models full page layout synthesis as a Multi-Objective Combinatorial Optimization Problem (MOCOP) and introduces a hybrid neural-evolutionary framework to solve it.
 
 

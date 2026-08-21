@@ -1,25 +1,23 @@
 \section{Automatic template retrieval: a dual challenge}
+\label{section:template-retrieval-dual-challenge}
 
-Talk about why is important to optimize this process, focusing 
-here only on the retrieval of templates, not the whole generation and
-pipeline presented before
+In modern digital-to-print publishing workflows (such as the one presented for \melody), transitioning from unstructured web articles to professionally formatted print layouts relies fundamentally on templates. As defined in Chapter~\ref{chapter:definitions}, an article template $\templateobj{j} \in \templatecatalog$ provides the structural and geometric skeleton that dictates how headlines, body text, and visual assets are spatially arranged. While full page generation involves placing multiple elements simultaneously onto a page canvas, template selection at the individual article level constitutes a core building block of the entire pipeline. Automating this retrieval process reduces manual design overhead and accelerates print production. However, selecting optimal templates from extensive, highly redundant industrial catalogs presents significant algorithmic challenges that extend beyond basic rule-based filtering.
 
-Define formally the problem, which requires to obtain a single or a set of templates 
-that follow the web article content/requirements, and also that are both not 
-so similar between them and also follow's historical usage (popularity).
-
-To check if they are similar between them, it requires to understand, model and create a 
-similarity metric of templates based on their internal organization (topology)
-
-This task can be solved in two different contexts:
-
+Formally, given a web article $\articleobj{i} = \langle \Cart{i}, \Nimg{i}, \Tlart{i}, \Stlart{i}, \Mainart{i} \rangle$ and an extensive template catalog $\templatecatalog$, the template retrieval problem aims to return a small candidate set of templates $\recolist{N} \subset \mathcal{T}$ of size $N$ that simultaneously satisfies three fundamental requirements:
 \begin{enumerate}
-    \item Retrieve templates  in an isolated setup, i.e. a single template for a single article, following the requirements above.
-    This works as a retrieval system to assist the selection of templates, in a stage where no full page is planned yet, or as a isolated
-    module to deploy in \melody.
-
-    \item Retrieve templates, but this time in a global page-aware context,
-     where the choice of one article impacts the other articles in the same page. 
-     This is the context where our page generation method  and the web to print pipeline 
-     works.
+    \item \textbf{Content Admissibility and Relevance:} Every retrieved template $t_j$ must satisfy the strict structural and technical constraints dictated by article $\articleobj{i}$. This includes matching available image slots, headline presence, and body text capacity bounds. Furthermore, retrieved candidates should align with historical editorial usage practices.
+    
+    \item \textbf{Structural Diversity:} The retrieved set $\recolist{N}$ must exhibit meaningful architectural variety. Retrieved candidates must vary significantly in their internal topology $\zoning{j}$, rather than representing minor geometric variations of the same underlying template.
+    
+    \item \textbf{Popularity Bias Mitigation (Long-Tail Coverage):} Industrial template repositories exhibit severe popularity bias, where a small fraction of dominant templates accounts for the vast majority of historical selections. This creates a steep long-tail distribution where a large repository of potentially optimal and structurally unique alternatives remains underutilized. The retrieval mechanism must actively mitigate this bias to surface relevant long-tail alternatives.
 \end{enumerate}
+
+To evaluate structural diversity effectively, retrieval systems cannot rely on flat metadata or coordinate-based distance metrics, which fail to capture topological arrangements and internal block configurations. Instead, this task requires understanding, modeling, and quantifying template similarity based on internal zoning topology $\zoning{j}$. This requirement motivates the development of topology-aware layout similarity metrics, such as the Graph Matching Network-based metric $\gmn(\cdot, \cdot)$ established in Chapter~\ref{section:modelling-similarity}.
+
+Depending on the operational scope and the stage of the publishing workflow, this structure-aware retrieval problem can be formulated and solved in two distinct contexts:
+\begin{enumerate}
+    \item \textbf{Isolated Single-Article Retrieval Setup:} In this setup, template retrieval operates on an isolated article $\articleobj{i}$ without considering surrounding page arrangements. The objective is to retrieve a diverse, content-compatible candidate set $\recolist{N}$ to assist human designers during early-stage layout planning or to serve as an independent recommendation module deployed in \melody. This isolated setting is addressed in Chapter~\ref{section:template-retrieval-single-article} through the Template Retrieval System (\trs) and its diversity-aware framework (TRF).
+    
+    \item \textbf{Global Page-Aware Setup (Contextual Scoring):} In this setup, template evaluation operates within a global page context containing a set of articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ assigned to a unified page canvas $\page$. In this page-level context, explicit structural diversity and long-tail coverage become secondary to evaluating editorial harmony, as selecting a template $\templatesel{i}$ for article $\articleobj{i}$ directly influences the visual balance and style of neighboring articles. Rather than constructing a standalone multi-candidate retrieval framework for page-level selection, this setup focuses on modeling and scoring contextual editorial compatibility through the \NeuralMethod (\neuralmethod) metric, detailed in Chapter~\ref{sec:gwes}. The output of this page-aware context is a contextual probability matrix that scores template suitability across the catalog for each article given its neighbors, which subsequently serves as the surrogate evaluation engine for multi-objective page generation in Chapter~\ref{chapter:pagegen}. It should be noted that this metric could seamlessly be used to build an analogous retrieval setup that fulfills the three aforementioned requirements; therefore, nothing is lost by focusing this section exclusively on the formulation of the metric itself.
+\end{enumerate}
+

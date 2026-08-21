@@ -6,66 +6,149 @@
 \section{Newspaper Design: General Context and Challenges}
 \label{section:newspaper-design}
 
+The digital era had completely transformed the newspaper industry, by introducing a wide array of new user experiences across various platforms, including online websites, mobile devices, tablets, and digital kiosks~\cite{citexx, citexx}. While this digital transition offers unprecedented opportunities for real-time content distribution and personalization, it simultaneously confronts publishers and layout designers with a significant design challenge ~\cite{IAN04, HKRA11}. The core difficulty lies in successfully translating the established design rules, visual hierarchy, and aesthetics of printed editions ~\cite{GG17, Ges18} into highly functional, dynamic digital formats.
+
+The ultimate objective of this transformation is to create an e-newspaper that makes a seamless synthesis based on usability, reading comfort, and reader engagement~\cite{HKRA11, Mor16, NV18}. To bridge the quality gap between modern online news and traditional printed newspapers, the industry must carefully navigate the ongoing evolution of its commercial strategies and technological frameworks. The following subsections detail how this digital shift has impacted the press business model and evaluate the current layout tools and paradigms used to bring news to digital screens.
+
 \subsection{Business Model and Revenue Streams in the Digital Era}
 
-\subsection{Newspaper Design: Tools and Paradigms}
-Talk about how now designers follow a content-based approach, instead of layout-based in the previous era.
+
+The transition from print to digital media has profoundly disrupted the traditional business model of the press industry. While revenues historically relied on single-copy newsstand sales and print advertising~\cite{placeholder-historical-revenue}, modern publishing models have increasingly pivoted toward subscription-driven strategies. Today, subscriptions represent the dominant revenue stream across both digital and physical platforms, accounting for more than XX\% of total industry revenues~\cite{placeholder-world-news-congress-2026, other-about-subs}, with physical print editions frequently positioned or bundled as premium offerings. Consequently, publishers are compelled to innovate and adapt their production and content delivery workflows to sustain profitability across an evolving multi-platform landscape.
+
+However, it is crucial to note that the physical format and its traditional layout are far from obsolete. As highlighted by industry experts at the World News Congress 2026 in Marseille, print media continues to thrive globally, particularly in regions such as the Middle East and markets with lower web adoption rates~\cite{placeholder-world-news-congress-2026}. Furthermore, the value of the newspaper layout extends far beyond physical paper~\cite{context-thesis, scientific-presentation}. The enduring relevance of the spatial arrangement of news is rooted in its proven cognitive and navigational advantages. Unlike linear digital feeds, layout-based media distribute information across multiple spatially distinct blocks, providing readers with structural awareness and a global overview of the content. Entry points such as headlines, subheadings, and visual cues guide attention, foster serendipity, and shape content consumption in ways unique to these documents~\cite{paper-magnification-user-study}. Simply linearizing articles for responsive digital screens discards the two-dimensional spatial organization that characterizes editorial design. Therefore, the challenge for the industry is not to abandon the layout, but to translate its two-dimensional richness into various physical and digital formats without degrading the reading experience.
+
+This challenge is further compounded by the critical need for accessibility, which represents both a societal imperative and a substantial economic factor. Current digital reading paradigms often fail to accommodate readers with visual constraints, such as the more than 180 million people globally experiencing low vision~\cite{low-vision}. When traditional layouts are merely shrunk to fit digital screens, entry points become illegible, forcing readers to rely on gesture-based magnification that fragments the global view and disrupts the natural reading path~\cite{paper-magnification-user-study}. Ensuring equitable access requires generating specialized formats, such as large-print editions~\cite{large-print} that adapt typography while preserving the fundamental 2D spatial paradigm and editorial hierarchy, or magnification tools to access the standard layout~\cite{paper-magnification-user-study}. Providing such an accessible, comfortable reading experience is essential for retaining readership and sustaining digital revenue streams~\cite{context-thesis, scientific-presentation}.
+
+Given these challenges and the need for diversification, publishers are forced to simultaneously produce multiple versions of the same publication: traditional print editions, standard digital layouts, responsive web content, and accessible large-print formats. Maintaining manual layout and pre-press processes to cater to all these variations is financially unsustainable and introduces significant production delays~\cite{preprint-magnification-algo}. To remain competitive, editors and designers face the urgent need to drastically reduce heavy production costs and pre-press bottlenecks. This economic pressure drives the industry toward the adoption of automated Software-as-a-Service (SaaS) Content Management Systems (CMS). 
+
+
+\subsection{Newspaper Design Paradigms: From Layout-Driven to Content-Driven Workflows}
+
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[draft,width=\widthForOneImage]{img/layout-driven-vs-content-driven.pdf}
+    \caption{Comparison of the layout-driven and content-driven paradigms in newspaper design. In the layout-driven approach, articles are written directly into predefined layouts, while in the content-driven approach, articles are created independently of their final layout, allowing for more flexible and efficient content management.}
+    \label{fig:layout-driven-vs-content-driven}
+\end{figure}
+
+
+The evolution of digital publishing has fundamentally altered not only business models but also the daily operational paradigms of newsroom production. Historically, print journalism was tightly coupled with the physical page format. Under this traditional ``layout-driven'' approach~\cite{digitizing-news}, journalists wrote articles directly into predefined layouts governed by the physical spatial boundaries of the printed sheet (\figref{fig:layout-driven-vs-content-driven}a). While this spatial constraint strictly bounded the volume of articles and guided the writing process according to fixed geometric containers, it ensured that layout composition occurred synchronously during content creation.
+
+The rise of digital media shifted newsroom operations toward a ``content-driven'' workflow, as illustrated in \figref{fig:layout-driven-vs-content-driven}b. In modern multi-platform newsrooms, raw editorial content (text, headlines, and multimedia assets) is logically decoupled from its final geometric representation. Journalists operate under a ``web-first'' paradigm, authoring stories for digital platforms without initial physical layout boundaries. While this shift dramatically increased publication speed and article volume, it introduced a major operational challenge for layout-based formats~\cite{newspaper_design_book, newman2024}. Unstructured, fluid web content must now be retroactively re-fitted into structured two-dimensional layouts for print and digital layout-based editions.
+
+Re-assembling web articles into structured two-dimensional print canvases represents a significant operational hurdle within modern publishing environments. Because content no longer carries inherent geometric boundaries, editorial teams must rely heavily on Content Management Systems (CMS) to format, organize, and assemble this unconstrained content into publication-ready pages~\cite{newspaper_design_book, wagner_trends_2017}. Understanding this transition from layout-driven to content-driven workflows is essential, as it defines the exact environment in which modern CMS platforms operate and sets the stage for evaluating current industrial solutions.
+
 
 \section{\melody: A french state-of-the-art software for newspaper design}
+\subsection{Presentation of the company Demain Un Autre Jour and its software \melody}
 
-\subsection{Presentation of the company \melody and its software}
 
-Include a description of the company \melody and its software, including its history, mission, and the main features of the software.
+Demain Un Autre Jour (DAJ) is a French software publisher specializing in digital technologies for the creation, structuring, transformation, and multi-channel distribution of editorial content~\cite{context-thesis-placeholder}. Led by CEO Bruno Génuit, an industry expert with over 25 years of experience in press digitalization and editorial workflow management (including prior leadership roles at Ouest-France and IFRA)~\cite{context-thesis}, the company provides software solutions to press organizations, publishing houses, and media groups. The company's flagship product, \melody, was conceived as an intuitive, human-centered Content Management System (CMS) specifically engineered for journalists, correspondents, and newsroom operators~\cite{context-thesis}. DAJ's primary mission is to streamline the editorial value chain, enabling media organizations to store, reference, and manage their complete information assets, including text streams, photographs, audio, and video, without volume limitations across physical and digital channels~\cite{context-thesis}.
 
-Also include if possible a software architecture diagram of the software, and a description of the main components and their interactions.
+Operating as a web-native Software-as-a-Service (SaaS) platform, \melody provides a collaborative environment accessible through standard web browsers. Currently deployed across more than 150 newsrooms of varying scales, including major french digital deployments such as \emph{Actu.fr}, the software manages the end-to-end editorial chain from content creation to final publication~\cite{context-thesis}. The platform's industrial reliability is reflected in its high adoption rate, with over 95\% of prospective clients transitioning to the solution after peer evaluations with active newsrooms~\cite{report-melody}. 
 
-\subsection{Newspaper elements and its properties}
+From an architectural perspective, \melody relies on automated transformation engines that convert native layout formats (such as Adobe InDesign) and legacy digitized archives into fully structured, semantically tagged XML documents~\cite{context-thesis}. This structured XML foundation enables the logical decoupling of raw editorial content from its geometric layout representation, facilitating multi-channel (web and print) editing across web and mobile platforms. Thanks to this architecture, \textbf{\melody has the ability to bridge digital and physical workflows, enabling editors to generate both web-responsive articles and print-ready newspaper pages} through a user-friendly interface, drastically reducing pre-press production delays~\cite{context-thesis}. 
 
-\begin{figure}[h]
+However, while \melody provides a robust web-native environment for web and print content management, bridging the gap from unstructured web articles back to formatted print pages has historically relied on labor-intensive, semi-manual processes. Although the system offers web-based editing tools that allow operators to format web articles into its print format, and drag-and-drop formatted articles into the page canvas to produce print-ready layouts directly within a browser interface, the workflow lacks automated decision-support mechanisms. Consequently, operators must manually  produce each page, an arduous task that currently requires hours of manual editing per publication.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includegraphics[draft, width=0.9\linewidth]{img/melody_manual_selection.png}
+        \caption{Web-based interface in \melody for manual article formatting.}
+        \label{fig:melody_manual_a}
+    \end{subfigure}
+    \vskip 0.8em
+    \begin{subfigure}[b]{\linewidth}
+        \centering
+        \includegraphics[draft, width=0.9\linewidth]{img/melody_pagegeneration.png}
+        \caption{Web-based interface in \melody for drag-and-drop page generation.}
+        \label{fig:melody_manual_b}
+    \end{subfigure}
+    \caption{Screenshots of the semi-manual web-to-print workflow within the \melody CMS, illustrating the operational bottleneck where operators manually format print pages.}
+    \label{fig:melody_manual_editing}
+\end{figure}
+
+
+
+
+
+
+\subsection{Specifications of the web-to-print workflow}
+\subsubsection{Basic elements}
+To understand the web-to-print workflow, it is necessary to first identify the fundamental structural primitives manipulated within the \melody CMS environment. To bridge unstructured digital news articles with structured physical  pages, the system relies on four core entities: the \emph{Page}, the \emph{Web Article}, the \emph{Template}, and the resulting \emph{Formatted Print Article}. \figref{fig:page-article-template} illustrates these entities.
+
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=\widthForOneImage]{img/page-article-template.pdf}
-    \caption{Problem input entities: (a) Page canvas $\page$ detailing the structural outer margins, (b) web article attributes $\articleobj{i} \in \articleset$, and (c) zoning topology and feature classes of a template $\templateobj{j} \in \templatecatalog$.}
+    \caption{Problem input entities: (a) Page canvas $\page$, (b) web article $\articleobj{i}$, and (c) template $\templateobj{j}$.}
     \label{fig:page-article-template}    
 \end{figure}
 
 
-\subsubsection{Page}
+\paragraph{Page.} Represents the global geometric container or physical canvas upon which editorial content is arranged. Industrially, a page is defined by its sheet boundaries, specifically its nominal width ($\Wpage$) and height ($\Hpage$), along with outer margins that delineate the effective printable area ($\Weff \times \Heff$), as shown in \figref{fig:page-article-template}. Within the \melody environment, the page canvas acts as a completely free-form spatial container. While visual guides and typographic grid indicators are available to assist operators during manual layout, the canvas area itself remains unconstrained, serving as the physical two-dimensional space where multiple articles, advertisements, and visual assets must be allocate (\figref{fig:melody_manual_a}).
 
-\subsubsection{Web article}
+\paragraph{Web article.} Represents an unformatted web article authored by journalists. Operating under a ``content-based'' paradigm, web articles exist purely as digital content streams without initial physical layout boundaries. Within the web-to-print workflow, each web article is defined by key metadata attributes extracted directly from the \melody database which provides its meta-characteristics to produce a formatted print version (\figref{fig:page-article-template}b): body text character count, total number of associated images, Boolean flags indicating headline or subtitle presence, and an editorial hierarchy flag designating whether the item serves as the main lead story or a secondary piece.
 
-\subsubsection{Template}
+\paragraph{Template.} A \emph{Template} acts as the architectural skeleton or pre-designed layout that converts an unformatted web article into a formatted, multi-column print article. Selected from an extensive catalog $\templatecatalog$ within \melody, a template dictates the internal spatial organization, topology, and geometric zoning of headlines, body text columns, photo placeholders, captions, etc. (\figref{fig:page-article-template}c). 
 
-
-
-
-
-
-\subsection{The print production workflow: from web articles to print pages}
+\paragraph{Formatted print article}
+As mentioned before, a \emph{formatted print article} represents the concrete instantiation that results from assigning a specific template to a web article.
 
 
 
+\subsubsection{The print production workflow: from web articles to print pages}
 
-\section{Motivation}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/workflow.pdf}
+    \caption{Overview of the semi-manual web-to-print workflow within the \melody CMS. The process begins with unformatted web articles, which are manually formatted into print-ready articles by assigning selected templates (Step 1). Finally, these formatted articles are arranged and placed onto the page canvas (Step 2) to produce the final print or replica layout.}
+    \label{fig:web-print-workflow}    
+\end{figure}
 
-Talk about optimizing and automatingthe print production workflow. Talk briefly about my vision on how this can be automated, using AI and combinatorial optimization techniques.
+To operationalize multi-channel publishing, CMS like \melody must bridge the gap between unformatted web content and rigid two-dimensional layouts. In \melody, this transition is executed through a semi-manual ``web-to-print'' workflow. This pipeline maps unstructured digital items into structured physical through a sequence of operational decisions. \figref{fig:web-print-workflow} provides a high-level overview of this workflow, illustrating how raw web content is progressively transformed into a finalized print layout.
 
-Talk about the impact of this optimization and automatization on the newspaper design process, including the potential benefits for designers and editors, and the corresponding improvement in the revenues without loosing
-quality of the produced pages.
+The workflow unfolds across three main sequential stages:
 
-Also, talk about a secondary application of this workflow that is also explored in this thesis: generation of large prints for visually impaired people. Talk about
-how this can be done by using the same techniques developed for the optimization and automatization of the print production workflow.
+\begin{enumerate}
+    \item \textbf{Web articles (Input):} Production begins with a collection of raw web articles. These articles exist purely as fluid digital content streams characterized by body text character counts, visual asset arrays, and metadata flags, but completely lacking spatial coordinates or internal zoning topology.
+    
+    \item \textbf{Template Selection and Article Formatting (Step 1):} To convert a fluid web article into a two-dimensional layout component, an operator must select an appropriate design template $\templateobj{j}$ from an extensive catalog $\templatecatalog$ within \melody. This selections binds the raw editorial text and multimedia assets into the template's pre-engineered zoning topology, instantiating a concrete formatted print article  with explicit geometric boundaries.
+    
+    \item \textbf{Page Allocation and Layout Building (Step 2):} Once individual articles are formatted into $n$ formatted components, the operator moves to the page assembly phase. In this step, the formatted articles must be manually allocated and positioned onto the free-form page canvas $\page$. The operator manually adjusts spatial arrangements to ensure that all elements fit within the printable bounds ($\Weff \times \Heff$), prevent spatial overlaps, and maintain visual alignment and journalistic hierarchy.
+\end{enumerate}
+
+Despite the web-native infrastructure provided by \melody, executing this workflow remains a highly labor-intensive process. Step~1 requires human operators to manually search through large template catalogs containing hundreds of highly similar options to find a compatible fit for each article. Subsequently, Step~2 obliges operators to perform complex manual spatial reasoning such as dragging, dropping, and adjusting layout blocks across free-form canvases to achieve a high quality layout without exceeding page constraints. As a result, assembling a single daily edition currently requires hours of dedicated manual editing per publication, creating a severe pre-press bottleneck that increases production costs and restricts operational agility.
+
+
+\section{Motivation and Objectives}
+
+\textbf{The primary objective of this thesis is to resolve the pre-press production bottleneck described in the previous sections by introducing intelligent, computational frameworks into the newspaper layout generation pipeline}. By integrating deep A.I and multi-objective combinatorial optimization, the proposed algorithms aim to automate the web-to-print and digital layout workflow. This approach seeks to accelerate page composition from hours of labor-intensive manual editing to a few minutes of automated execution, all while strictly preserving the visual identity, aesthetic standards, and editorial authority of the publication.
+
+From an industrial and operational perspective, automating layout generation fundamentally transforms the newsroom production model. By delegating repetitive geometric fitting, template selection, and spatial packing to computational engines, editors and layout designers are freed from mechanical constraints. Human expertise can thus be reallocated toward high-level creative curation, investigative journalism, and visual storytelling. Economically, this dramatic reduction in pre-press delays enables media organizations to cut operational overhead, increase publication agility, and support multi-platform distribution without incurring unsustainable labor costs. Crucially, this efficiency is achieved without compromising layout quality, thereby protecting brand identity, reader engagement, and advertising revenues across both print and digital replica editions.
+
+\textbf{Beyond its economic and industrial impact, this thesis explores a vital secondary application that addresses a major societal challenge: digital reading accessibility for visually impaired individuals}. Over 180 million people worldwide live with low vision, and millions more face situational visual constraints when reading complex multi-column media on small mobile screens~\cite{placeholder-study-in-imx-paper}. This work demonstrates that the same foundational techniques developed for industrial web-to-print automation can be repurposed to synthesize accessible, ``large-print'' digital layouts. By automatically enlarging typographical entry points (e.g., headlines and section headers) while preserving the underlying 2D spatial arrangement, the proposed framework delivers direct-access reading experiences that restore visual scannability, significantly improve reading performance, and reduce perceived cognitive workload for low-vision readers~\cite{paper-magnification-user-study.pdf}.
 
 \section{Challenges}
+\label{sec:challenges}
 
-Talk about the difficulties of the optimization and automatization of the print production workflow, including
+Automating and optimizing the newspaper print production workflow involves bridging computational intelligence, geometric optimization, and human-centered design. Transitioning from traditional, manually orchestrated layouts to dynamic, automated systems introduces several fundamental challenges that span several domains:
+
 \begin{itemize}
-    \item We are leading with layout-based elements (templates) together with multimedia (text and images), which are dificult to characterize directly without a careful understanding.
-    \item The combinatorial nature of the design problem: In this case requires to select a template for each article and organize them in pages, which is a geometrically complex problem with a large number of possible combinations.
-    \item The need to balance multiple objectives, such as text and image requirements, layout constraints, etc.
-    \item Necesity to capture human preferences in the optimization process, to produce results that are not only optimal in terms of the objective function, but also aesthetically pleasing and aligned with the newspaper's style and brand.
-    \item Verify if this process lead to the generation of large prints that are suitable for visually impaired people and also that these people prefer to read these instead of classical solutions such as magnification tools.
-    \item Finally, the need to deploy these tools in a real-world setting.
-\end{itemize}
+    \item \textbf{Characterization of multiple layout elements:} Newspaper layouts consist of a complex interplay of structured templates and dynamic multimedia assets, including headlines, body text, photographs, and captions. Characterizing these heterogeneous elements and their structural constraints requires a precise understanding of each element characteristics.
 
+    \item \textbf{Combinatorial Complexity of Spatial Packing:} The core layout generation task is inherently NP-hard~\cite{placeholder-np-hard-bpp}. It requires simultaneously selecting an appropriate structural template for each article from a vast catalog, and determining its spatial coordinates on a two-dimensional page canvas. The coupling of discrete template selection with 2D packing results in an exponential search space growth, making exact global optimization computationally intractable~\cite{placeholder-np-hard-bpp}.
+
+    \item \textbf{Balancing Multi-Objective Trade-offs:} Real-world editorial quality cannot be captured by a single scalar objective. The optimization process must reconcile multiple inherently conflicting goals, such as maximizing page space occupation (minimizing wasted white space), respecting capacity boundaries of each selected template, enforcing grid alignments, and positioning lead stories in privileged page zones.
+
+    \item \textbf{Modeling Tacit Human Preferences and Editorial Style:} Beyond geometric feasibility, automated systems must adhere to subjective aesthetic principles and historical newsroom practices. Formulating objective functions that capture subtle visual balance and implicit human design choices without introducing rigid, rule-based evaluation remains a computational challenge.
+
+    \item \textbf{Validating Accessibility and User Experience Benefits:} A key application of automated re-layouting lies in generating accessible large-print editions for readers operating under constrained visual access scenarios (e.g., small mobile displays or low-vision conditions). Verifying whether dynamically generated large-print editions preserve behavioral integrity, reduce navigational costs, and offer superior reading efficiency compared to conventional gesture-based magnification tools (such as pan-and-zoom) requires rigorous empirical validation with diverse user groups.
+
+    \item \textbf{Industrial Deployment and Real-World Scalability:} Finally, transitioning theoretical optimization algorithms into production-ready software systems presents significant engineering hurdles. The developed algorithms must seamlessly integrate into \melody, operate with execution times suitable for daily publication deadlines, and maintain operational stability across diverse publication formats.
+\end{itemize}
 
 \section{Summary}

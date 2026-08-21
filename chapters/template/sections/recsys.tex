@@ -1,10 +1,14 @@
 \section{Template retrieval for a single article}
+\label{section:template-retrieval-single-article}
+Having established $\gmn{\cdot}{\cdot}$ as the primary metric for topological layout similarity in \secref{section:modelling-similarity}, this structural foundation can now be applied to solve automated template retrieval. 
 
-In the single article-per-article context, the template retrieval problem is defined as a  top-$\topsize$ retrieval problem over a set of available template $\templatecatalog$. Given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. A key requirement of this task is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. A second critical requirement is novelty, or long-tail coverage~\cite{longtail}. Traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized.
+In the single article-per-article context, the template retrieval problem is defined as a top-$\topsize$ retrieval problem over a set of available templates $\templatecatalog$. Given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. A key requirement of this task is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. A second critical requirement is novelty, or long-tail coverage~\cite{longtail}. Traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized.
 
-Both structural diversity and popularity bias mitigation closely align with established research paradigms in Recommendation Systems (RS)~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}. This alignment suggests that certain algorithmic insights from RS research can be adapted to structure-aware layout retrieval, even though the proposed setting differs in fundamental ways. First, traditional RS models are predominantly user-dependent, relying on collaborative filtering driven by historical interactions and individual user preferences. In contrast, the propose definition of template retrieval is entirely user-agnostic and content-dependent, relying on objective structural characteristics. Second, the notion of diversity in this task applies directly to the topological layout structure rather than metadata or consumption patterns. Consequently, in this section, the classical recommendation concepts are adapted to a structurally grounded retrieval setting, where the goal is to optimize geometric coverage across the catalog.
+Both structural diversity and popularity bias mitigation closely align with established research paradigms in Recommendation Systems (RS)~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}. This alignment suggests that certain algorithmic insights from RS research can be adapted to structure-aware layout retrieval, even though the proposed setting differs in fundamental ways. First, traditional RS models are predominantly user-dependent, relying on collaborative filtering driven by historical interactions and individual user preferences. In contrast, the proposed definition of template retrieval is entirely user-agnostic and content-dependent, relying on objective structural characteristics. Second, the notion of diversity in this task applies directly to the topological layout structure rather than metadata or consumption patterns. Consequently, in this section, classical recommendation concepts are adapted to a structurally grounded retrieval setting, where the goal is to optimize geometric coverage across the catalog.
 
-To address the challenges of structure-aware layout retrieval, a graph-based retrieval framework is proposed, which considers both structural similarity modeling and diversity-driven selection. The framework operates in two complementary phases. In the offline phase, document layouts are modeled as graphs, and $\gmn{\cdot}{\cdot}$ is employed to organize the template catalog $\templatecatalog$ into clusters of structurally coherent designs. In the online query phase, the framework leverages these pre-computed clusters to perform diversity-aware retrieval for a given content item. Instead of treating retrieval as a flat ranking task, the mechanism samples candidate layouts across distinct structural clusters to compile the final results. This diversity-aware retrieval strategy is inspired by clustering-based diversification approaches in top-$\topsize$ recommendation~\cite{clusdiv}, adapted here to structured layout objects. In this architecture, the $\gmn{\cdot}{\cdot}$ enables fine-grained structural comparisons, while diversity is explicitly enforced during the retrieval stage, ensuring that the returned top-\topsize objects represent distinct architectural alternatives rather than minor variations of the same layout.
+To address the challenges of structure-aware layout retrieval, a graph-based retrieval framework is proposed, which explicitly integrates the topological similarity modeling developed in \secref{section:modelling-similarity} with a diversity-driven selection mechanism. The framework operates in two complementary phases. In the offline phase, document layouts are modeled as graphs, and $\gmn{\cdot}{\cdot}$ is employed to organize the template catalog $\templatecatalog$ into clusters of structurally coherent designs. In the online query phase, the framework leverages these pre-computed clusters to perform diversity-aware retrieval for a given content item. Instead of treating retrieval as a flat ranking task, the mechanism samples candidate layouts across distinct structural clusters to compile the final results. This diversity-aware retrieval strategy is inspired by clustering-based diversification approaches in top-$\topsize$ recommendation~\cite{clusdiv}, adapted here to structured layout objects. In this architecture, $\gmn{\cdot}{\cdot}$ enables fine-grained structural comparisons, while diversity is explicitly enforced during the retrieval stage, ensuring that the returned top-$\topsize$ objects represent distinct architectural alternatives rather than minor variations of the same layout.
+
+
 
 \subsection{Template Retrieval System (\trs) Overview}
 This framework is explicitly designed to promote structural diversity and novelty, enabling  broader range of distinct and potentially underused templates.
@@ -106,9 +110,29 @@ This step ensures that frequently used templates are initially prioritized, whil
 
 \subsubsection*{Stage 2: Filter admissible templates (Alg.~\ref{alg:cw}, line 4)}
 
-The full template set $\templatecatalog$ was filtered according to the specified query (e.g., presence of a title, number of images, or other structural constraints). This filtering step yields the subset of admissible templates $\admissibletemplates$, which defines the feasible search space for the selection process.
+The full template set $\templatecatalog$ was filtered according to the specified article requirements (e.g., presence of a title, number of images, or other structural constraints).
 
-This step enforces hard editorial or layout constraints upstream, ensuring that all subsequent operations are performed exclusively on templates that satisfy the current query requirements.  
+Formally, a template $\templateobj{j} \in \templatecatalog$ is classified as admissible, and thus included in the admissible subset $\admissibletemplates$, if and only if it simultaneously satisfies the following feasibility criteria:
+\begin{itemize}
+\item Image Allocation Integrity: The maximum image slot capacity of the template must accommodate the image count required by the article:
+\begin{equation}
+    \Nimg{i} \leq \Nimgmax{j}
+\end{equation}
+
+\item Title Consistency: The presence of a title element in the article must match the title block availability in the template:
+
+\begin{equation}
+\Tlart{i} = \Tltemp{j}
+\end{equation}
+
+\item Text Capacity Integrity: Assuming $\kactive{i} = \Nimg{i}$ active images are retained, the article's total character count $\Cart{i}$ must fall within the text capacity boundaries defined by the template's capacity matrix $\capacity{j}$, such that:  
+
+\begin{equation}
+    \capacity{j}[n_i, 0] \le c_i \le \capacity{j}[n_i, 1]
+\end{equation}
+
+\end{itemize}    
+
 
 \subsubsection*{Stage 3: Cluster-weight–based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
 
@@ -154,58 +178,60 @@ that balances usage-driven relevance with structural diversity and novelty.
 \subsection{Evaluation of \trs} 
 \label{section:trs-eval}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\publihebdos Template Catalog}
+\subsubsection{Template Catalog Dataset}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The utilized template repository $\templatecatalog$  was constructed this repository from a real-world deployment of the Melody CMS, and it contains $|\templatecatalog| = 452$ article templates defined and used by \publihebdos, one of Melody’s clients in a production environment. \footnotetext{With the permission of PubliHebdos, the templates were cleaned and anonymized before being released as a research dataset. The repository, together with template usage metadata, is publicly available at: \url{https://anonymous.4open.science/r/Newspaper-Template-Dataset-EFEF/}}.
+The template repository $\templatecatalog$ utilized in this evaluation is derived from the \publihebdos template archive (\secref{sec:publihebdos}).
 
-The repository was curated to ensure consistency, completeness, and shareability.
+%\footnotetext{With the permission of PubliHebdos, the templates were cleaned and anonymized before being released as a research dataset. The repository, together with template usage metadata, is publicly available at: \url{https://anonymous.4open.science/r/Newspaper-Template-Dataset-EFEF/}}.
 
-Each template is represented by (1) a JSON description encoding the layout structure, as formalized in Chapter~\ref{chapter:definitions}, and (2) a visual preview generated with synthetic text and randomized image placeholders (see examples in \figref{fig:template-example}). 
+%%The repository was curated to ensure consistency, completeness, and shareability.
 
-Table~\ref{tab:dataset-info} summarizes the main characteristics of the repository, while \figref{fig:dataset-info-graphs} reports distributions over key layout properties, including the number of columns, number of images, and aspect ratios. Together, these statistics illustrate the structural diversity of the template repository.
+%Each template is represented by (1) a JSON description encoding the layout structure, as formalized in Chapter~\ref{chapter:definitions}, and (2) a visual preview generated with synthetic text and randomized image placeholders (see examples in \figref{fig:template-example}). 
 
-In addition, the usage statistics associated with each template reveal a highly imbalanced distribution.  
-A small subset of templates accounts for the majority of historical usage, while approximately $17\%$ of templates have never been used. More than $90\%$ of templates have fewer than $1{,}600$ recorded uses, indicating a pronounced long-tail distribution. The observed properties transcend this specific repository, appearing consistently across multiple catalogs within the same CMS. 
+%Table~\ref{tab:dataset-info} summarizes the main characteristics of the repository, while \figref{fig:dataset-info-graphs} reports distributions over key layout properties, including the number of columns, number of images, and aspect ratios. Together, these statistics illustrate the structural diversity of the template repository.
 
-Such imbalance increases the risk of catalog stagnation and motivates the need for diversity- and novelty-aware selection mechanisms.
+%In addition, the usage statistics associated with each template reveal a highly imbalanced distribution.  
+%A small subset of templates accounts for the majority of historical usage, while approximately $17\%$ of templates have never been used. More than $90\%$ of templates have fewer than $1{,}600$ recorded uses, indicating a pronounced long-tail distribution. The observed properties transcend this specific repository, appearing consistently across multiple catalogs within the same CMS. 
 
-\begin{table}[htbp]
-    \centering
-    \begin{tabular}{lc}
-       \hline
-    Description & Value\\
-    \specialrule{.2em}{.1em}{.1em}
-        Number of templates & 452 \\
-        Average width (mm) & 137.1  \\
-         Average height (mm) & 132.9  \\
-        Average number of images & 1.48\\
-        Average number of different classes & 3.29\\
-        Average number of columns & 3.19\\
-    Template ID with max usage & 3142 \\
-    Max usage & 38005\\
-    Number of Zero-usage templates & 79 \\
-    Average usage & 781.8\\
-    Usage deviation & 3433.4\\
-     \% templates with usage $<1600$ & 92\% \\
-     \% templates with usage $<8000$ & 96\% \\
-     \hline
-    \end{tabular}
-    \caption{Table with general information about the dataset.}
-    \label{tab:dataset-info}
-\end{table}
+%Such imbalance increases the risk of catalog stagnation and motivates the need for diversity- and novelty-aware selection mechanisms.
 
- \begin{figure}[htpb]
-     \centering
-     \includegraphics[width=\widthForOneImage]{img/dataset_info_general.pdf}
-     \caption{
-     Overview of template dataset characteristics: 
-     (a) distribution of column counts per template, 
-     (b) distribution of image counts within templates,  
-     (c) distribution of template aspect ratios, and 
-     (d) usage distribution of templates, reordered by decreasing usage, during a 7-month period. These plots provide a general overview of the structural and usage diversity in the repository. 
-     }
-     \label{fig:dataset-info-graphs} 
- \end{figure}
+%\begin{table}[htbp]
+ %   \centering
+ %   \begin{tabular}{lc}
+   %    \hline
+  %  Description & Value\\
+   % \specialrule{.2em}{.1em}{.1em}
+    %    Number of templates & 452 \\
+    %    Average width (mm) & 137.1  \\
+   %      Average height (mm) & 132.9  \\
+   %     Average number of images & 1.48\\
+  %      Average number of different classes & 3.29\\
+  %      Average number of columns & 3.19\\
+  %  Template ID with max usage & 3142 \\
+ %   Max usage & 38005\\
+  %  Number of Zero-usage templates & 79 \\
+  %  Average usage & 781.8\\
+  %  Usage deviation & 3433.4\\
+  %   \% templates with usage $<1600$ & 92\% \\
+   %  \% templates with usage $<8000$ & 96\% \\
+   %  \hline
+  %  \end{tabular}
+   % \caption{Table with general information about the dataset.}
+   %% \label{tab:dataset-info}
+%\end{table}
+
+ %\begin{figure}[htpb]
+  %   \centering
+  %   \includegraphics[width=\widthForOneImage]{img/dataset_info_general.pdf}
+   %  \caption{
+   %  Overview of template dataset characteristics: 
+   %  (a) distribution of column counts per template, 
+   %  (b) distribution of image counts within templates,  
+   %  (c) distribution of template aspect ratios, and 
+    % (d) usage distribution of templates, reordered by decreasing usage, during a 7-month period. These plots provide a general overview of the structural and usage diversity in the repository. 
+   % }
+    % \label{fig:dataset-info-graphs} 
+ %\end{figure}
 
  \subsubsection{\gmnNetwork training and clustering results}
  \label{sec:gmn-training}
@@ -378,7 +404,11 @@ Two parameters govern the behavior of the selection process:
 (i) the list size $\topsize$, which corresponds to the number of candidate templates to retrieve and is therefore application-driven; and  
 (ii) the cluster weight threshold $\cwthreshold$, which controls the maximum number of templates selected per cluster and acts as an internal diversification constraint.
 
- Each parameter was varyed in turn, while fixing the other to a representative value. This allows us to (i) characterize the trade-offs induced by diversity mechanisms and (ii) verify the robustness of the proposed approach across different usage regimes. This evaluation also considers both observed and synthetic template usage distributions, namely \ODD and \ISD distributions. All experiments are conducted without any specific admissibility constraints, so that the full template catalog $\templatecatalog$ is considered as admissible. Results are shown in \figref{fig:performance-analysis-three-criteria} and commented below.
+ Each parameter was varyed in turn, while fixing the other to a representative value. This allows to (i) characterize the trade-offs induced by diversity mechanisms and (ii) verify the robustness of the proposed approach across different usage regimes. This evaluation also considers both observed and synthetic template usage distributions, namely \ODD and \ISD distributions. 
+ 
+ To rigorously benchmark the retrieval framework under maximum search space complexity and prevent trivial candidate pruning, all experimental evaluations were conducted without applying specific admissibility constraints. Consequently, the full template catalog was treated as completely admissible ($\admissibletemplates = \templatecatalog$)
+
+ Results are shown in \figref{fig:performance-analysis-three-criteria} and commented below.
 
 \begin{figure}[htbp]
     \centering

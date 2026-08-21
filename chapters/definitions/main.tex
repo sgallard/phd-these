@@ -1,64 +1,115 @@
-\chapter{Definitions}
+\chapter{Definitions and Industrial Datasets}
 \label{chapter:definitions}
 \input{abstract}
 
+\section{Definitions}
 
-\section{Page ($\page$)}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/page-article-template-with-notation.pdf}
+    \caption{Page canvas $\page$, web article $\articleobj{i}$, and template $\templateobj{j}$ with their respective notations.}
+    \label{fig:page-article-template-definitions}
+\end{figure}
+\subsection{Page ($\page$)}
 
-A page $\page$ defines an empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
+A page $\page$ defines the empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
 \begin{equation}
-\page = \langle \Wpage, \Hpage, \mtop, \mbottom, \mleft, \mright \rangle
+\page = \langle \Wpage, \Hpage, \mtop, \mbottom, \mleft, \mright, \colsize, \gutter \rangle,
+\label{eq:page-definition}
 \end{equation}
-Where:
+where:
 \begin{itemize}
-    \item $\Wpage \in \mathbb{R}^+$ and $\Hpage \in \mathbb{R}^+$ denote the total nominal width and height of the page, respectively, measured in millimeters (mm).
-    \item $\mtop, \mbottom, \mleft, \mright \in \mathbb{R}^+$ represent the structural margins that restrict the usable layout space from the outer boundaries of the page.
+    \item $\Wpage \in \mathbb{R}^+$ and $\Hpage \in \mathbb{R}^+$ denote the  width and height of the page, respectively, measured in millimeters (mm).
+    \item $\mtop, \mbottom, \mleft, \mright \in \mathbb{R}^+$ represent the  margins that restrict the usable layout space from the outer boundaries of the page.
+    \item $\colsize \in \mathbb{R}^+$ represents the fixed width of each column in the page layout. 
+    \item $\gutter \in \mathbb{R}^+$ denotes the spacing between columns. 
 \end{itemize}
-Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are strictly bounded by $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
+Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
 
-\section{Web article ($\articleobj{i}$)}
+\subsection{Web article ($\articleobj{i}$)}
 
-An individual web article $\articleobj{i} \in \articleset$, for any set of articles $\articleset$, is defined by its basic properties extracted from its metadata, as defined in \melody. Formally, $\articleobj{i}$ is modeled as a tuple:
+A web article $\articleobj{i} \in \articleset$, for any set of articles $\articleset$, is defined by its basic properties extracted from its metadata, as defined in \melody. Formally, $\articleobj{i}$ is modeled as a tuple:
 \begin{equation}
-\articleobj{i} = \langle \Cart{i}, \Nimg{i}, \Tlart{i}, \Stlart{i}, \Mainart{i} \rangle
+\articleobj{i} = \langle \Cart{i}, \Nimg{i}, \Tlart{i}, \Stlart{i}, \Mainart{i} \rangle,
 \end{equation}
 
-Where:
+where:
 \begin{itemize}
     \item $\Cart{i} \in \mathbb{Z}^+$ represents the total character count of the body text.
-    \item $\Nimg{i} \in \mathbb{Z}_{\ge 0}$ denotes the exact number of images that \articleobj{i}\ contains.
-    \item $\Tlart{i} \in \{0, 1\}$ is a boolean flag indicating the presence ($1$) or absence ($0$) of a headline or title element.
-    \item $\Stlart{i} \in \{0, 1\}$ is a boolean flag indicating the presence ($1$) or absence ($0$) of an accompanying subtitle.
-    \item $\Mainart{i} \in \{0, 1\}$ is an hierarchy flag indicating whether the article is designated as the main lead story ($1$) or a secondary piece ($0$) within the page context. Only one article can be indicated as main.
+    \item $\Nimg{i} \in \mathbb{Z}_{\ge 0}$ denotes the number of images that \articleobj{i}\ contains.
+    \item $\Tlart{i} \in \{0, 1\}$ is a binary flag indicating the presence ($1$) or absence ($0$) of a headline or title element.
+    \item $\Stlart{i} \in \{0, 1\}$ is a binary flag indicating the presence ($1$) or absence ($0$) of an accompanying subtitle.
+    \item $\Mainart{i} \in \{0, 1\}$ is a binary flag indicating whether the article is designated as the main lead story ($1$) within the page context. Only one article per page can be indicated as main.
 \end{itemize}
 
 
 
-\section{Template ($\templateobj{j}$)}
-
-Formally, an individual article template $\templateobj{j} \in \templatecatalog$, where $\templatecatalog$ is any catalog of templates, is characterized as follows:
+\subsection{Template ($\templateobj{j}$)}
+\label{sec:template-definition}
+Formally, an article template $\templateobj{j} \in \templatecatalog$, for any set of templates $\templatecatalog$, is characterized as follows:
 
 \begin{equation}
-\templateobj{j} = \langle \Wtemp{j}, \Htemp{j}, \zoning{j}, \capacity{j} \rangle
+\templateobj{j} = \langle \Wtemp{j}, \Htemp{j}, \zoning{j}, \capacity{j} \rangle,
 \end{equation}
 
-Where:
+where:
 \begin{itemize}
-    \item $\Wtemp{j} \in \mathbb{R}^+$ and $\Htemp{j} \in \mathbb{R}^+$ represent the nominal width and height of the template layout, respectively, measured in millimeters (mm).
-    \item $\zoning{j} = \{\zblock{j}{1}, \zblock{j}{2}, \dots, \zblock{j}{m_j}\}$ represents the zoning topology of the template, defined as a finite set of $m_j$ internal blocks. Each individual block $\zblock{j}{k} \in \zoning{j}$ is formalized as a pair $\zblock{j}{k}= \langle \blockgeom{\zblock{j}{k}}, \blockfeat{\zblock{j}{k}} \rangle$, where:
+    \item $\Wtemp{j} \in \mathbb{R}^+$ and $\Htemp{j} \in \mathbb{R}^+$ represent the  width and height of the template layout, respectively, measured in millimeters (mm). In the case of the page generation task (Chapter~\ref{chap:pagegen}), $\Wtemp{j}$ strictly adheres to the horizontal column size $\colsize$ and gutter $\gutter$ defined by the page $\page$.
+    \item $\zoning{j} = \{\zblock{j}{1}, \zblock{j}{2}, \dots, \zblock{j}{|\zoning{j}|}\}$ represents the zoning topology of the template, defined as a finite set of $|\zoning{j}|$ internal blocks. Each block $\zblock{j}{k}$ is formalized as a pair $\zblock{j}{k}= \langle \blockgeom{\zblock{j}{k}}, \blockfeat{\zblock{j}{k}} \rangle$, where:
     \begin{itemize}
-        \item $\blockgeom{\zblock{j}{1}}$ denotes the internal geometric bounding shape relative to the template's origin, which can be represented either as a standard two-dimensional bounding box (for theme, titles, subtitles, photos, and captions) or as a complex polygon containing inner holes (specifically for the multi-column text block wrapping around images).
-        \item $\blockfeat{\zblock{j}{k}} \in \{\text{THEME}, \text{TITLE}, \text{SUBTITLE}, \text{PHOTO}, \text{CAPTION}, \text{TEXT}\}$ specifies the semantic feature class assigned to the block.
+        \item $\blockgeom{\zblock{j}{k}}$ is an ordered set of cartesian coordinates (relative to $\templateobj{j}$ dimensions) that define the polygonal geometry of the block within the template layout.
+        \item $\blockfeat{\zblock{j}{k}} \in \{\text{THEME}, \text{TITLE}, \text{SUBTITLE}, \text{PHOTO}, \text{CAPTION}, \text{TEXT}\}$ specifies the feature class assigned to the block.
     \end{itemize}
     Note that the image slots available (\Nimgmax{j}) is an implicit property derived from the zoning topology, such that $\Nimgmax{j} = |\{\zblock{j}{k} \in \zoning{j} : \blockfeat{\zblock{j}{k}} = \text{PHOTO}\}|$.
-    \item \capacity{j}\ is a discrete dynamic text capacity mapping. To maximize design flexibility, optional image slots can be omitted during layout generation to allow the text block polygon to structurally absorb the reclaimed space. Thus, for a selected number of active images $k \in \{0, 1, \dots, \Nimgmax{j}\}$, the text capacity is defined by a dynamic character interval:
+
+    \item $\capacity{j} \in (\mathbb{Z}^+)^{(\Nimgmax{j} + 1) \times 2}$\ is a text capacity matrix. 
+    To maximize template selection flexibility, image slots can be omitted during template selection and layout generation steps (\figref{fig:web-print-workflow}) to allow the text block to structurally absorb the reclaimed space. Thus, for any selected number of active images $k \in \{0, 1, \dots, \Nimgmax{j}\}$, the $k$-th row of the matrix specifies the character count range for the body text:
+
     \begin{equation}
-    \capacity{j}(k) = [\Cmin{j}{k}, \Cmax{j}{k}]
+        \capacity{j} = 
+        \begin{bmatrix}
+        \capacity{j}[0, 0] & \capacity{j}[0, 1] \\
+        \capacity{j}[1, 0] & \capacity{j}[1, 1] \\
+        \vdots & \vdots \\
+        \capacity{j}[\Nimgmax{j}, 0] & \capacity{j}[\Nimgmax{j}, 1]
+        \end{bmatrix} 
+        =
+        \begin{bmatrix}
+        \capacity{j}^{\textrm{min}}[0] & \capacity{j}^{\textrm{max}}[0] \\
+        \capacity{j}^{\textrm{min}}[1] & \capacity{j}^{\textrm{max}}[1] \\
+        \vdots & \vdots \\
+        \capacity{j}^{\textrm{min}}[\Nimgmax{j}] & \capacity{j}^{\textrm{max}}[\Nimgmax{j}]
+        \end{bmatrix}
     \end{equation}
-    The interval bounds are strictly determined by the layout area variations that occur when removing the $\Nimgmax{j} - k$ unused image from the configuration (specifically computing boundaries by omitting either the largest or the smallest available photo slots inside the design). Note that the proposed formulation only assesses template suitability rather than determining which specific images to discard, leaving that selection decision to the human designer or external editorial software.
+
+For any  $k$, the elements in the $k$-th row denote the text capacity bounds when $k$ image slots are active, i.e., $k \leq \Nimgmax{j}$ images (coming for any article $\articleobj{i}$) were allocated. Specifically, $ \capacity{j}[k, 0]$ establishes the minimum character requirement, and $ \capacity{j}[k, 1]$ defines the maximum character capacity. These bounds are strictly determined by the area variations that occur when removing the $\Nimgmax{j} - k$ unused image slots from the template. Because the available image slots within a template may vary in physical dimensions (e.g., a large main photograph versus smaller secondary images), omitting different combinations of slots yields varying amounts of reclaimed space for the text block. Consequently, the minimum capacity $\capacity{j}[k, 0]$ is computed by assuming the omission of the smallest available photo slots (resulting in the least amount of expanded text area), whereas the maximum capacity $\capacity{j}[k, 1]$ is computed by omitting the largest available photo slots (yielding the maximum possible text area).
+
+Note that the proposed formulation only assesses template suitability rather than determining which specific images to discard, leaving that selection decision to the human designer or external editorial software.
 \end{itemize}
 
 
 
-\section{Formatted print article}
-When an article $\articleobj{i}$ is formatted to be placed in the page canvas, formally corresponds to an individual template $\templateobj{j} \in \templatecatalog$ assignation to $\articleobj{i}$. Formally, this template is denoted as $\templatesel{i}$.
+\subsection{Formatted print article}
+When an article $\articleobj{i}$ is formatted to be placed in the page canvas, it means that an individual template $\templateobj{j} \in \templatecatalog$ has been assigned to $\articleobj{i}$. 
+
+To formalize this, \templatesel{i} denotes the index of the selected template $\templateobj{\templatesel{i}} \in \templatecatalog$ for article $\articleobj{i}$. Formally,
+\begin{equation}
+\templatesel{i} \in \{1, 2, \dots, \catalogsize\}, \forall i \in \{1, 2, \dots, \numarticles\}.
+\label{eq:template-selection-def}
+\end{equation}
+
+Note that after this selection, the article acquires the physical dimensions and characteristics of the assigned template. Additionally, the number of images $\Nimg{i}$ in the article fixes the number of active image slots in the template, which in turn determines the text capacity range $\capacity{\templatesel{i}}[\Nimg{i}, :]$ to respect in the optimization process.
+
+\section{Industrial Datasets}
+
+
+
+To validate and benchmark the computational frameworks developed in this thesis, empirical evaluations rely on two real-world industrial repositories provided by press publishers operating under the \melody CMS environment. These datasets encapsulate different levels of editorial abstraction, ranging from individual article template catalogs with historical usage logs to fully assembled multi-article newspaper spreads.
+
+
+%%% GILLIAN WORK
+\subsection{\publihebdos archive}
+\label{sec:publihebdos}
+
+\subsection{\laprovence archive}
+\label{sec:laprovence}

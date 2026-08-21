@@ -1,15 +1,14 @@
+
 \section{Template retrieval in a page-aware context (\neuralmethod)}
 \label{sec:gwes}
-INTRODUCE THE PROBLEM HERE. FIND AN INFORMAL SKETCH HERE
 
-In the page-aware context, the template retrieval problem consists on obtaining a single or multiple templates for all articles in a page. This relies on the fact that newspaper layouts include tacit structural dependencies where the choice of a template for a given article inherently depends on its neighboring articles, this objective must be evaluated within a global page context.
+In the global page-aware context, template evaluation shifts from isolated single-article selection to assessing candidate template assignments across all articles assigned to a unified page canvas $\page$. This requirement stems from the fact that professional newspaper layouts exhibit tacit structural and visual dependencies, where selecting a template $\templatesel{i}$ for a given article $\articleobj{i}$ inherently depends upon, and influences, the spatial arrangement, aspect ratio, and editorial hierarchy of neighboring articles on the same page canvas.
 
-Here the topology similarities between templates and the dependencies between the articles in a page are both important. In this case, 
-
-
+Evaluating template suitability at the page level requires simultaneously addressing two complementary factors: modeling the internal topological structure of individual templates and capturing the contextual interdependencies among the set of articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ co-existing on the page. Standard flat metadata metrics and independent ranking mechanisms are insufficient for this task because they evaluate candidate templates in isolation, failing to capture how spatial configurations interact across adjacent layout blocks to form a cohesive visual spread.
 
 %%%%%% From here keep it
-Rather than relying on rigid, handcrafted heuristic rules that fail to capture the nuances of human design, \textbf{this was solved by developing a neural evaluation metric that scores the quality of assigned templates $\templatesel{i}$ for each article $\articleobj{i}$ in the page $\page$}, considering also their placement in the canvas. This module dynamically scores the contextual harmony between an article's content and its spatial configuration within a newspaper layout, combining a dynamic sequence-level Transformer encoder with a precalculated topological template similarity matrix (using $\gmn{\cdot}{\cdot}$) into a single neural method coined \NeuralMethod\ (\neuralmethod).
+Rather than relying on rigid, handcrafted heuristic rules that fail to capture the nuances of human design, this challenge is addressed by developing a neural evaluation metric that scores the quality of assigned templates $\templatesel{i}$ for each article $\articleobj{i}$ in the page $\page$, considering also their placement in the canvas. This module dynamically scores the contextual harmony between an article's content and its spatial configuration within a newspaper layout, combining a dynamic sequence-level Transformer encoder with a precalculated topological template similarity matrix (using $\gmn{\cdot}{\cdot}$) into a single neural method coined \NeuralMethod\ (\neuralmethod).
+
 
 
 \subsection{Transformer-based Editorial Intent Module}
@@ -57,7 +56,7 @@ To mitigate this, \neuralmethod\ incorporates a precalculated pairwise similarit
 
 However, and because the raw score $\gmn{\cdot}{\cdot}$ is unbounded ($\gmn{\templateobj{i}}{\templateobj{j}} \in (0, \infty], \forall i,j$), these values are mapped into a normalized affinity range $[0,1]$ using a Gaussian kernel transformation:
 \begin{equation}
-s_{ij} = \exp\left( -\frac{\gmn{\templateobj{i}}{\templateobj{j}}^2}{2\sigmagmn^2} \right)
+s_{ij} = \exp\left( -\frac{\gmn{\templateobj{i}}{\templateobj{j}}^2}{2(\sigmagmn)^2} \right)
 \end{equation}
 where $\sigmagmn$ represents a tunable scaling parameter calibrated according to the dataset characteristics to control the smoothness of the topological mapping. This transformation yields the final similarity matrix $\gmnMatrix$, with a bounded similarity score $s_{ij} \in [0, 1]$ between any pair of templates.
 
@@ -87,9 +86,9 @@ All deep learning pipelines are powered by the \textit{PyTorch}~\cite{pytorch} e
 
 The  training phase for the Transformer Encoder was conducted on a dedicated high-performance GPU computing cluster node, powered by an Intel Xeon Silver 4110 processor, 96~GB of system RAM, and an NVIDIA Tesla T4 GPU with 15~GB of dedicated video memory (VRAM).
 
-\subsubsection{Page Layout and Template Catalog Dataset (\laprovence)}
+\subsubsection{Page Layout and Template Catalog Dataset}
 
-To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using real-world archives from La Provence~\cite{laprovence}, a prominent French daily newspaper group. This comprehensive production repository was processed and decoupled into two primary interconnected structural components: a historical layout dataset and a static template catalog~$\templatecatalog$. The historical layout dataset  provides the required historical context to train the Transformer Encoder module of \neuralmethod. Concurrently, the static template catalog~$\templatecatalog$ serves as the underlying structural dataset utilized to compute the $\gmnMatrix$ matrix.
+To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using the available \laprovence archive (\secref{sec:laprovence}). The historical page dataset  provides the required historical context to train the Transformer Encoder module of \neuralmethod. Concurrently, the static template catalog~$\templatecatalog$ serves as the underlying structural dataset utilized to compute the $\gmnMatrix$ matrix.
 
 \paragraph{Historical Layout Dataset}
 
@@ -127,16 +126,16 @@ The finalized calibrated parameters are structured in Table~\ref{tab:algorithmic
 \begin{table}[htbp]
 \centering
 
-\begin{tabularx}{\widthForParametersTable}{Xcc}
+\begin{tabularx}{\widthForParametersTable}{Xc}
 \hline
-\textbf{Parameter Description} & \textbf{Symbol / Notation} & \textbf{Calibrated Value} \\ \hline
-Neural optimizer architecture & --- & AdamW \\
-Train/Val/Test split & --- & $80\%/15\%/5\%$ \\
-Base learning rate & $\eta$ & $10^{-4}$ \\
-Weight decay & --- & $10^{-2}$ \\
-Batch size & --- & 128 \\
-Total deep learning training epochs & --- & 3000  \\ 
-Early stopping epoch threshold & --- & 40  \\ \hline
+\textbf{Parameter Description} &  \textbf{Value} \\ \hline
+Neural optimizer architecture &  AdamW \\
+Train/Val/Test split &  $80\%/15\%/5\%$ \\
+Base learning rate &  $10^{-4}$ \\
+Weight decay &  $10^{-2}$ \\
+Batch size &  128 \\
+Total deep learning training epochs & 3000  \\ 
+Early stopping epoch threshold &  40  \\ \hline
 \end{tabularx}
 
 \caption{Calibrated algorithmic and structural hyperparameters for the Transformer Encoder training.}
