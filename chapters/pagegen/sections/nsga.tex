@@ -1,77 +1,107 @@
-\section{\methodName - a Hybrid Neural/Multiobjective Evolutionary Approach}
+\section{\methodNameGeneral - a Multiobjective Evolutionary Approach}
 
-\subsection{\methodName: Overview}
+\subsection{Architectural Overview}
 \label{sec:method-overview}
 
-The proposed layout generation method, coined \methodName\ and illustrated in \figref{fig:method-overview}, is engineered as a hybrid framework that blends deep learning template-to-graph modeling with many-objective evolutionary optimization engine. The primary objective of this architecture is to resolve the highly constrained combinatorial challenge of spatial article packing while simultaneously satisfying non-analytical human editorial preferences. 
+The proposed layout generation method, coined \methodNameGeneralLong (\methodNameGeneral), is engineered as a multi-objective evolutionary framework that find a set of layouts $\solution$ for a given instance $\instance$ of the above-detailed problem.  
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\widthForOneImage]{img/method/method-overview.pdf}
-    \caption{Global architectural workflow of the proposed \methodName\ framework. The system operates as a closed-loop optimization pipeline across three distinct stages: (1) the R-NSGA-III engine managing chromosome populations via AI-informed operators and historical aspiration points to guide the Pareto-front exploration, (2) the packing decoder  executing sequence-preserving backtracking to generate coordinate layouts from the chromosome representation, and (3) an evaluation suite combining analytical objectives ($f_1, f_3, f_4$) with a deep-learning-based historical editorial-alignment objective ($f_2$) to synthesize the unified objective vector $\mathbf{F}(\mathcal{S})$.}
+    \caption{Global architectural workflow of the proposed \methodNameGeneral\ framework. }
     \label{fig:method-overview}
 \end{figure}
 
-The global workflow of \methodName is executed across three interconnected pillars, as illustrated in \figref{fig:method-overview}:
-%\begin{itemize}
-  %  \item \textbf{Neural \objtwo\ Evaluation (\neuralmethod\ metric):} Operating dynamically within the fitness evaluation loop, this module serves as the neural approximation of the abstract function $\Omega(\articleobj{i}, \templatesel{i} \mid \solution)$. For each candidate solution, the page-aware scoring function \NeuralMethod\ (\neuralmethod) defined in Chapter~\ref{sec:gwes} is used to resolve the historical editorial-alignment objective (\objtwo).
-    
-   % \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating on the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}, this framework is responsible for the exploration and exploitation of candidate layout configurations. Depending on the operational phase, the engine can deploy two distinct paradigms: a data-driven RNSGA-III~\cite{rnsga-iii}, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2} for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
-    
-   % \item \textbf{Packing Decoder:} While a spatial decoder is fundamentally required to map the symbolic chromosome representation into a layout that represents \solution, \methodName\ deliberately eschew approximate greedy packing heuristics~\cite{lodi-packing-survey, chazelle-bl, burke-bf}. Given the constrained scale of the operational editorial domain, where page instances consistently involve a small number of articles ($\numarticles < 9$), resolving the pure spatial packing subproblem (conditioned on the specific template selections and elasticities fixed by the chromosome) remains computationally tractable. Consequently, the decoder takes the combinatorial sequences, template assignments, and text elasticities proposed by the evolutionary chromosomes and physically arranges the blocks on the page canvas, explicitly handling hard overlap and  boundaries through an extreme-points backtracking routine~\cite{crainic-extreme-points}.
-%\end{itemize}
+The global workflow of \methodNameGeneral operates as an optimization pipeline structured across three main interconnected modules, as illustrated in Figure~\ref{fig:method-overview}. 
 
-By decoupling the strategic combinatorial search (steered by the evolutionary engine) from the data-driven evaluation of historical designs (approximated by \neuralmethod), \methodName\ ensures that the framework can generate production-ready layout configurations within industrial time limits while maintaining absolute adherence to historical editorial standards.
+\begin{itemize}
+    \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating as the strategic search core, this module manages the population of abstract chromosomes across generations through specialized genetic operators (crossover, mutation, and pareto-front based selection~\cite{pareto}). The engine navigates the combinatorial search space of chromosomes, which represents template assignments ($\templatesel{i}$), article positioning $\posvar{i}$, and vertical elasticities $\elasticity{i}$.  Additionally, this module implements two distinct paradigms to select the best chromosomes in each generation: a preference-guided RNSGA-III~\cite{rnsga-iii}, coined \methodName, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}, coined \methodNameUniform, for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
+
+    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$. By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in Chapter~\ref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
+
+    \item \textbf{Multi-Objective Evaluation Module:} This module dynamically assesses each decoded layout $\solution$ across the four-dimensional objective space to synthesize the unified objective vector $\objvector(\solution)$. It combines analytical geometric functions ($\objone$: Page coverage, $\objthree$: Text capacity Integrity, and $\objfour$: Positioning of articles quality) with a neural evaluation pipeline ($\objtwo$: \NeuralMethod). The resulting objective vector  $\objvector(\solution)$ is fed back into the evolutionary optimization module to drive chromosome selection in the next generation.
+\end{itemize}
 
 
-\subsection{Many-Objective NSGA-III Optimization Engine}
+\subsection{Multi-Objective NSGA-III Optimization Engine}
 \label{sec:evolutionary_engine}
 
-The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a multi-part chromosome that maps symbolic design choices prior to physical layout decoding using the packing engine.
+The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a chromosome vector that maps abstract decisions prior to layout decoding using the packing engine.
 
 
 %%%% Chromosome Representation %%%
 \subsubsection{Chromosome Representation}
 \label{sec:chromosome_representation}
 
-Each candidate layout $\solution$ is encoded as a three-part chromosome vector $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in \figref{fig:chromosome_representation}:
+Each candidate layout $\solution$ is encoded as a chromosome composes of three sub-vectors $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in \figref{fig:chromosome_representation}:
 
 \begin{enumerate}
-    \item \textbf{Template Assignment Segment} $\chromosomeTemplateSegment = [t_1, t_2, \dots, t_{\numarticles}]$: A discrete vector where each gene $t_i \in \{1, \dots, \catalogsize\}$ defines the specific template assigned to article $\articleobj{i}$ from \templatecatalog.
-    \item \textbf{Permutation Segment} $\chromosomePermutationSegment = [\pi_1, \pi_2, \dots, \pi_{\numarticles}]$: An ordering vector representing a permutation of the default input article indices $\{1, 2, \dots, \numarticles\}$. This segment explicitly dictates the sequence in which the packing engine must process and position each article on the page canvas.
-    \item \textbf{Text Elasticity Segment} $\chromosomeElasticitySegment = [e_1, e_2, \dots, e_{\numarticles}]$: A discrete vector where each gene $e_i \in \{-15,-10,-5,0,5,10,15\}$, defining the specific vertical elasticity (see Chapter~\ref{sec:decision-variables}).
+    \item \textbf{Template Assignment Segment} $\chromosomeTemplateSegment = [t_1, t_2, \dots, t_{\numarticles}]$: A vector where each gene $t_i \in \{1, \dots, \catalogsize\}$ defines the specific template assigned to article $\articleobj{i}$ from \templatecatalog.
+    \item \textbf{Permutation Segment} $\chromosomePermutationSegment = [\pi_1, \pi_2, \dots, \pi_{\numarticles}]$: A vector representing a permutation of the default input article indices $\{1, 2, \dots, \numarticles\}$. This segment explicitly dictates the sequence in which the packing decoder engine must process and position each article on the page.
+    \item \textbf{Text Elasticity Segment} $\chromosomeElasticitySegment = [e_1, e_2, \dots, e_{\numarticles}]$: A vector where each gene $e_i \in \elasticityset$, defining the specific vertical elasticity (see Chapter~\ref{sec:decision-variables}).
 \end{enumerate}
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}[box/.style={draw, minimum size=8mm, inner sep=0pt, font=\small}]
 
-% Matrix of genes (Rows: t, pi, e | Columns: 1 to 4)
-\matrix (m) [matrix of nodes, nodes={box}, row sep=2mm, column sep=-\pgflinewidth] {
-    4 & 12 & 1  & 7  \\
-    2 & 4  & 1  & 3  \\
-    0 & -5 & 10 & 0  \\
-};
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        box/.style={draw, minimum size=8mm, inner sep=0pt, font=\small},
+        idx/.style={font=\small, text=gray},
+        sublabel/.style={font=\small\bfseries}
+    ]
 
-% Labels for rows
-\node[left=3mm of m-1-1, font=\small\bfseries] {$\chromosomeTemplateSegment$:};
-\node[left=3mm of m-2-1, font=\small\bfseries] {$\chromosomePermutationSegment$:};
-\node[left=3mm of m-3-1, font=\small\bfseries] {$\chromosomeElasticitySegment$:};
+    % Main chromosome label on the left
+    \node[font=\small\bfseries] (chrom-label) at (-0.8, 0) {$\chromosome = $};
 
-% Compact Column Indices (Fixes the permutation indexing problem without clutter)
-\foreach \i in {1,...,4} {
-    \node (idx-\i) [above=2mm of m-1-\i, font=\small, text=gray] {\i};
-}
-\node[left=3.5mm of idx-1, font=\small\bfseries, text=gray] {$i$:};
+    % --- 1. Template Segment (\chromosomeTemplateSegment) ---
+    \node[box] (t1) at (0,0) {4};
+    \node[box, right=-\pgflinewidth of t1] (t2) {12};
+    \node[box, right=-\pgflinewidth of t2] (t3) {1};
+    \node[box, right=-\pgflinewidth of t3] (t4) {7};
 
-% Decorative grouping braces
-\draw[decorate, decoration={brace, amplitude=5pt}] 
-    ([xshift=-10mm]m-1-1.north west) -- ([xshift=-10mm]m-3-1.south west)
-    node[midway, left=8pt, font=\small\bfseries] {$\chromosome$};
+    % Article indices i above template segment
+    \node[idx, above=2mm of t1] {$1$};
+    \node[idx, above=2mm of t2] {$2$};
+    \node[idx, above=2mm of t3] {$3$};
+    \node[idx, above=2mm of t4] {$4$};
+    %\node[idx, left=2mm of idx-1, font=\small\bfseries, text=gray] {$i$:};
+
+    % --- 2. Permutation Segment (\chromosomePermutationSegment) ---
+    % Separated by a 5mm horizontal gap; NO indices placed above
+    \node[box, right=2mm of t4] (p1) {2};
+    \node[box, right=-\pgflinewidth of p1] (p2) {4};
+    \node[box, right=-\pgflinewidth of p2] (p3) {1};
+    \node[box, right=-\pgflinewidth of p3] (p4) {3};
+
+    % --- 3. Elasticity Segment (\chromosomeElasticitySegment) ---
+    % Separated by a 5mm horizontal gap
+    \node[box, right=2mm of p4] (e1) {0};
+    \node[box, right=-\pgflinewidth of e1] (e2) {-5};
+    \node[box, right=-\pgflinewidth of e2] (e3) {10};
+    \node[box, right=-\pgflinewidth of e3] (e4) {0};
+
+    % Article indices i above elasticity segment
+    \node[idx, above=2mm of e1] {$1$};
+    \node[idx, above=2mm of e2] {$2$};
+    \node[idx, above=2mm of e3] {$3$};
+    \node[idx, above=2mm of e4] {$4$};
+
+    % --- Bottom Grouping Braces & Sub-array Labels ---
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+        ([yshift=-2mm]t1.south west) -- ([yshift=-2mm]t4.south east)
+        node[midway, below=5pt, sublabel] {$\chromosomeTemplateSegment$};
+
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+        ([yshift=-2mm]p1.south west) -- ([yshift=-2mm]p4.south east)
+        node[midway, below=5pt, sublabel] {$\chromosomePermutationSegment$};
+
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+        ([yshift=-2mm]e1.south west) -- ([yshift=-2mm]e4.south east)
+        node[midway, below=5pt, sublabel] {$\chromosomeElasticitySegment$};
 
 \end{tikzpicture}
 
-\caption{Chromosome representation example for an instance with $\numarticles=4$ active articles. The chromosome vector $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ groups design choices under a unified index $i$. For the template segment $\chromosomeTemplateSegment$ and the text elasticity segment $\chromosomeElasticitySegment$, the index $i$ maps directly to article $a_i$, specifying its assigned template $\templatesel{i}$ and elasticity $\elasticity{i}$, respectively. Conversely, the permutation segment $\chromosomePermutationSegment$ establishes the processing sequence to build the layout; in this representative example, the packing decoder sequentially accommodates article $\articleobj{2}$, followed by $\articleobj{4}$, $\articleobj{1}$, and finally $\articleobj{3}$.}
+\caption{Chromosome representation example for an instance with $\numarticles=4$ active articles. The chromosome vector $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ groups abstract choices for a single solution $\solution$. For the template sub-vector $\chromosomeTemplateSegment$ and the text elasticity sub-vector $\chromosomeElasticitySegment$, the index $i$ maps directly to article $a_i$, specifying its assigned template $\templatesel{i}$ and elasticity $\elasticity{i}$, respectively. Conversely, the permutation segment $\chromosomePermutationSegment$ establishes the processing sequence to build the layout; in this representative example, the packing decoder sequentially accommodates article $\articleobj{2}$, followed by $\articleobj{4}$, $\articleobj{1}$, and finally $\articleobj{3}$.}
 \label{fig:chromosome_representation}
 \end{figure}
 
@@ -80,29 +110,60 @@ Each candidate layout $\solution$ is encoded as a three-part chromosome vector $
 \subsubsection{Evolutionary Operators}
 \label{sec:evolutionary_operators}
 
-To effectively manipulate the three distinct genetic representations within the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$, specialized initialization, crossover, and mutation mechanisms are implemented.
+To effectively manipulate the three distinct genetic components within the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$, specialized initialization, crossover, and mutation mechanisms are implemented.
 
-\paragraph{Heuristic Population Initialization}
+\paragraph{Population Initialization}
 
-The initial population does not rely on pure randomness. For the template segment $\chromosomeTemplateSegment$, 50\% of the individuals are sampled using baseline \neuralmethod\ probabilities. Since no geometric layout exists at generation zero, this initial query feeds the Transformer with a metadata-only tensor, where downstream spatial coordinates and template zoning windows are omitted. Due to its training with feature dropout, the model is inherently robust to this missing spatial context, successfully projecting a meaningful predictive distribution that guides the initial sampling away from random choices. Of the remaining population, 30\% are sampled uniformly from a feasible template subset that satisfies all hard constraints and yields null text capacity penalty ($\objthree = 0$). The final 20\% are randomized from a subset that satisfies all hard constraints. 
+Given the vast combinatorial search space and strict constraints, purely random sampling populates early generations with unpromising or bad-quality candidates. Instead, a targeted initialization strategy biases the search toward feasible configurations. 
 
-Concurrently, the permutation segment $\chromosomePermutationSegment$ is initialized uniformly at random, while the elasticity segment $\chromosomeElasticitySegment$ is mostly initialized to 0 (80\%) to start from a elasticity-free set of solutions.
+Accordingly, the initial population is structured across the chromosome segments as follows:
+\begin{itemize}
+    \item \textbf{\chromosomeTemplateSegment:} 50\% of the individuals are sampled using baseline \neuralmethod\ probabilities. Since no geometric layout exists at generation zero, this initial query feeds the Transformer with a \emph{metadata-only tensor}, where spatial coordinates and template zoning are omitted. Due to its training with feature dropout, the model is inherently robust to this missing spatial context, successfully projecting a meaningful predictive distribution that guides the initial sampling away from random choices. Of the remaining population, 30\% are sampled uniformly from a feasible template subset that satisfies all hard constraints and yields zero text capacity penalty ($\objthree = 0$). The final 20\% are randomized from a subset that satisfies all hard constraints. 
+
+    \item \textbf{\chromosomePermutationSegment: } Individuals are initialized by generating uniform random permutations of article's sequence $\{1, 2, \dots, \numarticles\}$.  This initialization generates valid permutations of article indices rather than independent random integers, strictly guaranteeing that every article receives a unique sequence index without duplicates or missing elements.
+
+    \item \textbf{\chromosomeElasticitySegment: } The majority of the initial population (80\%) is initialized with null vertical elasticity ($\elasticity{i} = 0$), establishing an uncompressed state across initial solutions. However, the remaining 20\% is initialized with stochastically sampled elasticity values $\elasticity{i} \in \elasticityset$. This controlled injection of elasticity variance allows the evolutionary search to explore compression and expansion trade-offs from the beginning.
+\end{itemize}
+
 
 
 \paragraph{Crossover}
 
-The crossover operator applies two concurrent strategies. For the independent discrete template ($\chromosomeTemplateSegment$) and step-elasticity ($\chromosomeElasticitySegment$) segments, a standard Two-Point Crossover~\cite{crossovers} is executed. Conversely, to maintain valid indexing constraints without duplicates in the permutation sequence, the permutation segment ($\chromosomePermutationSegment$) is crossed using Order Crossover (OX1)~\cite{crossovers}.
+The crossover operator applies two concurrent strategies, to account for the different nature of the chromosome segments:
+
+\begin{itemize}
+    \item \textbf{$\chromosomeTemplateSegment$} and \textbf{$\chromosomeElasticitySegment$} segments: standard Two-Point Crossover~\cite{crossovers} is executed.
+    \item \textbf{$\chromosomePermutationSegment: $} to maintain valid indexing constraints without duplicates in the permutation sequence, the permutation segment ($\chromosomePermutationSegment$) is crossed using Order Crossover (OX1)~\cite{crossovers}.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    %%
+
+    \caption{Two-point crossover}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    %%
+
+    \caption{Order Crossover (OX1)}
+\end{figure}
+
 
 \paragraph{Mutation Roulette}
-To maintain controlled diversity without disrupting high-fitness structural patterns, mutations are managed by a hierarchical orchestrator. A global mutation probability $\globalmutationprob$ determines whether an individual undergoes modification. If triggered, exactly one specialized mutation operator is selected via a stochastic roulette wheel governed by a weight vector $\mathbf{w} = [\mutationprob{1}, \mutationprob{2}, \mutationprob{3}, \mutationprob{4}, \mutationprob{5}, \mutationprob{6}]$, where $\sum_{m=1}^{6} \mutationprob{m} = 1$. This vector isolates the exploratory or exploitative impact of each operator, allowing their exact probability distributions to be parameterized during experimental calibration. The six specialized mutation operators are defined as follows:
+
+To navigate the search space defined by the chromosome, a single uniform mutation operator is insufficient. Because the chromosome simultaneously encodes three distinct decision variables, each variable type requires specialized structural manipulation. A multi-operator mutation strategy is therefore designed,
+where each mutation operator is managed by a hierarchical orchestrator. A global mutation probability $\globalmutationprob$ determines whether an individual undergoes modification. If triggered, exactly one specialized mutation operator is selected via a stochastic roulette wheel governed by a weight vector $\mathbf{w} = [\mutationprob{1}, \mutationprob{2}, \mutationprob{3}, \mutationprob{4}, \mutationprob{5}, \mutationprob{6}]$, where $\sum_{m=1}^{6} \mutationprob{m} = 1$. This design balances fine-grained local search, targeted constraint repair, and broad global exploration across all variables represented in the chromosome.
+
+The six specialized mutation operators are defined as follows:
 
 \begin{itemize}
     \item \textbf{Permutation Reverse} ($\mutationprob{1}$): Selects a random sub-sequence within the permutation segment $\boldsymbol{\pi}$ and reverses its order, altering the priority sequence passed to the packing engine.
     \item \textbf{5-Most Similar Template} ($\mutationprob{2}$): Selects a random article and queries the matrix $\gmnMatrix$ to extract its $K=5$ topologically closest template neighbors. A new template is stochastically sampled from this neighborhood based on their  \neuralmethod\ scores (metadata-only tensor).
     \item \textbf{Textual Integrity Improvement} ($\mutationprob{3}$): Evaluates the current layout to identify the specific article causing the worst local capacity violation within objective $\objthree$. It then aggregates a feasible pool of templates that satisfy the article's physical requirements ($\objthree \sim 0$), replacing the mismatched template with a randomly selected  alternative from this pool.
     \item \textbf{Bernoulli Template Resampling} ($\mutationprob{4}$): Executes an independent Bernoulli trial with success probability equal to $0.5$ for every gene in the template segment $\chromosomeTemplateSegment$. For each winning gene, a new template is re-sampled globally from the entire catalog following the \neuralmethod probability distribution.
-    \item \textbf{Random Template Substitution} ($w_5$): Replaces a randomly selected article's template with a completely random choice from the catalog boundaries, injecting pure structural exploration.
-    \item \textbf{Geometric Elasticity Adjustment} ($w_6$): Selects a random gene from the elasticity segment $\chromosomeElasticitySegment$ and applies a fine-tuning delta ($\pm 5$). The mutated value is automatically clipped to remain within the operational boundaries of $[-15, 15]$.
+    \item \textbf{Random Template Substitution} ($\mutationprob{5}$): Replaces a randomly selected article's template with a completely random choice from the catalog boundaries, injecting pure structural exploration.
+    \item \textbf{Geometric Elasticity Adjustment} ($\mutationprob{6}$): Selects a random gene from the elasticity segment $\chromosomeElasticitySegment$ and applies a fine-tuning delta ($\pm 5$). The mutated value is automatically clipped to remain within the operational boundaries of $[-15, 15]$.
 \end{itemize}
 
 Crucially, to preserve context, whenever a $\chromosomeTemplateSegment$ mutation ($\mutationprob{2}, \mutationprob{3}, \mutationprob{4}, \mutationprob{5}$) modifies an article's template assignment, its corresponding elasticity gene in $\chromosomeElasticitySegment$ is automatically reset to 0.
@@ -113,18 +174,23 @@ Crucially, to preserve context, whenever a $\chromosomeTemplateSegment$ mutation
 \subsubsection{Many-Objective Optimization Paradigm}
 \label{sec:many-objective_optimization}
 
-The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in Chapter~\ref{sec:objective_formulation}. To incorporate domain expertise and accelerate convergence, \methodName\ introduces a targeted aspiration-point design (RNSGA-III~\cite{rnsga-iii}) as its core search engine, while retaining a uniform exploratory variant.
+The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in Chapter~\ref{sec:objective_formulation}. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection: a targeted aspiration-point design (\methodName) as a preference-based method, and a uniform exploratory variant (\methodNameUniform).
 
 \paragraph{Preference-Guided Engine (\methodName)}
-To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the primary configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors. These reference coordinates are computed offline from the objective vector distributions observed within the historical training dataset, conditioned on the active article count $\numarticles$ of the instance \instance. Specifically, for the four-dimensional objective space distribution of historical layout designs, two distinct aspiration vectors are extracted, corresponding to the 25th percentile (first quartile) and the 50th percentile (median) of the empirical historical distributions. Because all objectives follow a minimization paradigm, these quantiles establish demanding yet realistic target thresholds derived directly from successful human designs. A radius parameter $\RNSGAradius$ is enforced around these targeted points, restricting exploration to regions of proven structural and editorial utility. 
+To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the first configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors. These reference coordinates are computed offline from the objective vector distributions observed within the historical training dataset (see \secref{subsec:dataset_characterization}), conditioned on the active article count $\numarticles$ of the instance \instance. Specifically, for the four-dimensional objective space distribution of historical layout designs, two distinct aspiration vectors are extracted, corresponding to the 25th percentile (first quartile) and the 50th percentile (median) of the empirical historical distributions. Because all objectives follow a minimization paradigm, these quantiles establish demanding yet realistic target thresholds derived directly from successful human designs. A radius parameter $\RNSGAradius$ is enforced around these targeted points, restricting exploration to regions of proven structural and editorial utility. 
 
 To preserve localized diversity within these two targeted points, the framework projects a structured set of reference directions around each aspiration vector using 8 partitions, which mathematically yields exactly 165 local directions for a 4-dimensional space~\cite{rnsga-iii}. Accordingly, we configure a population size of 165 individuals per reference point ($165 \times 2 = 330$ in total), satisfying the preference-guided mechanism requirements while maintaining an equitable search capacity relative to the uniform exploration baseline.
 
 
+
+%TODO THIS REQUIRES MORE EXPLANATION
+
+
 \paragraph{Uniform Exploration (\methodNameUniform)}
 
-To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the optimization engine can alternatively be deployed using standard NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}. This variant, coined \methodNameUniformLong\ (\methodNameUniform),  operates fully autonomously without requiring historical design aspiration points, making it uniquely valuable when explicit editorial guidelines are unavailable or when the relative priorities among objectives are completely unknown. Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto front. By definition, this configuration maximizes objective space coverage, providing a robust, unconstrained search space coverage that facilitates standardized mathematical benchmarks against other baselines.
+To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the second variant, coined \methodNameUniformLong\ (\methodNameUniform) uses standard NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}. This variant  operates fully autonomously without requiring historical design aspiration points, making it uniquely valuable when explicit editorial guidelines are unavailable or when the relative priorities among objectives are completely unknown. Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto front. By definition, this configuration maximizes objective space coverage, providing a robust, unconstrained search space coverage that facilitates standardized mathematical benchmarks against other baselines.
 
+%TODO This might require more explanation
 
 
 %%%%%%%% Backtracking packing engine %%%%%%%%

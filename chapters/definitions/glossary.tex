@@ -1,0 +1,55 @@
+% Quick-reference glossary of the notation introduced in Chapter~\ref{chapter:definitions}.
+% Not included in the compiled manuscript by default -- add
+%   \input{chapters/definitions/glossary}
+% inside chapters/definitions/main.tex (e.g. after the Definitions section) if you want it
+% typeset as part of the thesis. Uses tabularx and booktabs, both already loaded by
+% sty/mesmacros.sty.
+
+\section{Glossary}
+
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\page$    & Page configuration / empty canvas \\
+$\Wpage$   & Total page width (mm) \\
+$\Hpage$   & Total page height (mm) \\
+$\mtop$    & Top margin \\
+$\mbottom$ & Bottom margin \\
+$\mleft$   & Left margin \\
+$\mright$  & Right margin \\
+$\Weff$    & Effective printable width ($\Wpage - \mleft - \mright$) \\
+$\Heff$    & Effective printable height ($\Hpage - \mtop - \mbottom$) \\
+$\colsize$ & Fixed column width \\
+$\gutter$  & Spacing between columns \\
+
+\midrule
+
+$\articleset$    & Set of articles \\
+$\numarticles$   & Number of articles, $|\articleset|$ \\
+$\articleobj{i}$ & Article object $i$ \\
+$\Cart{i}$       & Character count of body text \\
+$\Nimg{i}$       & Number of images in the article \\
+$\Tlart{i}$      & Binary flag: presence of a title \\
+$\Stlart{i}$     & Binary flag: presence of a subtitle \\
+$\Mainart{i}$    & Binary flag: designated main/lead story \\
+
+\midrule
+
+$\templatecatalog$      & Template catalog \\
+$\catalogsize$          & Size of the catalog, $|\templatecatalog|$ \\
+$\templateobj{j}$       & Template object $j$ \\
+$\Wtemp{j}$             & Template nominal width \\
+$\Htemp{j}$             & Template nominal height \\
+$\zoning{j}$            & Zoning topology (set of internal blocks) \\
+$\zblock{j}{k}$         & Internal block $k$ of $\zoning{j}$ \\
+$\blockgeom{\zblock{j}{k}}$ & Polygonal geometry (coordinates) of a block \\
+$\blockfeat{\zblock{j}{k}}$ & Feature class of a block (THEME, TITLE, SUBTITLE, PHOTO, CAPTION, TEXT) \\
+$\Nimgmax{j}$           & Maximum image slots (\# PHOTO blocks) \\
+$\capacity{j}$          & Text capacity matrix (rows indexed by active images $k$) \\
+
+\midrule
+$\templatesel{i}$ & Index of the template selected for article $i$, Eq.~\eqref{eq:template-selection-def} \\
+
+\bottomrule
+\end{tabularx}

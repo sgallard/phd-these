@@ -118,7 +118,7 @@ Every allocated article bounding box \bbox{i}\ must be entirely contained within
 \subsection{Multi-Objective Optimization Formulation}
 \label{sec:objective_formulation}
 
-The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). The optimization goal is to approximate a Pareto-optimal frontier~\cite{pareto} of layout configurations by simultaneously evaluating a vector of four distinct and conflicting objective functions:
+The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). Following the four layout criteria motivated in \secref{sec:pagegen-challenge}, the optimization goal is to approximate a Pareto-optimal frontier~\cite{pareto} of layout configurations by simultaneously evaluating a vector of four distinct and conflicting objective functions:
 \begin{equation}
 \objvector{\solution} = [\objone(\solution), \objthree(\solution), \objfour(\solution), \objtwo(\solution)]
 \end{equation}
@@ -146,7 +146,7 @@ By minimizing \objone, the optimization process directly drives the articles to 
 
 
 
-\subsubsection{\objthree: Text Capacity Integrity}
+\subsubsection{\objthree: Text capacity integrity}
 
 \begin{figure}[htbp]
     \centering
