@@ -49,10 +49,11 @@ This sequence of tokens is subsequently passed to a Transformer encoder~\cite{at
 Finally, the output of the encoder stack passes through a linear classification softmax layer to generate a probability matrix of dimensions $\numarticles \times \catalogsize$. Each entry in this matrix defines the contextual suitability, expressed as a probability $p\in[0,1]$ of a specific template for a given article in the page layout. 
 
 \subsection{$\gmn{\cdot}{\cdot}$ inclusion for template similarity}
+\label{sec:gwes-gmn-mapping}
 
 While the Transformer encoder models the dynamic suitability of template assignments based on historical contexts, it is inherently susceptible to long-tail bias, leading to the frequent under-scoring of valid templates simply because they are under-represented in the historical training dataset. This will cause that even if the Transformer achieves high predictive accuracy, its raw probability distributions might be highly concentrated, creating a rigid search space that can cause evolutionary operators to stall. 
 
-To mitigate this, \neuralmethod\ incorporates a precalculated pairwise similarity matrix $\gmnMatrix = [s_{ij}] \in \mathbb{R}^{\catalogsize \times \catalogsize}$ derived from $\gmn{\cdot}{\cdot}$ and $\gmnNetwork$~\cite{patil-2021, li-gmn-2019}.
+To mitigate this, \neuralmethod\ incorporates a precalculated pairwise similarity matrix $\gmnMatrix = [s_{ij}] \in \mathbb{R}^{\catalogsize \times \catalogsize}$ derived from $\gmn{\cdot}{\cdot}$ and $\gmnNetwork$~\cite{patil_layoutgmn_2021, li-gmn-2019}.
 
 However, and because the raw score $\gmn{\cdot}{\cdot}$ is unbounded ($\gmn{\templateobj{i}}{\templateobj{j}} \in (0, \infty], \forall i,j$), these values are mapped into a normalized affinity range $[0,1]$ using a Gaussian kernel transformation:
 \begin{equation}

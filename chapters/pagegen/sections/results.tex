@@ -24,7 +24,7 @@ The computational environments are strictly partitioned according to their opera
 \subsection{Dataset and Instance Setup}
 \label{subsec:dataset_characterization}
 
-To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using \laprovence archive (\secref{sec:laprovence}). This dataset  serves a dual purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
+To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using \laprovence archive (\secref{sec:laprovence}). This dataset  serves a threefold purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName; and third, it supplies the empirical objective distributions from which the historical aspiration vectors guiding the preference-based selection of \methodName are extracted, as detailed in \secref{sec:many-objective_optimization}. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
 
 
 %%%%%%%%% Hyperparameters U%%%%%%%%%%%%%
@@ -416,6 +416,7 @@ Crucially, the lower block isolates both frameworks by projecting their non-domi
 
 
 \subsection{\methodName\ vs \methodNameUniform}
+\label{sec:rnsga-vs-nsga}
 
 While \methodNameUniform\ effectively maps the multi-objective space, its uniform selection triggers a combinatorial explosion of the non-dominated frontier. In a production environment, this vast volume of non-dominates solutions imposes a considerable cognitive overhead on human users. To resolve this operational bottleneck, \methodName\ introduces a preference-guided evolutionary paradigm. 
 
@@ -496,6 +497,39 @@ To visually map both the differences in frontier size and its density within the
 In contrast, \figref{fig:parallel_rnsga} demonstrates the precise mechanics of \methodName's targeted pruning. The chaotic web completely collapses into a few highly curated design paths that strictly adhere to the lower, viable regions of the axes. By systematically eliminating operationally useless layouts, the preference engine successfully bridges the gap between multi-objective theoretical optimality and real-world decision spaces.
 
 
+\subsubsection{Execution Time}
+
+Beyond frontier cardinality and ROI density, both paradigms also differ in computational cost. Table~\ref{tab:exec_time_rnsga_comparison} contrasts their execution times across the same article count strata, where the values reported for \methodNameUniform\ correspond to those already presented in Table~\ref{tab:exec_time_analysis}.
+
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lll}
+\toprule
+$\numarticles$ & \methodNameUniform & \methodName \\
+\midrule
+2 & 56.191s $\pm$ 1.052s & 68.52s $\pm$ 1.44s\\
+3 & 59.333s $\pm$ 1.659s & 71.86s $\pm$ 2.11s\\
+4 & 64.299s $\pm$ 1.435s & 78.47s	$\pm$ 1.79s\\
+5 & 76.739s $\pm$ 1.799s & 93.83s	$\pm$ 2.97s\\
+6 & 80.614s $\pm$ 0.832s & 99.21s	$\pm$ 2.27s\\
+8 & 90.456s $\pm$ 1.839s & 111.77s $\pm$ 2.01s\\
+\bottomrule
+\end{tabular}
+\caption{Execution time comparison between the uniform and the preference-guided paradigms. The values reported for \methodNameUniform\ are reproduced from Table~\ref{tab:exec_time_analysis}. Metrics express the $\text{mean} \pm \text{standard deviation}$, stratified by article count ($\numarticles$).}
+\label{tab:exec_time_rnsga_comparison}
+\end{table}
+
+The measurements reveal that \methodName\ incurs a systematically higher execution time than \methodNameUniform, with an overhead comprised between $21\%$ and $24\%$ across the evaluated strata. This penalty can be explained by two reasons: 
+
+\begin{enumerate}
+  \item The population size is higher. \methodName\ evolves $\popsize_{R} = 330$ individuals against $\popsize = 286$, which amounts to $15.4\%$ additional chromosome decodings per generation. 
+  \item The survival selection mechanism itself. The reference-point niching of \methodName\ must evaluate the distance of every individual to each aspiration vector and subsequently apply the $\RNSGAradius$-based clearing procedure, an operation more costly than the uniform Das-Dennis association employed by \methodNameUniform.
+\end{enumerate}
+
+Two properties of this overhead deserve to be noted. First, it remains proportionally stable across the complexity strata instead of degrading as the article count grows, which indicates that the additional cost scales with the population and the selection mechanism rather than with the combinatorial difficulty of the instance. Second, the most demanding instance evaluated ($\numarticles = 8$) is still resolved in $111.77$s, hence below two minutes per page. The preference-guided paradigm of \methodName\ therefore justify its operational advantages, namely a frontier reduced by an order of magnitude and a substantially higher density within the region of interest, at a bounded and predictable computational time, which is acceptable in a production setting where page building is not a real-time task. These runtimes correspond to the reference configuration reported in \secref{sec:implementation_details}; on less capable hardware the absolute values scale accordingly, in which case the mitigation strategies examined in \secref{sec:computational-performance} become directly applicable.
+
+
 \subsection{Qualitative Results of \methodName}
 
 To complement the quantitative evaluation, this section provides a few examlpes of the pages synthesized by the framework. \figref{fig:qualitative_layouts_grid} presents a 2$\times$2 grid showcasing finalized layout alternatives across two representative instances of varying complexity, visually illustrating the structural diversity and design plasticity achieved by \methodName.
@@ -550,7 +584,7 @@ To complement the quantitative evaluation, this section provides a few examlpes 
 
  A qualitative inspection reveals \methodName\ consistently maximizes page utilization, dynamically selecting template/position configurations that jointly optimize all objectives. For the medium-complexity case ($n=4$),  two structurally similar alternatives (\ref{fig:layout_1a} and \ref{fig:layout_1b}) were selected to highlight the framework's capacity for fine-grained variations; these layouts share a global arrangement but diverge in micro-structural elasticity,as explicitly indicated by the text-scaling percentages, and template assignments. 
 
-Conversely, for the large-scale instance, two radically different designs were selected to showcase macro-structural plasticity of \methodName. While Alternative~\ref{fig:layout_2a} presents a valid fluid distribution, Alternative~\ref{fig:layout_2b} achieves one of the lowest editorial style scores ($\objtwo$) on the frontier by mirroring a highly authentic, structured newspaper grid that completely discards irregular, ``Tetris-like'' geometric partitioning.
+Conversely, for the large-scale instance, two radically different designs were selected to showcase macro-structural plasticity of \methodName. While Alternative~\ref{fig:layout_2a} presents a valid fluid distribution, Alternative~\ref{fig:layout_2b} achieves one of the best (lowest) $\objtwo$ scores  on the frontier by mirroring a highly authentic, structured newspaper grid that completely discards irregular, ``Tetris-like'' geometric partitioning.
 
 Additionally, the architectural synergy embedded within \neuralmethod\ gives rise to a compelling dual phenomenon regarding learned design criteria:
 \begin{enumerate}
@@ -561,14 +595,15 @@ Crucially, the system learns and deploys these complex, real-world layout rules 
 
 \section{Discussion}
 
-While the empirical and qualitative findings validate the efficacy of \methodName, two primary aspects require a critical analysis regarding its  industrial deployment, and architectural extensibility.
+While the empirical and qualitative findings validate the efficacy of \methodNameGeneral, two primary aspects require a critical analysis regarding its  industrial deployment, and architectural extensibility.
 
 \subsection{Computational Performance and Scalability}
-Execution time represents the primary computational bottleneck of \methodName. Nevertheless, several optimization vectors can be deployed to mitigate this overhead in production environments. First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) provides an immediate mechanism to accelerate response times without compromising frontier quality. 
+\label{sec:computational-performance}
+Execution time represents the primary computational bottleneck of \methodNameGeneral\ when contrasted against the constructive baselines, whose runtimes remain in the millisecond range. This overhead is nonetheless bounded: even \methodName, which is the more costly of the two paradigms, resolves the most demanding instance evaluated in under two minutes per page (Table~\ref{tab:exec_time_rnsga_comparison}). Beyond this, several optimization vectors can be deployed to further mitigate the overhead in production environments. First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) from $300$ to $200$ generations provides an immediate mechanism to accelerate response times without compromising frontier quality; assuming a cost roughly proportional to the number of generations, this measure alone would bring the most demanding instance from $111.77$s down to approximately $75$s.
 
-Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodName\ are already operationally viable and fully acceptable within the specific industrial newsroom production environment targeted by this investigation.
+Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodNameGeneral\ are already operationally viable within the specific industrial newsroom production environment targeted by this investigation. The most demanding instance evaluated, resolved in $111.77$s by the more costly of the two paradigms, remains within the tolerance of a few minutes per page specified by the industrial partner (\secref{sec:motivation}), and therefore satisfies the temporal criterion of the main objective stated in \secref{sec:objectives}, in contrast with the hours of manual editing that the workflow currently demands.
 
 \subsection{Architectural Extensibility to Advertisement Placement}
-The current implementation of \methodName\ omits the placement of advertisement elements. This omission stems strictly from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.
+The current implementation of \methodNameGeneral\ omits the placement of advertisement elements. This omission stems strictly from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.
 
-To integrate advertisements, these assets can be modeled as static, fixed-size bounding boxes within the chromosome representation. Unlike standard articles, advertisement blocks would bypass the template selection layer,as their aspect ratios are  predetermined, and feed directly into the spatial packing decoder. Furthermore, to guide their placement, a localized spatial penalty function can be formulated. This function would operate analogously to the main article zone objective ($\HCZ$ in $\objfour$), penalizing configurations that displace advertisements outside of the newspaper's historically preferred advertising quadrants. Beyond this parameterization, the core mechanisms of \methodName\ remain robust and inherently scalable.
+To integrate advertisements, these assets can be modeled as static, fixed-size bounding boxes within the chromosome representation. Unlike standard articles, advertisement blocks would bypass the template selection layer,as their aspect ratios are  predetermined, and feed directly into the spatial packing decoder. Furthermore, to guide their placement, a localized spatial penalty function can be formulated. This function would operate analogously to the main article zone objective ($\HCZ$), penalizing configurations that displace advertisements outside of the newspaper's historically preferred advertising quadrants. Beyond this parameterization, the core mechanisms of \methodNameGeneral\ remain robust and inherently scalable.

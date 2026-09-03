@@ -5,28 +5,128 @@
 
 The proposed layout generation method, coined \methodNameGeneralLong (\methodNameGeneral), is engineered as a multi-objective evolutionary framework that find a set of layouts $\solution$ for a given instance $\instance$ of the above-detailed problem.  
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=\widthForOneImage]{img/method/method-overview.pdf}
-    \caption{Global architectural workflow of the proposed \methodNameGeneral\ framework. }
+    \begin{tikzpicture}[
+        flowbox/.style={draw, rounded corners=2pt, text width=70mm, minimum height=11mm, align=center, font=\small, inner sep=2mm},
+        halfbox/.style={draw, rounded corners=2pt, text width=40mm, minimum height=11mm, align=center, font=\small, inner sep=2mm},
+        smallbox/.style={draw, rounded corners=2pt, text width=24mm, minimum height=13mm, align=center, font=\small, inner sep=1.5mm},
+        arr/.style={->, >=stealth, thick},
+        modtitle/.style={font=\small\bfseries, align=left},
+        node distance=6mm and 8mm
+    ]
+
+    % --- Module A: Many-Objective Evolutionary Optimization Engine ---
+    \node[halfbox] (aspiration) {Historical aspiration points};
+    \node[halfbox, right=of aspiration] (dasdennis) {Das-Dennis reference directions~\cite{das-dennis}};
+
+    \node[halfbox, below=of aspiration] (methodname) {\methodName: preference-guided RNSGA-III~\cite{rnsga-iii}};
+    \node[halfbox, below=of dasdennis] (methodnameuniform) {\methodNameUniform: uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}};
+
+    \node[flowbox] (pop) at ($(methodname.south)!0.5!(methodnameuniform.south)+(0,-13mm)$) {Population of chromosomes $\chromosome$ across generations --- genetic operators: crossover, mutation, selection (\figref{fig:evolutionary_loop})};
+
+    \draw[arr] (aspiration) -- (methodname);
+    \draw[arr] (dasdennis) -- (methodnameuniform);
+    \draw[arr] (methodname.south) -- (pop.north);
+    \draw[arr] (methodnameuniform.south) -- (pop.north);
+
+    \draw[dashed, rounded corners=3pt] ($(aspiration.north west)+(-4mm,9mm)$) rectangle ($(dasdennis.east |- pop.south)+(4mm,-4mm)$);
+    \node[modtitle, anchor=north west] at ($(aspiration.north west)+(-3mm,8mm)$) {Many-Objective Evolutionary Optimization Engine};
+
+    % --- Module B: Packing Decoder Module ---
+    \node[flowbox, below=15mm of pop] (decoder) {Packing decoder engine: extreme-points backtracking routine~\cite{crainic-extreme-points} (\secref{sec:packing_engine})};
+    \node[flowbox, below=of decoder] (layout) {Decoded layout $\solution$};
+
+    \draw[arr] (pop) -- (decoder);
+    \draw[arr] (decoder) -- (layout);
+
+    \draw[dashed, rounded corners=3pt] ($(decoder.north west)+(-4mm,9mm)$) rectangle ($(layout.south east)+(4mm,-4mm)$);
+    \node[modtitle, anchor=north west] at ($(decoder.north west)+(-3mm,8mm)$) {Packing Decoder Module};
+
+    % --- Module C: Multi-Objective Evaluation Module ---
+    \node[smallbox, below=15mm of layout, xshift=-50mm] (f1) {$\objone$: Page coverage};
+    \node[smallbox, right=of f1] (f2) {$\objthree$: Text capacity integrity};
+    \node[smallbox, right=of f2] (f3) {$\objfour$: Positioning quality};
+    \node[smallbox, right=of f3] (f4) {$\objtwo$: \neuralmethod};
+
+    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f1.north);
+    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f2.north);
+    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f3.north);
+    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f4.north);
+
+    \node[flowbox] (objvec) at ($(f2.south)!0.5!(f3.south)+(0,-13mm)$) {$\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
+
+    \draw[arr] (f1.south) -- (objvec.north);
+    \draw[arr] (f2.south) -- (objvec.north);
+    \draw[arr] (f3.south) -- (objvec.north);
+    \draw[arr] (f4.south) -- (objvec.north);
+
+    \draw[dashed, rounded corners=3pt] ($(f1.north west)+(-4mm,9mm)$) rectangle ($(f4.east |- objvec.south)+(4mm,-4mm)$);
+    \node[modtitle, anchor=north west] at ($(f1.north west)+(-3mm,8mm)$) {Multi-Objective Evaluation Module};
+
+    % --- Feedback loop: objective vector drives chromosome selection ---
+    \draw[arr] (objvec.west) -- ++(-6,0) node[pos=0.35, above, font=\small] {drives chromosome selection} |- (pop.west);
+
+    \end{tikzpicture}
+    \caption{Global architectural workflow of the proposed \methodNameGeneral\ framework. The three interconnected modules correspond to the description in this section: the evolutionary optimization engine drives a population of chromosomes $\chromosome$ through either the preference-guided \methodName\ or the uniform \methodNameUniform\ paradigm (the internal generational loop is detailed separately in \figref{fig:evolutionary_loop}); the packing decoder module decodes each chromosome into a layout $\solution$; and the multi-objective evaluation module synthesizes the objective vector $\objvector{\solution}$, which is fed back to drive chromosome selection in the next generation.}
     \label{fig:method-overview}
 \end{figure}
 
 The global workflow of \methodNameGeneral operates as an optimization pipeline structured across three main interconnected modules, as illustrated in Figure~\ref{fig:method-overview}. 
 
 \begin{itemize}
-    \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating as the strategic search core, this module manages the population of abstract chromosomes across generations through specialized genetic operators (crossover, mutation, and pareto-front based selection~\cite{pareto}). The engine navigates the combinatorial search space of chromosomes, which represents template assignments ($\templatesel{i}$), article positioning $\posvar{i}$, and vertical elasticities $\elasticity{i}$.  Additionally, this module implements two distinct paradigms to select the best chromosomes in each generation: a preference-guided RNSGA-III~\cite{rnsga-iii}, coined \methodName, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}, coined \methodNameUniform, for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
+    \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating as the strategic search engine, this module manages the population of abstract chromosomes across generations through specialized genetic operators (crossover, mutation, and pareto-front based selection~\cite{pareto}) detailed in the generational loop of \figref{fig:evolutionary_loop}. The engine navigates the combinatorial search space of chromosomes, which represents template assignments ($\templatesel{i}$), article positioning $\posvar{i}$, and vertical elasticities $\elasticity{i}$.  Additionally, this module implements two distinct paradigms to select the best chromosomes in each generation: a preference-guided RNSGA-III~\cite{rnsga-iii}, coined \methodName, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}, coined \methodNameUniform, for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
 
-    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$. By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in Chapter~\ref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
+    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$ (\secref{sec:packing_engine}). By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in Chapter~\ref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
 
-    \item \textbf{Multi-Objective Evaluation Module:} This module dynamically assesses each decoded layout $\solution$ across the four-dimensional objective space to synthesize the unified objective vector $\objvector(\solution)$. It combines analytical geometric functions ($\objone$: Page coverage, $\objthree$: Text capacity Integrity, and $\objfour$: Positioning of articles quality) with a neural evaluation pipeline ($\objtwo$: \NeuralMethod). The resulting objective vector  $\objvector(\solution)$ is fed back into the evolutionary optimization module to drive chromosome selection in the next generation.
+    \item \textbf{Multi-Objective Evaluation Module:} This module dynamically assesses each decoded layout $\solution$ across the four-dimensional objective space (\secref{sec:objective_formulation}) to synthesize the unified objective vector $\objvector(\solution)$. It combines analytical geometric functions ($\objone$: Page coverage, $\objthree$: Text capacity Integrity, and $\objfour$: Positioning of articles quality) with a neural evaluation pipeline ($\objtwo$: \NeuralMethod). The resulting objective vector  $\objvector(\solution)$ is fed back into the evolutionary optimization module to drive chromosome selection in the next generation.
 \end{itemize}
 
 
-\subsection{Multi-Objective NSGA-III Optimization Engine}
+\subsection{Many-Objective Evolutionary Optimization Engine}
 \label{sec:evolutionary_engine}
 
 The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a chromosome vector that maps abstract decisions prior to layout decoding using the packing engine.
+
+\figref{fig:evolutionary_loop} summarizes the resulting generational loop executed by this engine at each iteration. The remainder of this section formalizes each of its stages: the chromosome encoding is introduced in \secref{sec:chromosome_representation}, the population initialization and genetic operators are detailed in \secref{sec:evolutionary_operators}, and the many-objective selection paradigm is presented in \secref{sec:many-objective_optimization}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        flowbox/.style={draw, rounded corners=2pt, text width=54mm, minimum height=11mm, align=center, font=\small, inner sep=2mm},
+        decision/.style={draw, diamond, aspect=2.8, align=center, font=\small, inner sep=1pt},
+        arr/.style={->, >=stealth, thick},
+        node distance=6mm and 18mm
+    ]
+
+    \node[flowbox] (init) {Initialize population $P_0$\\ (chromosomes $\chromosome$, size $\popsize$)};
+    \node[flowbox, below=of init] (decode) {Decode each \chromosome\ into a layout $\solution$ (\secref{sec:packing_engine}); evaluate $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
+    \node[flowbox, below=of decode] (matsel) {Mating ($\frac{\popsize}{2}$)};
+    \node[flowbox, below=of matsel] (crossover) {Crossover: 2 parents produce 2 children (\secref{sec:evolutionary_operators})};
+    \node[flowbox, below=of crossover] (mutation) {Mutation to each offspring};
+    \node[flowbox, below=of mutation] (dedup) {Duplicate offspring are discarded};
+    \node[flowbox, below=of dedup] (decode2) {Decode each \chromosome\ into a layout $\solution$ (\secref{sec:packing_engine}); evaluate $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
+    \node[flowbox, below=of decode2] (envsel) {Selection procedure on current population $\cup$ offspring (NSGA-III / RNSGA-III, \secref{sec:many-objective_optimization}) $\to$ next generation $P_{g+1}$};
+    \node[flowbox, below=of envsel] (gplus) {$g = g+1$};
+    \node[decision, below=of gplus] (decision) {$g < \ngen$?};
+    \node[flowbox, right=of decision] (output) {Output: Pareto-approximate front of layouts $\solution$};
+
+    \draw[arr] (init) -- (decode);
+    \draw[arr] (decode) -- (matsel);
+    \draw[arr] (matsel) -- (crossover);
+    \draw[arr] (crossover) -- (mutation);
+    \draw[arr] (mutation) -- (dedup);
+    \draw[arr] (dedup) -- (decode2);
+    \draw[arr] (decode2) -- (envsel);
+    \draw[arr] (envsel) -- (gplus);
+    \draw[arr] (gplus) -- (decision);
+    \draw[arr] (decision) -- node[above, font=\small] {no} (output);
+    \draw[arr] (decision.west) -- ++(-3,0) node[pos=0.5, above, font=\small] {yes} |- (matsel.west);
+
+    \end{tikzpicture}
+    \caption{Generational loop of the \methodNameGeneral\ evolutionary engine. An initial population of $\popsize$ chromosomes is decoded into layouts and evaluated against the four-dimensional objective vector $\objvector{\solution}$ (\secref{sec:objective_formulation}). At every generation $g$, mating selection, crossover, and mutation jointly produce two new children per pair of parents from the current population; duplicate offspring are discarded, and the surviving offspring are decoded and evaluated. The selection procedure then retains the fittest chromosomes from the union of the current population and this offspring, according to either the uniform (\methodNameUniform) or aspiration point-guided (\methodName) NSGA-III paradigm, to form the next generation $P_{g+1}$. While $g$ remains below the generation budget $\ngen$, the loop resumes at mating selection; once $g = \ngen$, the population is returned as the Pareto-approximate front of layouts.}
+    \label{fig:evolutionary_loop}
+\end{figure}
 
 
 %%%% Chromosome Representation %%%
@@ -107,7 +207,7 @@ Each candidate layout $\solution$ is encoded as a chromosome composes of three s
 
 %%%%%% Operators %%%%%%%%
 
-\subsubsection{Evolutionary Operators}
+\subsubsection{Population Initialization and Evolutionary Operators}
 \label{sec:evolutionary_operators}
 
 To effectively manipulate the three distinct genetic components within the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$, specialized initialization, crossover, and mutation mechanisms are implemented.
@@ -138,15 +238,138 @@ The crossover operator applies two concurrent strategies, to account for the dif
 
 \begin{figure}[htbp]
     \centering
-    %%
+    \begin{tikzpicture}[
+        box/.style={draw, minimum size=8mm, inner sep=0pt, font=\small},
+        boxB/.style={box, fill=gray!25},
+        idx/.style={font=\small, text=gray},
+        rowlabel/.style={font=\small\bfseries, anchor=east},
+        cutline/.style={dashed, thick}
+    ]
 
-    \caption{Two-point crossover}
+    % --- Parent 1 row ---
+    \node[rowlabel] (p1-label) at (-0.5, 3) {Parent 1 (\chromosomeTemplateSegment; \chromosomeElasticitySegment)};
+    \node[box] (p1-1) at (0,3) {5};
+    \node[box, right=-\pgflinewidth of p1-1] (p1-2) {9};
+    \node[box, right=-\pgflinewidth of p1-2] (p1-3) {2};
+    \node[box, right=-\pgflinewidth of p1-3] (p1-4) {14};
+    \node[box, right=-\pgflinewidth of p1-4] (p1-5) {6};
+    \node[box, right=-\pgflinewidth of p1-5] (p1-6) {11};
+
+    \node[idx, above=2mm of p1-1] {$1$};
+    \node[idx, above=2mm of p1-2] {$2$};
+    \node[idx, above=2mm of p1-3] {$3$};
+    \node[idx, above=2mm of p1-4] {$4$};
+    \node[idx, above=2mm of p1-5] {$5$};
+    \node[idx, above=2mm of p1-6] {$6$};
+
+    % --- Parent 2 row ---
+    \node[rowlabel] (p2-label) at (-0.5, 1.5) {Parent 2 (\chromosomeTemplateSegment; \chromosomeElasticitySegment)};
+    \node[boxB] (p2-1) at (0,1.5) {8};
+    \node[boxB, right=-\pgflinewidth of p2-1] (p2-2) {3};
+    \node[boxB, right=-\pgflinewidth of p2-2] (p2-3) {12};
+    \node[boxB, right=-\pgflinewidth of p2-3] (p2-4) {1};
+    \node[boxB, right=-\pgflinewidth of p2-4] (p2-5) {10};
+    \node[boxB, right=-\pgflinewidth of p2-5] (p2-6) {4};
+
+    % --- Offspring 1 row ---
+    \node[rowlabel] (o1-label) at (-0.5, -0.7) {Offspring 1 (\chromosomeTemplateSegment; \chromosomeElasticitySegment)};
+    \node[box] (o1-1) at (0,-0.7) {5};
+    \node[box, right=-\pgflinewidth of o1-1] (o1-2) {9};
+    \node[boxB, right=-\pgflinewidth of o1-2] (o1-3) {12};
+    \node[boxB, right=-\pgflinewidth of o1-3] (o1-4) {1};
+    \node[box, right=-\pgflinewidth of o1-4] (o1-5) {6};
+    \node[box, right=-\pgflinewidth of o1-5] (o1-6) {11};
+
+    % --- Offspring 2 row ---
+    \node[rowlabel] (o2-label) at (-0.5, -2.2) {Offspring 2 (\chromosomeTemplateSegment; \chromosomeElasticitySegment)};
+    \node[boxB] (o2-1) at (0,-2.2) {8};
+    \node[boxB, right=-\pgflinewidth of o2-1] (o2-2) {3};
+    \node[box, right=-\pgflinewidth of o2-2] (o2-3) {2};
+    \node[box, right=-\pgflinewidth of o2-3] (o2-4) {14};
+    \node[boxB, right=-\pgflinewidth of o2-4] (o2-5) {10};
+    \node[boxB, right=-\pgflinewidth of o2-5] (o2-6) {4};
+
+    % --- Cut points, shared across all four rows ---
+    \draw[cutline] ([xshift=-\pgflinewidth]p1-3.north west) -- ([xshift=-\pgflinewidth]o2-3.south west);
+    \draw[cutline] ([xshift=-\pgflinewidth]p1-5.north west) -- ([xshift=-\pgflinewidth]o2-5.south west);
+
+    \end{tikzpicture}
+    \caption{Two-point crossover applied to a chromosome segment of length $\numarticles=6$ (e.g.\ $\chromosomeTemplateSegment$ or $\chromosomeElasticitySegment$). Two cut points (dashed lines) split Parent~1 (white) and Parent~2 (gray) into three blocks. Offspring~1 and Offspring~2 are obtained by exchanging the central block between the two parents, each box keeping the shade of the parent it was inherited from.}
+    \label{fig:two_point_crossover}
 \end{figure}
 \begin{figure}[htbp]
     \centering
-    %%
+    \begin{tikzpicture}[
+        box/.style={draw, minimum size=8mm, inner sep=0pt, font=\small},
+        boxB/.style={box, fill=gray!25},
+        segbox/.style={box, line width=1.1pt},
+        segboxB/.style={boxB, line width=1.1pt},
+        idx/.style={font=\small, text=gray},
+        order/.style={font=\scriptsize, text=gray},
+        rowlabel/.style={font=\small\bfseries, anchor=east},
+        cutline/.style={dashed, thick}
+    ]
 
-    \caption{Order Crossover (OX1)}
+    % --- Parent A row ---
+    \node[rowlabel] (pa-label) at (-0.5, 3) {Parent 1 (\chromosomePermutationSegment)};
+    \node[box] (pa-1) at (0,3) {2};
+    \node[box, right=-\pgflinewidth of pa-1] (pa-2) {4};
+    \node[segbox, right=-\pgflinewidth of pa-2] (pa-3) {1};
+    \node[segbox, right=-\pgflinewidth of pa-3] (pa-4) {6};
+    \node[box, right=-\pgflinewidth of pa-4] (pa-5) {3};
+    \node[box, right=-\pgflinewidth of pa-5] (pa-6) {5};
+
+    \node[idx, above=2mm of pa-1] {$1$};
+    \node[idx, above=2mm of pa-2] {$2$};
+    \node[idx, above=2mm of pa-3] {$3$};
+    \node[idx, above=2mm of pa-4] {$4$};
+    \node[idx, above=2mm of pa-5] {$5$};
+    \node[idx, above=2mm of pa-6] {$6$};
+
+    % --- Parent B row ---
+    \node[rowlabel] (pb-label) at (-0.5, 1.5) {Parent 2 (\chromosomePermutationSegment)};
+    \node[boxB] (pb-1) at (0,1.5) {1};
+    \node[boxB, right=-\pgflinewidth of pb-1] (pb-2) {6};
+    \node[segboxB, right=-\pgflinewidth of pb-2] (pb-3) {4};
+    \node[segboxB, right=-\pgflinewidth of pb-3] (pb-4) {2};
+    \node[boxB, right=-\pgflinewidth of pb-4] (pb-5) {5};
+    \node[boxB, right=-\pgflinewidth of pb-5] (pb-6) {3};
+
+    % --- Offspring 1 row: copies segment from Parent A, fills from Parent B ---
+    \node[rowlabel] (o1-label) at (-0.5, -0.7) {Offspring 1 (\chromosomePermutationSegment)};
+    \node[boxB] (o1-1) at (0,-0.7) {4};
+    \node[boxB, right=-\pgflinewidth of o1-1] (o1-2) {2};
+    \node[segbox, right=-\pgflinewidth of o1-2] (o1-3) {1};
+    \node[segbox, right=-\pgflinewidth of o1-3] (o1-4) {6};
+    \node[boxB, right=-\pgflinewidth of o1-4] (o1-5) {5};
+    \node[boxB, right=-\pgflinewidth of o1-5] (o1-6) {3};
+
+    \node[order, below=1mm of o1-1] {3rd};
+    \node[order, below=1mm of o1-2] {4th};
+    \node[order, below=1mm of o1-5] {1st};
+    \node[order, below=1mm of o1-6] {2nd};
+
+    % --- Offspring 2 row: copies segment from Parent B, fills from Parent A ---
+    \node[rowlabel] (o2-label) at (-0.5, -3.3) {Offspring 2 (\chromosomePermutationSegment)};
+    \node[box] (o2-1) at (0,-3.3) {1};
+    \node[box, right=-\pgflinewidth of o2-1] (o2-2) {6};
+    \node[segboxB, right=-\pgflinewidth of o2-2] (o2-3) {4};
+    \node[segboxB, right=-\pgflinewidth of o2-3] (o2-4) {2};
+    \node[box, right=-\pgflinewidth of o2-4] (o2-5) {3};
+    \node[box, right=-\pgflinewidth of o2-5] (o2-6) {5};
+
+    \node[order, below=1mm of o2-1] {3rd};
+    \node[order, below=1mm of o2-2] {4th};
+    \node[order, below=1mm of o2-5] {1st};
+    \node[order, below=1mm of o2-6] {2nd};
+
+    % --- Cut points, shared across all four rows ---
+    \draw[cutline] ([xshift=-\pgflinewidth]pa-3.north west) -- ([xshift=-\pgflinewidth]o2-3.south west);
+    \draw[cutline] ([xshift=-\pgflinewidth]pa-5.north west) -- ([xshift=-\pgflinewidth]o2-5.south west);
+
+    \end{tikzpicture}
+    \caption{Order Crossover (OX1) applied to the permutation segment $\chromosomePermutationSegment$ ($\numarticles=6$), using the same two cut points (dashed lines) as Figure~\ref{fig:two_point_crossover}. The segment between the cuts is copied into the corresponding offspring, keeping its position (bold border): Offspring~1 copies it from Parent~1 (white), Offspring~2 copies it from Parent~2 (gray). The remaining positions of each offspring are filled by scanning the \emph{other} parent cyclically, starting right after the second cut point (fill order labelled 1st-4th), and skipping any value already present in the copied segment so that the resulting sequence remains a valid permutation.}
+    \label{fig:ox1_crossover}
 \end{figure}
 
 
@@ -171,26 +394,30 @@ Crucially, to preserve context, whenever a $\chromosomeTemplateSegment$ mutation
 
 %%%%%% NSGA specifics %%%%%%%%%%
 
-\subsubsection{Many-Objective Optimization Paradigm}
+\subsubsection{NSGA-III Many-Objective Selection Paradigm}
 \label{sec:many-objective_optimization}
 
 The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in Chapter~\ref{sec:objective_formulation}. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection: a targeted aspiration-point design (\methodName) as a preference-based method, and a uniform exploratory variant (\methodNameUniform).
 
 \paragraph{Preference-Guided Engine (\methodName)}
-To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the first configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors. These reference coordinates are computed offline from the objective vector distributions observed within the historical training dataset (see \secref{subsec:dataset_characterization}), conditioned on the active article count $\numarticles$ of the instance \instance. Specifically, for the four-dimensional objective space distribution of historical layout designs, two distinct aspiration vectors are extracted, corresponding to the 25th percentile (first quartile) and the 50th percentile (median) of the empirical historical distributions. Because all objectives follow a minimization paradigm, these quantiles establish demanding yet realistic target thresholds derived directly from successful human designs. A radius parameter $\RNSGAradius$ is enforced around these targeted points, restricting exploration to regions of proven structural and editorial utility. 
+To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the first configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors computed offline from the same historical training dataset used to train the Transformer Encoder module of \neuralmethod\ (\secref{subsec:dataset_characterization}), conditioned on the active article count $\numarticles$ of the target instance \instance.
 
-To preserve localized diversity within these two targeted points, the framework projects a structured set of reference directions around each aspiration vector using 8 partitions, which mathematically yields exactly 165 local directions for a 4-dimensional space~\cite{rnsga-iii}. Accordingly, we configure a population size of 165 individuals per reference point ($165 \times 2 = 330$ in total), satisfying the preference-guided mechanism requirements while maintaining an equitable search capacity relative to the uniform exploration baseline.
+To extract these aspiration vectors, the following procedure is applied offline over the historical training dataset:
+\begin{itemize}
+    \item The four-dimensional objective vector $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$ (\secref{sec:objective_formulation}) is evaluated over every historical layout $\solution$ contained in the training dataset.
+    \item Because the  magnitude of each objective is intrinsically tied to the structural complexity of the page (more articles are inherently harder to fit and align into a single page) historical layouts are first stratified by their article count $\numarticles$, and the following statistics are computed independently within each resulting stratum.
+    \item Within each stratum, the marginal empirical distribution of every individual objective ($\objone, \objtwo, \objthree, \objfour$) is estimated separately, and two component-wise quantile vectors are extracted: one gathering the 25th percentile (first quartile) of each objective, and another gathering the 50th percentile (median).
+    \item Because all objectives follow a minimization paradigm, the first vector establishes a demanding target, matched only by the best quarter of historical designs, while the second reflects the standard of typical professional practice.
+    \item Extending the analysis beyond these two levels was deemed unnecessary: the first quartile and median already bracket the range of ambition relevant to the search, since quantiles above the median would target below-average historical designs, contradicting the purpose of steering the search toward high-utility regions. Moreover, every additional aspiration point would require its own local mesh of reference directions, inflating the resulting population size proportionally. 
+    \item This procedure produces a lookup table of aspiration-vector pairs indexed by article count; at optimization time, the pair matching the article's number $\numarticles$ of the target instance \instance is retrieved to anchor the search to the corresponding pair of aspiration points.
+\end{itemize}
 
-
-
-%TODO THIS REQUIRES MORE EXPLANATION
+At optimization time, a radius parameter $\RNSGAradius$ is enforced around these targeted points, restricting exploration to regions of proven structural and editorial utility~\cite{rnsga-iii}. Then, the framework projects a structured set of reference directions around each aspiration vector using 8 partitions, which mathematically yields exactly 165 local directions for a 4-dimensional space~\cite{rnsga-iii}. Accordingly, this produces a population size of 165 individuals per reference point ($165 \times 2 = 330$ in total), satisfying the preference-guided mechanism requirements while maintaining an equitable search capacity relative to the uniform exploration variant.
 
 
 \paragraph{Uniform Exploration (\methodNameUniform)}
 
-To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the second variant, coined \methodNameUniformLong\ (\methodNameUniform) uses standard NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}. This variant  operates fully autonomously without requiring historical design aspiration points, making it uniquely valuable when explicit editorial guidelines are unavailable or when the relative priorities among objectives are completely unknown. Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto front. By definition, this configuration maximizes objective space coverage, providing a robust, unconstrained search space coverage that facilitates standardized mathematical benchmarks against other baselines.
-
-%TODO This might require more explanation
+To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the second variant, coined \methodNameUniformLong\ (\methodNameUniform) uses standard NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}. This variant  operates fully autonomously without requiring historical design aspiration points, making it uniquely valuable when explicit editorial guidelines are unavailable or when the relative priorities among objectives are completely unknown. Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto front. By definition, this configuration maximizes search space coverage, facilitating standardized mathematical benchmarks against other baselines.
 
 
 %%%%%%%% Backtracking packing engine %%%%%%%%

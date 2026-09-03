@@ -3,18 +3,38 @@
 %%------------------------------------------------ Le résumé et les mots-clés -
 \begin{ResumeMotsCles}
 
-    %% Résumé en anglais : pas plus de 2000 caractères
+    %% Résumé en anglais : ~3000 caractères
 \begin{abstract}
-Abstract in English: no more than 2000 characters
+In today's news industry, reading has moved to websites, mobile devices and tablets, and the print edition has become increasingly costly to produce. The reason is operational: journalists once wrote to fill a page of fixed geometry, whereas today they write web-first and the layout comes afterwards. Every edition must therefore be rebuilt from content never shaped for a page, and in Melody, a French content management system deployed in over 150 newsrooms, that rebuilding is done by hand, at a cost of hours per edition. Print nevertheless remains valuable, since its two-dimensional arrangement lets a reader see at a glance what matters, which is why most publishers still offer it as a premium, subscription-based product.
+
+That bottleneck sets the objective of this thesis: to automate the articles-to-page workflow. Each article is given a template, a fixed geometric frame dictating where its headline, text and images sit, and the resulting print articles are arranged on the page, both without human intervention. What makes this hard is that a good page is not simply a well-packed one: several criteria compete, and one of them, whether the chosen templates match the publisher's own design practice, is never written down, and is observable only in the pages already produced.
+
+That last criterion is what the thesis addresses first, by defining a topological similarity between templates obtained by retraining a graph matching network. It supports two mechanisms: a diversity-aware retrieval framework, which operates on a single article and improves the structural diversity and the long-tail coverage of the retrieved templates, and a page-aware scoring model, which recovers the publisher's assignment style with 82.6\% top-1 accuracy on historical human assignments.
+
+Page layout generation, the main contribution of this thesis, is then formalised as a multi-objective combinatorial optimisation problem over the template, position and elasticity of each article, combining three analytically specifiable objectives with the learned page-aware score. The evolutionary method proposed to solve it is evaluated on 4,449 production pages and 345 templates from La Provence, a French regional daily. It retains 100\% single-page feasibility where decoupled select-then-pack methods overflow onto a second page. It also Pareto-dominates them and produces pages whose objective values fall within the ranges observed in operator-produced pages, in under two minutes for pages of up to eight articles. A preference-guided variant narrows the front to the region of historical human designs, giving an editor a set small enough to browse.
+
+As a final contribution, the same re-layouting principles are repurposed for a societal problem: reading under constrained visual access. In a controlled study with 24 participants, including readers with low vision, automatically generated direct-access large-print editions were compared with gesture-based magnification. Completion times fell by 37\% when reading headlines and by 50\% when locating a target headline, the larger gains going to readers with low vision. More importantly, pan-and-zoom deflects the reading path away from the trajectory the page affords, which the large-print edition preserves.
+
+Validated on production data from a deployed industrial system, this work shows that automated page layout generation can both remove a costly editorial bottleneck and widen access to the two-dimensional reading experience. Its components open further industrial applications, other display formats, and broader user validation.
 \end{abstract}
-\keywords{keyword1, keyword2, keyword3, keyword4, keyword5}
+\keywords{automated newspaper layout, multi-objective combinatorial optimization, evolutionary algorithms, template retrieval, large-print, low-vision accessibility}
 
 
-%% Résumé en français : pas plus de 2000 caractères
+%% Résumé en français : ~3000 caractères
 \begin{resume}
-Résumé en français : pas plus de 2000 caractères
+Dans la presse actuelle, la lecture s'est déplacée vers les sites web, les mobiles et les tablettes, et l'édition imprimée est devenue toujours plus coûteuse à produire. La raison est opérationnelle : le journaliste écrivait autrefois pour remplir une page de géométrie fixée, tandis qu'il écrit aujourd'hui d'abord pour le web, la mise en page venant ensuite. Chaque édition doit donc être reconstruite à partir d'un contenu jamais pensé pour une page et, dans Melody, un système de gestion de contenu français déployé dans plus de 150 rédactions, elle est faite à la main, au prix de plusieurs heures par édition. L'imprimé conserve pourtant sa valeur, car sa disposition bidimensionnelle permet au lecteur de saisir d'un coup d'{\oe}il ce qui compte, ce qui explique que la plupart des éditeurs le proposent encore comme produit premium, sur abonnement.
+
+Ce goulot d'étranglement fixe l'objectif de la thèse : automatiser le flux des articles vers la page. Chaque article reçoit un gabarit, un cadre géométrique fixe dictant l'emplacement de son titre, de son texte et de ses images, puis les articles imprimés obtenus sont disposés sur la page, le tout sans intervention humaine. La difficulté tient à ce qu'une bonne page n'est pas seulement bien remplie : plusieurs critères s'opposent, et l'un d'eux, la conformité des gabarits retenus à la pratique de conception de l'éditeur, n'est écrit nulle part et ne s'observe que dans les pages déjà produites.
+
+Ce dernier critère est traité en premier, en définissant une similarité topologique entre gabarits obtenue par réentraînement d'un réseau d'appariement de graphes. Elle fonde deux mécanismes : un cadre de recherche favorisant la diversité, qui porte sur un article isolé et améliore la diversité structurelle et la couverture de la longue traîne des gabarits retrouvés, et un modèle de score à l'échelle de la page, qui retrouve le style d'assignation de l'éditeur avec 82,6~\% d'exactitude top-1 sur les assignations humaines historiques.
+
+La génération de mise en page, contribution principale de la thèse, est ensuite formalisée comme un problème d'optimisation combinatoire multi-objectif portant sur le gabarit, la position et l'élasticité de chaque article, combinant trois objectifs spécifiables analytiquement avec le score appris à l'échelle de la page. La méthode évolutionnaire proposée pour le résoudre est évaluée sur 4~449 pages de production et 345 gabarits de La Provence, quotidien régional français. Elle conserve 100~\% de faisabilité sur une seule page là où les méthodes découplées débordent sur une seconde page. Elle les domine également au sens de Pareto et produit des pages dont les valeurs objectives se situent dans les plages observées chez les opérateurs, en moins de deux minutes pour des pages d'au plus huit articles. Une variante guidée par les préférences resserre le front sur la région des maquettes humaines historiques, offrant à l'éditeur un ensemble assez réduit pour être parcouru.
+
+Dernière contribution, les mêmes principes de remise en page sont transposés à un enjeu sociétal : la lecture en accès visuel contraint. Lors d'une étude contrôlée auprès de 24 participants, dont des lecteurs malvoyants, des éditions en gros caractères à accès direct, générées automatiquement, ont été comparées à l'agrandissement gestuel. Les temps ont baissé de 37~\% pour la lecture des titres et de 50~\% pour la localisation d'un titre cible, les gains les plus importants revenant aux lecteurs malvoyants. Surtout, l'agrandissement gestuel dévie le parcours de lecture que l'édition en gros caractères, elle, préserve.
+
+Validé sur des données de production d'un système industriel déployé, ce travail montre que la génération automatique de mise en page supprime un goulot d'étranglement éditorial coûteux et élargit l'accès à la lecture bidimensionnelle. Ses composants ouvrent d'autres applications industrielles, d'autres formats d'affichage et des validations plus larges.
 \end{resume}
-\motscles{mot-clé1, mot-clé2, mot-clé3, mot-clé4, mot-clé5}
+\motscles{mise en page automatisée de journaux, optimisation combinatoire multi-objectif, algorithmes évolutionnaires, recherche de gabarits, gros caractères, accessibilité basse vision}
 
 
 \end{ResumeMotsCles}

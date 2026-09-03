@@ -1,3 +1,36 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Callout blocks (side notes)        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Discreet, page-breakable note block: light background, colored left rule,
+% no surrounding frame, so it does not visually interrupt the running text.
+% Usage:
+%   \begin{callout}[Optional run-in title.] ... \end{callout}
+%   \begin{callout} ... \end{callout}
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+\colorlet{calloutrule}{violet}
+\colorlet{calloutbg}{violet!7}
+
+\newtcolorbox{callout@box}{%
+    enhanced,
+    breakable,
+    sharp corners,
+    colback=calloutbg,
+    colframe=calloutrule,
+    boxrule=0pt,
+    leftrule=2.5pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt,
+    before skip=\medskipamount,
+    after skip=\medskipamount,
+    fontupper=\small,
+    parbox=false%
+}
+
+\NewDocumentEnvironment{callout}{o}
+    {\begin{callout@box}\IfValueT{#1}{\textbf{#1}\space}}
+    {\end{callout@box}}
+
 \newcommand{\melody}{\emph{Melody}\xspace}
 \newcommand{\laprovence}{\emph{La Provence}\xspace}
 \newcommand{\publihebdos}{\emph{Publihebdos}\xspace}

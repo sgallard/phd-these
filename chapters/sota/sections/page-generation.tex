@@ -1,0 +1,248 @@
+%%% =====================================================================
+%%% SOTA - Section 3: Automated page layout generation
+%%% Mirrors Chapter~\ref{chapter:pagegen}. Addresses the MAIN objective and SO2.
+%%% This is the CENTRAL axis of the thesis and the most extensive section.
+%%% Treatment levels: 3.2 is P (pedagogical), 3.3 is D (detailed), 3.4 is I.
+%%% =====================================================================
+
+\section{Automated page layout generation}
+\label{sec:sota-pagegen}
+
+%%% TODO[SOTA]: opening paragraph. Resume the business motivation of
+%%% \secref{sec:motivation}: assembling a single edition currently takes hours of manual
+%%% editing, and the industrial requirement is a few minutes per page. Connect to the
+%%% challenges "combinatorial complexity of spatial packing" and "balancing
+%%% multi-objective trade-offs" of \secref{sec:challenges}, and announce that this axis
+%%% carries the main objective of \secref{sec:objectives}.
+
+\subsection{Automated document and page layout synthesis}
+\label{sec:sota-layout-synthesis}
+
+%%% TODO[SOTA]: to be written. Survey the field along four families, so that the
+%%% method of Chapter~\ref{chapter:pagegen} can be located within it:
+%%%  (a) Constructive and rule-based composition (grid systems, editorial rules).
+%%%  (b) Template-driven composition, which is the paradigm of \melody.
+%%%  (c) Optimization-based synthesis, which is the family this thesis belongs to.
+%%%  (d) Learning-based and generative synthesis.
+%%% State for each what criterion is optimized and whether placement and content
+%%% selection are solved jointly or sequentially.
+%%%
+%%% REFGAP (large): the current bibliography barely covers automated document layout
+%%% generation as a field. This is the single largest gap to fill before writing.
+%%%
+%%% TODO[SOTA]: close this subsection with the framing narrowing dropped from
+%%% framing.tex: state briefly that, of the four families just surveyed, this thesis
+%%% adopts optimization-based synthesis, and that the next subsection narrows to
+%%% multi-objective optimization specifically because it is the family of methods
+%%% Chapter~\ref{chapter:pagegen} teaches and adapts, not because the other families
+%%% are irrelevant to the field.
+
+\subsection{Multi-objective optimization}
+\label{sec:sota-moo}
+
+%%% -----------------------------------------------------------------
+%%% Treatment level P (PEDAGOGICAL). This subsection must teach the technique: it is
+%%% the direct algorithmic basis of Chapter~\ref{chapter:pagegen}, where NSGA-III and
+%%% R-NSGA-III are used and adapted.
+%%% Origin: placeholder "BE PRECISE AND EXPLAIN IN DETAIL" formerly at
+%%% chapters/pagegen/sections/sota.tex:13.
+%%% -----------------------------------------------------------------
+
+\subsubsection{Multi-objective problems and Pareto optimality}
+\label{sec:sota-pareto}
+
+%%% TODO[SOTA]: to be written, with full formalism.
+%%%  - Definition of a multi-objective problem and of a multi-objective combinatorial
+%%%    optimization problem (MOCOP), which is the class used in
+%%%    \secref{sec:objective_formulation}.
+%%%  - Pareto dominance, non-dominated set, Pareto-optimal set and Pareto front.
+%%%  - Ideal and nadir points; normalization of heterogeneous objectives.
+%%%  - Why weighted-sum scalarization is insufficient: it cannot reach solutions in
+%%%    non-convex regions of the front, and the result is highly sensitive to weights
+%%%    that no stakeholder can set meaningfully~\cite{savic_single-objective_2002}.
+%%%    This argument justifies the whole approach of Chapter~\ref{chapter:pagegen} and
+%%%    must be made carefully rather than asserted.
+%%% REFGAP: \cite{pareto} is cited in problem-formalization.tex:121 and nsga.tex:78 but
+%%% has no entry in biblio.bib. A foundational reference must be chosen here.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=\widthForOneImage]{img/pareto-dominance.pdf}
+    \caption{Pareto dominance and the Pareto front in a bi-objective minimization problem.}
+    \label{fig:sota-pareto-front}
+\end{figure}
+
+\subsubsection{Evolutionary multi-objective optimization}
+\label{sec:sota-emo}
+
+%%% TODO[SOTA]: to be written.
+%%%  - Why population-based metaheuristics suit multi-objective problems: a population
+%%%    approximates a whole front in a single run.
+%%%  - The NSGA-II lineage: fast non-dominated sorting, crowding distance, elitist
+%%%    environmental selection. Explain the mechanism, since NSGA-III is presented as a
+%%%    modification of it.
+%%% REFGAP: NSGA-II (Deb et al., 2002) is not in biblio.bib and must be added.
+
+\subsubsection{Many-objective optimization and NSGA-III}
+\label{sec:sota-nsga3}
+
+%%% TODO[SOTA]: to be written, with full formalism.
+%%%  - Why NSGA-II degrades beyond three objectives: the proportion of non-dominated
+%%%    solutions grows until selection pressure vanishes (dominance resistance).
+%%%    Chapter~\ref{chapter:pagegen} optimizes four objectives, so this must be explicit.
+%%%  - Reference directions as a replacement for crowding distance.
+%%%  - Das-Dennis structured reference points~\cite{das-dennis}: the simplex-lattice
+%%%    construction, the number of partitions, and the resulting count of directions.
+%%%  - Adaptive normalization: ideal point translation, extreme-point identification,
+%%%    construction of the hyperplane, intercepts.
+%%%  - Association of population members to reference lines and niche-preserving
+%%%    selection~\cite{nsga-iii-pt1, nsga-iii-pt2}.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=\widthForOneImage]{img/das-dennis-reference-directions.pdf}
+    \caption{Structured reference directions generated on the unit simplex by the Das--Dennis construction~\protect\cite{das-dennis}.}
+    \label{fig:sota-das-dennis}
+\end{figure}
+
+\subsubsection{Preference-guided optimization and R-NSGA-III}
+\label{sec:sota-rnsga3}
+
+%%% TODO[SOTA]: to be written, with full formalism.
+%%%  - When preferences should be articulated: a priori, interactively, or a posteriori.
+%%%    Chapter~\ref{chapter:pagegen} articulates them a priori, from historical pages.
+%%%  - Aspiration points and the region of interest.
+%%%  - R-NSGA-III~\cite{rnsga-iii}: how reference points replace uniform directions,
+%%%    how local directions are generated around each aspiration point, and the role of
+%%%    the spread parameter that controls the extent of the region of interest.
+%%%  - State explicitly why aspiration points are the natural vehicle for injecting
+%%%    tacit editorial preference, which is the challenge "modeling tacit human
+%%%    preferences and editorial style" of \secref{sec:challenges}.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=\widthForOneImage]{img/reference-vs-aspiration.pdf}
+    \caption{Uniform reference directions of NSGA-III compared with the local directions generated around an aspiration point in R-NSGA-III~\protect\cite{rnsga-iii}.}
+    \label{fig:sota-aspiration-points}
+\end{figure}
+
+\subsubsection{Assessing approximations of the Pareto front}
+\label{sec:sota-moo-indicators}
+
+%%% TODO[SOTA]: to be written.
+%%%  - Why scalar performance measures do not apply when the output is a set.
+%%%  - Hypervolume: definition, reference point, and what it captures jointly
+%%%    (convergence and spread).
+%%%  - The coverage C-metric, used in results.tex to compare two fronts directionally.
+%%%  - Knee points as a decision-making device when a single solution must be returned
+%%%    to an operator, which is the industrial situation of \melody.
+%%% REFGAP: \cite{hv} is cited in results.tex:315 but has no entry in biblio.bib.
+%%% REFGAP: indicators beyond hypervolume (IGD, spacing) and the knee-point literature
+%%% are absent from the bibliography.
+
+\subsubsection{Genetic operators and implementation frameworks}
+\label{sec:sota-operators}
+
+%%% TODO[SOTA]: to be written, briefly.
+%%%  - Operators for permutation representations, since one segment of the chromosome
+%%%    of Chapter~\ref{chapter:pagegen} is a permutation: order crossover and the
+%%%    broader review of representations and operators~\cite{crossovers}.
+%%%  - Operators for mixed representations, where discrete selection and permutation
+%%%    coexist in a single individual.
+%%%  - Frameworks: \texttt{pymoo}~\cite{pymoo}.
+
+\subsection{Two-dimensional packing}
+\label{sec:sota-packing}
+
+%%% -----------------------------------------------------------------
+%%% Treatment level D (DETAILED, not a full tutorial). This is the general theoretical
+%%% framework of the problem rather than a technique that the thesis adapts, so it is
+%%% positioned firmly but without the pedagogical development of \secref{sec:sota-moo}.
+%%% Origin: placeholder formerly at chapters/pagegen/sections/sota.tex:19.
+%%% -----------------------------------------------------------------
+
+\subsubsection{Problem taxonomy}
+\label{sec:sota-packing-taxonomy}
+
+%%% TODO[SOTA]: to be written.
+%%%  - Bin packing, strip packing and cutting stock: what distinguishes them and which
+%%%    one the page generation problem reduces to.
+%%%  - Guillotine versus free placement; orientation and rotation constraints.
+%%%  - Situate the newspaper page: fixed canvas, heterogeneous items, no rotation,
+%%%    free placement.
+%%%  - Survey reference~\cite{lodi-packing-survey}.
+%%% REFGAP: the formal typology of cutting and packing problems (Waescher/Dyckhoff)
+%%% is absent from the bibliography and is the right anchor for this subsubsection.
+
+\subsubsection{Computational complexity}
+\label{sec:sota-packing-complexity}
+
+%%% TODO[SOTA]: to be written.
+%%%  - NP-hardness of two-dimensional bin and strip packing.
+%%%  - This subsubsection supplies the reference that resolves the placeholder citation
+%%%    at chapters/context/main.tex:180, and substantiates the challenge "combinatorial
+%%%    complexity of spatial packing" of \secref{sec:challenges}.
+%%%  - Note the additional coupling specific to this thesis: template selection is
+%%%    discrete and simultaneous with placement, which compounds the search space.
+%%% REFGAP: \cite{placeholder-np-hard-bpp} needs a real NP-hardness reference.
+
+\subsubsection{Constructive heuristics}
+\label{sec:sota-packing-heuristics}
+
+%%% TODO[SOTA]: to be written.
+%%%  - Level and shelf algorithms.
+%%%  - Bottom-left placement~\cite{chazelle-bl} and its efficient implementation.
+%%%  - Best-fit placement for orthogonal stock cutting~\cite{burke-bf}.
+%%%  - Extreme points~\cite{crainic-extreme-points}: the placement rule adopted by the
+%%%    decoder of Chapter~\ref{chapter:pagegen}, so it warrants the most detail here.
+
+\subsubsection{Exact methods and their regime of viability}
+\label{sec:sota-packing-exact}
+
+%%% TODO[SOTA]: to be written. This subsubsection carries an argument, not just a review.
+%%%  - Branch-and-bound and exhaustive backtracking for placement.
+%%%  - The regime question: exact placement becomes tractable when the number of items
+%%%    per instance is small. State the boundary explicitly.
+%%%  - This is the direct justification for the design decision at nsga.tex:80, where an
+%%%    exact backtracking decoder is preferred over a greedy heuristic because instances
+%%%    involve few articles per page. The reader must be able to verify that choice from
+%%%    this subsubsection.
+
+\subsection{Learning inside optimization loops}
+\label{sec:sota-surrogate}
+
+%%% -----------------------------------------------------------------
+%%% Treatment level I (INTERMEDIATE). More than plain related work, because the thesis
+%%% does this, but deliberately NOT pedagogical: the surrogate was a tool, not the focus
+%%% of the thesis, and should not be given the weight of \secref{sec:sota-moo}.
+%%% Origin: the subsection heading formerly at chapters/pagegen/sections/sota.tex:17,
+%%% which had no body.
+%%% -----------------------------------------------------------------
+
+%%% TODO[SOTA]: to be written.
+%%%  - Surrogate-assisted evolutionary algorithms and fitness approximation: replacing
+%%%    or complementing an expensive or unavailable objective with a learned model.
+%%%  - The case relevant here is not computational cost but expressibility: the criterion
+%%%    is tacit. Editorial style cannot be written analytically, so it is learned from
+%%%    historical assignments. Position \neuralmethod\ in these terms, as one objective
+%%%    among four, and keep it framed as a tool.
+%%%  - Neural-guided population initialization and warm starts, which is the second use
+%%%    made of the model in Chapter~\ref{chapter:pagegen} (see nsga.tex:221).
+%%%  - Learning-to-optimize for combinatorial problems, mentioned for completeness.
+%%%
+%%% REFGAP (large): surrogate-assisted optimization and learning-to-optimize have no
+%%% coverage in the current bibliography.
+
+\subsection{Positioning and open gaps}
+\label{sec:sota-pagegen-gaps}
+
+%%% TODO[SOTA]: to be written. The gaps to state:
+%%%  (a) Automated layout synthesis has largely treated placement and content selection
+%%%      separately, whereas the industrial problem couples discrete template selection
+%%%      with two-dimensional placement in a single search space.
+%%%  (b) Editorial quality is not reducible to a single scalar objective, and the
+%%%      criteria in play genuinely conflict, which rules out the scalarized
+%%%      formulations dominant in the layout synthesis literature.
+%%%  (c) Tacit editorial style has no analytical form and has not been injected as a
+%%%      first-class objective into a many-objective layout generator.
+%%% Close by naming Chapter~\ref{chapter:pagegen}, the main objective and SO2.

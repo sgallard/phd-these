@@ -1745,7 +1745,12 @@
     \smallskip
     \noindent\textbf{Keywords:} \foreignlanguage{english}{\@keywords}
   \fi
-  \vspace{1cm}
+  % Un résumé par page : l'anglais et le français ne partagent plus la page,
+  % ce qui autorise des résumés de longueur normale sans débordement.
+  \newpage
+  \thispagestyle{empty}
+  \enlargethispage{2cm}
+  \vspace*{-2.5cm}
   \begin{center}\Large\bf \@titre\end{center}
 
   \noindent\unvcopy\fourth@coverGlobB

@@ -1,0 +1,48 @@
+\section{State of the art}
+
+
+%Here some structure (WIP)
+\subsection*{Layout representation}
+
+\subsection*{Layout retrieval}
+
+\subsection*{Layout similarity metrics}
+
+
+\subsection*{Context-aware retrieval and recommendation}
+
+
+%HERE COPY PASTE FROM OPREVIOUS PAPER ABOUT TEMPLATE RETRIEVAL. THIS DOES NOT INCLUDE ANY REFERENCE TO GWES, TRANSFORMERS, ETC. BECAUSE THAT FROM THE NSGA PAPER THAT DOES NOT HAVE SOTA YET
+
+%\subsection{Structured Document Layout Analysis and Retrieval}
+
+%Historically, Information Retrieval (IR) treated documents as a sequence of blocks of text. However, the emergence of Structured Document Retrieval (SDR) recognized that documents are actually aggregates of interrelated objects with specific logical and physical structures~\cite{chiaramella-sdr-2001}. To leverage this structural information, Document Layout Analysis (DLA) serves as a critical preprocessing step to detect and label homogeneous physical regions~\cite{binmakhashen-survey-2019}. While traditional DLA often focuses on extracting text components for Optical Character Recognition (OCR), visual-centric domains require a different perspective where the structure itself is the target of the search.
+
+%Unlike traditional text-based IR, Document Image Retrieval (DIR) addresses the need to retrieve entire page layouts based purely on their geometric and spatial arrangement, independent of textual content~\cite{yan-geometric-2013, vanbeusekom-distance-2006}. This is particularly relevant when keyword searches fall short due to language barriers, lack of explicit text, or simply because the user's intent relies heavily on visual memory of the layout's spatial distribution~\cite{yan-geometric-2013}. 
+
+%To achieve layout-based retrieval, classical systems typically calculate spatial distances between blocks and use matching algorithms to evaluate the similarity between pairs of layouts~\cite{vanbeusekom-distance-2006}. Furthermore, spatial and neighborhood relationships within document layouts are fundamentally well-suited for graph representations~\cite{binmakhashen-survey-2019}. Recent literature also highlights that conducting pairwise comparisons of layout characteristics is an effective mechanism to facilitate document retrieval~\cite{jaha-comparative-2024}. 
+
+%Inspired by these principles, our work takes the structural comparison of layouts a step further. We represent templates as graphs and leverage Graph Neural Networks (GNNs)~\cite{patil_layoutgmn_2021} to perform pairwise structural comparisons. Instead of relying on manual heuristics or strict coordinate matching, this approach allows our retrieval system to automatically learn deep spatial similarities, enabling a robust and purely structural retrieval of the complete layout.
+
+%\subsection{Structural Diversity}
+
+
+%While the conceptualization of diversification varies across Information Retrieval (IR) and recommendation systems (RS)~\cite{vrijenhoek-diversity-2024}, recent literature unifies these efforts by drawing a strict distinction between diversity and novelty~\cite{clarke-2008}. Diversity generally seeks to resolve query ambiguity (intent-based) or ensure structural variety (content-based), whereas novelty specifically aims to avoid redundancy by exposing users to new, less obvious, or long-tail items~\cite{wu-survey-2022}. In this work, we align with the concept of intrinsic, content-based diversity, defining it as the spatial and structural heterogeneity of the retrieved items~\cite{zheng-survey-2017}. Achieving this variety requires solving a bi-criterion optimization problem that balances diversity with conflicting relevance objectives, such as historical conformity~\cite{javari-div}. To navigate this trade-off, clustering-based methods are often employed to efficiently span the dataset's structural range without compromising relevance~\cite{clustering-survey, zheng-survey-2017, akinyemi-diversity-2012}.
+
+%We build upon ClusDiv~\cite{clusdiv}, which maximizes diversity for top-$N$ recommendations. However, a critical limitation of ClusDiv is its reliance on usage data. Under the formal definitions of the literature~\cite{clarke-2008}, this approach merely promotes a form of interaction novelty rather than genuine intrinsic diversity. Because it is highly susceptible to popularity bias, visually identical templates can be separated into different clusters simply because they have different usage statistics. This fails to provide truly distinct layout options, obscuring the diversity needed for fair catalog exposure~\cite{wu-survey-2022}. 
+
+%To overcome this, we propose adapting the ClusDiv logic by shifting the underlying clustering distance metric from usage frequency to structural differences. By clustering templates based on the spatial arrangement and relationships between design elements, our approach ensures that the resulting variety is rooted in genuine visual heterogeneity rather than misleading popularity metrics. Ultimately, this paradigm shift unifies both objectives: it guarantees intrinsic structural diversity  while simultaneously promoting novelty by surfacing underused templates from the long-tail.
+
+%\subsection{Popularity Bias and Long-Tail}
+
+%Item usage in datasets typically follows a power-law distribution: a ``short-head'' subset dominates interactions, while the ``long-tail'' remains underutilized. This phenomenon, often referred to as the ``super-star'' economy in recommendation systems~\cite{wu-survey-2022}, is widely recognized in both the deep learning domain~\cite{longtail-deep} and RS literature~\cite{longtail}. This creates a severe popularity bias and a ``cold start'' problem for tail items, limiting the system’s effective variety and obscuring the exploration of valuable but unpopular design options~\cite{longtail}.
+
+%As established, mitigating this redundancy requires promoting novelty, which is the ability to surface non-popular items and ensure fair catalog exposure~\cite{wu-survey-2022}. A popular methodology to tackle this problem involves clustering-based strategies. For instance, Park and Tuzhilin~\cite{long-tail-ei-tc} utilized item grouping to improve tail visibility, while more recent adaptive approaches improve this method by dynamically defining head-tail boundaries based on real-time data~\cite{longtail-clustering-based}.
+
+%Our work addresses this by implementing a structural clustering-based mechanism that explicitly explores the ``tail''. By guaranteeing the exposure of rarely used but structurally distinct templates, our approach directly counteracts the super-star bias, a strategy validated through novelty-aware metrics~\cite{longtail, wu-survey-2022}.
+
+%%\subsection{Graph Matching and Deep Representation Learning}
+
+%Layout templates are complex structures defined by relative context (distance, angles, etc.) between its inner elements (images, captions, titles, etc.) rather than absolute coordinates. Their topology is best captured through graph representations where nodes symbolize content regions and edges denote spatial or hierarchical relationships~\cite{patil_layoutgmn_2021}. Traditional Euclidean metrics prove insufficient in this domain, as minor positional shifts can drastically alter coordinate vectors without changing the underlying design logic.
+
+%To overcome these limitations, Graph Neural Networks (GNNs) have emerged as a robust framework for encoding layout data. Specifically, Patil et al.~\cite{patil_layoutgmn_2021} demonstrated that Graph Matching Networks (GMNs)~\cite{li_graph_2019}, a special type of GNN,  effectively learn similarity metrics through cross-graph attention mechanisms, which facilitate fine-grained, pairwise comparisons. By leveraging this architecture, our proposed method computes a similarity metric sensitive to layouts' topology. This provides the objective foundation to measure diversity in our method, framing layout composition as a structured retrieval problem.

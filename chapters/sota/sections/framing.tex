@@ -1,0 +1,20 @@
+%%% =====================================================================
+%%% SOTA - Section 1: Framing
+%%% Treatment level: R (related work / positioning)
+%%% Purpose: open the narrative thread with Chapter~\ref{chapter:context}
+%%%          (motivation, challenges, objectives) and announce the axes.
+%%% =====================================================================
+
+Producing a print page automatically within the industrial workflow of \melody\ does not amount to generating a layout from an empty canvas. Each article is assigned one of hundreds of pre-designed templates already in use by the publisher, and the page is assembled from these fixed units under margin, capacity and style constraints, rather than composed freely element by element. Most of the layout generation literature addresses the latter problem, namely the free-form placement of elements on an unconstrained canvas, and offers no direct treatment of how a catalog of pre-existing designs should be represented, compared or selected before assembly.
+
+Framed this way, the problem requires drawing on several distinct topics: representing and retrieving layouts from a catalog, assembling selected layouts under several conflicting numeric and editorial constraints within a bounded computation budget, and, for the accessibility application pursued in this thesis, understanding how a reader engages with the resulting two-dimensional layout under constrained visual access.
+
+More specifically, a computational treatment of that layout is organized around three operations, and this chapter reviews the prior literature for each in turn:
+
+\begin{enumerate}
+    \item A layout must first be \emph{represented and retrieved}, which requires a description of its internal structure and a notion of similarity between structures (\secref{sec:sota-retrieval}).
+    \item It must then be \emph{generated} under criteria that are simultaneously geometric, editorial and conflicting (\secref{sec:sota-pagegen}).
+    \item Finally, it must be \emph{accessible} to a human whose access to the page may be visually constrained (\secref{sec:sota-reading}).
+\end{enumerate}
+
+\secref{sec:sota-retrieval} reviews the first operation, \secref{sec:sota-pagegen} the second, and \secref{sec:sota-reading} the third. The second operation carries the main objective of this thesis (\secref{sec:objectives}) and receives the most extensive treatment. The chapter closes with \secref{sec:sota-synthesis}, which positions the three contribution chapters against the gaps identified along the way.

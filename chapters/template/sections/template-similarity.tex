@@ -50,11 +50,9 @@ This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched 
 
 \subsection{template-based Graph Matching Network}
 
- As a step further, to capture layout topology,  a Graph Matching Network (GMN) architecture~\cite{patil_layoutgmn_2021}, here referred to as \gmnNetwork, was implemented and retrained for the purpose of this work. This network learns a similarity metric by modeling pairs of templates as graphs and computing an embedding vector for each template. Consequently, \gmnNetwork produces a similarity function, denoted $\gmn{\cdot}{\cdot}$, that can be applied to any pair of templates $\templateobj{1}$ and $\templateobj{2}$. This measure captures structural (topological) similarity, is always negative, and satisfies $\gmn{\templateobj{1}}{\templateobj{2}} = 0$ if the templates are identical.
+ As a step further, to capture layout topology, a Graph Matching Network (GMN) architecture~\cite{patil_layoutgmn_2021}, here referred to as \gmnNetwork, was implemented and retrained for the purpose of this work, following the cross-graph attention mechanism and triplet-based training scheme described in \secref{sec:sota-gmn}. Templates are represented as directed, fully connected graphs over their constituent elements, in the same manner as LayoutGMN, and \gmnNetwork is trained on triplets built from $\tdiou{\cdot}{\cdot}$ thresholds rather than plain Intersection-over-Union. Consequently, \gmnNetwork produces a similarity function, denoted $\gmn{\cdot}{\cdot}$, that can be applied to any pair of templates $\templateobj{1}$ and $\templateobj{2}$. Following the sign convention of the LayoutGMN implementation, this raw score is negative by construction and satisfies $\gmn{\templateobj{1}}{\templateobj{2}} = 0$ if the templates are identical, growing more negative as their structures diverge.
 
- EXPLAIN IN DETAIL USING PATIL REFERENCE
-
- FINISH DEFINING GMN AS A 0,1, METRIC
+The use of the $\gmn{\cdot}{\cdot}$ metric varies depending on the application; in single-article context (\secref{section:template-retrieval-single-article}), the absolute value of this metric is used to define the distance for clustering and retrieval. In the page-aware setting of \neuralmethod\ (\secref{sec:gwes-gmn-mapping}), the same score is instead mapped into a bounded $[0,1]$ affinity through a Gaussian kernel, since that context requires a normalized similarity matrix rather than an unbounded distance.
 
 
 \subsection{Empirical comparison between both methods}
@@ -70,7 +68,7 @@ d_{tdIoU}(\templateobj{1},\templateobj{2}) = |\tdiou{\templateobj{1}}{\templateo
 \end{equation}
 templates are organized via agglomerative clustering with a threshold $\tdiouclusterthreshold$. Starting from singleton clusters, pairs of clusters are merged when their average inter-template distance is below $\tdiouclusterthreshold$. This produces a set of clusters $\tdiouclusters$.
 
-At the same time, a set of clusters $\gmnclusters$ can be generated using an analog distance $d_{tGMN}$ but using $\gmn{\templateobj{1}}{\templateobj{2}}$, and the corresponding inter-template maximum average distance of $\gmnclusterthreshold$.
+At the same time, a set of clusters $\gmnclusters$ can be generated using an analog distance $d_{GMN}(\templateobj{1},\templateobj{2}) = |\gmn{\templateobj{1}}{\templateobj{2}}|$, and the corresponding inter-template maximum average distance of $\gmnclusterthreshold$.
 
 Note that both $\tdiouclusterthreshold$ and $\gmnclusterthreshold$ were tuned to produce a reasonable, but also equivalent and comparable number of clusters between the methods. Specifically, $\tdiouclusterthreshold = 1.1$ and $\gmnclusterthreshold=2.8$, producing $|\tdiouclusters| = 80$ and $|\gmnclusters| = 81$ respectively, with a similar distribution. 
 
