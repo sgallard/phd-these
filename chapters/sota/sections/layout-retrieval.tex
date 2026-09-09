@@ -1,10 +1,8 @@
 %%% =====================================================================
 %%% SOTA - Section 2: Structured document layouts
-%%% Mirrors Chapter~\ref{chapter:template}. Addresses SO1.
-%%% Treatment levels: 2.3 and 2.5 are P (pedagogical); the rest is R.
 %%% =====================================================================
 
-\section{Structured document layouts: representation, similarity and retrieval}
+\section{Document layouts: representation, similarity and retrieval}
 \label{sec:sota-retrieval}
 
 Assigning a template to an article requires characterizing what distinguishes one template from another, which is the challenge stated in \secref{sec:challenges} as the characterization of multiple layout elements. This section reviews the literature needed to represent, compare and retrieve such templates. 
@@ -61,7 +59,7 @@ Patil et al.~\cite{patil_layoutgmn_2021} instantiate this triplet-based framewor
 
 What makes the resulting metric structurally aware, despite being trained from purely geometric labels, is the structural bias introduced by cross-graph attention. Because each node in one layout adjusts its representation against every node of the other, the network is forced to reason about which elements correspond to which, rather than only about how much of the page they cover. Patil et al.\ report that this bias can be strong enough to overturn the Intersection-over-Union labels the network was trained on: two layouts that Intersection-over-Union would label as dissimilar, because their elements sit in different absolute positions, can be predicted as clearly more structurally similar than a layout Intersection-over-Union would rate positively, whenever the two share more of their underlying topology~\cite{patil_layoutgmn_2021}. In retrieval experiments over large floor plan and interface datasets, results returned under the learned metric matched crowd-sourced human judgments of structural similarity more closely than either Intersection-over-Union directly or a competing graph-embedding baseline, confirming that the network generalizes beyond the geometric signal used to supervise it.
 
-Given the advantages of LayoutGMN as a deep graph-based method to compute similarity, this thesis adapts it directly (\secref{section:modelling-similarity}): article templates are represented as graphs following the same principles, and the resulting cross-graph matching vectors are turned into the bounded similarity metric used throughout Chapter~\ref{chapter:template} for template retrieval.
+Given the advantages of LayoutGMN as a deep graph-based method to compute similarity, this thesis adapts it directly: article templates are represented as graphs following the same principles, and the resulting cross-graph matching vectors are turned into the bounded similarity metric used throughout Chapter~\ref{chapter:template} for template retrieval.
 
 
 \begin{figure}[htbp]
@@ -133,49 +131,31 @@ However, this type of clustering-method operates entirely on rating: items are g
 \subsection{Beyond independent retrieval: context-aware scoring of joint item sets}
 \label{sec:sota-page-aware-scoring}
 
-%%% -----------------------------------------------------------------
-%%% STRUCTURE STILL TENTATIVE. This subsection positions \neuralmethod, a Transformer
-%%% encoder that scores template assignments jointly over all articles of a page and
-%%% is consumed as an objective in \secref{sec:sota-pagegen}. The previous paper had no
-%%% state of the art for it (see the note formerly in template/sections/sota.tex).
-%%% Four candidate entry points are proposed below, with search keywords, so that the
-%%% literature can be gathered before deciding whether this stays as one subsection
-%%% or is split in two.
-%%%
-%%% (1) Transformers as set encoders. Self-attention~\cite{attention} over a set of
-%%%     articles. A page is a SET, not a sequence: this must be argued or refuted
-%%%     explicitly. Keywords: set transformer / deep sets / permutation invariant
-%%%     neural network / set-input neural architecture.
-%%% (2) Neural layout generation and assessment. Keywords: layout generation
-%%%     transformer / conditional layout generation / document layout synthesis deep
-%%%     learning / layout quality assessment / neural design scoring / computational
-%%%     design aesthetics.
-%%% (3) Recommending coherent sets. Choosing templates that work well TOGETHER on a
-%%%     page is formally analogous to recommending a set rather than independent items.
-%%%     Considered the most promising framing. Keywords: slate recommendation / bundle
-%%%     recommendation / complementary item recommendation / set-aware recommendation /
-%%%     basket completion.
-%%% (4) Classification over large catalogues with long-tailed label distributions,
-%%%     connecting back to~\cite{longtail-deep}. Keywords: extreme multi-label
-%%%     classification / long-tailed classification / label distribution skew.
-%%% -----------------------------------------------------------------
+The retrieval mechanisms reviewed above are the appropriate tool when a template is assigned to a single article at a time, which is itself one of the settings this thesis addresses (\secref{section:template-retrieval-single-article}). A different situation arises once an entire page is composed at once: the suitability of the template assigned to one article then depends on the templates assigned to every other article sharing the same page canvas, for instance to share a common template across neighboring articles. Neither pairwise similarity nor list-level diversification reasons about this dependency, since both evaluate one article at a time. This section reviews the literature that instead encodes and scores several items jointly, and examines how closely each line of work matches the requirement of scoring a full page assignment.
 
-%%% REFGAP: this subsection has essentially no coverage in the current bibliography.
+\paragraph*{Joint encoding of item collections}
+A neural network encodes a collection of items jointly when the representation it computes for one item is allowed to depend on every other item in the collection, typically through self-attention. Such an encoder is permutation-equivariant when permuting the input items permutes the computed representations identically, and permutation-invariant when a subsequent symmetric aggregation, such as summation or attention-based pooling, removes any remaining dependency on input order~\cite{xie-set-function-survey-2025}. Kim et al.~\cite{kim-transformers-deepsets-2021} formalize this property for the Transformer architecture directly, showing that self-attention followed by such pooling recovers exactly the permutation-invariant function class of Deep Sets. Invariance of this kind is appropriate when the items being jointly encoded are genuinely interchangeable, for instance when a group of articles is treated as an unordered collection. It does not transfer directly to a page layout, however, because a candidate assignment must be scored against the specific coordinates each article occupies on the canvas, not merely against which articles happen to be present: the same set of articles placed differently on the page is not an equivalent input, so the encoder cannot discard positional information the way permutation-invariant pooling does.
+
+The closest architectural precedent for reasoning jointly while still carrying positional information through attention is the object-detection literature. Carion et al.~\cite{carion-detr-2020} inject positional identity through a fixed bank of learned query embeddings, one per candidate detection, precisely because the position and identity of the objects present in an image are unknown beforehand and must themselves be inferred; a Transformer decoder lets every query attend to the image features and to every other query, so that one predicted box can suppress or reinforce another before any prediction is finalized. The setting addressed in this thesis (\secref{sec:gwes}) does not share this uncertainty, since the coordinates of every article on the page being scored are already known as input rather than something the network must locate. Its Transformer encoder (\secref{sec:transformer_module}) accordingly needs no bank of learned queries to carry positional identity: each article's own coordinates enter directly as part of its input features, and a lightweight embedding tied to reading order is added on top, letting self-attention combine this explicit, instance-specific spatial information across the whole page without inheriting DETR's decoder or the matching objective it needs.
+
+\paragraph*{Neural scoring of joint assignments}
+Once a collection of items has been encoded jointly, a further step is generally required to reduce that encoding to the single number that scores the configuration as a whole. Xie and Tong~\cite{xie-set-function-survey-2025} formalize this requirement as learning a set function $f: 2^X \to \mathbb{R}$, and survey two solutions: deep energy-based set prediction, which assigns a scalar energy to a candidate set so that lower energy corresponds to higher coherence, and deep submodular functions, which constrain the learned scalar to exhibit diminishing returns as items are added. The same reduction recurs at smaller scale in graph and set regression: Buterez et al.~\cite{buterez-edge-set-attention-2024} pool a jointly-attended set of edge embeddings into a single vector using a handful of learned seed vectors under multi-head attention before projecting it to one regression score, and Kim et al.~\cite{kim-transformers-deepsets-2021} reduce an order-$k$ joint representation to an order-$0$ scalar through an equivariant pooling layer, following the same order-reducing principle. In every case reviewed here, jointness is resolved inside the encoder, and a separate, learned pooling mechanism is then required to compress the resulting collection of representations into the single scalar the task needs.
+
+\neuralmethod\ departs from this pattern for a reason tied to its training signal rather than to its architecture. The historical layouts available for training only record, for each article, which template a human designer selected, not a scalar judgment of how good the page was as a whole; this categorical, per-article signal trains a per-article classification head directly, but leaves no page-level target against which a learned pooling head, of the kind reviewed above, could be fit. The page-level score is therefore assembled after training, as a direct sum of independently computed per-article compatibility terms rather than as the output of a learned aggregator; keeping the score separable by article is also convenient once it is used as one term inside the multi-objective search of Chapter~\ref{chapter:pagegen}. The role played by a learned pooling network in the literature reviewed above is played here instead by the pairwise structural similarity metric already introduced in \secref{sec:sota-gmn}, which corrects each article's prediction before it is summed rather than aggregating the set of predictions into it.
+
+A closely related literature frames this by modelling it as a recommendation problem over sets rather than individual items. Nguyen et al.~\cite{nguyen-ramen-2025} build a bundle representation by concatenating the multimodal features of every candidate item and refining them through self-attention, then score a candidate item against that bundle embedding by inner product, training the whole model with a listwise negative log-likelihood loss. Yu et al.~\cite{yu-dsetrec-2025} model a user session as an unordered set rather than a chronological sequence, aggregating item features with a DeepSets-style sum-pooling encoder, and report that removing positional encodings from the architecture improves recommendation accuracy, on the grounds that the order in which a session's items were interacted with carries no meaningful signal. Both results illustrate why this literature, despite sharing the goal of scoring a set rather than independent items, does not transfer to page composition without modification: it targets catalogs of large and variable cardinality, is trained from discrete and implicit feedback, and treats item order as noise to be removed, whereas a page-level score must remain sensitive to the exact placement of every article, a dependency these methods have no notion of and are explicitly designed to discard.
+
+None of these three lines of literature addresses the requirement of a page-aware scoring in the way this thesis frame it. Each nonetheless isolates one requirement of such a score while missing another: DETR~\cite{carion-detr-2020} carries positional identity through joint attention, but via a fixed bank of learned queries suited to an unknown number of objects, not to articles whose position is already known and continuously valued; learned pooling mechanisms exist to compress a jointly-encoded set into a scalar, but require a page-level target to be trained against that the available historical data does not provide; and set-aware recommendation formalizes scoring a set collectively, but over catalogs and feedback signals unlike those of a page assignment.
 
 \subsection{Positioning and open gaps}
 \label{sec:sota-retrieval-gaps}
 
-%%% TODO[SOTA]: to be written. The gaps to state, each already prepared above:
-%%%  (a) Layout retrieval has been addressed with hand-designed geometric heuristics or
-%%%      strict coordinate matching, whereas the structural comparison required here is
-%%%      learned. This motivates representing templates as graphs and using a GNN-based
-%%%      pairwise comparison (\secref{sec:sota-gmn}).
-%%%  (b) Clustering-based diversification defines diversity over usage statistics rather
-%%%      than over structure (\secref{sec:sota-clusdiv}), so it cannot guarantee that the
-%%%      returned candidates are genuinely distinct designs. Shifting the clustering
-%%%      distance from usage frequency to structural difference unifies both goals:
-%%%      intrinsic structural diversity, and novelty through the exposure of underused
-%%%      long-tail templates.
-%%%  (c) No existing system scores template assignments jointly at page level
-%%%      (\secref{sec:sota-page-aware-scoring}).
-%%% Close by naming Chapter~\ref{chapter:template} and the first specific objective.
+The literature reviewed in this section leaves three gaps open, which motivate the first specific objective of this thesis, developed across Chapter~\ref{chapter:template}.
+
+First, pairwise layout comparison spans two distinct families: hand-designed geometric measures that score a pair of layouts directly from their coordinates, such as the Intersection-over-Union ratio, its distance-based corrections, and the Hungarian assignment used to align blocks before aggregating them; and learned, graph-based comparison, reviewed next. What the geometric family cannot capture is the relative topology binding a layout's elements together rather than their absolute placement, which is precisely what a Graph Matching Network learns to compare~\cite{li-gmn-2019, patil_layoutgmn_2021}. Chapter~\ref{chapter:template} accordingly represents article templates as graphs and reuses this cross-graph comparison as the pairwise similarity metric underlying template retrieval (\secref{section:modelling-similarity}).
+
+Second, diversifying a set of retrieved candidates has been addressed by clustering the catalog on historical usage statistics rather than on content: ClusDiv, in particular, groups templates by how similarly they were rated, which offers no guarantee that templates sharing a cluster are structurally close, nor that templates split across clusters are structurally distinct. Novelty is exposed through the same kind of usage-based clustering, so both concerns share the same blind spot. Replacing the clustering distance with the structural similarity metric of \secref{sec:sota-gmn} unifies them under a single, content-based criterion, which is the adaptation carried out in \secref{section:template-retrieval-single-article}.
+
+Third, both of the above evaluate a single article at a time. \secref{sec:sota-page-aware-scoring} showed that jointly scoring an entire page assignment is not directly served by the closest available literature either: joint attention that carries positional identity is developed for detecting an unknown number of objects rather than for a fixed set of already-placed articles; learned pooling mechanisms compress a jointly-encoded set into a scalar but require a page-level training target that historical page data does not provide; and set-aware recommendation formalizes scoring a set collectively, but over catalogs unlike those of a page. \secref{sec:gwes} closes this gap by conditioning a per-article classification head on the full page context through self-attention, and assembling the page-level score afterward rather than learning it end-to-end.
+
+

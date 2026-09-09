@@ -2,7 +2,7 @@
 \label{chapter:definitions}
 \input{abstract}
 
-\input{glossary}
+
 
 \section{Definitions}
 
@@ -12,7 +12,7 @@
     \caption{Page canvas $\page$, web article $\articleobj{i}$, and template $\templateobj{j}$ with their respective notations.}
     \label{fig:page-article-template-definitions}
 \end{figure}
-\subsection{Page ($\page$)}
+\subsection{Page ($\page$)}.
 
 A page $\page$ defines the empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
 \begin{equation}
@@ -102,16 +102,19 @@ To formalize this, \templatesel{i} denotes the index of the selected template $\
 
 Note that after this selection, the article acquires the physical dimensions and characteristics of the assigned template. Additionally, the number of images $\Nimg{i}$ in the article fixes the number of active image slots in the template, which in turn determines the text capacity range $\capacity{\templatesel{i}}[\Nimg{i}, :]$ to respect in the optimization process.
 
-\section{Industrial Datasets}
+
+
+\input{glossary}
+%\section{Industrial Datasets}
 
 
 
-To validate and benchmark the computational frameworks developed in this thesis, empirical evaluations rely on two real-world industrial repositories provided by press publishers operating under the \melody CMS environment. These datasets encapsulate different levels of editorial abstraction, ranging from individual article template catalogs with historical usage logs to fully assembled multi-article newspaper spreads.
+%To validate and benchmark the computational frameworks developed in this thesis, empirical evaluations rely on two real-world industrial repositories provided by press publishers operating under the \melody CMS environment. These datasets encapsulate different levels of editorial abstraction, ranging from individual article template catalogs with historical usage logs to fully assembled multi-article newspaper spreads.
 
 
 %%% GILLIAN WORK
-\subsection{\publihebdos archive}
-\label{sec:publihebdos}
+%\subsection{\publihebdos archive}
+%\label{sec:publihebdos}
 
-\subsection{\laprovence archive}
-\label{sec:laprovence}
+%\subsection{\laprovence archive}
+%\label{sec:laprovence}

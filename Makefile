@@ -1,10 +1,10 @@
 all:
-	pdflatex sommaire
-	bibtex sommaire
-	bibtex web
+	pdflatex main
+	bibtex main
+	-bibtex web
 	bibtex mine
-	pdflatex sommaire
-	pdflatex sommaire
+	pdflatex main
+	pdflatex main
 
 clean:
 	rm -f *.aux *.bbl *.lbl *.loa *.loe *.lof *.log *.maf *.mlf* *.mlt* *.mtc* *.toc *.blg

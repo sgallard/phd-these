@@ -10,119 +10,70 @@
 \section{Reading layout-driven documents under constrained visual access}
 \label{sec:sota-reading}
 
-%%% TODO[SOTA]: opening paragraph. Resume the societal motivation of
-%%% \secref{sec:motivation} and the challenge "validating accessibility and user
-%%% experience benefits" of \secref{sec:challenges}. Announce that this axis carries
-%%% the third specific objective of \secref{sec:objectives}.
+As stated in \secref{sec:motivation}, the societal motivation of this thesis concerns two groups of readers who share a common difficulty in accessing structured, layout-driven documents: those facing device-related visual constraints on mobile displays, and those \LV\ facing reader-related constraints. \secref{sec:challenges} frames the corresponding challenge as one of validating accessibility and user experience benefits, namely whether automatically generated large-print editions preserve behavioral integrity and offer superior reading efficiency compared with conventional gesture-based magnification. This section reviews the literature underlying that question, from the general constraints of digital and mobile reading, through the specific challenge posed by two-dimensional, layout-driven documents within it, to the specific strategies available for reading under constrained visual access.
 
-\subsection{Reading two-dimensional layouts}
-\label{sec:sota-reading-layouts}
-
-Structured, layout-driven documents combine dense text with visual design and spatial organization to convey meaning. Because of their distinct design elements, findings derived from linear reading cannot be generalized to layout-driven documents~\cite{ozretic_dosen_key_2018, hollander_e-reader_2011}. Such documents pose distinctive challenges owing to their complex structures, which are often organized around visual entry points~\cite{holsanova_entry_2006}.
-
-Navigation in these contexts resonates with research on graphical user interfaces. The ``Visual Information Seeking Mantra'' of Shneiderman~\cite{shneiderman1996} outlines a progression from global overview to local zooming and filtering, and finally to details on demand. This principle connects directly to the magnification strategies examined in this thesis, bridging document design and interaction techniques.
-
-%%% TODO[SOTA]: extend with the eye-tracking evidence on newspaper reading, which is
-%%% currently absent from the migrated prose although the references are available:
-%%%  - Local design factors and reading behavior~\cite{holmqvist_role_2005}.
-%%%  - Eye movement patterns and newspaper design~\cite{holmberg_eye_2004}.
-%%%  - Reading online newspapers~\cite{zambarbieri_eye_2008}.
-%%%  - Scanpath analysis techniques on web pages~\cite{eraslan_eye_2015}.
-%%%  - Reading paper versus on-line documents~\cite{ohara_comparison_1997}.
-%%%  - Visual hierarchies and navigation patterns~\cite{atata_evaluating_2025}.
-%%% Then add the computational counterpart, i.e. that the reading order of a
-%%% visually-rich document is itself a prediction problem~\cite{wang_layoutreader_2021,
-%%% qiao2024, zhang2023, zhang_modeling_2024}. This matters because it shows the spatial
-%%% arrangement carries the reading sequence, which is precisely what linearization destroys.
-
-\subsection{Digital and mobile reading}
+\subsection{Digital media reading}
 \label{sec:sota-digital-reading}
 
 Recent research in the interactive media experience community has begun to explore how different media mixes, ranging from traditional articles to 360-degree video, affect user experience in immersive journalism. Bujić et al.~\cite{bujic-imx2023} compared 360-degree video across devices against a monitor-article condition, and found that while immersive formats may increase involvement, traditional text-based articles offer lower levels of distraction, which is critical in contemporary news consumption. This underlines the continued relevance of text-based media on digital platforms.
 
 Within this landscape, prior research has shown that mobile devices have reshaped reading practices and changed the habits of readers~\cite{readinghabits2016, reading-periodicals2021, mobilereading2015}. At the same time, reading on mobile remains more demanding than on larger displays. Budiu~\cite{Budiu2015} identified inherent constraints, such as limited screen size, frequent interruptions, single-window views and unstable connectivity, that require careful design considerations to support sustained reading.
 
-Nielsen~\cite{Nielsen2011} reported that comprehension of complex content on small displays is only about 48\% of that obtained on desktop monitors. This gap is explained by two main factors: mobile readers see less information at once, which reduces context and therefore understanding, and they must navigate through the document, which diverts attention. Moran~\cite{moran2016reading} further showed that while short, simple texts are read with similar comprehension across devices, reading speed drops significantly for longer or denser passages, which highlights the need for layout optimization and interaction strategies to improve mobile reading performance.
+Indeed, Nielsen~\cite{Nielsen2011} reported that comprehension of complex content on small displays is only about 48\% of that obtained on desktop monitors. This gap is explained by two main factors: mobile readers see less information at once, which reduces context and therefore understanding, and they must navigate through the document, which diverts attention. Moran~\cite{moran2016reading} further showed that while short, simple texts are read with similar comprehension across devices, reading speed drops significantly for longer or denser passages, which highlights the need for layout optimization and interaction strategies to improve mobile reading performance. This difficulty compounds further when the content itself is not simple linear text but a structured, layout-driven document, whose reading depends on spatial organization as much as on textual content.
 
-\subsection{Responsive design and the loss of spatial semantics}
+\subsubsection{Reading two-dimensional layouts}
+\label{sec:sota-reading-layouts}
+
+Structured, layout-driven documents combine dense text with visual design and spatial organization to convey meaning. Because of their distinct design elements, findings derived from linear reading cannot be generalized to layout-driven documents~\cite{ozretic_dosen_key_2018, hollander_e-reader_2011}. Such documents pose distinctive challenges owing to their complex structures, which are often organized around visual entry points~\cite{holsanova_entry_2006}.
+
+Navigation in these contexts resonates with research on graphical user interfaces. The ``Visual Information Seeking Mantra'' of Shneiderman~\cite{shneiderman1996} outlines a progression from global overview to local zooming and filtering, and finally to details on demand. This principle connects directly to the magnification strategies examined in this thesis, bridging document design and interaction techniques.
+
+This spatial organization has also been examined through eye-tracking studies of newspaper reading. Holmqvist and Wartenberg~\cite{holmqvist_role_2005} examined the role of local design factors in newspaper reading behaviour, while Holmberg~\cite{holmberg_eye_2004} studied the relation between newspaper design factors and eye movement patterns. Zambarbieri et al.~\cite{zambarbieri_eye_2008} extended eye-tracking analysis to the online newspaper format. More broadly, Eraslan et al.~\cite{eraslan_eye_2015} surveyed scanpath analysis techniques for web pages, and Atata~\cite{atata_evaluating_2025} evaluated how visual hierarchies and navigation patterns affect the accessibility of a page's structure. Taken together, this body of work indicates that reading a layout-driven document is guided by its spatial arrangement rather than by a purely linear process.
+
+This dependence on spatial arrangement has a computational counterpart: the reading order of a visually-rich document is itself the object of a prediction problem, rather than a property directly available from its markup. LayoutReader~\cite{wang_layoutreader_2021} addresses reading order detection by pre-training over the text and layout of a document, and subsequent work has proposed relation-prediction formulations that jointly exploit multi-modal layout cues~\cite{qiao2024}, token-path prediction~\cite{zhang2023}, and ordering relations between layout elements~\cite{zhang_modeling_2024}. That reading order must itself be predicted, rather than read off a document's linear structure, corroborates the argument above: the spatial arrangement of a layout-driven document carries its reading sequence, which is precisely what a linearized representation destroys.
+
+\subsubsection{Responsive design and the loss of spatial semantics}
 \label{sec:sota-responsive}
 
-In theory, web-responsive adaptation principles could address the general challenge of reading complex documents on small screens. Preserving spatial semantics, however, is often at odds with standard web-adaptation paradigms. Techniques such as responsive design handle small displays primarily through linear reflow mechanisms~\cite{reflow, marcotte_responsive_2010, responsive-design}, which collapse multi-column grids into a single vertical stack defined by the document object model order. While this method preserves sequential reading order and eliminates bi-directional scrolling, it sacrifices the two-dimensional spatial paradigm that defines newspapers and other layout-driven documents~\cite{chesham_master_2003, chiou_2024}.
+Given that the reading order of a layout-driven document is carried by its spatial arrangement, as established above, the most direct response to the constraints of digital and mobile reading is to adapt that arrangement to the screen rather than to abandon it. Web-responsive design offers exactly this kind of adaptation and, in theory, could address the general challenge of reading complex documents on small screens. However, techniques such as responsive design handle small displays primarily through linear reflow mechanisms~\cite{reflow, marcotte_responsive_2010, responsive-design}, which collapse multi-column grids into a single vertical stack defined by the document object model order. While this method preserves sequential reading order and eliminates bi-directional scrolling, it sacrifices the two-dimensional spatial paradigm that defines newspapers and other layout-driven documents~\cite{chesham_master_2003, chiou_2024}.
 
 As a result, for documents whose navigation, visual hierarchy and interpretation rely on spatial organization~\cite{holmqvist_role_2005, ohara_comparison_1997}, standard responsive design, and similarly summary-based or linearized representations, cannot serve as viable alternatives: they remove visual entry points, suppress layout cues, and fundamentally transform the nature of the reading task.
 
-%%% TODO[SOTA]: add the zoomable user interface literature, which is the interaction
-%%% alternative to reflow and is currently missing from the migrated prose:
-%%%  - Navigation patterns with and without an overview~\cite{nav-patterns-2002}.
-%%%  - Linear, fisheye and overview+detail interfaces for reading~\cite{hornb_reading_2001}.
-%%%  - Zoomable interfaces on small screens~\cite{buring_zoomable}.
-%%% This is the direct ancestor of the pan-and-zoom condition studied in
-%%% Chapter~\ref{chapter:magnification} and should be positioned as such.
+An alternative to reflow, rather than to spatial organization itself, is offered by zoomable user interfaces, which let a reader navigate a document by panning and zooming instead of linearizing it. Hornbæk et al.~\cite{nav-patterns-2002} studied navigation patterns and the usability of zoomable interfaces with and without an overview, and Hornbæk and Frøkjær~\cite{hornb_reading_2001} compared the usability of linear, fisheye and overview-plus-detail interfaces for reading electronic documents. Büring~\cite{buring_zoomable} examined zoomable user interfaces specifically on small screens. This body of work is the basic interaction paradigm underlying \panzoom\ magnification.
+
+Across this axis, no response to the constraints of digital and mobile reading of structured documents preserves both spatial organization and direct legibility at once: reflow-based responsive design discards the spatial organization that reading a layout-driven document depends on, while zoomable interfaces preserve it only through a manipulable, view-restricted form of navigation. This motivates evaluating large-print layouts as an alternative that preserves spatial organization while restoring entry-point legibility directly. Chapter~\ref{chapter:magnification} examines exactly this alternative, quantifying the behavioral and performance cost of \condone\ (\condonenot) against the direct structural access afforded by \condtwo\ (\condtwonot).
 
 \subsection{Situational visual impairments}
 \label{sec:sota-svi}
 
-Situational visual impairments (SVIs)~\cite{svi-challenges} arise when reading is disrupted by device limitations, such as small font or display size and low resolution, or by environmental factors, including luminosity and ambient noise. Tigwell et al.~\cite{tigwell-2018} investigated how SVIs such as glare or movement affect mobile content usability, and highlighted that designers often lack specialized tools and guidelines to address these challenges. They proposed preliminary recommendations and emphasized the need for improved design support through better resources and educational frameworks. Building on this, a further study~\cite{svi-bright-env} examined the impact of bright outdoor lighting on screen readability. Its results indicate that, while ambient brightness reduces readability, the intrinsic brightness and contrast of the content play an even larger role, which suggests that design interventions should prioritize optimizing content contrast over compensating for glare alone.
+The discussion above concerns how a layout-driven document is navigated once its content is visible; a further, more direct constraint is whether that content is legible in the first place. This latter concern is formalized in the literature as situational visual impairments (SVIs)~\cite{svi-challenges}, which arise when reading is disrupted by device limitations, such as small font or display size and low resolution, or by environmental factors, including luminosity and ambient noise. Tigwell et al.~\cite{tigwell-2018} investigated how SVIs such as glare or movement affect mobile content usability, and highlighted that designers often lack specialized tools and guidelines to address these challenges. They proposed preliminary recommendations and emphasized the need for improved design support through better resources and educational frameworks. Building on this, a further study~\cite{svi-bright-env} examined the impact of bright outdoor lighting on screen readability. Its results indicate that, while ambient brightness reduces readability, the intrinsic brightness and contrast of the content play an even larger role, which suggests that design interventions should prioritize optimizing content contrast over compensating for glare alone.
 
 In parallel, technical solutions have been proposed to mitigate SVIs. \emph{SituFont}~\cite{yue2024situfont} is a dynamic font adaptation system that adjusts attributes such as size, weight and spacing on the basis of real-time sensor inputs and human-in-the-loop feedback. Its authors validated the approach through comparative evaluations across eight simulated SVI scenarios, considering factors such as environment, user mobility and luminosity. Their findings show that \emph{SituFont} significantly improves reading efficiency and reduces cognitive and physical workload compared with manual adjustments, which highlights the potential of adaptive font systems for supporting mobile reading under situational constraints.
+
+While these studies provide valuable insight into, and technical solutions for, reading under SVIs, they primarily concern plain text consumption rather than structured, layout-driven documents. Chapter~\ref{chapter:magnification} extends this line of research to such documents under \CVAS.
 
 \subsection{Reading with low vision}
 \label{sec:sota-low-vision}
 
-Despite the importance of inclusive design, users with disabilities have historically been underrepresented within the interactive media experience community. A survey of seventeen years of research~\cite{vatavu-imx2021} revealed that only 4.23\% of papers addressed accessibility, with a specific call for more empirical studies involving people with disabilities.
+The constraints considered so far are situational and device-related, affecting any reader regardless of visual acuity. A second, complementary source of constrained visual access is reader-related: reduced visual acuity itself, as experienced by readers \LV. Despite the importance of inclusive design, users with disabilities have historically been underrepresented within the interactive media experience community. A survey of seventeen years of research~\cite{vatavu-imx2021} revealed that only 4.23\% of papers addressed accessibility, with a specific call for more empirical studies involving people with disabilities.
 
 Digital devices provide new opportunities for readers \LV\ to access information through adaptable text formats and presentation options~\cite{reading-digital-legge}. A growing body of research has examined how these readers interact with digital reading environments, including studies that simulate \CVAS\ in order to better understand performance under magnification and limited visual access. A key contribution by Atilgan et al.~\cite{atilgan2020} provides a unified framework to evaluate how print size and display size affect reading speed, both for small-display readers and for individuals with low vision using magnified text. Their results show that limitations in font and display size can prevent some readers from reaching their maximum reading performance.
 
-%%% TODO[SOTA]: insert here, before the paragraph on magnification strategies, the
-%%% psychophysical foundation that the migrated paper prose assumed rather than stated.
-%%% Chapter~\ref{chapter:magnification} uses the critical print size operationally to set
-%%% the experimental conditions, so it must be defined precisely:
-%%%  - The MNREAD chart and the reading-speed versus print-size curve~\cite{mansfield1993,
-%%%    legge1992psychophysics, legge2006}, including normative baselines~\cite{calabrese_baseline_2016}.
-%%%  - The critical print size as the plateau threshold of that curve, and the reading
-%%%    acuity and maximum reading speed parameters derived alongside it.
-%%%  - Print size expressed as a visual angle, and the logMAR scale.
-%%%  - Whether print size matters for reading, from the typographic side~\cite{legge2011},
-%%%    and the clinical usefulness of self-reported comfortable print size~\cite{latham-2022}.
+The concept of print size that these strategies target is grounded in a specific psychophysical framework. The MNREAD test~\cite{mansfield1993, legge1992psychophysics} measures reading speed as a function of print size using sentences of decreasing size, tracing a characteristic curve: reading speed remains roughly constant above a threshold size, then declines sharply as print size decreases further, until it reaches zero. Three parameters are conventionally derived from this curve~\cite{legge2006}: the maximum reading speed, that is, the plateau value reached for large print; the critical print size (CPS), defined as the smallest print size at which reading speed reaches this plateau; and the reading acuity, the smallest print size at which text can still be read at all, well below the CPS. Print size itself is expressed as a visual angle rather than as an absolute physical dimension, since legibility depends on the size of the retinal image rather than on the size of the character on the page or screen, and it is conventionally reported on the logMAR scale, a logarithmic measure of the minimum angle of resolution. Normative baselines for this curve across age groups are available for readers with normal vision~\cite{calabrese_baseline_2016}.
 
-Several studies have examined display configurations and strategies for magnified reading. Xiong et al.~\cite{xiong_digital_2022} proposed guidelines emphasizing the importance of exceeding the critical print size and of maintaining at least thirteen characters per line to support fluent reading. Granquist et al.~\cite{granquist_how_2018} asked participants with low vision to adjust text for comfortable reading, and found that most relied on enlarging the text and, to a lesser extent, on reducing the viewing distance. Beckmann et al.~\cite{beckmann_psychophysics_1996} studied manual navigation with stand-mounted video magnifiers and reported that reading speed decreases unless the viewing window is sufficiently wide, above roughly ten characters, which is consistent with the threshold identified by Xiong et al.~\cite{xiong_digital_2022}. Magnification and contrast enhancement were also shown to improve reading speed in simulated low-vision environments, with magnification generally having a more substantial effect than contrast~\cite{magnification-low-vision}.
+Several studies have used this critical print size framework directly to derive guidelines for display configurations and magnification strategies. Xiong et al.~\cite{xiong_digital_2022} proposed guidelines emphasizing the importance of exceeding the critical print size and of maintaining at least thirteen characters per line to support fluent reading. Granquist et al.~\cite{granquist_how_2018} asked participants with low vision to adjust text for comfortable reading, and found that most relied on enlarging the text and, to a lesser extent, on reducing the viewing distance. Beckmann et al.~\cite{beckmann_psychophysics_1996} studied manual navigation with stand-mounted video magnifiers and reported that reading speed decreases unless the viewing window is sufficiently wide, above roughly ten characters, which is consistent with the threshold identified by Xiong et al.~\cite{xiong_digital_2022}. Magnification and contrast enhancement were also shown to improve reading speed in simulated low-vision environments, with magnification generally having a more substantial effect than contrast~\cite{magnification-low-vision}.
 
-Other work has examined navigation and magnification strategies in more detail. Bowers et al.~\cite{bowers-reading} analyzed reading with optical magnifiers and highlighted challenges such as line retrace. Tang et al.~\cite{tang_screen_2023} compared two types of screen magnification on modern devices: full-screen magnification, which is analogous to pan-and-zoom, and lens magnification, which allows users to see a larger portion of the unmagnified screen for spatial reference. They identified trade-offs in performance and usability, and showed that the lens mode led to more consistent and uniform mouse movements, whereas the full mode caused longer and more frequent pauses. Similarly, Aguilar and Castet~\cite{aguilar-castet2017} developed a gaze-controlled system that magnifies a portion of text while maintaining a global view, which participants found more comfortable than traditional video magnifiers.
+Sizing text and the viewing window appropriately, however, is only part of the picture: how a reader navigates within a magnified view is a separate concern, and several works have developed concrete mechanisms to support it. Bowers et al.~\cite{bowers-reading} analyzed reading with optical magnifiers and highlighted challenges such as line retrace. Tang et al.~\cite{tang_screen_2023} compared two types of screen magnification on modern devices: full-screen magnification, which is analogous to pan-and-zoom, and lens magnification, which allows users to see a larger portion of the unmagnified screen for spatial reference. They identified trade-offs in performance and usability, and showed that the lens mode led to more consistent and uniform mouse movements, whereas the full mode caused longer and more frequent pauses. Similarly, Aguilar and Castet~\cite{aguilar-castet2017} developed a gaze-controlled system that magnifies a portion of text while maintaining a global view, which participants found more comfortable than traditional video magnifiers, and Wang et al.~\cite{wang_gazeprompt_2024} proposed \emph{GazePrompt}, a system that similarly uses gaze in real time to drive gaze-aware augmentations of the reading experience for readers \LV.
 
-%%% TODO[SOTA]: complete with the eye-movement evidence under magnification, available
-%%% in the bibliography but absent from the migrated prose~\cite{heo_reading_2024,
-%%% wang_understanding_2023, wang_gazeprompt_2024, valsecchi_saccadic_2013}, and with
-%%% eye tracking as an HCI instrument~\cite{jacob_eye_2003}. Note that
-%%% Chapter~\ref{chapter:magnification} deliberately rejects eye tracking for its own
-%%% protocol, so this passage should present the technique without implying its adoption.
+The same underlying technology, eye tracking, is also used in a different capacity in the literature: not to drive an interactive system in real time, but as a research instrument to characterize reading behavior itself~\cite{jacob_eye_2003}. Wang et al.~\cite{wang_understanding_2023} used eye tracking to examine how readers \LV\ read, and Heo et al.~\cite{heo_reading_2024} analyzed eye movements specifically under screen magnification, using gaze tracks compensated for the magnification transform itself. This line of work builds on more fundamental characterizations of eye movements during reading, such as the analysis of saccadic and smooth-pursuit movements over drifting text by Valsecchi et al.~\cite{valsecchi_saccadic_2013}. While Chapter~\ref{chapter:magnification} does not rely on eye tracking for its own protocol, this body of work situates the instrument among the methods available for studying reading under magnification.
 
-\subsection{Large-print editions}
-\label{sec:sota-large-print}
-
-%%% TODO[SOTA]: to be written. This is the shortest subsection but closes the axis, and
-%%% it was flagged in the original note of magnification/sections/sota.tex as
-%%% "NYT LARGE PRINT". Points to cover:
-%%%  - The large-type edition of The New York Times~\cite{nyt-large-type-1967} as the
-%%%    historical precedent of a large-print newspaper that preserves the layout instead
-%%%    of linearizing it.
-%%%  - Why the approach was abandoned industrially, and why automated generation changes
-%%%    that economic equation, which links back to \secref{sec:motivation}.
-%%% REFGAP: contemporary large-print or accessible-edition practice is not covered by the
-%%% current bibliography beyond the historical NYT reference.
+Together, these studies establish the impact of magnification on low-vision reading. Most prior work, however, concerns plain, unstructured text, and analyzes reading speed, errors and navigation patterns within a fixed set of lines. Chapter~\ref{chapter:magnification} instead investigates structured, layout-driven documents such as newspapers, where reading involves navigating not only text but also the spatial layout, for readers \NV\ and \LV\ alike, quantifying the behavioral and performance cost of \condone against the direct structural access afforded by large-prints.
 
 \subsection{Positioning and open gaps}
 \label{sec:sota-reading-gaps}
 
-Taken together, these studies establish the impact of magnification on low-vision reading. Most prior work, however, concerns plain, unstructured text, and analyzes reading speed, errors and navigation patterns within a fixed set of lines. Studies of reading under situational visual impairments likewise focus on text consumption rather than on structured documents.
+The three axes reviewed above converge on a single, common gap, which motivates the third specific objective of this thesis, developed across Chapter~\ref{chapter:magnification}.
 
-%%% TODO[SOTA]: complete the gap statement. The elements to assemble:
-%%%  (a) No prior study examines structured layout-based documents, such as newspapers,
-%%%      where reading involves navigating not only text but also the spatial layout.
-%%%  (b) The two families of remedies have never been compared against each other on such
-%%%      documents: manipulable magnification, which preserves the layout but imposes a
-%%%      navigation cost, and direct structural access through a large-print layout,
-%%%      which removes that cost while preserving spatial organization.
-%%%  (c) Both readers \NV\ under device-induced constraints and readers \LV\ fall under
-%%%      the same umbrella of \CVAS, yet are rarely studied within a single protocol.
-%%% Close by naming Chapter~\ref{chapter:magnification} and the third specific objective
-%%% of \secref{sec:objectives}.
+First, \secref{sec:sota-digital-reading} showed that neither of the two standard responses to reading structured documents on small screens preserves both spatial organization and direct legibility at once: reflow-based responsive design discards spatial organization, while zoomable interfaces preserve it only through a manipulable, view-restricted form of navigation. Second, \secref{sec:sota-svi} showed that situational visual impairments have so far been studied for plain text rather than for structured, layout-driven documents. Third, \secref{sec:sota-low-vision} showed that magnification strategies for low-vision reading have likewise been evaluated only on plain, unstructured text, independently of spatial layout.
+
+No prior study, therefore, examines structured layout-based documents under \CVAS\ for readers \NV\ and \LV\ alike, nor compares manipulable magnification  and direct structural access through a large-print layout. Chapter~\ref{chapter:magnification} closes this gap: it reports a controlled user study of newspaper reading under \CVAS\ that compares \condone\ against \condtwo, for readers \NV\ and \LV\ alike.

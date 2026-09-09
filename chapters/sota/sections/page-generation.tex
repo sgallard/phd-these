@@ -5,7 +5,7 @@
 %%% Treatment levels: 3.2 is P (pedagogical), 3.3 is D (detailed), 3.4 is I.
 %%% =====================================================================
 
-\section{Automated page layout generation}
+\section{Automated page generation and optimization}
 \label{sec:sota-pagegen}
 
 %%% TODO[SOTA]: opening paragraph. Resume the business motivation of
@@ -15,27 +15,28 @@
 %%% multi-objective trade-offs" of \secref{sec:challenges}, and announce that this axis
 %%% carries the main objective of \secref{sec:objectives}.
 
-\subsection{Automated document and page layout synthesis}
+\subsection{Layout Generation}
 \label{sec:sota-layout-synthesis}
 
-%%% TODO[SOTA]: to be written. Survey the field along four families, so that the
-%%% method of Chapter~\ref{chapter:pagegen} can be located within it:
-%%%  (a) Constructive and rule-based composition (grid systems, editorial rules).
-%%%  (b) Template-driven composition, which is the paradigm of \melody.
-%%%  (c) Optimization-based synthesis, which is the family this thesis belongs to.
-%%%  (d) Learning-based and generative synthesis.
-%%% State for each what criterion is optimized and whether placement and content
-%%% selection are solved jointly or sequentially.
-%%%
-%%% REFGAP (large): the current bibliography barely covers automated document layout
-%%% generation as a field. This is the single largest gap to fill before writing.
-%%%
-%%% TODO[SOTA]: close this subsection with the framing narrowing dropped from
-%%% framing.tex: state briefly that, of the four families just surveyed, this thesis
-%%% adopts optimization-based synthesis, and that the next subsection narrows to
-%%% multi-objective optimization specifically because it is the family of methods
-%%% Chapter~\ref{chapter:pagegen} teaches and adapts, not because the other families
-%%% are irrelevant to the field.
+\subsubsection*{Deep generative methods}
+Automated layout generation has recently been framed within the broader context of Artificial Intelligence Generated Content (AIGC), where a layout is treated as one deliverable among several kinds of content a generative system may produce~\cite{shi-2023}. Across this literature, a layout is abstracted uniformly as a set of graphical primitives, each parameterized by a bounding box and a category label $(c, x, y, w, h)$, regardless of whether the target domain is a printed document, a mobile interface, or a natural scene. Four families of deep generative architecture have been applied to this representation: autoregressive models, which cast layout generation as a sequence of conditional token predictions, later challenged by non-autoregressive alternatives that predict and refine every attribute in parallel instead (LayoutTransformer~\cite{gupta_layouttransformer_2021}; BLT~\cite{kong-2022}); variational autoencoders, which learn a continuous latent space over complete layouts, often paired with a graph neural network to condition generation on structural relations between elements (Neural Design Network~\cite{Lee-2020}); generative adversarial networks, in which a generator and a discriminator are trained jointly, whether searched directly in latent space under explicit constraints (CLG-LO~\cite{kikuchi-2021}) or conditioned on the content to be laid out (ContentGAN~\cite{zheng-2019}); and, more recently, flow-based and diffusion models, which generate and edit layouts through iterative denoising or bijective mappings~\cite{shi-2023}.
+
+Most of these architectures share the underlying representation of a layout element as a bounding box tied to a category label, $(c, x, y, w, h)$, which is essentially the representation this thesis also adopts for an article placed on a page. The task posed over that shared representation, however, differs fundamentally: every system reviewed above generates the geometry itself, sampling or decoding a plausible arrangement of boxes from a learned distribution, whereas this thesis never synthesizes new boxes. Instead, within a single evolutionary search, it jointly assigns one pre-existing template, drawn from a fixed, though extensive, catalog, to each article, and packs the resulting fixed-size blocks onto the canvas, treating several explicit, conflicting editorial criteria as a Pareto trade-off~\cite{pareto} rather than folding them into a single learned or latent loss.
+
+\subsubsection*{Rule and optimization-based methods}
+
+A different line of work treats layout as an explicit optimization or constraint-satisfaction problem instead of something to be learned. GRIDS~\cite{Dayama-2020} formulates interactive grid-based interface layout as a mixed-integer linear program, encoding alignment, packing, and overall shape directly as objectives and constraints, and additionally samples diverse near-optimal solutions to that same program to offer a designer several alternatives rather than a single one. Jacobs et al.~\cite{jacobs-2003} address adaptive document layout with a library of hand-built, page-level grid templates, pairing one such template with a batch of content and separately allocating that content across pages through constraint solving. Note that the template here denotes an entire page rather than a single article, and pairing and allocation are resolved as two distinct steps rather than one joint decision, which sets this system apart from the per-article, jointly evolved assignment used in this thesis despite the superficial similarity of the term. More recently, LayoutRectifier~\cite{shen-2025} applies optimization as a post-process, snapping elements back onto a grid and correcting overlaps left behind by deep generative layout models.
+
+Across these systems, geometric and perceptual criteria are formalized precisely, but each one is resolved either as a single scalarized objective or as a fixed hierarchy of constraints over a page-level unit, never as a trade-off among several conflicting editorial criteria, and never as a joint search deciding which template to assign to an article together with where to place it.
+
+\subsubsection*{Newspaper-specific methods}
+
+Most literature specifically targeting newspaper pages addresses segmentation of historical print for OCR rather than the generation of new layouts, which is itself telling of how little this exact problem has been studied. The few exceptions~\cite{Strecker2009AutomaticLOF, Oliveira2009TwoAFE} construct a page directly from fixed procedural rules, predating the many-objective evolutionary machinery this thesis relies on: there is no catalog of templates to select from and no search over trade-offs, since a single layout is produced deterministically and there is no objective function to trade off in the first place.
+
+%%%%%%%%%
+None of the three lines of work reviewed above matches the problem this thesis addresses, though each falls short for a different reason: the deep generative methods sample new box geometry from a learned distribution; the general-domain optimization and rule-based methods formalize objectives correctly but resolve them as a single scalarized program or a fixed constraint hierarchy over a page-level unit; and the newspaper-specific rule-based methods hand-code a deterministic procedure with no objective function at all. 
+
+What this thesis does instead is to jointly assign one pre-existing template, drawn from a catalog, to each article and pack the resulting fixed-size blocks onto the canvas, within a single evolutionary search treating several conflicting editorial criteria as a multi-objective trade-off. Within this landscape, the following subsection narrows to multi-objective optimization, the machinery Chapter~\ref{chapter:pagegen} adapts.
 
 \subsection{Multi-objective optimization}
 \label{sec:sota-moo}

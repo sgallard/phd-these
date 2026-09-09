@@ -31,6 +31,13 @@
     {\begin{callout@box}\IfValueT{#1}{\textbf{#1}\space}}
     {\end{callout@box}}
 
+% Inline award badge: trophy icon + small-caps text in a muted gold, as a
+% lighter-weight alternative to bold for flagging a distinction (e.g. a best
+% paper mention) without competing visually with the running text.
+\RequirePackage{fontawesome5}
+\colorlet{awardcolor}{orange!85!black}
+\newcommand{\awardbadge}[1]{{\color{awardcolor}\faTrophy~\textsc{#1}}}
+
 \newcommand{\melody}{\emph{Melody}\xspace}
 \newcommand{\laprovence}{\emph{La Provence}\xspace}
 \newcommand{\publihebdos}{\emph{Publihebdos}\xspace}
@@ -132,7 +139,7 @@
 
 \newcommand{\topsize}{N\xspace}
 
-\newcommand{\trs}{TRS\xspace}
+\newcommand{\trs}{TRF\xspace}
 
 \newcommand{\cwthreshold}{CW_{th}} % added by pk
 
