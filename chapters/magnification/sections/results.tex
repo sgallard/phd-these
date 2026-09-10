@@ -82,7 +82,7 @@ The analysis presented in this section tests hypotheses \hypperformance-\hyppref
 
 Collected data were analyzed using a linear mixed-effects model with Participant ID as a random effect. The fixed effects are detailed in Table~\ref{tab:lmm}. An ANOVA test was used to check for significance using the F-statistic, setting the p-value threshold at $p < 0.05$. All reported values are model estimates (i.e., estimated marginal means) rather than raw data. 
 
-The following sections report exact p-values and effect sizes for significant main effects and interactions. Complete model statistics—including F-values, degrees of freedom, and detailed pairwise comparisons—are provided in the supplementary tables in the Appendix~\ref{TODO} of this thesis. Not significant effects and interactions are not reported.
+The following sections report exact p-values and effect sizes for significant main effects and interactions. Not significant effects and interactions are not reported. %Complete model statistics—including F-values, degrees of freedom, and detailed pairwise comparisons—are provided in the supplementary tables in the Appendix~\ref{TODO} of this thesis. 
 
 \begin{table}[htbp]
 \centering
@@ -392,3 +392,19 @@ Based on the previous results, a summary focused in each hypothesis is presented
 
     \item[\hyppreference]Supported. NASA-TLX scores, a direct preference question, and qualitative feedback all converged to show a strong overall user preference for \condtwonot.
 \end{itemize}
+
+
+\subsection{Discussion}
+
+\subsubsection{ConditionOrder impact}
+As shown in Table~\ref{tab:lmm}, conditions are modeled using a within-subject factor,  counterbalanced  by systematic alternation to balance order (illustrated in Fig.~\ref{fig:conditions-setup}).
+In addition, statistical analysis on ConditionOrder showed no significant results, indicating a lack of fatigue effects.
+
+\subsubsection{Generalization of the study}
+
+Findings are expected to generalize within structured, layout-based documents, as loss of global context and interface manipulability are content-independent properties of GB vs. LP.
+While this study quantified text-only reading, the methodology could potentially be extended to richer layouts with additional entry points~\cite{ozretic_dosen_key_2018}. This would require identifying the specific natural reading paths associated with such layouts, which would differ from the one defined here. Furthermore, future protocols would likely need adaptations to address this use case, such as moving beyond reading aloud or accounting for CPS limitations when integrating visual elements.
+
+\subsubsection{Training and familiarity effects}
+
+The potential role of training and familiarity also merits consideration; observed patterns were similar for participants with normal-vision (already familiar with magnification) and low vision, though effects were larger for the latter. This suggests that training could reduce difference magnitude for them, but their visual acuity will prevent eliminating the gap, and the qualitative pattern between GB and LP is unlikely to change.

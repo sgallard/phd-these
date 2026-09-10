@@ -10,7 +10,7 @@
 \section{Reading layout-driven documents under constrained visual access}
 \label{sec:sota-reading}
 
-As stated in \secref{sec:motivation}, the societal motivation of this thesis concerns two groups of readers who share a common difficulty in accessing structured, layout-driven documents: those facing device-related visual constraints on mobile displays, and those \LV\ facing reader-related constraints. \secref{sec:challenges} frames the corresponding challenge as one of validating accessibility and user experience benefits, namely whether automatically generated large-print editions preserve behavioral integrity and offer superior reading efficiency compared with conventional gesture-based magnification. This section reviews the literature underlying that question, from the general constraints of digital and mobile reading, through the specific challenge posed by two-dimensional, layout-driven documents within it, to the specific strategies available for reading under constrained visual access.
+As stated in \secref{sec:societal-motivation}, the societal motivation of this thesis concerns two groups of readers who share a common difficulty in accessing structured, layout-driven documents: those facing device-related visual constraints on mobile displays, and those \LV\ facing reader-related constraints. \secref{sec:large-print-adaptation} frames the corresponding challenge as one of validating accessibility and user experience benefits, namely whether automatically generated large-print editions preserve behavioral integrity and offer superior reading efficiency compared with conventional gesture-based magnification. This section reviews the literature underlying that question, from the general constraints of digital and mobile reading, through the specific challenge posed by two-dimensional, layout-driven documents within it, to the specific strategies available for reading under constrained visual access.
 
 \subsection{Digital media reading}
 \label{sec:sota-digital-reading}
@@ -21,7 +21,7 @@ Within this landscape, prior research has shown that mobile devices have reshape
 
 Indeed, Nielsen~\cite{Nielsen2011} reported that comprehension of complex content on small displays is only about 48\% of that obtained on desktop monitors. This gap is explained by two main factors: mobile readers see less information at once, which reduces context and therefore understanding, and they must navigate through the document, which diverts attention. Moran~\cite{moran2016reading} further showed that while short, simple texts are read with similar comprehension across devices, reading speed drops significantly for longer or denser passages, which highlights the need for layout optimization and interaction strategies to improve mobile reading performance. This difficulty compounds further when the content itself is not simple linear text but a structured, layout-driven document, whose reading depends on spatial organization as much as on textual content.
 
-\subsubsection{Reading two-dimensional layouts}
+\subsubsection*{Reading two-dimensional layouts}
 \label{sec:sota-reading-layouts}
 
 Structured, layout-driven documents combine dense text with visual design and spatial organization to convey meaning. Because of their distinct design elements, findings derived from linear reading cannot be generalized to layout-driven documents~\cite{ozretic_dosen_key_2018, hollander_e-reader_2011}. Such documents pose distinctive challenges owing to their complex structures, which are often organized around visual entry points~\cite{holsanova_entry_2006}.
@@ -32,7 +32,7 @@ This spatial organization has also been examined through eye-tracking studies of
 
 This dependence on spatial arrangement has a computational counterpart: the reading order of a visually-rich document is itself the object of a prediction problem, rather than a property directly available from its markup. LayoutReader~\cite{wang_layoutreader_2021} addresses reading order detection by pre-training over the text and layout of a document, and subsequent work has proposed relation-prediction formulations that jointly exploit multi-modal layout cues~\cite{qiao2024}, token-path prediction~\cite{zhang2023}, and ordering relations between layout elements~\cite{zhang_modeling_2024}. That reading order must itself be predicted, rather than read off a document's linear structure, corroborates the argument above: the spatial arrangement of a layout-driven document carries its reading sequence, which is precisely what a linearized representation destroys.
 
-\subsubsection{Responsive design and the loss of spatial semantics}
+\subsubsection*{Responsive design and the loss of spatial semantics}
 \label{sec:sota-responsive}
 
 Given that the reading order of a layout-driven document is carried by its spatial arrangement, as established above, the most direct response to the constraints of digital and mobile reading is to adapt that arrangement to the screen rather than to abandon it. Web-responsive design offers exactly this kind of adaptation and, in theory, could address the general challenge of reading complex documents on small screens. However, techniques such as responsive design handle small displays primarily through linear reflow mechanisms~\cite{reflow, marcotte_responsive_2010, responsive-design}, which collapse multi-column grids into a single vertical stack defined by the document object model order. While this method preserves sequential reading order and eliminates bi-directional scrolling, it sacrifices the two-dimensional spatial paradigm that defines newspapers and other layout-driven documents~\cite{chesham_master_2003, chiou_2024}.
@@ -72,7 +72,7 @@ Together, these studies establish the impact of magnification on low-vision read
 \subsection{Positioning and open gaps}
 \label{sec:sota-reading-gaps}
 
-The three axes reviewed above converge on a single, common gap, which motivates the third specific objective of this thesis, developed across Chapter~\ref{chapter:magnification}.
+The three axes reviewed above converge on a single, common gap, which motivates the objective of this thesis stated in \secref{sec:large-print-adaptation}, developed across Chapter~\ref{chapter:magnification}.
 
 First, \secref{sec:sota-digital-reading} showed that neither of the two standard responses to reading structured documents on small screens preserves both spatial organization and direct legibility at once: reflow-based responsive design discards spatial organization, while zoomable interfaces preserve it only through a manipulable, view-restricted form of navigation. Second, \secref{sec:sota-svi} showed that situational visual impairments have so far been studied for plain text rather than for structured, layout-driven documents. Third, \secref{sec:sota-low-vision} showed that magnification strategies for low-vision reading have likewise been evaluated only on plain, unstructured text, independently of spatial layout.
 

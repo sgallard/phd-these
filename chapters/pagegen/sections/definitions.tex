@@ -2,7 +2,7 @@
 \section{Automated Page Layout Generation: A Multi-Objective Challenge}
 \label{sec:pagegen-challenge}
 
-While Chapter~\ref{chapter:template} focused on retrieving templates in two contexts (isolated-article and page-aware template selection), an automated newspaper production workflow requires not only that, but also synthesizing an entire array of unstructured web articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ onto a  page canvas $\page$ (see \figref{fig:web-print-workflow} and Chapter~\ref{sec:motivation}).
+While Chapter~\ref{chapter:template} focused on retrieving templates in two contexts (isolated-article and page-aware template selection), an automated newspaper production workflow requires not only that, but also synthesizing an entire array of unstructured web articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ onto a  page canvas $\page$ (see \figref{fig:web-print-workflow} and \secref{sec:basic-elements}).
 
 Consequently, the proposed problem consists of \textbf{concurrently solving a discrete template assignment challenge and a two-dimensional packing problem}. For a given set of input articles $\articleset$, a valid solution requires mapping each article $\articleobj{i}$ to an appropriate template $\templateobj{j} \in \templatecatalog$ while discovering an optimal spatial configuration on the page canvas $\page$ that avoids overlaps, respects canvas boundaries, and maximizes visual quality.
 

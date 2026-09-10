@@ -9,11 +9,11 @@
 \label{sec:sota-pagegen}
 
 %%% TODO[SOTA]: opening paragraph. Resume the business motivation of
-%%% \secref{sec:motivation}: assembling a single edition currently takes hours of manual
+%%% \secref{sec:industrial-motivation}: assembling a single edition currently takes hours of manual
 %%% editing, and the industrial requirement is a few minutes per page. Connect to the
 %%% challenges "combinatorial complexity of spatial packing" and "balancing
-%%% multi-objective trade-offs" of \secref{sec:challenges}, and announce that this axis
-%%% carries the main objective of \secref{sec:objectives}.
+%%% multi-objective trade-offs" of \secref{sec:multi-objective-page-generation}, and announce that this axis
+%%% carries the main objective of \secref{sec:multi-objective-page-generation}.
 
 \subsection{Layout Generation}
 \label{sec:sota-layout-synthesis}
@@ -36,7 +36,7 @@ Most literature specifically targeting newspaper pages addresses segmentation of
 %%%%%%%%%
 None of the three lines of work reviewed above matches the problem this thesis addresses, though each falls short for a different reason: the deep generative methods sample new box geometry from a learned distribution; the general-domain optimization and rule-based methods formalize objectives correctly but resolve them as a single scalarized program or a fixed constraint hierarchy over a page-level unit; and the newspaper-specific rule-based methods hand-code a deterministic procedure with no objective function at all. 
 
-What this thesis does instead is to jointly assign one pre-existing template, drawn from a catalog, to each article and pack the resulting fixed-size blocks onto the canvas, within a single evolutionary search treating several conflicting editorial criteria as a multi-objective trade-off. Within this landscape, the following subsection narrows to multi-objective optimization, the machinery Chapter~\ref{chapter:pagegen} adapts.
+What this thesis does instead is to jointly assign one pre-existing template, drawn from a catalog, to each article and pack the resulting fixed-size blocks onto the canvas, within a single evolutionary search treating several conflicting editorial criteria as a multi-objective trade-off. Within this landscape, the following subsection narrows to multi-objective optimization, which is the framework Chapter~\ref{chapter:pagegen} adapts.
 
 \subsection{Multi-objective optimization}
 \label{sec:sota-moo}
@@ -49,7 +49,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%% chapters/pagegen/sections/sota.tex:13.
 %%% -----------------------------------------------------------------
 
-\subsubsection{Multi-objective problems and Pareto optimality}
+\subsubsection*{Multi-objective problems and Pareto optimality}
 \label{sec:sota-pareto}
 
 %%% TODO[SOTA]: to be written, with full formalism.
@@ -73,7 +73,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
     \label{fig:sota-pareto-front}
 \end{figure}
 
-\subsubsection{Evolutionary multi-objective optimization}
+\subsubsection*{Evolutionary multi-objective optimization}
 \label{sec:sota-emo}
 
 %%% TODO[SOTA]: to be written.
@@ -84,7 +84,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%%    modification of it.
 %%% REFGAP: NSGA-II (Deb et al., 2002) is not in biblio.bib and must be added.
 
-\subsubsection{Many-objective optimization and NSGA-III}
+\subsubsection*{Many-objective optimization and NSGA-III}
 \label{sec:sota-nsga3}
 
 %%% TODO[SOTA]: to be written, with full formalism.
@@ -106,7 +106,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
     \label{fig:sota-das-dennis}
 \end{figure}
 
-\subsubsection{Preference-guided optimization and R-NSGA-III}
+\subsubsection*{Preference-guided optimization and R-NSGA-III}
 \label{sec:sota-rnsga3}
 
 %%% TODO[SOTA]: to be written, with full formalism.
@@ -118,7 +118,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%%    the spread parameter that controls the extent of the region of interest.
 %%%  - State explicitly why aspiration points are the natural vehicle for injecting
 %%%    tacit editorial preference, which is the challenge "modeling tacit human
-%%%    preferences and editorial style" of \secref{sec:challenges}.
+%%%    preferences and editorial style" of \secref{sec:multi-objective-page-generation}.
 
 \begin{figure}[htbp]
     \centering
@@ -127,7 +127,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
     \label{fig:sota-aspiration-points}
 \end{figure}
 
-\subsubsection{Assessing approximations of the Pareto front}
+\subsubsection*{Assessing approximations of the Pareto front}
 \label{sec:sota-moo-indicators}
 
 %%% TODO[SOTA]: to be written.
@@ -141,7 +141,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%% REFGAP: indicators beyond hypervolume (IGD, spacing) and the knee-point literature
 %%% are absent from the bibliography.
 
-\subsubsection{Genetic operators and implementation frameworks}
+\subsubsection*{Genetic operators and implementation frameworks}
 \label{sec:sota-operators}
 
 %%% TODO[SOTA]: to be written, briefly.
@@ -162,7 +162,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%% Origin: placeholder formerly at chapters/pagegen/sections/sota.tex:19.
 %%% -----------------------------------------------------------------
 
-\subsubsection{Problem taxonomy}
+\subsubsection*{Problem taxonomy}
 \label{sec:sota-packing-taxonomy}
 
 %%% TODO[SOTA]: to be written.
@@ -175,19 +175,19 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%% REFGAP: the formal typology of cutting and packing problems (Waescher/Dyckhoff)
 %%% is absent from the bibliography and is the right anchor for this subsubsection.
 
-\subsubsection{Computational complexity}
+\subsubsection*{Computational complexity}
 \label{sec:sota-packing-complexity}
 
 %%% TODO[SOTA]: to be written.
 %%%  - NP-hardness of two-dimensional bin and strip packing.
-%%%  - This subsubsection supplies the reference that resolves the placeholder citation
-%%%    at chapters/context/main.tex:180, and substantiates the challenge "combinatorial
-%%%    complexity of spatial packing" of \secref{sec:challenges}.
+%%%  - This subsubsection can expand on \cite{lodi-packing-survey}, already cited for
+%%%    this claim in the Multi-objective page generation subsection of Chapter 1
+%%%    (\secref{sec:multi-objective-page-generation}), and substantiates the challenge
+%%%    "combinatorial complexity of spatial packing" stated there.
 %%%  - Note the additional coupling specific to this thesis: template selection is
 %%%    discrete and simultaneous with placement, which compounds the search space.
-%%% REFGAP: \cite{placeholder-np-hard-bpp} needs a real NP-hardness reference.
 
-\subsubsection{Constructive heuristics}
+\subsubsection*{Constructive heuristics}
 \label{sec:sota-packing-heuristics}
 
 %%% TODO[SOTA]: to be written.
@@ -197,7 +197,7 @@ What this thesis does instead is to jointly assign one pre-existing template, dr
 %%%  - Extreme points~\cite{crainic-extreme-points}: the placement rule adopted by the
 %%%    decoder of Chapter~\ref{chapter:pagegen}, so it warrants the most detail here.
 
-\subsubsection{Exact methods and their regime of viability}
+\subsubsection*{Exact methods and their regime of viability}
 \label{sec:sota-packing-exact}
 
 %%% TODO[SOTA]: to be written. This subsubsection carries an argument, not just a review.
