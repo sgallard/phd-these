@@ -5,19 +5,10 @@
 This chapter formalizes, in precise mathematical terms, the page, web article, template, and print article entities that \melody already manipulates natively as a feature of its production system (\secref{sec:basic-elements}). This formalization underlies every contribution developed in the remainder of this thesis.
 
 \section{Core concepts and representations}
-
-
-%TODO: PUT FULL PAGE EACH SUBFIGURE , SPLITTING THE SUBFIGURE IN 3. MAYBE TEMPLATE AND ARTICLE NOT IN A FULL PAGE TO VISUALLY SEE THE DIFFERENCE IN SIZE
-%todo: increase gutter
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\widthForOneImage]{img/page-article-template-with-notation.pdf}
-    \caption{Page canvas $\page$, web article $\articleobj{i}$, and template $\templateobj{j}$ with their respective notations.}
-    \label{fig:page-article-template-definitions}
-\end{figure}
 \subsection{Newspaper page ($\page$)}.
+\label{sec:page-definition}
 
-A page $\page$ defines the empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
+A page $\page$ (\figref{fig:page}) defines the empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
 \begin{equation}
 \page = \langle \Wpage, \Hpage, \mtop, \mbottom, \mleft, \mright, \colsize, \gutter \rangle,
 \label{eq:page-definition}
@@ -30,10 +21,17 @@ where:
     \item $\gutter \in \mathbb{R}^+$ denotes the spacing between columns. 
 \end{itemize}
 Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\widthForOneImage]{img/page-with-notation.pdf}
+    \caption{Page $\page$}
+    \label{fig:page}
+\end{figure}
 
 \subsection{Web article ($\articleobj{i}$)}
+\label{sec:web-article}
 
-A web article $\articleobj{i} \in \articleset$, where  $\articleset$ is a set of articles, is defined the following tuple:
+A web article $\articleobj{i} \in \articleset$ (\figref{fig:article}), where  $\articleset$ is a set of articles, is defined the following tuple:
 \begin{equation}
 \articleobj{i} = \langle \Cart{i}, \Nimg{i}, \Tlart{i}, \Stlart{i}, \Mainart{i} \rangle,
 \end{equation}
@@ -45,12 +43,16 @@ where:
     \item $\Stlart{i} \in \{0, 1\}$ is a binary flag indicating the presence ($1$) or absence ($0$) of an accompanying subtitle,
     \item $\Mainart{i} \in \{0, 1\}$ is a binary flag indicating whether the article is designated as the main lead story ($1$) within the page context. Only one article per page can be indicated as main.
 \end{itemize}
-
-
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\widthForOneImage]{img/article-with-notation.pdf}
+    \caption{Web article $\articleobj{i}$}
+    \label{fig:article}
+\end{figure}
 
 \subsection{Template ($\templateobj{j}$)}
-\label{sec:template-definition}
-Formally, an article template $\templateobj{j} \in \templatecatalog$, where $\templatecatalog$, is characterized as follows:
+\label{sec:template}
+Formally, an article template $\templateobj{j} \in \templatecatalog$ (\figref{fig:template}), where $\templatecatalog$ is a set of templates, is characterized as follows:
 
 \begin{equation}
 \templateobj{j} = \langle \Wtemp{j}, \Htemp{j}, \zoning{j}, \capacity{j} \rangle,
@@ -96,11 +98,16 @@ These bounds are strictly determined by the area variations that occur when remo
 
 Note that the proposed formulation only assesses template suitability rather than determining which specific images to discard, leaving that selection decision to the human designer or external editorial software.
 \end{itemize}
-
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/template-with-notation.pdf}
+    \caption{Template $\templateobj{j}$}
+    \label{fig:template}
+\end{figure}
 
 
 \subsection{Print article}
-When an article $\articleobj{i}$ is formatted to be placed in the page canvas, it means that an individual template $\templateobj{j} \in \templatecatalog$ has been assigned to $\articleobj{i}$. 
+When an article $\articleobj{i}$ is formatted to be placed in the page canvas, it means that an individual template $\templateobj{j} \in \templatecatalog$ has been assigned to $\articleobj{i}$, becoming a print article (\figref{fig:print-article}).
 
 To formalize this, \templatesel{i} denotes the index of the selected template $\templateobj{\templatesel{i}} \in \templatecatalog$ for article $\articleobj{i}$. Formally,
 \begin{equation}
@@ -110,9 +117,25 @@ To formalize this, \templatesel{i} denotes the index of the selected template $\
 
 Note that after this selection, the article acquires the physical dimensions and characteristics of the assigned template. 
 Additionally, the number of images $\Nimg{i}$ in the article fixes the number of active image slots in the template, which in turn determines the text capacity range $[\capacity{\templatesel{i}}[\Nimg{i}, 0], \capacity{\templatesel{i}}[\Nimg{i}, 0]]$ to respect in the optimization process.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\widthForOneImage]{img/print-article-with-notation.pdf}
+    \caption{Print article $\articleobj{i}$ with the respective assigned template $\templateobj{\templatesel{i}}$}
+    \label{fig:print-article}
+\end{figure}
+
+\subsection{Full page layout $\solution$}
+\label{sec:solution}
+
+A solution $\solution$ corresponds to the desired output of the web-to-print workflow. It is defined as a fully composed page layout in which every article $\articleobj{i} \in \articleset$ is assigned a template $\templateobj{\templatesel{i}}$ and is positioned within the physical boundaries of the page $\page$ (\figref{fig:solution}).
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\widthForOneImage]{img/solution.pdf}
+    \caption{Solution $\solution$: a full page $\page$ with three print articles positioned.}
+    \label{fig:solution}
+\end{figure}
 
 
-%TODO: HAVE A FIGURE WHERE THE 3 PREVIOUS FIGURE ARE TOGETHER, AND LINK TO CHAPTER 5.2.1
 
 \section{Industrial Datasets}
 

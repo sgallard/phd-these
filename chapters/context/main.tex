@@ -153,13 +153,13 @@ A \emph{print article} represents the concrete instantiation that results from a
 \subsection{Limitations of the current workflow}
 \label{sec:limitations-current-workflow}
 
-However, while \melody provides a robust web-native environment for web and print content management, bridging the gap from  web articles to print pages has historically relied on labor-intensive, semi-manual processes (\figref{fig:melody_manual_a} and \figref{fig:melody_manual_b}). Although the system offers web-based editing tools that allow operators to format web articles into its print format (\figref{fig:melody_manual_a}), and drag-and-drop articles into the page canvas to produce print layouts directly within a browser interface (\figref{fig:melody_manual_b}), \textbf{the workflow lacks automated decision-support mechanisms}. Consequently, operators must manually  produce each page, an arduous task that currently requires hours of manual editing per publication.
+However, while \melody provides a robust web-native environment for web and print content management, bridging the gap from  web articles to print pages has historically relied on labor-intensive, semi-manual processes (\figref{fig:melody_manual_a} and \figref{fig:melody_manual_b}). Although the system offers web-based editing tools that allow operators to format web articles into its print format (\figref{fig:melody_manual_a}), and drag-and-drop articles into the page canvas to produce print layouts directly within a browser interface (\figref{fig:melody_manual_b}), \textbf{the workflow lacks automated decision-support mechanisms}. Consequently, operators must manually produce each page, an arduous task that required more than one hour of manual editing per page before the introduction of \melody's web-native tooling, and that still requires an average of fifteen to twenty minutes per page today; aggregated across a full edition of many pages, this individually modest duration still accumulates into several hours of manual editing.
 
 More specifically, in terms of the workflow:
 
 \begin{enumerate}
     \item Step~1 requires human operators to manually search through large template catalogs containing hundreds of highly similar options to find a compatible fit for each article. 
-    \item  Step~2 obliges operators to perform complex manual spatial reasoning such as dragging, dropping, and adjusting layout blocks across free-form canvases to achieve a high quality layout without exceeding page constraints. As a result, assembling a single daily edition currently requires hours of dedicated manual editing per publication, creating a bottleneck that increases production costs.
+    \item  Step~2 obliges operators to perform complex manual spatial reasoning such as dragging, dropping, and adjusting layout blocks across free-form canvases to achieve a high quality layout without exceeding page constraints, a bottleneck that increases production costs.
 \end{enumerate}
 
 Taken together, these limitations show that the operational bottleneck does not stem from a lack of digital tooling within \melody, but from the absence of decision-support mechanisms capable of automating template selection and page composition. Closing this gap therefore requires moving beyond incremental improvements to the existing web-based editing tools, toward computational methods able to perform these tasks autonomously. The following section motivates this shift from both an industrial and a societal perspective, before \secref{sec:scientific-challenges-contributions} translates it into the concrete scientific challenges and contributions addressed by this thesis.
@@ -172,7 +172,7 @@ Taken together, these limitations show that the operational bottleneck does not 
 \subsection{Industrial motivation}
 \label{sec:industrial-motivation}
 
-From a strategic perspective, automatizing the print production workflow would accelerate page composition from hours of labor-intensive manual editing to a few minutes of automated execution, all while strictly preserving the visual quality of the publication. This tolerance of a few minutes per page is specified by \melody as the operational requirement for automated composition, since page building is not a real-time task but must fit within the daily publication cycle. Beyond this immediate cost objective, eliminating the remaining production time also opens a longer-term industrial perspective: on-demand, near real-time newspaper production, which neither \melody or any other CMS currently have.
+From a strategic perspective, page composition time has already been substantially reduced by the introduction of \melody's web-native tooling, from more than one hour of fully manual editing per page to an average of fifteen to twenty minutes per page with the current semi-manual workflow. Automatizing this remaining workflow would further accelerate page composition to a few minutes of fully automated execution per page, all while strictly preserving the visual quality of the publication. This tolerance of a few minutes per page is specified by \melody as the operational requirement for automated composition, since page building is not a real-time task but must fit within the daily publication cycle. Beyond this immediate cost objective, eliminating the remaining production time also opens a longer-term industrial perspective: on-demand, near real-time newspaper production, which neither \melody or any other CMS currently have.
 
 From an operational perspective, automating layout generation fundamentally transforms the workflow. By delegating repetitive template selection and geometric fitting to computational engines, editors and layout designers are freed from mechanical constraints. Human expertise can thus be reallocated toward high-level creative curation, investigative journalism, and visual storytelling. Crucially, this efficiency is achieved without compromising layout quality, thereby protecting brand identity and reader engagement of the print.
 
@@ -205,7 +205,7 @@ Selecting a template for each article in isolation, however, does not by itself 
 
 Page quality cannot be reduced to a single scalar criterion either: it results from several, partly conflicting measures, such as spatial occupation, adherence to editorial style, text-capacity fit, and positioning, each answering to a different concern of the production process, such that improving one measure comes at the expense of another. 
 
-This thesis therefore aims, as its main objective, to \textbf{automate the \melody web-to-print workflow, generating a complete print page from a set of web articles without manual template assignment nor manual placement, in a few minutes per page against the hours of manual editing currently required, and with objective values within the ranges observed in operator-produced pages of the same publisher}. 
+This thesis therefore aims, as its main objective, to \textbf{automate the \melody web-to-print workflow, generating a complete print page from a set of web articles without manual template assignment nor manual placement, in a few minutes per page against the fifteen to twenty minutes per page currently required, and with objective values within the ranges observed in operator-produced pages of the same publisher}. 
 
 Building on the page-aware template-selection scoring introduced in \secref{sec:learned-template-retrieval}, this thesis further aims to \textbf{quantify the improvement in trade-offs among the quality measures that the proposed multi-objective method, which incorporates this scoring as one of its optimization objectives, attains over constructive and ablated baselines}. 
 
@@ -218,7 +218,7 @@ Beyond industrial production, \secref{sec:societal-motivation} argued that the s
 
 This thesis therefore aims to \textbf{validate that large-print layouts reduce reading time and perceived workload, and better preserve the behavioral integrity of the reading, with respect to gesture-based magnification, for readers \NV\ under device-related visual constraints (e.g., small mobile screens) and readers \LV}. 
 
-Chapter~\ref{chapter:magnification} addresses this objective by repurposing the re-layouting techniques of Chapter~\ref{chapter:pagegen} to generate large-print editions, and reports a controlled user study comparing reading performance, navigational cost, and perceived workload between direct-access large-print layouts and gesture-based magnification.
+Chapter~\ref{chapter:magnification} addresses this objective by repurposing the developed techniques to generate large-print editions, and reports a controlled user study comparing reading performance, navigational cost, and perceived workload between direct-access large-print layouts and gesture-based magnification.
 
 \section{Thesis outline}
 
@@ -228,8 +228,7 @@ retrieval, automated page layout generation, and reading under constrained
 visual access.
 
 Chapter~\ref{chapter:definitions} introduces the terminology, problem formulation, representations,
-and industrial datasets used throughout the thesis. A glossary of the main
-terms and notations is also provided.
+and industrial datasets used throughout the thesis.
 
 Chapter~\ref{chapter:template} presents the proposed approaches for learned template retrieval.
 

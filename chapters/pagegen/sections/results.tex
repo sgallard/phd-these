@@ -54,7 +54,7 @@ LayoutGMN kernel smoothing parameter & $\sigmagmn$ & 0.5 \\ \hline
 \multicolumn{3}{l}{\textit{B. NSGA-III/RNSGA-III Parameters}} \\ \hline
 Number of reference directions for  \methodNameUniform & --- & 10 \\
 Population size for \methodNameUniform & $\popsize$& 286 \\
-Radius around aspiration points in \methodName & $\RNSGAradius$ & 0.15 \\
+Local mesh contraction factor in \methodName & $\RNSGAradius$ & 0.15 \\
 Total Population size for  \methodName & $\popsize_{R}$ &  330 \\
 Number of Generations & $\ngen$ &  300\\
 Crossover prob. & $p_{\text{cross}}$ & 0.5 \\  
@@ -312,7 +312,13 @@ An examination of the empirical results in Table~\ref{tab:pareto_dominance_metri
 
 \subsubsection{\neuralmethod\ Impact on Pareto Frontier Quality}
 
-To isolate and quantify the exact architectural contribution of the deep learning component within the optimization engine, a rigorous ablation analysis is conducted between the ablated framework ($\baseline{5}$) and the proposed \methodNameUniform. Since both methods operate under the multi-objective paradigm and generate full Pareto frontiers rather than single solutions, traditional scalar metrics are insufficient. Instead, their performance is evaluated directly in their multi-objective domain using Hypervolume~\cite{hv} metric (HV), to measure both convergence toward the true Pareto optimal front and solution diversity, and the Coverage Metric ($\mathcal{C}$-metric), which quantifies the directional dominance of one non-dominated front over another.
+To isolate and quantify the exact architectural contribution of the deep learning component within the optimization engine, a rigorous ablation analysis is conducted between the ablated framework ($\baseline{5}$) and the proposed \methodNameUniform. Since both methods operate under the multi-objective paradigm and generate full Pareto frontiers rather than single solutions, traditional scalar metrics are insufficient. Instead, their performance is evaluated directly in their multi-objective domain using the following two indicators~\cite{hv}:
+
+\begin{itemize}
+    \item \textbf{Hypervolume (HV)}: intuitively, how much of the objective space a front covers toward improvement. Formally, a reference point $z^{\text{ref}}$ is fixed once, slightly worse than every objective's worst attainable value. Then, every solution in a front $A$ dominates the box of objective space delimited by itself and $z^{\text{ref}}$, and $HV(A)$ is the volume of the union of all these boxes across the front, $HV(A) = \Lambda\big(\bigcup_{a \in A} [a, z^{\text{ref}}]\big)$, where $\Lambda$ denotes that volume (the Lebesgue measure). A front that is both closer to the true Pareto front and more spread out across it covers a larger volume under this construction, so HV captures convergence and diversity jointly in a single number, where higher is always better. 
+    In this evaluation, $z^{\text{ref}}$ is set component-wise to $1.1$ times the empirical nadir point observed across the compared fronts, i.e., $10\%$ beyond the worst value attained by each objective, a common convention in the field for fixing a reference point that remains slightly outside every attainable front, ensuring HV never collapses to zero and stays comparable across runs~\cite{ishibuchi-2018}.
+    \item \textbf{Coverage metric ($\mathcal{C}$-metric)}: $\mathcal{C}(A,B)$ is the fraction of solutions in front $B$ that are dominated by at least one solution in front $A$; it is asymmetric ($\mathcal{C}(A,B) \neq 1-\mathcal{C}(B,A)$ in general), so both directions must be reported to characterize which front dominates the other.
+\end{itemize}
 
 \paragraph{Convergence}
 
@@ -420,7 +426,7 @@ Crucially, the lower block isolates both frameworks by projecting their non-domi
 
 While \methodNameUniform\ effectively maps the multi-objective space, its uniform selection triggers a combinatorial explosion of the non-dominated frontier. In a production environment, this vast volume of non-dominates solutions imposes a considerable cognitive overhead on human users. To resolve this operational bottleneck, \methodName\ introduces a preference-guided evolutionary paradigm. 
 
-To evaluate both approaches pragmatically, a multi-dimensional Region of Interest (ROI) was defined, which serves as an ``envelope'' for solutions that achieves acceptable scores in all objectives, conditioned on the active artile count $\numarticles$. Rather than relying on arbitrary thresholds, the boundaries of the ROI are empirically derived by calculating the 90th percentile ($0.9$ quantile) of the empirical historical distributions for each individual objective ($\objone, \objtwo, \objthree, \objfour$). This section evaluates the total number of generated solutions alongside the exact percentage that successfully falls within the defined ROI.
+To evaluate both approaches pragmatically, a multi-dimensional Acceptability Envelope (AE) was defined, which serves as an ``envelope'' for solutions that achieves acceptable scores in all objectives, conditioned on the active artile count $\numarticles$. Rather than relying on arbitrary thresholds, the boundaries of the AE are empirically derived by calculating the 90th percentile ($0.9$ quantile) of the empirical historical distributions for each individual objective ($\objone, \objtwo, \objthree, \objfour$). This section evaluates the total number of generated solutions alongside the exact percentage that successfully falls within the defined AE.
 
 
 \subsubsection{Pareto Frontier Cardinality}
@@ -447,7 +453,7 @@ As outlined in Table~\ref{tab:frontier_cardinality_comparison}, transitioning fr
 This sharp contraction is the direct mathematical manifestation of \methodName's reference-point pruning. By explicitly weighting the evolutionary survival selection toward the historical aspirations, \methodName\ systematically discards operationally unviable areas of the search space. Consequently, this targeted reduction eliminates the severe cognitive overhead imposed on human editors, transforming the multi-objective algorithm from an overwhelming theoretical generator into a highly specialized decision-making tool.
 
 
-\subsubsection{\% of Pareto Frontier within the ROI}
+\subsubsection{\% of Pareto Frontier within the AE}
 
 \begin{table}[]
     \centering
@@ -463,13 +469,13 @@ $\numarticles$ & \methodNameUniform & \methodName \\
 8 & 9.2\% $\pm$ 7.2\% & \bfseries47.1\% $\pm$ 24.3\% \\
 \bottomrule
 \end{tabular}
-\caption{\% pareto frontier within the Region of Interest (ROI). Metrics express the $\text{mean} \pm \text{standard deviation}$ of the percentage of final non-dominated solutions.}    \label{tab:roi_density_comparison}
+\caption{\% pareto frontier within the Acceptability Envelope (AE). Metrics express the $\text{mean} \pm \text{standard deviation}$ of the percentage of final non-dominated solutions.}    \label{tab:roi_density_comparison}
 \end{table}
 
-The density of solutions within the ROI in Table~\ref{tab:roi_density_comparison} confirm the exact mechanism behind the frontier compression. As instance complexity scales ($\numarticles \ge 4$), the uniform paradigm suffers a severe convergence collapse, with its ROI density dropping to single-digit efficiency. This drop mathematically proves that standard uniform environmental selection wastes massive computational budget exploring unviable regions.
+The density of solutions within the AE in Table~\ref{tab:roi_density_comparison} confirm the exact mechanism behind the frontier compression. As instance complexity scales ($\numarticles \ge 4$), the uniform paradigm suffers a severe convergence collapse, with its AE density dropping to single-digit efficiency. This drop mathematically proves that standard uniform environmental selection wastes massive computational budget exploring unviable regions.
 
 
-Conversely, \methodName\ successfully counteracts this. By anchoring the survival selection around preference-derived aspiration points, the guided framework concentrates its population within the target zone, maintaining remarkably high densities ($58.1\%$ at $\numarticles=6$ and $47.1\%$ at $\numarticles=8$). When cross-referenced with the cardinality reduction shown in Table~\ref{tab:frontier_cardinality_comparison}, these results deliver a definitive conclusion: \methodName\ does not suffer from a loss of valuable diversity, but rather performs a highly targeted pruning of non-viable space, ensuring the generated alternatives are strictly tailored to the newsroom's operational requirements. To confirm this behavioral shift, a Wilcoxon signed-rank test across all instances was conducted. The test decisively rejects the null hypothesis ($W = 5.0$, $p < 0.001$, effect size of $r = 1.03$), validating that the ROI density superiority of \methodName\ is statistically significant.
+Conversely, \methodName\ successfully counteracts this. By anchoring the survival selection around preference-derived aspiration points, the guided framework concentrates its population within the target zone, maintaining remarkably high densities ($58.1\%$ at $\numarticles=6$ and $47.1\%$ at $\numarticles=8$). When cross-referenced with the cardinality reduction shown in Table~\ref{tab:frontier_cardinality_comparison}, these results deliver a definitive conclusion: \methodName\ does not suffer from a loss of valuable diversity, but rather performs a highly targeted pruning of non-viable space, ensuring the generated alternatives are strictly tailored to the newsroom's operational requirements. To confirm this behavioral shift, a Wilcoxon signed-rank test across all instances was conducted. The test decisively rejects the null hypothesis ($W = 5.0$, $p < 0.001$, effect size of $r = 1.03$), validating that the AE density superiority of \methodName\ is statistically significant.
 
 
 \begin{figure}[htbp]
@@ -487,19 +493,19 @@ Conversely, \methodName\ successfully counteracts this. By anchoring the surviva
       \caption{\methodName}
       \label{fig:parallel_rnsga}
     \end{subfigure}
-\caption{Visual trade-off comparison using parallel coordinates for a representative medium-complexity instance ($\numarticles=5$) under shared global axis scaling. The gray shaded region represents the ROI, while the black lines denote the active aspiration points targeted by \methodName. The color gradient reflects the performance on $\objone$}
+\caption{Visual trade-off comparison using parallel coordinates for a representative medium-complexity instance ($\numarticles=5$) under shared global axis scaling. The gray shaded region represents the AE, while the black lines denote the active aspiration points targeted by \methodName. The color gradient reflects the performance on $\objone$}
 \label{fig:parallel_coordinates_comparison}
 \end{figure}
 
 
-To visually map both the differences in frontier size and its density within the ROI, \figref{fig:parallel_coordinates_comparison} contrasts the final non-dominated populations of both paradigms on a representative instance ($\numarticles=5$). As illustrated in \figref{fig:parallel_uniform}, \methodNameUniform\ yields a chaotic pattern. Solutions are wildly scattered across the entire objective space, forcing a massive portion of the trajectories to escape the gray acceptability envelope (ROI), particularly along the historical editorial style ($\objtwo$). 
+To visually map both the differences in frontier size and its density within the AE, \figref{fig:parallel_coordinates_comparison} contrasts the final non-dominated populations of both paradigms on a representative instance ($\numarticles=5$). As illustrated in \figref{fig:parallel_uniform}, \methodNameUniform\ yields a chaotic pattern. Solutions are wildly scattered across the entire objective space, forcing a massive portion of the trajectories to escape the gray acceptability envelope (AE), particularly along the historical editorial style ($\objtwo$). 
 
 In contrast, \figref{fig:parallel_rnsga} demonstrates the precise mechanics of \methodName's targeted pruning. The chaotic web completely collapses into a few highly curated design paths that strictly adhere to the lower, viable regions of the axes. By systematically eliminating operationally useless layouts, the preference engine successfully bridges the gap between multi-objective theoretical optimality and real-world decision spaces.
 
 
 \subsubsection{Execution Time}
 
-Beyond frontier cardinality and ROI density, both paradigms also differ in computational cost. Table~\ref{tab:exec_time_rnsga_comparison} contrasts their execution times across the same article count strata, where the values reported for \methodNameUniform\ correspond to those already presented in Table~\ref{tab:exec_time_analysis}.
+Beyond frontier cardinality and AE density, both paradigms also differ in computational cost. Table~\ref{tab:exec_time_rnsga_comparison} contrasts their execution times across the same article count strata, where the values reported for \methodNameUniform\ correspond to those already presented in Table~\ref{tab:exec_time_analysis}.
 
 
 \begin{table}[htbp]
@@ -524,10 +530,10 @@ The measurements reveal that \methodName\ incurs a systematically higher executi
 
 \begin{enumerate}
   \item The population size is higher. \methodName\ evolves $\popsize_{R} = 330$ individuals against $\popsize = 286$, which amounts to $15.4\%$ additional chromosome decodings per generation. 
-  \item The survival selection mechanism itself. The reference-point niching of \methodName\ must evaluate the distance of every individual to each aspiration vector and subsequently apply the $\RNSGAradius$-based clearing procedure, an operation more costly than the uniform Das-Dennis association employed by \methodNameUniform.
+  \item The survival selection mechanism itself. The reference-point niching of \methodName\ must evaluate the distance of every individual to each of the local reference directions generated around the aspiration points and contracted by $\RNSGAradius$, an operation more costly than the single, global association against the uniform Das-Dennis mesh employed by \methodNameUniform.
 \end{enumerate}
 
-Two properties of this overhead deserve to be noted. First, it remains proportionally stable across the complexity strata instead of degrading as the article count grows, which indicates that the additional cost scales with the population and the selection mechanism rather than with the combinatorial difficulty of the instance. Second, the most demanding instance evaluated ($\numarticles = 8$) is still resolved in $111.77$s, hence below two minutes per page. The preference-guided paradigm of \methodName\ therefore justify its operational advantages, namely a frontier reduced by an order of magnitude and a substantially higher density within the region of interest, at a bounded and predictable computational time, which is acceptable in a production setting where page building is not a real-time task. These runtimes correspond to the reference configuration reported in \secref{sec:implementation_details}; on less capable hardware the absolute values scale accordingly, in which case the mitigation strategies examined in \secref{sec:computational-performance} become directly applicable.
+Two properties of this overhead deserve to be noted. First, it remains proportionally stable across the complexity strata instead of degrading as the article count grows, which indicates that the additional cost scales with the population and the selection mechanism rather than with the combinatorial difficulty of the instance. Second, the most demanding instance evaluated ($\numarticles = 8$) is still resolved in $111.77$s, hence below two minutes per page. The preference-guided paradigm of \methodName\ therefore justify its operational advantages, namely a frontier reduced by an order of magnitude and a substantially higher density within the acceptability envelope, at a bounded and predictable computational time, which is acceptable in a production setting where page building is not a real-time task. These runtimes correspond to the reference configuration reported in \secref{sec:implementation_details}; on less capable hardware the absolute values scale accordingly, in which case the mitigation strategies examined in \secref{sec:computational-performance} become directly applicable.
 
 
 \subsection{Qualitative Results of \methodName}
@@ -601,7 +607,7 @@ While the empirical and qualitative findings validate the efficacy of \methodNam
 \label{sec:computational-performance}
 Execution time represents the primary computational bottleneck of \methodNameGeneral\ when contrasted against the constructive baselines, whose runtimes remain in the millisecond range. This overhead is nonetheless bounded: even \methodName, which is the more costly of the two paradigms, resolves the most demanding instance evaluated in under two minutes per page (Table~\ref{tab:exec_time_rnsga_comparison}). Beyond this, several optimization vectors can be deployed to further mitigate the overhead in production environments. First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) from $300$ to $200$ generations provides an immediate mechanism to accelerate response times without compromising frontier quality; assuming a cost roughly proportional to the number of generations, this measure alone would bring the most demanding instance from $111.77$s down to approximately $75$s.
 
-Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodNameGeneral\ are already operationally viable within the specific industrial newsroom production environment targeted by this investigation. The most demanding instance evaluated, resolved in $111.77$s by the more costly of the two paradigms, remains within the tolerance of a few minutes per page specified by the industrial partner (\secref{sec:industrial-motivation}), and therefore satisfies the temporal criterion of the main objective stated in \secref{sec:multi-objective-page-generation}, in contrast with the hours of manual editing that the workflow currently demands.
+Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodNameGeneral\ are already operationally viable within the specific industrial newsroom production environment targeted by this investigation. The most demanding instance evaluated, resolved in $111.77$s by the more costly of the two paradigms, remains within the tolerance of a few minutes per page specified by the industrial partner (\secref{sec:industrial-motivation}), and therefore satisfies the temporal criterion of the main objective stated in \secref{sec:multi-objective-page-generation}, in contrast with the fifteen to twenty minutes of manual editing per page that \melody's current workflow still demands (\secref{sec:industrial-motivation}).
 
 \subsection{Architectural Extensibility to Advertisement Placement}
 The current implementation of \methodNameGeneral\ omits the placement of advertisement elements. This omission stems strictly from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.

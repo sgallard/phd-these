@@ -7,55 +7,55 @@
 
 \chapter*{Notation reference}
 
-%TODO:
-%Category  |   Symbol   |   Meaning   |   Formula
-
-%Category = Page / Web article / Template / Print article
-% Formula: Refer equation like (number), no eq.(number) or section (\secref)
-
-\begin{tabularx}{\textwidth}{@{}l X@{}}
+\begin{tabularx}{\textwidth}{@{}l l X l@{}}
 \toprule
-Symbol & Meaning \\
+Category & Symbol & Meaning & Formula \\
 \midrule
-$\page$    & Page configuration / empty canvas \\
-$\Wpage$   & Total page width (mm) \\
-$\Hpage$   & Total page height (mm) \\
-$\mtop$    & Top margin \\
-$\mbottom$ & Bottom margin \\
-$\mleft$   & Left margin \\
-$\mright$  & Right margin \\
-$\Weff$    & Effective printable width ($\Wpage - \mleft - \mright$) \\
-$\Heff$    & Effective printable height ($\Hpage - \mtop - \mbottom$) \\
-$\colsize$ & Fixed column width \\
-$\gutter$  & Spacing between columns \\
-
-\midrule
-
-$\articleset$    & Set of articles \\
-$\numarticles$   & Number of articles, $|\articleset|$ \\
-$\articleobj{i}$ & Article object $i$ \\
-$\Cart{i}$       & Character count of body text \\
-$\Nimg{i}$       & Number of images in the article \\
-$\Tlart{i}$      & Binary flag: presence of a title \\
-$\Stlart{i}$     & Binary flag: presence of a subtitle \\
-$\Mainart{i}$    & Binary flag: designated main/lead story \\
+\multirow{11}{*}{Page}
+           & $\page$    & Page configuration / empty canvas & \eqref{eq:page-definition} \\
+           & $\Wpage$   & Total page width (mm) & \secref{sec:page-definition} \\
+           & $\Hpage$   & Total page height (mm) & \secref{sec:page-definition} \\
+           & $\mtop$    & Top margin & \secref{sec:page-definition} \\
+           & $\mbottom$ & Bottom margin & \secref{sec:page-definition} \\
+           & $\mleft$   & Left margin & \secref{sec:page-definition} \\
+           & $\mright$  & Right margin & \secref{sec:page-definition} \\
+           & $\Weff$    & Effective printable width ($\Wpage - \mleft - \mright$) & \secref{sec:page-definition} \\
+           & $\Heff$    & Effective printable height ($\Hpage - \mtop - \mbottom$) & \secref{sec:page-definition} \\
+           & $\colsize$ & Fixed column width & \secref{sec:page-definition} \\
+           & $\gutter$  & Spacing between columns & \secref{sec:page-definition} \\
 
 \midrule
 
-$\templatecatalog$      & Template catalog \\
-$\catalogsize$          & Size of the catalog, $|\templatecatalog|$ \\
-$\templateobj{j}$       & Template object $j$ \\
-$\Wtemp{j}$             & Template nominal width \\
-$\Htemp{j}$             & Template nominal height \\
-$\zoning{j}$            & Zoning topology (set of internal blocks) \\
-$\zblock{j}{k}$         & Internal block $k$ of $\zoning{j}$ \\
-$\blockgeom{\zblock{j}{k}}$ & Polygonal geometry (coordinates) of a block \\
-$\blockfeat{\zblock{j}{k}}$ & Feature class of a block (THEME, TITLE, SUBTITLE, PHOTO, CAPTION, TEXT) \\
-$\Nimgmax{j}$           & Maximum image slots (\# PHOTO blocks) \\
-$\capacity{j}$          & Text capacity matrix (rows indexed by active images $k$) \\
+\multirow{8}{*}{Web article}
+           & $\articleset$    & Set of articles & \secref{sec:web-article} \\
+           & $\numarticles$   & Number of articles, $|\articleset|$ & \secref{sec:web-article} \\
+           & $\articleobj{i}$ & Article object $i$ & \secref{sec:web-article} \\
+           & $\Cart{i}$       & Character count of body text & \secref{sec:web-article} \\
+           & $\Nimg{i}$       & Number of images in the article & \secref{sec:web-article} \\
+           & $\Tlart{i}$      & Binary flag: presence of a title & \secref{sec:web-article} \\
+           & $\Stlart{i}$     & Binary flag: presence of a subtitle & \secref{sec:web-article} \\
+           & $\Mainart{i}$    & Binary flag: designated main/lead story & \secref{sec:web-article} \\
 
 \midrule
-$\templatesel{i}$ & Index of the template selected for article $i$, Eq.~\eqref{eq:template-selection-def} \\
+
+\multirow{11}{*}{Template}
+           & $\templatecatalog$      & Template catalog & \secref{sec:template} \\
+           & $\catalogsize$          & Size of the catalog, $|\templatecatalog|$ & \secref{sec:template} \\
+           & $\templateobj{j}$       & Template object $j$ & \secref{sec:template} \\
+           & $\Wtemp{j}$             & Template nominal width & \secref{sec:template} \\
+           & $\Htemp{j}$             & Template nominal height & \secref{sec:template} \\
+           & $\zoning{j}$            & Zoning topology (set of internal blocks) & \secref{sec:template} \\
+           & $\zblock{j}{k}$         & Internal block $k$ of $\zoning{j}$ & \secref{sec:template} \\
+           & $\blockgeom{\zblock{j}{k}}$ & Polygonal geometry (coordinates) of a block & \secref{sec:template} \\
+           & $\blockfeat{\zblock{j}{k}}$ & Feature class of a block (THEME, TITLE, SUBTITLE, PHOTO, CAPTION, TEXT) & \secref{sec:template} \\
+           & $\Nimgmax{j}$           & Maximum image slots (\# PHOTO blocks) & \secref{sec:template} \\
+           & $\capacity{j}$          & Text capacity matrix (rows indexed by active images $k$) & \secref{sec:template} \\
+
+\midrule
+Print article & $\templatesel{i}$ & Index of the template selected for article $i$ & \eqref{eq:template-selection-def} \\
+
+\midrule
+Solution & $\solution$ & Full page layout: complete configuration of positioned print articles & \secref{sec:solution} \\
 
 \bottomrule
 \end{tabularx}
