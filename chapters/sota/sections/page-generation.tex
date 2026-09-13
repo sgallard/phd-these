@@ -1,19 +1,11 @@
-%%% =====================================================================
-%%% SOTA - Section 3: Automated page layout generation
-%%% Mirrors Chapter~\ref{chapter:pagegen}. Addresses the MAIN objective and SO2.
-%%% This is the CENTRAL axis of the thesis and the most extensive section.
-%%% Treatment levels: 3.2 is P (pedagogical), 3.3 is D (detailed), 3.4 is I.
-%%% =====================================================================
+
 
 \section{Automated page generation and optimization}
 \label{sec:sota-pagegen}
 
-%%% TODO[SOTA]: opening paragraph. Resume the business motivation of
-%%% \secref{sec:industrial-motivation}: assembling a single edition currently takes hours of manual
-%%% editing, and the industrial requirement is a few minutes per page. Connect to the
-%%% challenges "combinatorial complexity of spatial packing" and "balancing
-%%% multi-objective trade-offs" of \secref{sec:multi-objective-page-generation}, and announce that this axis
-%%% carries the main objective of \secref{sec:multi-objective-page-generation}.
+Building the page layout is the main objective to automatize in the \melody web-to-print workflow. 
+
+This step means resolving, within that budget, the two challenges identified in \secref{sec:multi-objective-page-generation}: the combinatorial complexity of a spatial packing problem coupled to a discrete template assignment, and the balancing of several conflicting editorial criteria. This section reviews the literature bearing on each of these challenges.
 
 \subsection{Layout Generation}
 \label{sec:sota-layout-synthesis}
@@ -286,95 +278,76 @@ This a priori formulation is precisely what makes aspiration points the natural 
 \subsection{Two-dimensional packing}
 \label{sec:sota-packing}
 
-%%% -----------------------------------------------------------------
-%%% Treatment level D (DETAILED, not a full tutorial). This is the general theoretical
-%%% framework of the problem rather than a technique that the thesis adapts, so it is
-%%% positioned firmly but without the pedagogical development of \secref{sec:sota-moo}.
-%%% Origin: placeholder formerly at chapters/pagegen/sections/sota.tex:19.
-%%% -----------------------------------------------------------------
-
 \subsubsection*{Problem taxonomy}
 \label{sec:sota-packing-taxonomy}
 
-%%% TODO[SOTA]: to be written.
-%%%  - Bin packing, strip packing and cutting stock: what distinguishes them and which
-%%%    one the page generation problem reduces to.
-%%%  - Guillotine versus free placement; orientation and rotation constraints.
-%%%  - Situate the newspaper page: fixed canvas, heterogeneous items, no rotation,
-%%%    free placement.
-%%%  - Survey reference~\cite{lodi-packing-survey}.
-%%% REFGAP: the formal typology of cutting and packing problems (Waescher/Dyckhoff)
-%%% is absent from the bibliography and is the right anchor for this subsubsection.
+The problem addressed by this thesis, packing a heterogeneous set of rectangular articles onto a page, is a two-dimensional, rectangular packing problem, consisting on two basic variants which are examined following the terminology established by Lodi et al.~\cite{lodi-packing-survey}:
+
+\begin{enumerate}
+    \item The Two-Dimensional Bin Packing Problem (2BP) requires assigning a set of $n$ rectangular items to an unlimited number of identical rectangular containers, or bins, of dimensions $W \times H$, so as to minimize the total number of bins used~\cite{lodi-packing-survey}.
+    \item The Two-Dimensional Strip Packing Problem (2SP) instead considers a single container, the strip, of fixed width $W$ and unbounded height, and the objective becomes packing every item while minimizing the total height $H_{\text{total}}$ occupied~\cite{lodi-packing-survey}.
+\end{enumerate}
+In both problems, items are placed with their sides parallel to those of the container and may not overlap; the two formulations differ only in which resource, the number of containers or the height of a single container, is treated as the quantity to minimize.
+
+Beyond the objective, two-dimensional packing problems are further classified by the degree of freedom allowed when placing each item: orientation may be fixed, so that an item is placed only as given; restricted to $90^\circ$ rotations; or left entirely free~\cite{dyckhoff-typology}. Fixed orientation is not merely a modeling convenience but a physical requirement in industries such as woodworking or textile cutting, where the grain of the material or a printed pattern is not aligned identically along both axes, so that rotating an item would not be possible~\cite{lodi-packing-survey}.
+
+The problem addressed by this thesis departs from both 2BP and 2SP on the container side, since it packs articles onto a single page of fixed width and fixed, rather than unbounded height, so that neither the number of containers nor a container dimension is the quantity minimized; the packing decision instead consider page ocupation trade-off against other editorial criteria. Orientation, in turn, is fixed throughout: every article is printed upright, at the column width set by the page grid, and is never rotated. What sets the item side of the problem apart, however, is that an article does not arrive with a single, predetermined shape: the template assignment decision lets each article be packed under any one of several candidate templates, each with its own width and height, so that choosing which footprint to pack an item under is itself part of the decision, not a fixed input. This couples the two-dimensional, single-container packing problem examined above with a multiple-choice selection over item sizes, in the sense already formalized for the one-dimensional case by multiple-choice vector bin packing~\cite{pattshamir-multichoice-vbp}. It is precisely this coupling, a discrete choice of footprint decided jointly with a continuous placement, that sets the problem addressed by this thesis apart from the canonical formulations reviewed above.
 
 \subsubsection*{Computational complexity}
 \label{sec:sota-packing-complexity}
 
-%%% TODO[SOTA]: to be written.
-%%%  - NP-hardness of two-dimensional bin and strip packing.
-%%%  - This subsubsection can expand on \cite{lodi-packing-survey}, already cited for
-%%%    this claim in the Multi-objective page generation subsection of Chapter 1
-%%%    (\secref{sec:multi-objective-page-generation}), and substantiates the challenge
-%%%    "combinatorial complexity of spatial packing" stated there.
-%%%  - Note the additional coupling specific to this thesis: template selection is
-%%%    discrete and simultaneous with placement, which compounds the search space.
+Both 2BP and 2SP are strongly NP-hard~\cite{lodi-packing-survey}. This intractability is precisely what substantiates the challenge of combinatorial complexity raised for the page generation problem in \secref{sec:multi-objective-page-generation}: producing a complete page requires solving a two-dimensional packing problem that is already hard on its own.
+
+The problem addressed by this thesis compounds that hardness further, since the shape of an item is not a fixed input either: assigning a template to an article is decided jointly with its placement. A standard 2BP or 2SP instance already ranges over every placement of $n$ items of given, fixed dimensions; here, each of the $n$ articles additionally ranges over its own set of candidate templates, so that solving the page generation problem amounts to solving a two-dimensional packing instance selected jointly with the placement itself, out of an exponentially large family of such instances.
 
 \subsubsection*{Constructive heuristics}
 \label{sec:sota-packing-heuristics}
 
-%%% TODO[SOTA]: to be written.
-%%%  - Level and shelf algorithms.
-%%%  - Bottom-left placement~\cite{chazelle-bl} and its efficient implementation.
-%%%  - Best-fit placement for orthogonal stock cutting~\cite{burke-bf}.
-%%%  - Extreme points~\cite{crainic-extreme-points}: the placement rule adopted by the
-%%%    decoder of Chapter~\ref{chapter:pagegen}, so it warrants the most detail here.
+Given the intractability established above, constructive heuristics that build a feasible packing directly, in polynomial time and at a bounded distance from the optimum, are the practical recourse most of the literature relies on~\cite{lodi-packing-survey}. 
+
+A first family restricts attention to level, or shelf, packings, ordering items by non-increasing height and placing them into horizontal levels whose height is set by the first item assigned to each. Next-Fit Decreasing Height (NFDH) opens a new level whenever the current item no longer fits in the active one; First-Fit Decreasing Height (FFDH) instead searches every previously opened level before doing so; and Best-Fit Decreasing Height (BFDH) picks, among those it fits into, the level with the least residual width, packing more densely in practice than either. This added care is reflected in their guarantees: $NFDH(I) \le 2\,OPT(I) + 1$, tightened to $FFDH(I) \le 1.7\,OPT(I) + 1$ by considering every open level rather than only the last one~\cite{lodi-packing-survey}.
+
+A second, more general family does not commit to levels at all: the Bottom-Left (BL) heuristic slides each incoming rectangle from the top-right corner of the container down and to the left until it meets the boundary or another item, while its refinement, Bottom-Left-Fill (BLF), additionally tracks the free points left behind so that a later item can fill an interior gap a plain bottom-left slide would leave unused~\cite{chazelle-bl}. This added flexibility has a computational cost: Chazelle gives an efficient implementation of BL running in $O(N^2)$, whereas BLF's continual search for interior gaps raises its complexity to $O(N^3)$~\cite{chazelle-bl}. Both remain sensitive to the order in which items are presented, and BLF was, for years, the reference heuristic against which subsequent constructive methods were compared.
+
+A different constructive strategy, Best-Fit (BF), tracks the container's skyline, the height already occupied at every horizontal coordinate, and places each item directly against its lowest gap, choosing whichever candidate item fits that gap best~\cite{burke-bf}. The resulting heuristic packs several thousand items in seconds, at a quality that consistently surpasses Bottom-Left and Bottom-Left-Fill~\cite{burke-bf}.
+
+The extreme-points rule generalizes this same guaranteed-free-surface idea from a single skyline to arbitrarily many candidate points: whenever an item is placed, the corners of its top and side faces are projected toward the container walls or toward other already-placed items, generating new points where a future item may be anchored~\cite{crainic-extreme-points}. Unlike the corner points used by earlier heuristics, these points can fall beneath an overhang or inside a cavity formed by items of different sizes, letting the heuristic reach space a skyline- or level-based method would leave unused~\cite{crainic-extreme-points}. A constructive heuristic built on this rule outperforms Best-Fit and the level heuristics above on both three- and two-dimensional benchmarks~\cite{crainic-extreme-points}. 
+
+Extreme points also lose no optimal solution when used as the only candidate positions, since there always exists an optimal packing in which every item is pushed as far down and to the left as its already-placed neighbors allow~\cite{lodi-packing-survey}; it is this completeness, and not merely their practical performance, that this thesis relies on, repurposing extreme points as the candidate-generation mechanism for an exact backtracking search rather than a purely greedy placement.
+
 
 \subsubsection*{Exact methods and their regime of viability}
 \label{sec:sota-packing-exact}
 
-%%% TODO[SOTA]: to be written. This subsubsection carries an argument, not just a review.
-%%%  - Branch-and-bound and exhaustive backtracking for placement.
-%%%  - The regime question: exact placement becomes tractable when the number of items
-%%%    per instance is small. State the boundary explicitly.
-%%%  - This is the direct justification for the design decision at nsga.tex:80, where an
-%%%    exact backtracking decoder is preferred over a greedy heuristic because instances
-%%%    involve few articles per page. The reader must be able to verify that choice from
-%%%    this subsubsection.
+Exact resolution methods also exist for both 2BP and 2SP, typically as branch-and-bound schemes that place items one at a time and, at each step, branch over a bounded number of candidate positions determined by the items already placed~\cite{lodi-packing-survey}. Because that bound grows with the number of items already in the instance, so does the size of the resulting search tree, which is why exact enumeration remains practical only for a comparatively small number of items~\cite{lodi-packing-survey}.
 
-\subsection{Learning inside optimization loops}
+The problem addressed by this thesis falls within that regime, but only because the two decisions it couples are not both searched exactly: the combinatorial explosion belongs to the discrete choice of which template each article receives, which the evolutionary search of explores directly, not to the placement problem left once that choice is fixed. Once every article has an assigned template, what remains is a standard two-dimensional packing instance over the small number of articles a single page holds (tipically less than 10 according to \melody), which is inside the regime in which exact placement stays tractable.
+
+It is on this basis, backtracking exhaustively and completely over extreme-point placements (\secref{sec:sota-packing-heuristics}), that Chapter~\ref{chapter:pagegen} resolves placement exactly rather than through the constructive heuristics reviewed above.
+
+\subsection{Surrogate-assisted combinatorial optimization}
 \label{sec:sota-surrogate}
 
-%%% -----------------------------------------------------------------
-%%% Treatment level I (INTERMEDIATE). More than plain related work, because the thesis
-%%% does this, but deliberately NOT pedagogical: the surrogate was a tool, not the focus
-%%% of the thesis, and should not be given the weight of \secref{sec:sota-moo}.
-%%% Origin: the subsection heading formerly at chapters/pagegen/sections/sota.tex:17,
-%%% which had no body.
-%%% -----------------------------------------------------------------
+In expensive combinatorial optimization, evaluating a single candidate solution can itself require a costly simulation or the training of a model, so surrogate-assisted evolutionary algorithms substitute a cheap, learned approximation for that evaluation during the search~\cite{liu-2024}.
 
-%%% TODO[SOTA]: to be written.
-%%%  - Surrogate-assisted evolutionary algorithms and fitness approximation: replacing
-%%%    or complementing an expensive or unavailable objective with a learned model.
-%%%  - The case relevant here is not computational cost but expressibility: the criterion
-%%%    is tacit. Editorial style cannot be written analytically, so it is learned from
-%%%    historical assignments. Position \neuralmethod\ in these terms, as one objective
-%%%    among four, and keep it framed as a tool.
-%%%  - Neural-guided population initialization and warm starts, which is the second use
-%%%    made of the model in Chapter~\ref{chapter:pagegen} (see nsga.tex:221).
-%%%  - Learning-to-optimize for combinatorial problems, mentioned for completeness.
-%%%
-%%% REFGAP (large): surrogate-assisted optimization and learning-to-optimize have no
-%%% coverage in the current bibliography.
+Two examples illustrate this motivation:
+\begin{itemize}
+    \item In genetic programming for AutoML, where each individual is a machine-learning pipeline whose fitness requires training and validating it, a transformer encoder can instead learn to compare pairs of pipelines directly, at a fraction of that cost~\cite{teixeira-2025}.
+    \item In evolutionary facility-location search, where evaluating a candidate configuration requires solving a costly flow subproblem, an Extreme Learning Machine plays the same role, approximating that evaluation for most individuals in the population~\cite{guo-2017}. 
+\end{itemize}
+In both cases,  the surrogate exists to make computing it cheaper.
 
-\subsection{Positioning and open gaps}
+\neuralmethod (\secref{sec:gwes}), answers a different need: the objective is not expensive to compute but has no analytical form to begin with, since editorial style of template assignments is tacit and only observable through the operator's own historical assignments. This need echoes reward design in evolutionary reinforcement learning, where a learned model stands in for an objective with no explicit formula at all, rather than for one that is merely expensive to evaluate~\cite{li-2024}. Learning it from that data is therefore not a shortcut around computation but the only way to state it as an objective at all, and it is treated as such (\secref{sec:gwes}).
+
+\subsection{Open gaps}
 \label{sec:sota-pagegen-gaps}
 
-%%% TODO[SOTA]: to be written. The gaps to state:
-%%%  (a) Automated layout synthesis has largely treated placement and content selection
-%%%      separately, whereas the industrial problem couples discrete template selection
-%%%      with two-dimensional placement in a single search space.
-%%%  (b) Editorial quality is not reducible to a single scalar objective, and the
-%%%      criteria in play genuinely conflict, which rules out the scalarized
-%%%      formulations dominant in the layout synthesis literature.
-%%%  (c) Tacit editorial style has no analytical form and has not been injected as a
-%%%      first-class objective into a many-objective layout generator.
-%%% Close by naming Chapter~\ref{chapter:pagegen}, the main objective and SO2.
+Positioned against the methods reviewed throughout this section, the problem addressed by this thesis diverges from the surveyed literature along three axes.
+
+\begin{itemize}
+    \item Automated layout generation is, in its dominant form, a generative task: the deep architectures reviewed in \secref{sec:sota-layout-synthesis} sample or decode a plausible arrangement of boxes from a learned distribution, a starting point fundamentally at odds with this thesis, which never synthesizes new geometry but instead assigns and packs templates already fixed in a catalog. The smaller body of work that does allow explicit placement constraints still treats template selection and geometric placement as two separate steps rather than one joint decision, unlike the coupled template assignment and packing problem this thesis addresses (\secref{sec:sota-packing-taxonomy}).
+    \item Editorial quality is not reducible to a single scalar objective, since the criteria at play, spatial occupation, editorial template assignments, text-capacity fit, and positioning, genuinely conflict with one another. This is why the thesis builds on the multi-objective machinery surveyed in \secref{sec:sota-moo} rather than resolving them into a single weighted score.
+    \item Editorial template assignment has no analytical form of its own, since it is observable only through the operator's own historical choices rather than through an explicit rule. Learning such a criterion from data instead of deriving it analytically is not itself new, and echoes the reward-design tradition already noted in \secref{sec:sota-surrogate}. This is why this thesis  learns editorial template choices directly from historical assignments and treats it as one objective among others (\secref{sec:gwes}).
+\end{itemize}
+
+Chapter~\ref{chapter:pagegen} addresses these three points together, in pursuit of the main objective of automating the web-to-print worflow (\figref{fig:web-print-workflow}).

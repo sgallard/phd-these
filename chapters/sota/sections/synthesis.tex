@@ -1,38 +1,23 @@
-%%% =====================================================================
-%%% SOTA - Section 5: Synthesis
-%%% Closes the narrative thread opened in \secref{sec:sota-scope} and hinges
-%%% towards Part II. Treatment level: R.
-%%% =====================================================================
 
-\section{Synthesis: positioning and open gaps}
+
+\section{Summary}
 \label{sec:sota-synthesis}
 
-%%% TODO[SOTA]: opening paragraph. State that the three axes converge on the same
-%%% object and that the gaps identified in \secref{sec:sota-retrieval-gaps},
-%%% \secref{sec:sota-pagegen-gaps} and \secref{sec:sota-reading-gaps} correspond one to
-%%% one with the challenges of \secref{sec:scientific-challenges-contributions}.
-
-%%% TODO[SOTA]: fill the table below. It is the closing half of the thread opened in
-%%% \secref{sec:sota-scope}, and the verification criterion is that every challenge of
-%%% \secref{sec:scientific-challenges-contributions} appears in it and every objective of \secref{sec:scientific-challenges-contributions}
-%%% is reached by at least one row.
+The three operations announced in \secref{sec:sota-scope} converge on the same element: the page produced by \melody's web-to-print workflow. Each was reviewed in its own section, where the gaps left open were argued against the scientific challenges of \secref{sec:scientific-challenges-contributions} that motivate that axis. Table~\ref{tab:sota-synthesis} consolidates this correspondence, pointing to the literature reviewed, the open gaps, and the contribution chapter that closes each axis.
 
 \begin{table}[htbp]
     \centering
-    \caption{Correspondence between the scientific challenges of \protect\secref{sec:scientific-challenges-contributions}, the gaps identified in the state of the art, and the contributions of Part~II.}
+    \begin{tabular}{l l l l}
+        \toprule
+        Axis & Literature reviewed & Open gap & Contribution \\
+        \midrule
+        Template retrieval & \secref{sec:sota-retrieval} & \secref{sec:sota-retrieval-gaps} & Chapter~\ref{chapter:template} \\
+        Page generation & \secref{sec:sota-pagegen} & \secref{sec:sota-pagegen-gaps} & Chapter~\ref{chapter:pagegen} \\
+        Reading accessibility & \secref{sec:sota-reading} & \secref{sec:sota-reading-gaps} & Chapter~\ref{chapter:magnification} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Correspondence between the three axes of this chapter, the literature reviewed, open gap section, and the contribution chapter that closes it against the scientific challenges of \protect\secref{sec:scientific-challenges-contributions}.}
     \label{tab:sota-synthesis}
-    % \begin{tabular}{...}
-    %   Challenge & Gap in the state of the art & Contribution & Objective \\
-    %   Characterization of layout elements   & ... & Chapter~\ref{chapter:template}      & SO1 \\
-    %   Tacit editorial style                 & ... & Chapter~\ref{chapter:template}      & SO1/SO2 \\
-    %   Combinatorial complexity of packing   & ... & Chapter~\ref{chapter:pagegen}       & Main \\
-    %   Multi-objective trade-offs            & ... & Chapter~\ref{chapter:pagegen}       & Main/SO2 \\
-    %   Accessibility and user experience     & ... & Chapter~\ref{chapter:magnification} & SO3 \\
-    %   Industrial deployment and scalability & ... & Chapter~\ref{chapter:pagegen}       & Main \\
-    % \end{tabular}
 \end{table}
 
-%%% TODO[SOTA]: closing paragraph. Restate the dependencies announced in
-%%% \secref{sec:sota-scope}: the neural scorer is formulated in the first axis and
-%%% consumed as an objective in the second, and the large-print editions of the third
-%%% axis are produced by the method of the second. Then hand over to Part~II.
+ \emph{Part~II: Contributions} now presents these three contributions in turn, starting with the template retrieval system of Chapter~\ref{chapter:template}.

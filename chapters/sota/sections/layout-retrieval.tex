@@ -147,7 +147,7 @@ A closely related literature frames this by modelling it as a recommendation pro
 
 None of these three lines of literature addresses the requirement of a page-aware scoring in the way this thesis frame it. Each nonetheless isolates one requirement of such a score while missing another: DETR~\cite{carion-detr-2020} carries positional identity through joint attention, but via a fixed bank of learned queries suited to an unknown number of objects, not to articles whose position is already known and continuously valued; learned pooling mechanisms exist to compress a jointly-encoded set into a scalar, but require a page-level target to be trained against that the available historical data does not provide; and set-aware recommendation formalizes scoring a set collectively, but over catalogs and feedback signals unlike those of a page assignment.
 
-\subsection{Positioning and open gaps}
+\subsection{Open gaps}
 \label{sec:sota-retrieval-gaps}
 
 The literature reviewed in this section leaves three gaps open, which motivate the objective of this thesis stated in \secref{sec:learned-template-retrieval}, developed across Chapter~\ref{chapter:template}.
