@@ -1,5 +1,5 @@
 
-\section{Template retrieval in a page-aware context (\neuralmethod)}
+\section{Page-aware template scoring}
 \label{sec:gwes}
 
 In the global page-aware context, template evaluation shifts from isolated single-article selection to assessing candidate template assignments across all articles assigned to a unified page canvas $\page$. This requirement stems from the fact that professional newspaper layouts exhibit tacit structural and visual dependencies, where selecting a template $\templatesel{i}$ for a given article $\articleobj{i}$ inherently depends upon, and influences, the spatial arrangement, aspect ratio, and editorial hierarchy of neighboring articles on the same page canvas.
@@ -11,14 +11,27 @@ Rather than relying on rigid, handcrafted heuristic rules that fail to capture t
 
 
 
-\subsection{Transformer-based Editorial Intent Module}
+\subsection{Problem formulation}
+\label{sec:gwes-problem-formulation}
+
+When an article is instead evaluated as part of a page canvas $\page$ shared with other articles $\articleset = \{\articleobj{1}, \dots, \articleobj{n}\}$, editorial harmony between neighboring templates is the goal. 
+
+Formally, the input to this setting is a page canvas $\page$ populated by the article set $\articleset$, each article $\articleobj{i}$ already carrying a candidate template assignment $\templatesel{i}$; this setting is therefore formalized as scoring, rather than retrieving, the compatibility of this joint assignment, conditioned on each article's neighbors on the page. 
+
+Given this formalism, the desired output is a compatibility matrix $\mathbf{P} \in [0,1]^{\numarticles \times \catalogsize}$, where each entry expresses the contextual suitability of assigning a given catalog template to a given article, conditioned on the rest of the page. These per-article scores are later combined with the template similarity matrix $\gmnMatrix$ (\secref{sec:gwes-gmn-mapping}) into a single scalar \neuralmethod\ score for the whole layout $\solution$.
+
+\subsection{Proposed approach}
+
+\neuralmethod\ addresses this problem by combining a Transformer-based encoder, which scores contextual editorial suitability, with the topology-aware similarity metric $\gmn{\cdot}{\cdot}$, which corrects that score for long-tail bias.
+
+\subsubsection{Transformer-based Editorial Intent Module}
 \label{sec:transformer_module}
 
-The primary role of the Transformer-based encoder is to operate as a contextual judge that scores the appropriateness of each template $\templatesel{i}$ given the specific metadata of each article $\articleobj{i}$ in the set of placed articles $\articleset$ (of size $\numarticles$) and their placement on the page canvas $\page$. Unlike static classification networks, this encoder evaluates the entire page context simultaneously, capturing how the spatial configuration of one article influences the editorial validity of its neighbors.
+The primary role of the Transformer-based encoder is to operate as a contextual network that scores the appropriateness of each template $\templatesel{i}$ given the specific metadata of each article $\articleobj{i}$ in the set of placed articles $\articleset$ (of size $\numarticles$) and their placement on the page canvas $\page$. Unlike static classification networks, this encoder evaluates the entire page context simultaneously, capturing how the spatial configuration of one article influences the editorial validity of its neighbors.
 
-\subsubsection{Input Tensor}
+\paragraph{Input Tensor}
 
-The input tensor aggregates three distinct feature streams:
+To feed the joint article-template assignment $(\page, \articleset)$ into the Transformer encoder, the article set $\articleset$ (together with each article's currently assigned template $\templatesel{i}$) is reformatted into a single input tensor, aggregating three distinct feature streams per article:
 \begin{enumerate}
     \item \textbf{Input Metadata ($\mathbf{m}_i$):} The intrinsic structural features of article $\articleobj{i} \in \articleset$ exactly as defined in Chapter~\ref{chapter:definitions}. This vector encapsulates four concrete numerical features extracted from the input instance: the body text character count, the total number of allocated images, and binary flags indicating the presence of an article title and subtitle, respectively.
     
@@ -30,9 +43,9 @@ The input tensor aggregates three distinct feature streams:
 \end{enumerate}
 
 
-For each individual article $\articleobj{i}$, the feature streams are concatenated into a unified vector $\mathbf{x}_i \in \mathbb{R}^{109}$, where the template zoning window is zero-padded up to its maximum 100-dimensional capacity. To evaluate the entire layout as a cohesive unit, the vectors of all $\numarticles$ active articles are sorted from top-to-bottom and left-to-right based on their top-left coordinates, and stacked into a sequence tensor. To accommodate variations in article counts across layouts, these sequences are uniformly padded, while a boolean mask isolates the active articles to evaluate the global page context simultaneously.
+For each individual article $\articleobj{i}$, the feature streams are concatenated into a unified vector $\mathbf{x}_i \in \mathbb{R}^{109}$, where the template zoning window is zero-padded up to its maximum  capacity. To evaluate the entire layout as a cohesive unit, the vectors of all $\numarticles$ active articles are sorted from top-to-bottom and left-to-right based on their top-left coordinates, and stacked into a sequence tensor. To accommodate variations in article counts across layouts, these sequences are uniformly padded, while a boolean mask isolates the active articles to evaluate the global page context simultaneously.
 
-\subsubsection{Transformer Encoder Model}
+\paragraph{Transformer Encoder Model}
 
 The sequence of article vectors $\mathbf{x}_i \in \mathbb{R}^{109}$ representing the layout are subsequently and simultaneously fed into the network. First, a dense linear projection layer maps the 109-dimensional feature space into a 128-dimensional latent embedding space:
 
@@ -48,7 +61,7 @@ This sequence of tokens is subsequently passed to a Transformer encoder~\cite{at
 
 Finally, the output of the encoder stack passes through a linear classification softmax layer to generate a probability matrix of dimensions $\numarticles \times \catalogsize$. Each entry in this matrix defines the contextual suitability, expressed as a probability $p\in[0,1]$ of a specific template for a given article in the page layout. 
 
-\subsection{$\gmn{\cdot}{\cdot}$ inclusion for template similarity}
+\subsubsection{tGMN inclusion for template similarity}
 \label{sec:gwes-gmn-mapping}
 
 While the Transformer encoder models the dynamic suitability of template assignments based on historical contexts, it is inherently susceptible to long-tail bias, leading to the frequent under-scoring of valid templates simply because they are under-represented in the historical training dataset. This will cause that even if the Transformer achieves high predictive accuracy, its raw probability distributions might be highly concentrated, creating a rigid search space that can cause evolutionary operators to stall. 
@@ -59,9 +72,9 @@ However, and because the raw score $\gmn{\cdot}{\cdot}$ is unbounded ($\gmn{\tem
 \begin{equation}
 s_{ij} = \exp\left( -\frac{\gmn{\templateobj{i}}{\templateobj{j}}^2}{2(\sigmagmn)^2} \right)
 \end{equation}
-where $\sigmagmn$ represents a tunable scaling parameter calibrated according to the dataset characteristics to control the smoothness of the topological mapping. This transformation yields the final similarity matrix $\gmnMatrix$, with a bounded similarity score $s_{ij} \in [0, 1]$ between any pair of templates.
+where $\sigmagmn$ represents a scaling parameter set according to the dataset characteristics to control the smoothness of the topological mapping. This transformation yields the final similarity matrix $\gmnMatrix$, with a bounded similarity score $s_{ij} \in [0, 1]$ between any pair of templates.
 
-\subsection{\neuralmethod\ calculation}
+\subsubsection{\NeuralMethod (\neuralmethod)}
 
 Finally, to obtain the \neuralmethod, the probabilities from the Transformer and the topological affinities from $\gmnMatrix$ must be algebraically combined. 
 
@@ -76,12 +89,13 @@ This formulation mathematically expresses the probability ``smoothing'' mechanis
 \neuralmethod(\solution) = \sum_{i=1}^{\numarticles} (1 - \alpha_i)
 \end{equation}
 
-\subsection{Evaluation of \neuralmethod}
+\subsection{Experimental evaluation}
 \label{sec:gwes-evaluation}
 
-In this section the predictive capabilities and structural behavior of the deep learning components underlying the \neuralmethod\ metric are verified. 
+In this section the predictive capabilities and structural behavior of the components underlying the \neuralmethod\ metric are verified. 
 
 \subsubsection{Implementation and Hardware Details}
+\label{sec:gwes-implementation}
 
 All deep learning pipelines are powered by the \textit{PyTorch}~\cite{pytorch} ecosystem. This neural framework encompasses the dynamic sequence-level Transformer encoder responsible for predicting historical editorial intent, alongside the implementation of the Layout Graph Matching Network (GMN) utilized to calculate the pre-computed topological affinity matrix~$\gmnMatrix$.
 
@@ -107,12 +121,12 @@ The final dataset consider instances containing a variable count of between $1$ 
 
 \paragraph{Template Catalog}
 
-The structural template catalog $\templatecatalog$ is composed by  $\catalogsize = 345$ designs from \laprovence. Each blueprint specifies all elements described in Chapter~\ref{chapter:definitions} for a given template: dimensions ($W_j, H_j$), internal zoning $\zoning{j}$ and text capacity mapping $\capacity{j}$. 
+The structural template catalog $\templatecatalog$ is composed by  $\catalogsize = 345$ designs from \laprovence archive. Each blueprint specifies all elements described in Chapter~\ref{chapter:definitions} for a given template: dimensions ($W_j, H_j$), internal zoning $\zoning{j}$ and text capacity mapping $\capacity{j}$. 
 
 
 \subsubsection{$\gmnMatrix$ calculation}
 
-The structural similarity matrix $\gmnMatrix$ is computed utilizing the template catalog $\templatecatalog$ from \laprovence, but using an instance of $\gmnNetwork$ pre-trained on the analogous, structurally equivalent publishing corpus of \publihebdos, detailed in Chapter~\ref{section:trs-eval}. 
+The structural similarity matrix $\gmnMatrix$ is computed utilizing the template catalog $\templatecatalog$ from \laprovence, but using an instance of $\gmnNetwork$ pre-trained on the analogous, structurally equivalent publishing corpus of \publihebdos, detailed in \secref{section:trs-eval}. 
 
 This calculation outputs a matrix with dimensions $\gmnMatrix = [s_{ij}] \in \mathbb{R}^{345 \times 345}$. Consequently, the training validation and convergence analyses presented in the following sections focus exclusively on the Transformer Encoder architecture. $\gmnMatrix$\  assumes a prominent role  within the evaluation of the unified \neuralmethod\ metric.
 
@@ -120,26 +134,29 @@ This calculation outputs a matrix with dimensions $\gmnMatrix = [s_{ij}] \in \ma
 \subsubsection{Transformer Encoder Training Hyperparameters}
 \label{subsec:hyperparameter_calibration_transformer}
 
-The operational parameters governing the neural training of the Transformer Encoder in \neuralmethod\  were calibrated through extensive empirical pilot studies over the specified dataset. 
+The operational parameters governing the neural training of the Transformer Encoder in \neuralmethod\  were set through extensive empirical pilot studies over the specified dataset. 
 
-The finalized calibrated parameters are structured in Table~\ref{tab:algorithmic_parameters_transformer}.
+The finalized parameters are structured in Table~\ref{tab:algorithmic_parameters_transformer}.
 
 \begin{table}[htbp]
 \centering
 
-\begin{tabularx}{\widthForParametersTable}{Xc}
-\hline
-\textbf{Parameter Description} &  \textbf{Value} \\ \hline
-Neural optimizer architecture &  AdamW \\
-Train/Val/Test split &  $80\%/15\%/5\%$ \\
-Base learning rate &  $10^{-4}$ \\
-Weight decay &  $10^{-2}$ \\
-Batch size &  128 \\
-Total deep learning training epochs & 3000  \\ 
-Early stopping epoch threshold &  40  \\ \hline
+\begin{tabularx}{\textwidth}{@{}l l X l@{}}
+\toprule
+Category & Symbol & Parameter Description & Value \\
+\midrule
+\multirow{7}{*}{\makecell[l]{Transformer \\ Encoder Training}}
+           & --- & Neural optimizer architecture & AdamW \\
+           & --- & Train/Val/Test split & $80\%/15\%/5\%$ \\
+           & --- & Base learning rate & $10^{-4}$ \\
+           & --- & Weight decay & $10^{-2}$ \\
+           & --- & Batch size & 128 \\
+           & --- & Total deep learning training epochs & 3000 \\
+           & --- & Early stopping epoch threshold & 40 \\
+\bottomrule
 \end{tabularx}
 
-\caption{Calibrated algorithmic and structural hyperparameters for the Transformer Encoder training.}
+\caption{Algorithmic and structural hyperparameters for the Transformer Encoder training.}
 \label{tab:algorithmic_parameters_transformer}
 \end{table}
 
@@ -214,19 +231,18 @@ Max Confidence Peak ($\|\cdot\|_\infty$) & 0.62 & 0.18  \\ \hline
 
 The metrics detailed in Table~\ref{tab:gmn_impact} confirm that the topological convolution step expands the average pool of viable layout alternatives from $1.89$ to $3.23$ options per article, yielding a stable 1.7$\times$ gain in search space flexibility. This phenomenon represents a controlled probability diffusion mechanism, where mass is transferred from isolated predictions toward geometric neighbors. Crucially, this diffusion actively counteracts predictor rigidity, achieving a $71.14\%$ reduction in the distribution's maximum confidence peak (with the mean infinity norm dropping from $0.62$ down to $0.18$). While this smooth distribution naturally lowers the absolute dominance of the top-1 template due to mass sharing among interchangeable designs (while maintaining top-1 rank dominance in general), it successfully transforms a highly polarized search space into a cooperative landscape suitable for optimization tasks.
 
-
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\widthForOneImage]{img/gwes_vs_transformer_ex2.png}
+\includegraphics[width=\widthForOneImage]{img/gwes_vs_transformer_ex2.pdf}
 \caption{Qualitative behavior of $\gmnMatrix$ smoothing of the Transformer Encoder, for a ground truth target (in blue). Green labels denote the target template. While the raw Transformer pipeline (top row) operates over a formal probability distribution summing to unity, the integrated \neuralmethod\ framework (bottom row) maps raw, non-normalized structural affinity scores derived from the matrix multiplication with $\gmnMatrix$. }
 \label{fig:gwes-vs-transformer}
 \end{figure}
 
 
-This behavioral characteristic is qualitatively illustrated in \figref{fig:gwes-vs-transformer}. As shown in this representative example, the human-selected target template (\texttt{T:594763}) is successfully identified as the top rank by both paradigms. However, the standalone Transformer exhibits a rigid, steep probability drop-off immediately after its first choice, collapsing from $0.478$ down to $0.106$ and $0.035$ for the subsequent positions. This extreme polarization penalizes structurally similar alternatives, severely limiting the exploration capacity of the evolutionary engine if the top candidate encounters conflicts.
+This behavioral characteristic is qualitatively illustrated in \figref{fig:gwes-vs-transformer}. As shown in this representative example, the human-selected target template (\texttt{T:594763}) is successfully identified as the top rank by both paradigms. However, the standalone Transformer exhibits a rigid, steep probability drop-off immediately after its first choice, collapsing from $0.478$ down to $0.106$ and $0.035$ for the subsequent positions. This polarization penalizes structurally similar alternatives, severely limiting the exploration capacity of the evolutionary engine if the top candidate encounters conflicts.
 
 
-Conversely, the unified \neuralmethod\ metric leverages the graph-matching prior to build a cooperative, high-utility plateau. To reflect the true operational reality of the evolutionary process, the values displayed for \neuralmethod\ in \figref{fig:gwes-vs-transformer} correspond to the raw, non-normalized affinity scores rather than formal probabilities. Under this framework, \neuralmethod\ actively expands the search space by shifting values; the target template achieves a dominant affinity score of $0.619$, while its direct visual twin (\texttt{T:594765}) is elevated to an equivalent utility level of $0.605$, and alternative valid blueprints like \texttt{T:594748} are uncovered at $0.541$.
+Conversely, the unified \neuralmethod\ metric leverages the graph-matching prior to build a cooperative, high-utility plateau. To reflect the true operational reality of the evolutionary process, the values displayed for \neuralmethod\ in \figref{fig:gwes-vs-transformer} correspond to the raw, non-normalized affinity scores rather than formal probabilities. Under this framework, \neuralmethod\ actively expands the search space by shifting values; the target template achieves a dominant affinity score of $0.619$, while its direct visual twin (\texttt{T:594765}) is elevated to an equivalent affinity score of $0.605$.
 
 
 

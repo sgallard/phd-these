@@ -1,6 +1,7 @@
-\section{\methodNameGeneral - a Multiobjective Evolutionary Approach}
+\section{Proposed approach: \methodNameGeneral}
+\label{sec:evopagegen-approach}
 
-\subsection{Architectural Overview}
+\subsection{Architectural overview}
 \label{sec:method-overview}
 
 The proposed layout generation method, coined \methodNameGeneralLong (\methodNameGeneral), is engineered as a multi-objective evolutionary framework that find a set of layouts $\solution$ for a given instance $\instance$ of the above-detailed problem.  
@@ -77,16 +78,16 @@ The global workflow of \methodNameGeneral operates as an optimization pipeline s
 \begin{itemize}
     \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating as the strategic search engine, this module manages the population of abstract chromosomes across generations through specialized genetic operators (crossover, mutation, and pareto-front based selection~\cite{pareto}) detailed in the generational loop of \figref{fig:evolutionary_loop}. The engine navigates the combinatorial search space of chromosomes, which represents template assignments ($\templatesel{i}$), article positioning $\posvar{i}$, and vertical elasticities $\elasticity{i}$.  Additionally, this module implements two distinct paradigms to select the best chromosomes in each generation: a preference-guided RNSGA-III~\cite{rnsga-iii}, coined \methodName, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}, coined \methodNameUniform, for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
 
-    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$ (\secref{sec:packing_engine}). By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in Chapter~\ref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
+    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$ (\secref{sec:packing_engine}). By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in \secref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
 
     \item \textbf{Multi-Objective Evaluation Module:} This module dynamically assesses each decoded layout $\solution$ across the four-dimensional objective space (\secref{sec:objective_formulation}) to synthesize the unified objective vector $\objvector(\solution)$. It combines analytical geometric functions ($\objone$: Page coverage, $\objthree$: Text capacity Integrity, and $\objfour$: Positioning of articles quality) with a neural evaluation pipeline ($\objtwo$: \NeuralMethod). The resulting objective vector  $\objvector(\solution)$ is fed back into the evolutionary optimization module to drive chromosome selection in the next generation.
 \end{itemize}
 
 
-\subsection{Many-Objective Evolutionary Optimization Engine}
+\subsection{Many-objective evolutionary optimization engine}
 \label{sec:evolutionary_engine}
 
-The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in Chapter~\ref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a chromosome vector that maps abstract decisions prior to layout decoding using the packing engine.
+The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in \secref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a chromosome vector that maps abstract decisions prior to layout decoding using the packing engine.
 
 \figref{fig:evolutionary_loop} summarizes the resulting generational loop executed by this engine at each iteration. The remainder of this section formalizes each of its stages: the chromosome encoding is introduced in \secref{sec:chromosome_representation}, the population initialization and genetic operators are detailed in \secref{sec:evolutionary_operators}, and the many-objective selection paradigm is presented in \secref{sec:many-objective_optimization}.
 
@@ -138,7 +139,7 @@ Each candidate layout $\solution$ is encoded as a chromosome composes of three s
 \begin{enumerate}
     \item \textbf{Template Assignment Segment} $\chromosomeTemplateSegment = [t_1, t_2, \dots, t_{\numarticles}]$: A vector where each gene $t_i \in \{1, \dots, \catalogsize\}$ defines the specific template assigned to article $\articleobj{i}$ from \templatecatalog.
     \item \textbf{Permutation Segment} $\chromosomePermutationSegment = [\pi_1, \pi_2, \dots, \pi_{\numarticles}]$: A vector representing a permutation of the default input article indices $\{1, 2, \dots, \numarticles\}$. This segment explicitly dictates the sequence in which the packing decoder engine must process and position each article on the page.
-    \item \textbf{Text Elasticity Segment} $\chromosomeElasticitySegment = [e_1, e_2, \dots, e_{\numarticles}]$: A vector where each gene $e_i \in \elasticityset$, defining the specific vertical elasticity (see Chapter~\ref{sec:decision-variables}).
+    \item \textbf{Text Elasticity Segment} $\chromosomeElasticitySegment = [e_1, e_2, \dots, e_{\numarticles}]$: A vector where each gene $e_i \in \elasticityset$, defining the specific vertical elasticity (see \secref{sec:decision-variables}).
 \end{enumerate}
 
 
@@ -397,7 +398,7 @@ Crucially, to preserve context, whenever a $\chromosomeTemplateSegment$ mutation
 \subsubsection{NSGA-III Many-Objective Selection Paradigm}
 \label{sec:many-objective_optimization}
 
-The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in Chapter~\ref{sec:objective_formulation}. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection: a targeted aspiration-point design (\methodName) as a preference-based method, and a uniform exploratory variant (\methodNameUniform).
+The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in \secref{sec:objective_formulation}. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection: a targeted aspiration-point design (\methodName) as a preference-based method, and a uniform exploratory variant (\methodNameUniform).
 
 \paragraph{Preference-Guided Engine (\methodName)}
 To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the first configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors computed offline from the same historical training dataset used to train the Transformer Encoder module of \neuralmethod\ (\secref{subsec:dataset_characterization}), conditioned on the active article count $\numarticles$ of the target instance \instance.
@@ -422,10 +423,10 @@ To ensure an unbiased and wide-reaching exploration of the non-dominated multi-o
 
 %%%%%%%% Backtracking packing engine %%%%%%%%
 
-\subsection{Packing Decoder Engine}
+\subsection{Packing decoder engine}
 \label{sec:packing_engine}
 
-The packing decoder engine is implemented to ensure a deterministic decoding of the abstract chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ into a page layout represented by spatial coordinates and the previously defined decision variables (Chapter~\ref{sec:decision-variables}). Unlike standard two-dimensional bin packing algorithms that allow arbitrary item reordering~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, this engine enforces strict sequence preservation dictated by the evolutionary permutation segment $\chromosomePermutationSegment$. 
+The packing decoder engine is implemented to ensure a deterministic decoding of the abstract chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ into a page layout represented by spatial coordinates and the previously defined decision variables (\secref{sec:decision-variables}). Unlike standard two-dimensional bin packing algorithms that allow arbitrary item reordering~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, this engine enforces strict sequence preservation dictated by the evolutionary permutation segment $\chromosomePermutationSegment$. 
 
 This sequence preservation is fundamental to the multi-objective nature of the optimization problem, since changing the relative order of articles directly alters $\objvector$, meaning that different permutation sequences yield distinct non-dominated trade-offs across the multi-objective Pareto frontier. 
 On the contrary, once a specific sequence $\chromosomePermutationSegment$ is fixed by the evolutionary operators, the packing engine's sole responsibility is to evaluate its geometric feasibility. By coupling a fixed linear sequence with a complete, exhaustive backtracking technique, the decoder guarantees that if a valid spatial configuration exists for that specific permutation, it will be found.
@@ -446,23 +447,23 @@ First, the list of available Extreme Points $\extremepointset$ is initially seed
 
 To maintain a valid and compact search space, the candidate point list $\extremepointset$ is continuously pruned by eliminating coordinates that fall outside the page bounds $(\Weff, \Heff)$ or land inside already allocated articles. The remaining valid points within $\extremepointset$ are sorted following a canonical Bottom-Left priority sequence: any generic candidate point $P = (x_P, y_P) \in \extremepointset$ is ordered ascending by its vertical coordinate $y_P$, breaking ties by its horizontal coordinate $x_P$.
 
-While the previous formulation corresponds to the standard approach proposed by Crainic et al.~\cite{crainic-extreme-points}, in \methodName, this step needs to be adapted to consider the grid imposed by $\colsize$ and $\gutter$. This is already taken into account by the template dimensions (as mentioned in \secref{sec:template-definition}), but is also necessary that the packing decoder engine introduces a localized alignment shift during point generation to respect the $\gutter$. Specifically, when an article $\articleobj{i}$ is successfully committed to an x-coordinate $\xcoord{i}$, the baseline extreme points are shifted by the $\gutter$ offset:
+While the previous formulation corresponds to the standard approach proposed by Crainic et al.~\cite{crainic-extreme-points}, in \methodName, this step needs to be adapted to consider the grid imposed by $\colsize$ and $\gutter$. This is already taken into account by the template dimensions (as mentioned in \secref{sec:constraints_space}), but is also necessary that the packing decoder engine introduces a localized alignment shift during point generation to respect the $\gutter$. Specifically, when an article $\articleobj{i}$ is successfully committed to an x-coordinate $\xcoord{i}$, the baseline extreme points are shifted by the $\gutter$ offset:
 \begin{equation}
 \xcoorgutter{i} = (\xcoord{i} + \Wtemp{\templatesel{i}} + \gutter, y)
 \end{equation}
 
 
 
+Although the extreme-point set $\extremepointset$ is complete, in that it discards no optimal placement~\cite{lodi-packing-survey}, generating candidate points alone does not resolve placement: an explicit search routine over $\extremepointset$ is still required to select among them. In this context, doing an exact and complete search remains tractable precisely because, once the evolutionary permutation $\chromosomePermutationSegment$ and template assignments $\chromosomeTemplateSegment$ are fixed, only the small number of articles held within a single page has to be placed, rather than the exponentially large discrete template-selection problem addressed by the evolutionary engine itself (\secref{sec:sota-packing-exact}).
 
 \subsubsection{Sequence-Preserving Backtracking Packing}
 
 
-The packing engine strictly enforces the sequential order dictated by the evolutionary permutation segment $\chromosomePermutationSegment$. Considering this, the packing decoder engine processes the sequence through a dynamic prefix-slicing mechanism, as formalized in Algorithm~\ref{alg:packing_decoder}. At any point during execution, a tracking index divides the permutation into already packed items and a sub-sequence of remaining unplaced articles. The engine's objective is to isolate and accommodate the largest possible continuous block/prefix of these remaining articles in the page canvas, starting exactly from the tracking index. Crucially, maximizing this prefix size directly minimizes empty or unallocated remnants on the page canvas, thereby significantly optimizing the wasted space objective ($\objone$).
-
+Algorithm~\ref{alg:packing_decoder} formalizes this search through a dynamic prefix-slicing mechanism. At any point during execution, a tracking index divides the permutation into already packed items and a sub-sequence of remaining unplaced articles. The engine's objective is to isolate and accommodate the largest possible continuous block/prefix of these remaining articles in the page canvas, starting exactly from the tracking index. Crucially, maximizing this prefix size directly minimizes empty or unallocated remnants on the page canvas, thereby significantly optimizing the wasted space objective ($\objone$).
 
 To determine if a targeted prefix can fit within the current page, the engine invokes an exhaustive recursive backtracking solver, structured in Algorithm~\ref{alg:solve_recursive}. For a given batch, the solver processes the articles sequentially, evaluating them against the sorted extreme points list $\extremepointset$. It attempts to position the current item on the first available candidate point; if the item respects the page boundaries and yields zero spatial overlap, the placement is provisionally committed. The extreme points list $\extremepointset$ is then updated, and the solver recursively calls itself to place the next article in the batch. If a downstream article cannot be accommodated on any valid point, the routine backtracks, uncommitting the immediate predecessor to explore alternative spatial configurations across $\extremepointset$. If the solver exhaustively explores all combinations and returns a global failure for that prefix, the outer loop decrementally reduces the batch size by one article and re-tests this smaller prefix on the same page, as outlined in Algorithm~\ref{alg:packing_decoder}. This decremental reduction repeats until a viable prefix successfully converges. Once a batch is committed, if there are still remaining unplaced items left in $\chromosomePermutationSegment$, the engine instantiates a new empty page, updates the tracking index, and restarts the cycle.
 
-Crucially, the total number of pages is simply reported as an output of the decoding phase; the responsibility of enforcing the hard constraints and discarding or penalizing the solution for exceeding the single-page limit rests exclusively with the evolutionary optimization engine. Also, this recursive mechanism remains computationally tractable in practice because the linear $\mathcal{O}(n)$ extreme-point update sequence operates over a strictly bounded number of articles per page ($n < 9$ within the operational editorial domain).
+Crucially, the total number of pages is simply reported as an output of the decoding phase; the responsibility of enforcing the hard constraints and discarding or penalizing the solution for exceeding the single-page limit rests exclusively with the evolutionary optimization engine. 
 
 
 

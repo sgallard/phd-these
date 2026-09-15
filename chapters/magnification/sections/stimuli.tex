@@ -1,9 +1,8 @@
-\section{Newspaper Pages and CPS-based Condition Setup}
-\label{sec:newspaperpages}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Newspaper Pages}
+\label{sec:newspaperpages}
 \subsubsection{Original edition}
 
 Each newspaper page combined two components: (1) a \emph{layout file}, defining the geometric arrangement of articles on the page, and (2) a \emph{content file}, providing the textual material for each article (headline, body text, and target font sizes). Because our study focuses on headlines, body text was generated only to fill space within article blocks and was not analyzed.  
@@ -44,7 +43,7 @@ The method receives as input an original edition along with a target magnificati
 For the purpose of generating large-print editions, the algorithm was provided with each baseline layout $l_i$ and a representative content set $c_{i,1}$, alongside a magnification factor of $\times 2$, which comfortably covers the critical print size spectrum across both participant cohorts (see Section~\ref{sec:condition-definition}). Only $c_{i,1}$ was required for layout generation, as content sets $c_{i,2}$ and $c_{i,3}$ are strictly equivalent in character length. The output of this procedure is a set of optimized large-print layouts $\largeprintset = \{l'_i\}_{i=1,\dots,9}$ (\figref{fig:newspaper-pages}(b)). Each final large-print edition was obtained by pairing an optimized layout with one of the three equivalent content files for that page. It should be noted that in the large-print edition, an enlarged font size inherently limits the amount of body text displayed on the overview spread. This represents an intrinsic operational characteristic of digital large-print editions—analogous to commercial kiosk news applications—which are engineered primarily to facilitate page scanning and article discovery. Readers utilize the multi-article overview to locate entry points (i.e., headlines) and subsequently transition to a dedicated single-article reading mode for full content consumption.
 
 
-\subsection{Conditions setup based on CPS}
+\subsection{CPS-based reading conditions}
 \label{sec:condition-definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

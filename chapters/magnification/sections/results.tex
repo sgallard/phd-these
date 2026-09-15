@@ -1,6 +1,5 @@
-\section{Population and data collected}
-
 \subsection{Population}
+\label{sec:population-and-results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -74,11 +73,12 @@ Note that, except for voice recordings, no personal data was collected. Voice re
 
 
 
-\section{Results}
+\section{Experimental results}
+\label{sec:magnification-results}
 
 The analysis presented in this section tests hypotheses \hypperformance-\hyppreference.  First, the statistical model is described, then results for Task 1 and Task 2 are reported, and finally subjective workload and user preference are analyzed using the NASA-TLX questionnaire together with overall preference.
 
-\subsection{Statistical model}
+\subsection{Statistical analysis}
 
 Collected data were analyzed using a linear mixed-effects model with Participant ID as a random effect. The fixed effects are detailed in Table~\ref{tab:lmm}. An ANOVA test was used to check for significance using the F-statistic, setting the p-value threshold at $p < 0.05$. All reported values are model estimates (i.e., estimated marginal means) rather than raw data. 
 
@@ -114,7 +114,7 @@ Fixed effects of the Linear Mixed-Effects Model (LMM) used in this study. Factor
 \label{tab:lmm}
 \end{table}
 
-\subsection{Task 1 analysis}
+\subsection{Task 1: Reading all headlines (structural orientation)}
 Participants’ audio recordings were transcribed using WhisperX~\cite{whisperX}, reconstructing a task timeline for each participant. Each timeline was segmented into reading (R) and transition (T) periods (see \figref{fig:taskone-timeline}). From this timeline,  four metrics to test hypotheses \hypperformance and \hyppath were derived:
 \begin{enumerate}
     \item Success ratio: The proportion of correctly read articles out of the total (e.g., 5/6=$83.3\%$ in \figref{fig:taskone-timeline}). Note that a headline was considered correctly read if its transcription was phonetically equivalent to the source text, which we verified using the \emph{phonetic-fr} Python library.
@@ -289,7 +289,7 @@ Moreover, the transition time plots (b, d) reveal that the difference is primari
 \end{figure}
 
 
-\subsection{Task 2 analysis}
+\subsection{Task 2: Finding a target headline (targeted retrieval)}
 Regarding Task 2, two metrics to test hypotheses \hypfindingperformance and \hypfindingpositions were derived:
 \begin{enumerate}
     \item Success ratio: for this task, the success ratio was a binary measure (1 = target headline found, 0 = not found).
@@ -334,7 +334,7 @@ These results are illustrated in \figref{fig:phasetwo}.
 
 Finally, the influence of the target headline's location ("zone") in task completion time was analyzed. The analysis revealed no statistically significant effect (\statreport{2}{209.75}{2.73}{=.067}{0.03}) and therefore is not possible to confirm the hypothesis \hypfindingpositions.
 
-\subsection{Participants preferences}
+\subsection{Participants' preferences}
 \label{subsection:preferences}
 
 To test \hyppreference,  NASA-TLX scores, a direct preference question, and qualitative feedback were analized.
@@ -394,17 +394,18 @@ Based on the previous results, a summary focused in each hypothesis is presented
 \end{itemize}
 
 
-\subsection{Discussion}
+\section{Discussion}
+\label{sec:magnification-discussion}
 
-\subsubsection{ConditionOrder impact}
+\subsection{ConditionOrder impact}
 As shown in Table~\ref{tab:lmm}, conditions are modeled using a within-subject factor,  counterbalanced  by systematic alternation to balance order (illustrated in Fig.~\ref{fig:conditions-setup}).
 In addition, statistical analysis on ConditionOrder showed no significant results, indicating a lack of fatigue effects.
 
-\subsubsection{Generalization of the study}
+\subsection{Generalization of the study}
 
 Findings are expected to generalize within structured, layout-based documents, as loss of global context and interface manipulability are content-independent properties of GB vs. LP.
 While this study quantified text-only reading, the methodology could potentially be extended to richer layouts with additional entry points~\cite{ozretic_dosen_key_2018}. This would require identifying the specific natural reading paths associated with such layouts, which would differ from the one defined here. Furthermore, future protocols would likely need adaptations to address this use case, such as moving beyond reading aloud or accounting for CPS limitations when integrating visual elements.
 
-\subsubsection{Training and familiarity effects}
+\subsection{Training and familiarity effects}
 
 The potential role of training and familiarity also merits consideration; observed patterns were similar for participants with normal-vision (already familiar with magnification) and low vision, though effects were larger for the latter. This suggests that training could reduce difference magnitude for them, but their visual acuity will prevent eliminating the gap, and the qualitative pattern between GB and LP is unlikely to change.

@@ -1,9 +1,9 @@
-\section{Modelling template topology and similarity}
+\section{Template similarity modelling}
 \label{section:modelling-similarity}
 As explained before, a key requirement of in template retrieval is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. In this context, standard metrics such as Intersection-over-Union (IoU) or Jaccard index~\cite{jaccard2021} are insufficient: they are sensitive to small misalignments, and in cases with no overlap they provide zero gradients, making optimization difficult~\cite{patil_layoutgmn_2021}. 
 
 
-\subsection{template- and distance-based Intersection over Union}
+\subsection{Template- and distance-based Intersection over Union}
 
 To address these limitations, an analytical and geometrical measure is defined as a first approximation to measure similarity between layouts. This similarity metric, coined Template- and distance-based Intersection over Union ($\tdiou{\cdot}{\cdot}$), which adapts the Distance-IoU loss~\cite{zheng_distance-iou_2019} to multi-element layouts, considers both the overlap between regions and the distance between their centers, providing a continuous measure of geometric alignment.
 
@@ -48,14 +48,14 @@ C_M = \frac{1}{2 \, \Htemp{\templateobj{1}}\Wtemp{\templateobj{1}}} \sum_{(\zblo
 \]
 This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched element quality and structural differences.
 
-\subsection{template-based Graph Matching Network}
+\subsection{Template-based Graph Matching Network}
 
  As a step further, to capture layout topology, a Graph Matching Network (GMN) architecture~\cite{patil_layoutgmn_2021}, here referred to as \gmnNetwork, was implemented and retrained for the purpose of this work, following the cross-graph attention mechanism and triplet-based training scheme described in \secref{sec:sota-gmn}. Templates are represented as directed, fully connected graphs over their constituent elements, in the same manner as LayoutGMN, and \gmnNetwork is trained on triplets built from $\tdiou{\cdot}{\cdot}$ thresholds rather than plain Intersection-over-Union. Consequently, \gmnNetwork produces a similarity function, denoted $\gmn{\cdot}{\cdot}$, that can be applied to any pair of templates $\templateobj{1}$ and $\templateobj{2}$. Following the sign convention of the LayoutGMN implementation, this raw score is negative by construction and satisfies $\gmn{\templateobj{1}}{\templateobj{2}} = 0$ if the templates are identical, growing more negative as their structures diverge.
 
 The use of the $\gmn{\cdot}{\cdot}$ metric varies depending on the application; in single-article context (\secref{section:template-retrieval-single-article}), the absolute value of this metric is used to define the distance for clustering and retrieval. In the page-aware setting of \neuralmethod\ (\secref{sec:gwes-gmn-mapping}), the same score is instead mapped into a bounded $[0,1]$ affinity through a Gaussian kernel, since that context requires a normalized similarity matrix rather than an unbounded distance.
 
 
-\subsection{Empirical comparison between both methods}
+\subsection{Empirical comparison of both methods}
 
 To assess which similarity measure better reflects human perception, an online study with $42$ participants recruited via \emph{Prolific}~\cite{prolific} was conducted. Each trial consisted of: (1) a reference template $\templateobj{R}$ shown for 2 seconds, followed by (2) a selection scene where participants chose the template most similar to $\templateobj{R}$ between two options $\templateobj{O_1}$ and $\templateobj{O_2}$.
 
@@ -70,7 +70,7 @@ templates are organized via agglomerative clustering with a threshold $\tdiouclu
 
 At the same time, a set of clusters $\gmnclusters$ can be generated using an analog distance $d_{GMN}(\templateobj{1},\templateobj{2}) = |\gmn{\templateobj{1}}{\templateobj{2}}|$, and the corresponding inter-template maximum average distance of $\gmnclusterthreshold$.
 
-Note that both $\tdiouclusterthreshold$ and $\gmnclusterthreshold$ were tuned to produce a reasonable, but also equivalent and comparable number of clusters between the methods. Specifically, $\tdiouclusterthreshold = 1.1$ and $\gmnclusterthreshold=2.8$, producing $|\tdiouclusters| = 80$ and $|\gmnclusters| = 81$ respectively, with a similar distribution. 
+Note that both $\tdiouclusterthreshold$ and $\gmnclusterthreshold$ were set to produce a reasonable, but also equivalent and comparable number of clusters between the methods. Specifically, $\tdiouclusterthreshold = 1.1$ and $\gmnclusterthreshold=2.8$, producing $|\tdiouclusters| = 80$ and $|\gmnclusters| = 81$ respectively, with a similar distribution. 
 
 \subsection*{Triplet definition}
 Each trial involved a triplet $(R,O_1,O_2)$. $\templateobj{O_1}$ was chosen as a neighbor of $\templateobj{R}$ according to \tdiou{\templateobj{R}}{\templateobj{O_1}} but not \gmn{\templateobj{R}}{\templateobj{O_1}}, and $O_2$ as a neighbor according to \gmn{\templateobj{R}}{\templateobj{O_2}} but not \tdiou{\templateobj{R}}{\templateobj{O_2}}.  40 randomnly-selected triplets were generated this rule (examples in \figref{fig:online_experiment}(b)).
@@ -94,10 +94,10 @@ Finally, how familiarity with newspaper layouts influences similarity perception
     \includegraphics[width=\widthForOneImage]{img/online_experiment.pdf}
     \caption{\label{fig:online_experiment} 
 Results of the online experiment.
-(a) Percentage of $O_2$  selections for each of the 40 triplets. Each point represents the average percentage of $O_2$ selections, with the shaded area indicating the interquartile range ($Q1$–$Q3$). Two groups are highlighted: triplets \{1,\dots,15\} (green), where participants mainly selected $O_1$ (\tdiou), and triplets \{23,\dots,40\} (orange), where participants mainly selected $O_2$ (GMN). A central band ($40\%$–$60\%$) where no clear preference was established. The marginal histogram (right) counts the frequency of triplets in $10\%$ intervals, where each block represents a single triplet. The bold percentage labels indicate the total proportion of the triplets falling into each of the three categories.
+(a) Percentage of $O_2$  selections for each of the 40 triplets. Each point represents the average percentage of $O_2$ selections, with the shaded area indicating the interquartile range ($Q1$–$Q3$). Two groups are highlighted: triplets \{1,\dots,15\} (green), where participants mainly selected $O_1$ ($\tdiou{\cdot}{\cdot}$), and triplets \{23,\dots,40\} (orange), where participants mainly selected $O_2$ ($\gmn{\cdot}{\cdot}$). A central band ($40\%$–$60\%$) where no clear preference was established. The marginal histogram (right) counts the frequency of triplets in $10\%$ intervals, where each block represents a single triplet. The bold percentage labels indicate the total proportion of the triplets falling into each of the three categories.
 (b) Example triplets from each group. Individual participant choices are represented by a human-shaped icon.
     }
 \end{figure}
 
 
-In conclusion, this analysis lead to the selection of $\gmn{\cdot}{\cdot}$ as the main similarity measure to be used in this work.
+This analysis lead to the selection of $\gmn{\cdot}{\cdot}$ as the main similarity measure to be used in this work.

@@ -1,35 +1,43 @@
 
-\section{Automated Page Layout Generation: A Multi-Objective Challenge}
+\section{Introduction}
 \label{sec:pagegen-challenge}
 
-While Chapter~\ref{chapter:template} focused on retrieving templates in two contexts (isolated-article and page-aware template selection), an automated newspaper production workflow requires not only that, but also synthesizing an entire array of unstructured web articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ onto a  page canvas $\page$ (see \figref{fig:web-print-workflow} and \secref{sec:basic-elements}).
+\subsection{Motivation}
 
-Consequently, the proposed problem consists of \textbf{concurrently solving a discrete template assignment challenge and a two-dimensional packing problem}. For a given set of input articles $\articleset$, a valid solution requires mapping each article $\articleobj{i}$ to an appropriate template $\templateobj{j} \in \templatecatalog$ while discovering an optimal spatial configuration on the page canvas $\page$ that avoids overlaps, respects canvas boundaries, and maximizes visual quality.
+While Chapter~\ref{chapter:template} focused on retrieving templates, an automated newspaper production workflow requires creating a layout from an entire array of unstructured web articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ and a page canvas $\page$. This page generation step is precisely the central bottleneck identified in Chapter~\ref{chapter:context} and the main problem addressed in this thesis.
 
-Compounding this dual challenge, page layout quality cannot be evaluated through a single scalar metric. The criteria that govern it are not trivially postulated; they are the judgments that operators perform by hand during Step~2 of the \melody workflow (\figref{fig:web-print-workflow}), and each of them answers to a different party involved in the production.
+\subsection{Problem statement}
 
-\begin{itemize}
-    \item \textbf{Page coverage} (\objone). The page is a physical surface that has already been paid for. Unallocated white space wastes paper and ink, while an overflow forces the edition onto an additional page. This criterion answers to the \emph{production cost} that motivates the automation of the workflow in the first place.
+The proposed problem consists of \textbf{concurrently solving a discrete template assignment challenge and a two-dimensional packing problem}: for a given set of input articles $\articleset$, a valid solution maps each article $\articleobj{i}$ to a template $\templateobj{j} \in \templatecatalog$ and discovers a spatial configuration on $\page$ that is both feasible and of high quality.
 
-    \item \textbf{Text capacity integrity} (\objthree). Under the content-driven paradigm (\figref{fig:layout-driven-vs-content-driven}), journalists write without topology in mind, so the length of a story and the capacity of the container that will receive it are decoupled at authoring time and must be reconciled at layout time. A mismatch either clips editorial content or leaves a visibly sparse text block. This criterion answers to the \emph{integrity of the content} relative to the selected template.
+In this context, a solution is only admissible if it satisfies the hard constraints detailed in \secref{sec:constraints_space}: every article must fit on a single page, its assigned template must accommodate its images and headline, no two articles may overlap or exceed the page boundaries, and grid and gutter alignment must be guaranteed.
 
-    \item \textbf{Positioning quality} (\objfour). Readers infer the relative importance of stories from where these are placed on the page, and scan the page as a structured layout rather than as a linear sequence. Displacing the lead story from its privileged zone, or leaving neighboring articles slightly misaligned, degrades precisely the navigational value that justifies producing a two-dimensional layout at all. This criterion answers to the \emph{reader engagement}.
-
-    \item \textbf{Template selection editorial style} (\objtwo). A page may be dense, correctly fitted and hierarchically sound, and still combine templates in ways that the newsroom of that publisher would never have chosen. This criterion evaluates the templates assigned to the articles of a page against those that operators of the same publisher historically assigned in comparable page contexts. It therefore measures the design practice established by the publisher. Unlike the preceding three, which any publisher would formulate in identical terms, this criterion is defined relative to a specific historical record and is thus publisher-specific by construction. It answers to the \emph{newspaper design practice}.
-\end{itemize}
-
-Taken together, these four criteria correspond to the four interests that a printed page must serve simultaneously: production cost, content integrity, reader navigation, and conformity with the design practice of the publisher. The inclusion of only these four objectives is not arbitrary either, as every remaining aspect is deliberately treated elsewhere:
-%Taken together, these four criteria correspond to the four interests that a printed page must serve simultaneously: production cost, content integrity, reader navigation, and conformity with the design practice of the publisher. Their number is not arbitrary either, as the scope of the objective vector is delimited by an explicit inclusion rule: an aspect of the layout is modeled as an optimization objective only if it (i) depends on the decision variables of the problem, namely the template assigned to each article and its position on the canvas, (ii) admits degrees of quality rather than a binary verdict, and (iii) cannot be enforced by construction. Every remaining aspect is deliberately treated elsewhere:
+Then, among feasible solutions, quality is assessed along four criteria:
 
 \begin{itemize}
-    \item Overlaps between articles and containment within the printable area are binary and verifiable properties, and are therefore enforced as hard constraints. Modeling them as objectives would allow the optimizer to trade feasibility for quality.
-    \item Horizontal alignment is guaranteed by construction, since every template of the catalog $\templatecatalog$ conforms to the column width $\colsize$ and gutter $\gutter$ of the page $\page$.
-    \item Typography, leading, color, and the internal visual hierarchy of an article are fixed inside the template by its human designer and are never manipulated during layout generation, so they cannot vary between candidate solutions.
+    \item \textbf{page coverage}, penalizing unallocated white space;
+    \item \textbf{text capacity integrity}, penalizing mismatches between an article's length and its template's capacity;
+    \item \textbf{positioning quality}, penalizing improper placement of the lead article or misaligned neighbors;
+    \item \textbf{template selection editorial style}, measuring conformity with the publisher's historical template assigments through \neuralmethod\ (\secref{sec:gwes}).
 \end{itemize}
 
-Note that the first three objectives are criteria that an operator is able to state as an explicit rule, and can therefore be formalized analytically from the geometry of the page and of the assigned templates. The fourth is of a different nature: operators can recognize which template combinations conform to the practice of their newspaper, but they cannot enumerate the rules by which they do so. The only accessible trace of that tacit knowledge is the record of the pages they have produced, so the criterion must be learned from it instead of being written down, which is precisely the role of the page-aware metric \neuralmethod\ introduced in Chapter~\ref{chapter:template}.
+These four criteria are mutually antagonistic, and coupling discrete template selection with two-dimensional packing induces a combinatorial explosion that makes exact global optimization intractable. This motivates modeling full page layout generation as a multi-objective combinatorial optimization problem, solved through a multi-objective evolutionary framework.
 
-These criteria are, moreover, mutually antagonistic, so that optimizing one of them frequently degrades another. For instance, packing articles tightly to eliminate unallocated white space may force the main lead article out of its privileged top position, or impose a template whose body text capacity severely mismatches the length of the article it receives. Additionally, and because coupling discrete template selections with a two-dimensional packing problem induces an exponential combinatorial explosion, exact global optimization quickly becomes intractable.
+\subsection{Contributions}
 
-To address these problems, this chapter models full page layout generation as a Multi-Objective Combinatorial Optimization Problem (MOCOP) and introduces a multi-objective evolutionary framework to solve it.
+Addressing the problem introduced above, this chapter makes two contributions, both variants of the same multi-objective evolutionary framework \methodNameGeneral\ (\secref{sec:evopagegen-approach}), which concurrently resolves template assignment and two-dimensional packing by optimizing the four  objectives formalized in \secref{sec:objective_formulation}:
+\begin{itemize}
+    \item \textbf{\methodNameUniform} (\secref{sec:many-objective_optimization}): a uniformly exploratory variant, based on standard NSGA-III, that autonomously covers the Pareto front without requiring historical design preferences.
+    \item \textbf{\methodName} (\secref{sec:many-objective_optimization}): a preference-guided variant, based on Reference-Point NSGA-III (RNSGA-III), that steers the search toward reference points computed offline from historical human-designed layouts, trading exploration breadth for closer alignment with editorial practice.
+\end{itemize}
+Both variants share a common architecture, including a sequence-preserving backtracking packing decoder (\secref{sec:packing_engine}) that deterministically converts a chromosome-encoded template assignment and article permutation into a feasible two-dimensional page layout.
+
+\subsection*{Outline}
+
+This chapter formalizes and solves this problem across three sections:
+\begin{enumerate}
+    \item \secref{sec:decision-variables} formalizes the decision variables, the hard constraints, and the objective vector $\objvector{\solution}$ introduced above.
+    \item \secref{sec:method-overview} introduces \methodNameGeneral, the multi-objective evolutionary framework that solves this problem.
+    \item \secref{sec:results} reports the experimental evaluation of \methodNameGeneral\ against baseline methods.
+\end{enumerate}
 

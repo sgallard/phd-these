@@ -1,0 +1,107 @@
+{
+  "instance_id": "529469",
+  "export_timestamp": "2026-09-14T16:29:42.039003",
+  "metrics": {
+    "f1": 0.05000275315235947,
+    "f2": 2.4031279377696797,
+    "f3": 1.5817988747791678,
+    "f4": 0.5076923076923077
+  },
+  "page": {
+    "width": 289.0,
+    "height": 360.0,
+    "margins": {
+      "top": 30.675,
+      "bottom": 15.0,
+      "left": 15.0,
+      "right": 15.0
+    }
+  },
+  "articles_layout": [
+    {
+      "id": "3631693",
+      "char_count": 2379,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": true,
+      "layout": {
+        "template_id": "594830",
+        "page_index": 0,
+        "x": 88.0,
+        "y": 0.0,
+        "width": 128.0,
+        "height": 154.35,
+        "elasticity_applied": 5
+      }
+    },
+    {
+      "id": "3630870",
+      "char_count": 2223,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594812",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 155.35,
+        "width": 171.0,
+        "height": 154.35,
+        "elasticity_applied": 5
+      }
+    },
+    {
+      "id": "3631771",
+      "char_count": 1271,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594787",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "width": 84.0,
+        "height": 154.35,
+        "elasticity_applied": 5
+      }
+    },
+    {
+      "id": "3630861",
+      "char_count": 915,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594695",
+        "page_index": 0,
+        "x": 175.0,
+        "y": 155.35,
+        "width": 40.0,
+        "height": 154.35,
+        "elasticity_applied": 5
+      }
+    },
+    {
+      "id": "3630859",
+      "char_count": 377,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "595072",
+        "page_index": 0,
+        "x": 220.0,
+        "y": 0.0,
+        "width": 40.0,
+        "height": 308.7,
+        "elasticity_applied": 5
+      }
+    }
+  ]
+}

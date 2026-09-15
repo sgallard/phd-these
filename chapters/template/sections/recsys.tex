@@ -1,21 +1,30 @@
-\section{Template retrieval for a single article}
+\section{Single-article template retrieval}
 \label{section:template-retrieval-single-article}
-Having established $\gmn{\cdot}{\cdot}$ as the primary metric for topological layout similarity in \secref{section:modelling-similarity}, this structural foundation can now be applied to solve automated template retrieval. 
 
-In the single article-per-article context, the template retrieval problem is defined as a top-$\topsize$ retrieval problem over a set of available templates $\templatecatalog$. Given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. A key requirement of this task is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. A second critical requirement is novelty, or long-tail coverage~\cite{longtail}. Traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized.
+\subsection{Problem formulation}
+\label{sec:trs-problem-formulation}
 
-Both structural diversity and popularity bias mitigation closely align with established research paradigms in Recommendation Systems (RS)~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}. This alignment suggests that certain algorithmic insights from RS research can be adapted to structure-aware layout retrieval, even though the proposed setting differs in fundamental ways. First, traditional RS models are predominantly user-dependent, relying on collaborative filtering driven by historical interactions and individual user preferences. In contrast, the proposed definition of template retrieval is entirely user-agnostic and content-dependent, relying on objective structural characteristics. Second, the notion of diversity in this task applies directly to the topological layout structure rather than metadata or consumption patterns. Consequently, in this section, classical recommendation concepts are adapted to a structurally grounded retrieval setting, where the goal is to optimize geometric coverage across the catalog.
+Having established $\gmn{\cdot}{\cdot}$ as the primary metric for topological layout similarity in \secref{section:modelling-similarity}, this structural foundation can now be applied to solve automated template retrieval.
 
-To address the challenges of structure-aware layout retrieval, a graph-based retrieval framework is proposed, which explicitly integrates the topological similarity modeling developed in \secref{section:modelling-similarity} with a diversity-driven selection mechanism. The framework operates in two complementary phases. In the offline phase, document layouts are modeled as graphs, and $\gmn{\cdot}{\cdot}$ is employed to organize the template catalog $\templatecatalog$ into clusters of structurally coherent designs. In the online query phase, the framework leverages these pre-computed clusters to perform diversity-aware retrieval for a given content item. Instead of treating retrieval as a flat ranking task, the mechanism samples candidate layouts across distinct structural clusters to compile the final results. This diversity-aware retrieval strategy is inspired by clustering-based diversification approaches in top-$\topsize$ recommendation~\cite{clusdiv}, adapted here to structured layout objects. In this architecture, $\gmn{\cdot}{\cdot}$ enables fine-grained structural comparisons, while diversity is explicitly enforced during the retrieval stage, ensuring that the returned top-$\topsize$ objects represent distinct architectural alternatives rather than minor variations of the same layout.
+In the single article-per-article context, the template retrieval problem is defined as a top-$\topsize$ retrieval problem over a set of available templates $\templatecatalog$. Given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. A key requirement of this task is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. A second critical requirement is novelty, or long-tail coverage~\cite{longtail}: traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized. Together, these requirements echo strategies well documented in the Recommendation Systems (RS) literature~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}.
+
+
+\begin{callout}
+Despite this connection, the proposed setting is not a classical RS: traditional models are predominantly user-dependent, relying on collaborative filtering driven by historical interactions and individual user preferences, whereas the proposed definition of template retrieval is entirely user-agnostic and content-dependent, relying on objective structural characteristics. Likewise, the notion of diversity here applies directly to the topological layout structure rather than to historical consumption data. Consequently, in this section, classical recommendation concepts are adapted to a structurally grounded retrieval setting, where the goal is to optimize geometric coverage across the catalog.
+\end{callout}
+
+\subsection{Proposed approach}
 
 
 
-\subsection{Template Retrieval System (\trs) Overview}
+% The framework operates in two complementary phases. In the offline phase, document layouts are modeled as graphs, and $\gmn{\cdot}{\cdot}$ is employed to organize the template catalog $\templatecatalog$ into clusters of structurally coherent designs. In the online query phase, the framework leverages these pre-computed clusters to perform diversity-aware retrieval for a given content item. Instead of treating retrieval as a flat ranking task, the mechanism samples candidate layouts across distinct structural clusters to compile the final results. This diversity-aware retrieval strategy is inspired by clustering-based diversification approaches in top-$\topsize$ recommendation~\cite{clusdiv}, adapted here to structured layout objects. In this architecture, $\gmn{\cdot}{\cdot}$ enables fine-grained structural comparisons, while diversity is explicitly enforced during the retrieval stage, ensuring that the returned top-$\topsize$ objects represent distinct architectural alternatives rather than minor variations of the same layout.
+
+\subsubsection{Template Retrieval System (\trs) overview}
 This framework is explicitly designed to promote structural diversity and novelty, enabling  broader range of distinct and potentially underused templates.
 
 The proposed method takes as input the following elements:
 \begin{itemize}
-    \item A catalog of  templates $\templatecatalog$, where each template defines a layout composed of multiple content regions. Regions are represented as polygons (convex or concave, with or without holes) and are associated with semantic content types (e.g., text, image, title), as illustrated in \figref{fig:page-article-template}(c) and \figref{fig:template-example}.
+    \item A catalog of  templates $\templatecatalog$, where each template defines a layout composed of multiple content regions. Regions are represented as polygons (convex or concave, with or without holes) and are associated with semantic content types (e.g., text, image, title), as illustrated in \figref{fig:template}.
     
     \item A template usage log, recording how frequently each template has been used over a given time period. Templates that were not used during this period are assigned a usage value of zero, which in this context explicitly denotes absence of usage rather than missing or unknown feedback.
     
@@ -23,17 +32,12 @@ The proposed method takes as input the following elements:
     
     \item The target number $\topsize$ of templates to obtain as output.
 \end{itemize}
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\widthForOneImage]{img/template_definition.pdf}
-    \caption{\label{fig:template-example}Two examples of templates with their abstract structure composed of different elements (left) and a corresponding realistic rendering (right).}
-\end{figure}
 
 \trs is organized into two complementary components with distinct roles.
 An offline component establishes a structural representation of the template catalog by learning similarities between templates and organizing them into clusters.
 An online component constitutes the operational phase of the method: given a specific query content, it selects a small set of templates drawn from distinct clusters, ensuring both relevance and diversity in the proposed results. These two components are detailed in the following subsections.
 
-\subsection{Offline Component: Catalog \templatecatalog Clustering}
+\subsubsection{Offline component: catalog \templatecatalog\ clustering}
 
 The objective of the offline component is to construct a structure-aware clustering over the template catalog, which serves as the foundation for diversity-aware selection at query time. This component operates entirely prior to any retrieval queries.
 
@@ -44,7 +48,7 @@ d_{GMN}(\templateobj{1},\templateobj{2}) = |\gmn{\templateobj{1}}{\templateobj{2
 \end{equation}
 templates are organized via agglomerative clustering with a threshold $\clusterthreshold$, producing a set of clusters $\clusters$ (starting from singleton clusters, pairs of clusters are merged when their average inter-template distance is below $\clusterthreshold$).  Unlike methods such as ClusDiv~\cite{clusdiv}, the number of clusters is not tied to the target recommendation list size $\topsize$, but is determined solely by $\clusterthreshold$, which controls the tolerance for structural similarity of templates in the dataset. This clustering provides the foundation for the diversity-aware selection performed during the online retrieval phase.
 
-\subsection{Online Component: Template Retrieval Framework (TRF)}
+\subsubsection{Online component: Template Retrieval Framework (\trf)}
 
 In this phase, the set of  clusters $\clusters$ associated with the template catalog $\templatecatalog$ is already computed during the offline phase. The objective now is to generate, for a given query, a ranked list of $\topsize$ recommended templates that balances relevance, diversity, and novelty.
 Each step of the method is presented incrementally, with reference to the pseudocode in Algorithm~\ref{alg:cw} and the illustration in \figref{fig:cw}. The process consists of three main stages: (1) Assign rating values, (2) Filter admissible templates, (3) Select templates for retrieval using cluster weights ($CW$) and diversity-aware mechanisms.
@@ -52,12 +56,12 @@ Each step of the method is presented incrementally, with reference to the pseudo
     \centering
     \includegraphics[width=\widthForOneImage]{img/our_trs_algorithm.pdf}
     \caption{\label{fig:cw} 
-    Illustration of the online componen under the assumption that $\cwthreshold < 3$. Each template is represented by a grey circle, with size proportional to its relative usage; templates are grouped into clusters outlined with dotted lines. Based on the input query, admissible templates are marked with green borders, while non-admissible templates have red borders. Cluster boundaries are also color-coded: clusters with at least one admissible template are marked in green, while those without (such as $\cluster{5}$) are marked in red. Using initial cluster weights, the reassignment algorithm first redirects weight values to $\cluster{2}$ until either $CW_2$ reaches the threshold $\cwthreshold$ or the maximum number of admissible templates in $\cluster{2}$ is reached. Subsequently, weights are also reassigned to $\cluster{1}$, given that it has the lowest $CW$ and the maximum distance from $\cluster{2}$. The final phase of the algorithm corresponds to the selection step, which recommends $CW_i$ templates per cluster $\cluster{i}$, prioritizing templates with the highest rating values (larger green circles) and applying a proximity penalty to reduce similarity among selected templates and further enhance diversity.
+    Illustration of \trf under the assumption that $\cwthreshold < 3$. Each template is represented by a grey circle, with size proportional to its relative usage; templates are grouped into clusters outlined with dotted lines. Based on the input query, admissible templates are marked with green borders, while non-admissible templates have red borders. Cluster boundaries are also color-coded: clusters with at least one admissible template are marked in green, while those without (such as $\cluster{5}$) are marked in red. Using initial cluster weights, the reassignment algorithm first redirects weight values to $\cluster{2}$ until either $CW_2$ reaches the threshold $\cwthreshold$ or the maximum number of admissible templates in $\cluster{2}$ is reached. Subsequently, weights are also reassigned to $\cluster{1}$, given that it has the lowest $CW$ and the maximum distance from $\cluster{2}$. The final phase of the algorithm corresponds to the selection step, which recommends $CW_i$ templates per cluster $\cluster{i}$, prioritizing templates with the highest rating values (larger green circles) and applying a proximity penalty to reduce similarity among selected templates and further enhance diversity.
     }
 \end{figure}
 
 \begin{algorithm}
-\caption{\label{alg:cw}Template Retrieval Framework (TRF) algorithm}
+\caption{\label{alg:cw}Template Retrieval Framework (\trf) algorithm}
 \begin{algorithmic}[1]
 \REQUIRE \topsize: size of output list, $\cwthreshold$: diversity threshold, $\templatecatalog$: list of templates, $\{C_i\}$: list of clusters, usage of each template in $\templatecatalog$, input query.
 
@@ -103,12 +107,12 @@ Each step of the method is presented incrementally, with reference to the pseudo
 \end{algorithm}
 
 
-\subsubsection*{Stage 1: Assign rating values (Alg.~\ref{alg:cw}, lines 1--3)}
+\paragraph{Stage 1: Assign rating values (Alg.~\ref{alg:cw}, lines 1--3)}
 The first step in the online retrieval process is to assign a rating value to each template . Here, the rating corresponds directly to the usage history of the template. This provides a baseline measure of template popularity, which will guide the initial ranking.
 
 This step ensures that frequently used templates are initially prioritized, while still leaving room for the algorithm to promote diversity and novelty in subsequent steps.
 
-\subsubsection*{Stage 2: Filter admissible templates (Alg.~\ref{alg:cw}, line 4)}
+\paragraph{Stage 2: Filter admissible templates (Alg.~\ref{alg:cw}, line 4)}
 
 The full template set $\templatecatalog$ was filtered according to the specified article requirements (e.g., presence of a title, number of images, or other structural constraints).
 
@@ -134,7 +138,7 @@ Formally, a template $\templateobj{j} \in \templatecatalog$ is classified as adm
 \end{itemize}    
 
 
-\subsubsection*{Stage 3: Cluster-weight–based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
+\paragraph{Stage 3: Cluster-weight–based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
 
 This stage determines how many templates should be selected from each cluster and then instantiates these selections while enforcing diversity constraints, using the similarity metric.
 
@@ -165,7 +169,7 @@ If this template belongs to a cluster $\cluster{i}$ with $CW_i > 0$, it is added
 
 To further promote local diversity,  a local suppression mechanism was introduced, inspired by diversification strategies in recommendation systems.
 After selecting the $k$-th template $\templateincluster{i}{k}$ in cluster $\cluster{i}$, the rating values of all remaining templates $\templateincluster{i}{l}$ in the same cluster that are structurally too similar are penalized.
-More precisely, and given two templates $\templateincluster{i}{k}$ and $\templateincluster{i}{l}$ from the same cluster $i$; if $d_{tGMN}(t_{i,k}, t_{i,l}) < \gamma$, the rating value $r_{i,l}$ is divided by a factor $\kappa$, with $\kappa$ chosen sufficiently large to strongly inhibit near-duplicate layouts.
+More precisely, and given two templates $\templateincluster{i}{k}$ and $\templateincluster{i}{l}$ from the same cluster $i$; if $d_{tGMN}(t_{i,k}, t_{i,l}) < \gamma$, the rating value $r_{i,l}$ is divided by a factor $\kappa$. Both parameters were set through empirical pilot studies, with $\kappa$ chosen sufficiently large to strongly inhibit near-duplicate layouts.
 This suppression prevents the immediate selection of highly similar templates while keeping them available for later iterations if needed.
 
 At the end of this process, the proposed method returns a ranked list
@@ -175,7 +179,7 @@ At the end of this process, the proposed method returns a ranked list
 that balances usage-driven relevance with structural diversity and novelty.
 
 
-\subsection{Evaluation of \trs} 
+\subsection{Experimental evaluation}
 \label{section:trs-eval}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Template Catalog Dataset}
@@ -240,32 +244,33 @@ The first task is to train the LayoutGMN network used to measure structural simi
 To generate the training data,  an augmented version of the template repository $\templatecatalog$ was generated, denoted $\extendedtemplates$. For each template containing images,  all possible variants obtained by removing $i = 0,1,\ldots,n$ images were generated, thereby creating additional space for body text. This augmentation strategy preserves the overall layout structure while introducing controlled geometric variability.
 As a result, the augmented dataset $\extendedtemplates$ contains 5,341 templates.
 
-\gmnNetwork is trained on $\extendedtemplates$ using the triplet-based framework described in~\cite{patil_layoutgmn_2021}. During training, care is taken to ensure that no template appears simultaneously in the training and test sets within any triplet. The main training parameters are reported in Table~\ref{tab:params}. With this configuration, the network achieves 98\% accuracy on the test set. This performance is comparable to that reported in~\cite{patil_layoutgmn_2021}, confirming the ability of the model to capture structural isomorphism between layouts. These results validate the use of the learned embedding distance as a reliable similarity measure for the subsequent clustering stage.
+\gmnNetwork is trained on $\extendedtemplates$ using the triplet-based framework described in~\cite{patil_layoutgmn_2021}. During training, care is taken to ensure that no template appears simultaneously in the training and test sets within any triplet. The main training parameters, set through empirical pilot studies, are reported in Table~\ref{tab:params}. With this configuration, the network achieves 98\% accuracy on the test set. This performance is comparable to that reported in~\cite{patil_layoutgmn_2021}, confirming the ability of the model to capture structural isomorphism between layouts. These results validate the use of the learned embedding distance as a reliable similarity measure for the subsequent clustering stage.
 \begin{table}[htbp]
     \centering
-    \begin{tabular}{lc}
-       \hline
-     Description & Value\\
-     \specialrule{.2em}{.1em}{.1em}
-      \multicolumn{2}{c}{\gmnNetwork training parameters} \\
-        Batch size & 20 \\
-        Epochs & 500 \\
-        Dataset size & 5341\\
-        Training set size & 80\%\\
-        Validation set size & 20\%\\
-         \multicolumn{2}{c}{Clustering parameters} \\
-        $\clusterthreshold$ & $2.8$ \\
-        \multicolumn{2}{c}{Online component parameters} \\
-        $\gamma$ & $0.5$ \\
-         $\kappa$ & $10^7$ \\
-         \hline
-    \end{tabular}
+    \begin{tabularx}{\textwidth}{@{}l l X l@{}}
+    \toprule
+    Category & Symbol & Parameter Description & Value \\
+    \midrule
+    \multirow{5}{*}{\gmnNetwork training}
+               & --- & Batch size & 20 \\
+               & --- & Epochs & 500 \\
+               & --- & Dataset size & 5341 \\
+               & --- & Training set size & 80\% \\
+               & --- & Validation set size & 20\% \\
+    \midrule
+    Clustering & $\clusterthreshold$ & Distance threshold for agglomerative clustering & $2.8$ \\
+    \midrule
+    \multirow{2}{*}{Online selection}
+               & $\gamma$ & Structural similarity threshold for local suppression & $0.5$ \\
+               & $\kappa$ & Rating penalization factor for near-duplicate templates & $10^7$ \\
+    \bottomrule
+    \end{tabularx}
     \caption{Main parameters used across similarity learning, clustering, and online selection.}
     \label{tab:params} 
 \end{table}
 
 \paragraph{Template clustering.}
-The structural similarity function learned by LayoutGMN is then used as a distance metric to perform agglomerative clustering over the original template repository. Using the hand-tuned clustering threshold reported in Table~\ref{tab:params}, a total of 81 clusters was obtained.
+The structural similarity function learned by LayoutGMN is then used as a distance metric to perform agglomerative clustering over the original template repository. Using the clustering threshold set through preliminary pilot studies and reported in Table~\ref{tab:params}, a total of 81 clusters was obtained.
 
 \figref{fig:cluster-graphs} presents an analysis of the resulting clusters in terms of both size (number of templates per cluster) and cumulative usage. This reveals that the majority of isolated clusters are concentrated near the origin, representing singletons—clusters containing a single template—with minimal cumulative usage. These points correspond to highly specialized layouts with distinctive geometries that are rarely reused in practice. Conversely, the progression toward the upper-right quadrant identifies a smaller subset of clusters that dominate usage statistics. A deeper analysis revealed that these high-usage clusters, including the highlighted outlier, effectively group generic templates, such as text-only layouts, single-image templates, or standard image-with-caption configurations of varying sizes. 
 
@@ -276,8 +281,8 @@ This clustering structure makes explicit the distinction between generic layouts
     \centering
     \includegraphics[width=\widthForOneImage]{img/templates_x_usage_x_histograms.pdf}
     \caption{
-    Cluster Distribution Analytics by Total Usage and Template Count.
-    Each black point indicates the presence of at least one cluster sharing those specific characteristics. To visualize cluster density, data is grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a cluster  with a single-element). To maintain visual clarity of the graph, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant.
+    Cluster distribution analytics by total usage and template count.
+    Each black point indicates the presence of at least one cluster sharing those specific characteristics. To visualize cluster density, data is grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a single cluster). To maintain visual clarity of the graph, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant.
     }
     \label{fig:cluster-graphs}
 \end{figure}
@@ -398,7 +403,7 @@ Higher values indicate more diverse layouts. This metric focuses on absolute str
 \paragraph{Performance Analysis} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This section evaluates the online template retrieval framework (TRF) under different operating conditions. The objective is not only to quantify algorithmic performance, but also to assess how TRF behaves in realistic scenarios, where the number of proposed templates and the level of enforced diversity may vary.
+This section evaluates the online template retrieval framework (\trf) of \trs under different operating conditions. The objective is not only to quantify algorithmic performance, but also to assess how \trf behaves in realistic scenarios, where the number of proposed templates and the level of enforced diversity may vary.
 
 Two parameters govern the behavior of the selection process:  
 (i) the list size $\topsize$, which corresponds to the number of candidate templates to retrieve and is therefore application-driven; and  
@@ -432,26 +437,26 @@ First, it is necessary to analyze conformity to historical usage, measured using
 
 \figref{fig:performance-analysis-three-criteria}(a1) and (a3) report $nDCG$ values as a function of $\cwthreshold$ for a fixed list size $\topsize=5$. As expected, increasing diversification constraints leads to a gradual decrease in conformity for all diversity-aware methods. This effect is more pronounced for our approach due to the local suppression mechanism, which deliberately penalizes templates that are structurally too similar to previously selected ones.
 
-Importantly, this decrease remains controlled across both the Original Dataset Distribution (\ODD) and the more challenging Increasing Slope Distribution (\ISD). While \mostpopular trivially achieves the maximum $nDCG$, it does so at the expense of diversity, as commented in the next section. In contrast, \trs and more specifically TRF maintains acceptable conformity levels while enabling substantially richer template sets. This behavior reflects the intended compromise: historical usage is respected as a baseline, but not enforced as the sole decision criterion.
+Importantly, this decrease remains controlled across both the Original Dataset Distribution (\ODD) and the more challenging Increasing Slope Distribution (\ISD). While \mostpopular trivially achieves the maximum $nDCG$, it does so at the expense of diversity, as commented in the next section. In contrast, \trs  maintains acceptable conformity levels while enabling substantially richer template sets. This behavior reflects the intended compromise: historical usage is respected as a baseline, but not enforced as the sole decision criterion.
 
-Similar trends are observed when varying \topsize with fixed $\cwthreshold=3$ (\figref{fig:performance-analysis-three-criteria}(a2) and (a4)). Notably, \classicclusdiv exhibits a sharper degradation in $nDCG$ when $\cwthreshold < \topsize$, as clustering by usage forces the selection of very low-frequency templates during reassignment. TRF avoids this abrupt drop by decoupling structural similarity from usage during clustering.
+Similar trends are observed when varying \topsize with fixed $\cwthreshold=3$ (\figref{fig:performance-analysis-three-criteria}(a2) and (a4)). Notably, \classicclusdiv exhibits a sharper degradation in $nDCG$ when $\cwthreshold < \topsize$, as clustering by usage forces the selection of very low-frequency templates during reassignment. \trs avoids this abrupt drop by decoupling structural similarity from usage during clustering.
 
 
-Now it is turn to measure structural diversity, which constitutes the primary objective of TRF.
-For fixed $\topsize=5$, \figref{fig:performance-analysis-three-criteria}(b1) and (b3) show that under the \ODD case, TRF achieves slightly higher diversity than baseline approaches. This gain is mainly attributable to the local suppression mechanism, which prevents the selection of near-duplicate layouts within the same cluster.
+Now it is turn to measure structural diversity, which constitutes the primary objective of \trs.
+For fixed $\topsize=5$, \figref{fig:performance-analysis-three-criteria}(b1) and (b3) show that under the \ODD case, \trs achieves slightly higher diversity than baseline approaches. This gain is mainly attributable to the local suppression mechanism, which prevents the selection of near-duplicate layouts within the same cluster.
 
-Under the \ISD case, the advantage becomes substantial. Here, the cluster weight reassignment strategy plays a critical role: by reallocating selection capacity toward structurally distant clusters, the method significantly increases diversity compared to all baselines. As shown in \figref{fig:performance-analysis-three-criteria}(b3) and (b4), TRF reaches a structural diversity score near $40$, whereas baseline methods peak at around $20$ for the same parameters, effectively doubling ($2x$) the diversity.
+Under the \ISD case, the advantage becomes substantial. Here, the cluster weight reassignment strategy plays a critical role: by reallocating selection capacity toward structurally distant clusters, the method significantly increases diversity compared to all baselines. As shown in \figref{fig:performance-analysis-three-criteria}(b3) and (b4), \trs reaches a structural diversity score near $40$, whereas baseline methods peak at around $20$ for the same parameters, effectively doubling ($2x$) the diversity.
 
 An interesting behavior emerges as $\cwthreshold$ varies. For small values, repeated reassignment steps progressively increase local diversity by encouraging exploration across distant clusters. Beyond a certain point, however, excessive relaxation of the constraint leads to a convergence toward more similar templates, causing diversity to plateau or decrease. This effect highlights the existence of an operational regime where diversity gains are maximized without over-fragmenting the selection.
 
-When varying \topsize with fixed $\cwthreshold=3$ (\figref{fig:performance-analysis-three-criteria}(b2) and (b4)), the same trends persist. Diversity typically peaks when $N \approx 2\cwthreshold$, confirming that TRF scales coherently with the size of the output list.
+When varying \topsize with fixed $\cwthreshold=3$ (\figref{fig:performance-analysis-three-criteria}(b2) and (b4)), the same trends persist. Diversity typically peaks when $N \approx 2\cwthreshold$, confirming that \trs scales coherently with the size of the output list.
 
 
-Finally, and beyond structural diversity,  TRF ability to promote underutilized templates is analyzed, measured using \LTP (\figref{fig:performance-analysis-three-criteria}(c1--c4)).
+Finally, and beyond structural diversity,  \trs ability to promote underutilized templates is analyzed, measured using \LTP (\figref{fig:performance-analysis-three-criteria}(c1--c4)).
 
 The \mostpopular baseline systematically selects templates from the short head of the distribution, resulting in zero long-tail coverage. \classicclusdiv exhibits high long-tail usage for small $\cwthreshold$, but this effect rapidly diminishes as the constraint relaxes. \adaptedclusdiv, which does not cluster by usage, shows limited ability to surface rare templates.
 
-In contrast, TRF consistently retrieves at least one low-usage template under the \ODD scenario (\figref{fig:performance-analysis-three-criteria}(c1) and (c3)), regardless of $\cwthreshold$, due to the combined effect of cluster-level diversification and local suppression . Under \ISD (\figref{fig:performance-analysis-three-criteria}(c2) and (c4)), long-tail coverage remains higher than for all baselines across the full range of parameters. Furthermore, the results in \figref{fig:performance-analysis-three-criteria}(c3) and (c4) indicate a improvement of approximately $1.5x$ over the baselines. This advantage tends to diminish for large $\cwthreshold$, as fewer constraints are available to force the exploration of low-usage regions.
+In contrast, \trs consistently retrieves at least one low-usage template under the \ODD scenario (\figref{fig:performance-analysis-three-criteria}(c1) and (c3)), regardless of $\cwthreshold$, due to the combined effect of cluster-level diversification and local suppression . Under \ISD (\figref{fig:performance-analysis-three-criteria}(c2) and (c4)), long-tail coverage remains higher than for all baselines across the full range of parameters. Furthermore, the results in \figref{fig:performance-analysis-three-criteria}(c3) and (c4) indicate a improvement of approximately $1.5x$ over the baselines. This advantage tends to diminish for large $\cwthreshold$, as fewer constraints are available to force the exploration of low-usage regions.
 
 These results confirm that the proposed selection mechanism does not merely redistribute diversity among frequent templates, but actively contributes to catalog exploration.
 

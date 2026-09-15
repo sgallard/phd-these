@@ -1,0 +1,58 @@
+{
+  "instance_id": "519195",
+  "export_timestamp": "2026-09-14T16:25:15.658526",
+  "metrics": {
+    "f1": -1.5907102519641114e-06,
+    "f2": 1.551862403498454,
+    "f3": 0.36838222619544836,
+    "f4": 0.0038461538461537215,
+    "iou": 0.0038461538461537215,
+    "align": 0.0
+  },
+  "page": {
+    "width": 289.0,
+    "height": 360.0,
+    "margins": {
+      "top": 30.675,
+      "bottom": 15.0,
+      "left": 15.0,
+      "right": 15.0
+    }
+  },
+  "articles_layout": [
+    {
+      "id": "3586464",
+      "char_count": 3145,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": true,
+      "layout": {
+        "template_id": "594768",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "width": 259.0,
+        "height": 185.102,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3586516",
+      "char_count": 3062,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594822",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 185.102,
+        "width": 259.0,
+        "height": 129.223,
+        "elasticity_applied": 0
+      }
+    }
+  ]
+}

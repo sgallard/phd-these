@@ -1,23 +1,34 @@
-\section{Automatic template retrieval: a dual challenge}
+\section{Introduction}
 \label{section:template-retrieval-dual-challenge}
 
-In modern digital-to-print publishing workflows (such as the one presented for \melody), transitioning from unstructured web articles to professionally formatted print layouts relies fundamentally on templates. As defined in Chapter~\ref{chapter:definitions}, an article template $\templateobj{j} \in \templatecatalog$ provides the structural and geometric skeleton that dictates how headlines, body text, and visual assets are spatially arranged. While full page generation involves placing multiple elements simultaneously onto a page canvas, template selection at the individual article level constitutes a core building block of the entire pipeline. Automating this retrieval process reduces manual design overhead and accelerates print production. However, selecting optimal templates from extensive, highly redundant industrial catalogs presents significant algorithmic challenges that extend beyond basic rule-based filtering.
+\subsection{Motivation}
 
-Formally, given a web article $\articleobj{i} = \langle \Cart{i}, \Nimg{i}, \Tlart{i}, \Stlart{i}, \Mainart{i} \rangle$ and an extensive template catalog $\templatecatalog$, the template retrieval problem aims to return a small candidate set of templates $\recolist{N} \subset \mathcal{T}$ of size $N$ that simultaneously satisfies three fundamental requirements:
+Automating the retrieval of article templates $\templateobj{j} \in \templatecatalog$ (Chapter~\ref{chapter:definitions}) reduces the manual design overhead of publishing workflows such as \melody's, but selecting from extensive, highly redundant industrial catalogs cannot rely on basic rule-based filtering. How this problem is best formalized, however, depends on the stage of the workflow at which retrieval takes place: whether an article is considered in isolation, or jointly with the other articles already sharing its page.
+
+\subsection{Problem statement}
+
+\paragraph{Single-article setting.} Given a single web article $\articleobj{i}$ considered in isolation and the catalog $\templatecatalog$, this setting aims to retrieve a small candidate set of templates that are simultaneously admissible, structurally diverse, and free from popularity bias. This setting and proposed method are formalized in \secref{sec:trs-problem-formulation}.
+
+\paragraph{Page-aware setting.} Given an article $\articleobj{i}$ evaluated instead as part of a page canvas $\page$ shared with other articles $\articleset = \{\articleobj{1}, \dots, \articleobj{n}\}$, editorial harmony between neighboring templates is the goal, formalized as scoring, rather than retrieving, the compatibility of a candidate template with $\articleobj{i}$, conditioned on its neighbors on the page. This setting and proposed method are formalized in \secref{sec:gwes-problem-formulation}.
+
+However, evaluating either setting requires going beyond flat metadata or coordinate-based distances, since both assessing diversity and page-aware scoring hinge on the internal zoning topology $\zoning{j}$ of the templates involved. This motivates the topology-aware similarity metric $\gmn(\cdot, \cdot)$ developed in \secref{section:modelling-similarity}, shared by both settings.
+
+\subsection{Contributions}
+
+Addressing the single-article and page-aware settings introduced above, this chapter makes four contributions:
+\begin{itemize}
+    \item \textbf{tdIoU} (\secref{section:modelling-similarity}): an analytical, distance-aware Intersection-over-Union measure that provides an approximation of structural similarity between templates.
+    \item \textbf{tGMN} ($\gmn(\cdot,\cdot)$, \secref{section:modelling-similarity}): a learned Graph Matching Network-based similarity metric, trained on triplets derived from tdIoU thresholds, that captures layout topology beyond flat geometric overlap and is shared across both retrieval settings.
+    \item \textbf{\trs} (\secref{section:template-retrieval-single-article}): the Template Retrieval System, a two-phase framework for single-article retrieval that clusters the template catalog offline using tGMN and, balances relevance, structural diversity, and novelty when serving a query in online time.
+    \item \textbf{\neuralmethod} (\NeuralMethod, \secref{sec:gwes}): a page-aware scoring metric that combines a Transformer-based editorial intent module with tGMN-based similarity smoothing to correct long-tail bias when evaluating a joint article-template assignment across a shared page.
+\end{itemize}
+
+\subsection*{Outline}
+
+This chapter addresses this dual setting across three sections:
 \begin{enumerate}
-    \item \textbf{Content Admissibility and Relevance:} Every retrieved template $t_j$ must satisfy the strict structural and technical constraints dictated by article $\articleobj{i}$. This includes matching available image slots, headline presence, and body text capacity bounds. Furthermore, retrieved candidates should align with historical editorial usage practices.
-    
-    \item \textbf{Structural Diversity:} The retrieved set $\recolist{N}$ must exhibit meaningful architectural variety. Retrieved candidates must vary significantly in their internal topology $\zoning{j}$, rather than representing minor geometric variations of the same underlying template.
-    
-    \item \textbf{Popularity Bias Mitigation (Long-Tail Coverage):} Industrial template repositories exhibit severe popularity bias, where a small fraction of dominant templates accounts for the vast majority of historical selections. This creates a steep long-tail distribution where a large repository of potentially optimal and structurally unique alternatives remains underutilized. The retrieval mechanism must actively mitigate this bias to surface relevant long-tail alternatives.
-\end{enumerate}
-
-To evaluate structural diversity effectively, retrieval systems cannot rely on flat metadata or coordinate-based distance metrics, which fail to capture topological arrangements and internal block configurations. Instead, this task requires understanding, modeling, and quantifying template similarity based on internal zoning topology $\zoning{j}$. This requirement motivates the development of topology-aware layout similarity metrics, such as the Graph Matching Network-based metric $\gmn(\cdot, \cdot)$ established in Chapter~\ref{section:modelling-similarity}.
-
-Depending on the operational scope and the stage of the publishing workflow, this structure-aware retrieval problem can be formulated and solved in two distinct contexts:
-\begin{enumerate}
-    \item \textbf{Isolated Single-Article Retrieval Setup:} In this setup, template retrieval operates on an isolated article $\articleobj{i}$ without considering surrounding page arrangements. The objective is to retrieve a diverse, content-compatible candidate set $\recolist{N}$ to assist human designers during early-stage layout planning or to serve as an independent recommendation module deployed in \melody. This isolated setting is addressed in Chapter~\ref{section:template-retrieval-single-article} through the Template Retrieval System (\trs) and its diversity-aware framework (TRF).
-    
-    \item \textbf{Global Page-Aware Setup (Contextual Scoring):} In this setup, template evaluation operates within a global page context containing a set of articles $\articleset = \{\articleobj{1}, \articleobj{2}, \dots, \articleobj{n}\}$ assigned to a unified page canvas $\page$. In this page-level context, explicit structural diversity and long-tail coverage become secondary to evaluating editorial harmony, as selecting a template $\templatesel{i}$ for article $\articleobj{i}$ directly influences the visual balance and style of neighboring articles. Rather than constructing a standalone multi-candidate retrieval framework for page-level selection, this setup focuses on modeling and scoring contextual editorial compatibility through the \NeuralMethod (\neuralmethod) metric, detailed in Chapter~\ref{sec:gwes}. The output of this page-aware context is a contextual probability matrix that scores template suitability across the catalog for each article given its neighbors, which subsequently serves as the surrogate evaluation engine for multi-objective page generation in Chapter~\ref{chapter:pagegen}. It should be noted that this metric could seamlessly be used to build an analogous retrieval setup that fulfills the three aforementioned requirements; therefore, nothing is lost by focusing this section exclusively on the formulation of the metric itself.
+    \item \secref{section:modelling-similarity} develops both tdIoU and tGMN used throughout the chapter.
+    \item \secref{section:template-retrieval-single-article} addresses single-article retrieval through the \trs\ system.
+    \item \secref{sec:gwes} extends the metric to a page-aware setting via \neuralmethod.
 \end{enumerate}
 

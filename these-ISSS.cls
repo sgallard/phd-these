@@ -1934,7 +1934,7 @@
   \addtocounter{page}{1}}
 
 \AtEndDocument{
-  \fourthcover
+  %\fourthcover
   %  \clearpage
   \lastpage@putlabel
 }

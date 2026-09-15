@@ -1,12 +1,15 @@
-\section{Problem definition}
+\section{Problem formulation}
+\label{sec:problem-formulation-pagegen}
 
 For a given set of input articles $\articleset$, a valid solution requires mapping each article $\articleobj{i} \in \articleset$ to an appropriate template $\templateobj{j} \in \templatecatalog$, and discovering an optimal spatial configuration on the page canvas $\page$ that prevents overlaps, respects page boundaries, and maximizes visual quality.
 
+\subsection{Inputs and outputs}
 
 Given this setting, a specific problem instance input is denoted as $\instance = \langle \page, \articleset \rangle$, which encapsulates both the global page canvas $\page$ and the set of articles $\articleset$ to be packed. While $\page$ and $\articleset$ constitute the input instance, there is also a static template catalog $\templatecatalog$ available to resolve the layout, which does not depend on the specific instance but is fixed across all problem instances.
 
+Given this input, the desired output is a complete layout solution \solution, aggregating for every article $\articleobj{i} \in \articleset$ a template selection $\templatesel{i}$, a position allocation $\posvar{i}$, and a vertical elasticity $\elasticity{i}$ (formally defined in \secref{sec:decision-variables}) subject to the defined feasibility constraints and optimizing along the multi-objective vector $\objvector{\solution}$.
 
-\subsection{Decision Variables and Search Space Complexity}
+\subsection{Decision variables and search space}
 \subsubsection{Decision Variables}
 \label{sec:decision-variables}
 
@@ -55,7 +58,7 @@ This exponential growth establishes the NP-hard nature of the proposed task, pro
 
 %%%%%%%%%%%%%%%%%%%%% Constraints and Feasibility space %%%%%%%%%%%%%%%
 
-\subsection{Hard Constraints (Feasibility Criteria)}
+\subsection{Feasibility constraints}
 \label{sec:constraints_space}
 
 A solution $\solution$ is classified as strictly infeasible and is rejected by the optimization framework if it violates any of the following conditions:
@@ -109,13 +112,13 @@ Every allocated article bounding box \bbox{i}\ must be entirely contained within
     \label{eq:grid_alignment}
 \end{equation}
  
- Note that the proposed optimization framework satisfies this constraint by design, because (1) all templates within the catalog are predefined to match these standardized grid metrics, the optimization algorithm inherently preserves the overall grid structure, and (2) the spatial alignment is operationally guaranteed thanks to the explicit incorporation of the $\gutter$ offsetoffset when determining valid insertion coordinates, ensuring perfect horizontal alignment across the layout without expanding the search space (\secref{sec:packing_engine} for more details).
+ Note that the proposed optimization framework satisfies this constraint by design, because (1) all templates within the catalog are predefined to match these standardized grid metrics, the optimization algorithm inherently preserves the overall grid structure, and (2) the spatial alignment is operationally guaranteed thanks to the explicit incorporation of the $\gutter$ offsetoffset when determining valid insertion coordinates, ensuring perfect horizontal alignment across the layout without expanding the search space (\secref{sec:packing_engine}).
 
 
 
 %%%%%%%%%%%%%%% Multiobjective optimization %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Multi-Objective Optimization Formulation}
+\subsection{Multi-objective formulation}
 \label{sec:objective_formulation}
 
 The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). Following the four layout criteria motivated in \secref{sec:pagegen-challenge}, the optimization goal is to approximate a Pareto-optimal frontier~\cite{pareto} of layout configurations by simultaneously evaluating a vector of four distinct and conflicting objective functions:
@@ -292,7 +295,7 @@ By minimizing \objtwo, the optimization process drives the configuration toward 
 
 \paragraph{\objtwo\ implementation}
 
-In particular, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is modeled using the \NeuralMethod (\neuralmethod) defined in Chapter~\ref{sec:gwes}. Thanks to the page-aware context deep learning architecture, \neuralmethod\ is capable of capturing the complex interdependencies between neighboring articles and their assigned templates, effectively learning the implicit editorial style, thus resolving \objtwo. Of course, this assumes that the model has been trained on a sufficiently large and representative historical dataset of newspaper layouts, in the exact same way as described in Chapter~\ref{sec:gwes}. Given this, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is formally defined as:
+In particular, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is modeled using the \NeuralMethod (\neuralmethod) defined in \secref{sec:gwes}. Thanks to the page-aware context deep learning architecture, \neuralmethod\ is capable of capturing the complex interdependencies between neighboring articles and their assigned templates, effectively learning the implicit editorial style, thus resolving \objtwo. Of course, this assumes that the model has been trained on a sufficiently large and representative historical dataset of newspaper layouts, in the exact same way as described in \secref{sec:gwes}. Given this, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is formally defined as:
 
 \begin{equation}
 \Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution) = \neuralmethod(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution),

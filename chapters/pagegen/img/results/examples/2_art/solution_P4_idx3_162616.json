@@ -1,0 +1,56 @@
+{
+  "instance_id": "519195",
+  "export_timestamp": "2026-09-14T16:26:16.137043",
+  "metrics": {
+    "f1": 0.01834517188847895,
+    "f2": 1.1068225124834419,
+    "f3": 0.2612433249237556,
+    "f4": 0.0038461538461537215
+  },
+  "page": {
+    "width": 289.0,
+    "height": 360.0,
+    "margins": {
+      "top": 30.675,
+      "bottom": 15.0,
+      "left": 15.0,
+      "right": 15.0
+    }
+  },
+  "articles_layout": [
+    {
+      "id": "3586464",
+      "char_count": 3145,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": true,
+      "layout": {
+        "template_id": "594769",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "width": 259.0,
+        "height": 217.35,
+        "elasticity_applied": 15
+      }
+    },
+    {
+      "id": "3586516",
+      "char_count": 3062,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594874",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 218.35,
+        "width": 259.0,
+        "height": 92.4,
+        "elasticity_applied": 10
+      }
+    }
+  ]
+}
