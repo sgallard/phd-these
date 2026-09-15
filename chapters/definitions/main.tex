@@ -141,18 +141,125 @@ A solution $\solution$ corresponds to the desired output of the web-to-print wor
 
 
 
-To validate and benchmark the computational frameworks developed in this thesis, empirical evaluations rely on two real-world industrial repositories provided by press publishers operating under the \melody CMS environment. These datasets encapsulate different levels of editorial abstraction, ranging from individual article template catalogs with historical usage logs to fully assembled multi-article newspaper spreads.
+To instantiate the formal definitions introduced in this chapter, empirical evaluations throughout this thesis rely on two industrial repositories provided by press publishers operating under the \melody content management system: \publihebdos~\cite{publihebdos} and \laprovence~\cite{laprovence}. Both repositories originate from the same underlying platform and therefore share a common data model for templates, but differ in scope: the \publihebdos repository exposes a template catalog together with its historical usage log, whereas the \laprovence repository exposes a template catalog together with a corpus of fully assembled historical page layouts. \laprovence could, in principle, also yield a usage log by aggregating template occurrences across its page corpus; however, since this repository was not employed for the template retrieval task addressed in Chapter~\ref{chapter:template}, such a derived log was not of interest and was not extracted. 
+
+The remainder of this section describes the raw structure of both repositories (\secref{sec:publihebdos}, \secref{sec:laprovence}), and the preprocessing pipeline applied to derive the quantities required by the definitions of this chapter (\secref{sec:dataset-preprocessing}).
 
 
-%%% GILLIAN WORK
 \subsection{\publihebdos archive}
 \label{sec:publihebdos}
+
+\subsubsection{Set of templates}
+
+\publihebdos archive exposes its catalog of $\catalogsize = 452$ article templates $\templatecatalog$ through a collection of XML files, one per template. Each XML file specifies:
+\begin{itemize}
+    \item a unique identifier for the template;
+    \item its width $\Wtemp{j}$ and height $\Htemp{j}$, together with the number of page columns it spans, which is redundant with $\Wtemp{j}$, since it strictly adheres to the column grid $\colsize$ and gutter $\gutter$ of the page $\page$ (\secref{sec:template});
+    \item its number of image slots $\Nimgmax{j}$;
+    \item the number of body text characters it can accommodate when all $\Nimgmax{j}$ image slots are occupied. This is a single raw quantity that, once combined with the preprocessing step described in \secref{sec:dataset-preprocessing}, yields the full text capacity matrix $\capacity{j}$ introduced in \secref{sec:template};
+    \item its zoning $\zoning{j}$, given as the list of internal blocks $\zblock{j}{k}$, each one annotated with a semantic class $\blockfeat{\zblock{j}{k}}$ and a bounding box expressed relative to the template dimensions.
+\end{itemize}
+At this raw stage, the bounding boxes are allowed to overlap: in practice, the body text block is defined as a single large rectangle spanning the background of the template, while the remaining blocks (title, subtitle, images, captions) are layered on top of it. \secref{sec:dataset-preprocessing} describes how these overlapping boxes are later resolved into the non-overlapping polygonal geometry required by \secref{sec:template}. Each XML file is accompanied by a JPEG rendering of the template, in which every block is displayed with a placeholder graphic (\figref{fig:publihebdos-template-example}).
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: pegar imagen 
+    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+    \caption{Example of a \publihebdos template rendering, with placeholder graphics for each block.}
+    \label{fig:publihebdos-template-example} 
+\end{figure}
+
+\subsubsection{Usage log}
+
+In addition to the template catalog, \publihebdos provides a CSV usage log covering the six months preceding the data extraction, reporting for each template its identifier, its overall usage count $\templateutilization{j}$, and its per-month usage count. \figref{fig:publihebdos-usage-longtail} plots the resulting overall usage distribution across the catalog, reordered by decreasing usage: it exhibits a pronounced long-tail shape, with a small subset of templates (empirically, the top 4\% of the catalog, corresponding to a usage $\templateutilization{j}$ above $8000$) concentrating most of the recorded usage, while the majority of templates are used sparingly or not at all. This empirically observed threshold of $8000$ is reused in Chapter~\ref{chapter:template} to separate the short head from the long tail when evaluating template retrieval methods. More generally, this long-tail distribution motivates the design of the template retrieval mechanisms introduced in Chapter~\ref{chapter:template}, which account for popularity bias and long-tail exposure together with structural diversity.
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: pegar imagen
+    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+    \caption{Overall usage distribution across the \publihebdos template catalog, reordered by decreasing usage, showing a pronounced long-tail shape.}
+    \label{fig:publihebdos-usage-longtail}
+\end{figure}
+
+\subsubsection{Statistics}
+% TODO: decidir si esta subseccion aporta lo suficiente como para incluirla, y completarla
 
 \subsection{\laprovence archive}
 \label{sec:laprovence}
 
+\subsubsection{Set of templates}
+
+\laprovence archive exposes its own catalog of $\catalogsize = 345$ article templates $\templatecatalog$, following the same XML and JPEG format described for \publihebdos in \secref{sec:publihebdos}.
+
+%\subsubsection{Statistics}
+
+\subsubsection{Set of pages}
+
+In addition to its template catalog, the \laprovence archive provides a corpus of $6{,}007$ historical page layouts, each corresponding to a front or internal page of the daily newspaper composed by human operators within \melody. Each page is described by an XML file specifying:
+\begin{itemize}
+    \item a unique identifier for the page;
+    \item its width $\Wpage$ and height $\Hpage$, its margins $\mtop, \mbottom, \mleft, \mright$, and its column grid $\colsize$ and gutter $\gutter$;
+    \item for each article placed on the page:
+    \begin{itemize}
+        \item a unique identifier;
+        \item its position and size ($x$, $y$, width, and height), expressed relative to the absolute page boundaries, i.e., ignoring the margins;
+        \item the identifier $\templatesel{i}$ of the template selected for the article;
+        \item a deep copy of the corresponding template's own XML file.
+    \end{itemize}
+\end{itemize}
+Advertisements are not always represented in this XML format, since they are typically hardcoded directly onto the page rather than modeled as articles. 
+Because $\Wtemp{j}$ strictly adheres to the column grid $\colsize$ and gutter $\gutter$ of the page $\page$ (\secref{sec:template}), an article's width always matches the width of its selected template exactly.
+In contrast, its height may not, a discrepancy formally captured by the elasticity variable introduced in \secref{sec:decision-variables}. Similarly, an article may occupy fewer image slots than the $\Nimgmax{\templatesel{i}}$ available in the assigned template, though never more.
+
+In practice, the page width $\Wpage$, height $\Hpage$, margins $\mtop, \mbottom, \mleft, \mright$, column size $\colsize$, and gutter $\gutter$ are fixed across the entire \laprovence page corpus:
+\begin{itemize}
+    \item $\Wpage = 289.0$ mm, $\Hpage = 360.0$ mm;
+    \item $\mtop = 30.675$ mm, $\mbottom = 15.0$ mm, $\mleft = 15.0$ mm, $\mright = 15.0$ mm;
+    \item $\colsize = 40.0$ mm, $\gutter = 4.0$ mm (e.g., a two-column span therefore measures $2\colsize + \gutter = 84.0$ mm).
+\end{itemize}
+
+A PDF rendering of the composed page is additionally provided alongside each XML file (\figref{fig:laprovence-page-example}).
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: pegar imagen
+    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+    \caption{Example of a composed \laprovence page layout (PDF rendering).}
+    \label{fig:laprovence-page-example}
+\end{figure}
+
+%\subsubsection{Statistics}
+
 \subsection{Preprocessing}
 \label{sec:dataset-preprocessing}
-%cgal 
-%polygon
-%
+
+\subsubsection{Template preprocessing}
+
+As noted in \secref{sec:publihebdos}, the raw bounding boxes provided in the template XML files do not represent the actual topology of the internal blocks. Since several blocks (specially the body text block, defined as a single rectangle spanning the background) overlap with adjacent blocks, this raw geometry cannot be used directly to compute layout similarity between templates (\secref{section:modelling-similarity}). Consequently, each template is cleaned by computing intersection and union operations between the declared bounding boxes, using the CGAL library, to recover the actual polygon $\blockgeom{\zblock{j}{k}}$ that bounds each block.
+
+Once the zoning $\zoning{j}$ has been cleaned in this way, the text capacity matrix $\capacity{j}$ is computed for each template following the definition given in \secref{sec:template}. The resulting template $\templateobj{j} = \langle \Wtemp{j}, \Htemp{j}, \zoning{j}, \capacity{j} \rangle$ is serialized to a JSON file, and a new PNG rendering is generated to visualize the cleaned zoning topology (\figref{fig:template-cleaned-topology}).
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: pegar imagen
+    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+    \caption{Cleaned zoning topology of a template, after resolving overlapping raw bounding boxes into real block polygons.}
+    \label{fig:template-cleaned-topology}
+\end{figure}
+
+\subsubsection{Page preprocessing}
+
+Before use, the \laprovence page corpus described in \secref{sec:laprovence} is filtered in two steps. First, all front pages are discarded, a requirement imposed by \melody, since front pages follow different, more free-form layout construction principles. Second, among the remaining pages, pages exhibiting spatial overflow or overlap between articles (indicating an exporting error) and pages referencing a template identifier absent from the corresponding template catalog (indicating a desynchronization between the two datasets) are also discarded. After these two filtering steps, $4{,}449$ pages remain usable.
+
+These usable pages are then classified into four disjoint categories, based on the percentage difference, for each article on the page, between its actual height and the nominal height of its assigned template. 
+\begin{itemize}
+    \item pages composed of a single article spanning the full page, for which this height comparison does not apply: $953$ pages;
+    \item pages with two articles or more, where every article's height matches its template's height exactly (a $0\%$ difference): $2{,}665$ pages;
+    \item pages with two articles or more, where at least one article's height difference is non-zero but remains within the $[-15\%, 15\%]$ range -- i.e., the article may be either compressed or expanded relative to its template, within this admissible margin: $110$ pages;
+    \item pages with two articles or more, where at least one article's height difference falls outside the $[-15\%, 15\%]$ range: $721$ pages.
+\end{itemize}
+The thresholds used for this classification ($[-15\%, 15\%]$) are not derived for this thesis. Instead, they are established by \melody itself as part of its own production guidelines. This percentage difference is later formalized, for the page generation task, as the elasticity variable introduced in \secref{sec:decision-variables}.
+
+All $4{,}449$ usable pages are used to train the neural models described in Chapter~\ref{chapter:template} (\secref{sec:gwes}), which relies on the train/validation/test split described there; restricting training to a subset of these categories was deliberately avoided, since maximizing the amount of available data is preferable for training a neural model.
+
+In contrast, only the exact-match and admissible-elasticity categories (amounting to $2{,}775$ pages) constitute the eligible pool for the evolutionary page generation algorithm of Chapter~\ref{chapter:pagegen}, since these are the only categories that remain representative of the range that formulation is designed to model. The procedure used to select the actual benchmark instances from this pool is described in \secref{subsec:dataset_characterization}.

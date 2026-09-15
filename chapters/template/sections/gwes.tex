@@ -33,9 +33,9 @@ The primary role of the Transformer-based encoder is to operate as a contextual 
 
 To feed the joint article-template assignment $(\page, \articleset)$ into the Transformer encoder, the article set $\articleset$ (together with each article's currently assigned template $\templatesel{i}$) is reformatted into a single input tensor, aggregating three distinct feature streams per article:
 \begin{enumerate}
-    \item \textbf{Input Metadata ($\mathbf{m}_i$):} The intrinsic structural features of article $\articleobj{i} \in \articleset$ exactly as defined in Chapter~\ref{chapter:definitions}. This vector encapsulates four concrete numerical features extracted from the input instance: the body text character count, the total number of allocated images, and binary flags indicating the presence of an article title and subtitle, respectively.
+    \item \textbf{Input Metadata:} The intrinsic structural features of article $\articleobj{i} \in \articleset$ exactly as defined in Chapter~\ref{chapter:definitions}. This vector encapsulates four concrete numerical features extracted from the input instance: the body text character count, the total number of allocated images, and binary flags indicating the presence of an article title and subtitle, respectively.
     
-    \item \textbf{Spatial Coordinates ($\mathbf{c}_i$):} The absolute geometric coordinates of each article $\articleobj{i} \in \articleset$, relative to the page dimensions (\Wpage\ and \Hpage). This vector captures the physical bounding box properties of $\articleobj{i}$, specifically its top-left grid coordinates $(x_i, y_i)$, width $\Wtemp{\templatesel{i}}$, and height $\Htemp{\templatesel{i}}$.
+    \item \textbf{Spatial Coordinates:} The absolute geometric coordinates of each article $\articleobj{i} \in \articleset$, relative to the page dimensions (\Wpage\ and \Hpage). This vector captures the physical bounding box properties of $\articleobj{i}$, specifically its top-left grid coordinates $(x_i, y_i)$, width $\Wtemp{\templatesel{i}}$, height $\Htemp{\templatesel{i}}$, and the number of page columns spanned by the assigned template.
     
     \item \textbf{Template Zoning ($\zoning{i}$):} A flattened structural vector aggregating the internal geometric coordinates of all constituent blocks within template $\templatesel{i}$. For each zoning block $\zblock{i}{k} \in \zoning{i}$, a 5-dimensional feature tuple is appended to the vector, corresponding to a numerical identifier of the semantic feature class $\blockfeat{\zblock{i}{k}}$ (as formalized in Chapter~\ref{chapter:definitions}), followed by its relative bounding box properties $(x, y, w, h)$ normalized by the template dimensions $\Wtemp{\templatesel{i}}$ and $\Htemp{\templatesel{i}}$. This representation captures the layout topology of the template.
 
@@ -107,21 +107,11 @@ To evaluate the architectural robustness and industrial applicability of the pro
 
 \paragraph{Historical Layout Dataset}
 
-The historical layout dataset contains a total of $6,007$ production pages extracted from the publisher's workflows. To establish a high-fidelity benchmark, a data-cleaning pipeline was deployed to isolate incomplete or deformed layout files, resulting in $4,449$ fully usable, non-corrupted pages. 
-
-Each layout instance in this clean repository is represented as a detailed XML file encapsulating three data streams:
-\begin{itemize}
-    \item The global physical dimensions of the page canvas~$\page$, specifying total nominal boundaries ($\Wpage, \Hpage$) and margins ($\mtop, \mbottom, \mleft, \mright$).
-    \item The exact top-left coordinate placements ($\xcoord{i}, \ycoord{i}$), dimensions for each individual article~$\articleobj{i}$ relative to the page origin, and the assigned template $\templatesel{i}$.
-    \item A structural copy of the internal zoning topology~$\zoning{\templatesel{i}}$, outlining the relative bounding shapes and semantic feature classes of the inner blocks belonging to the chosen template~$\templatesel{i}$.
-\end{itemize}
-
-The final dataset consider instances containing a variable count of between $1$ and $11$ distinct news articles arranged simultaneously within a single page canvas.
-
+Following the filtering and classification pipeline described in \secref{sec:dataset-preprocessing}, $4,449$ usable pages from the \laprovence archive are available to train the Transformer Encoder module. These instances contain a variable count of between $1$ and $11$ distinct news articles arranged simultaneously within a single page canvas; the feature streams extracted from each article $\articleobj{i}$ to build the network's input are detailed in the input tensor paragraph of \secref{sec:transformer_module}.
 
 \paragraph{Template Catalog}
 
-The structural template catalog $\templatecatalog$ is composed by  $\catalogsize = 345$ designs from \laprovence archive. Each blueprint specifies all elements described in Chapter~\ref{chapter:definitions} for a given template: dimensions ($W_j, H_j$), internal zoning $\zoning{j}$ and text capacity mapping $\capacity{j}$. 
+The structural template catalog $\templatecatalog$ used to compute $\gmnMatrix$ is the \laprovence catalog described in \secref{sec:laprovence}, comprising $\catalogsize = 345$ templates.
 
 
 \subsubsection{$\gmnMatrix$ calculation}

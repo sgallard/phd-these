@@ -22,10 +22,41 @@ The computational environments are strictly partitioned according to their opera
 
 
 
-\subsection{Dataset and instance setup}
+\subsection{Historical dataset and instance setup}
 \label{subsec:dataset_characterization}
 
-To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using \laprovence archive (\secref{sec:laprovence}). This dataset  serves a threefold purpose within our experimental validation pipeline: first, it provides the required historical context to train the Transformer Encoder module of \neuralmethod; second, it is utilized to select and adapt a curated set of representative real-world examples to construct the evaluation problem instances~$\instance$ used to benchmark \methodName; and third, it supplies the empirical objective distributions from which the historical aspiration vectors guiding the preference-based selection of \methodName are extracted, as detailed in \secref{sec:many-objective_optimization}. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine and as the underlying structural dataset utilized to train the LayoutGMN module.
+To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using the \laprovence archive (\secref{sec:laprovence}). This dataset serves two purposes within this evaluation: it supplies the empirical objective distributions from which the historical aspiration vectors guiding the preference-based selection of \methodName are extracted, as detailed in \secref{sec:many-objective_optimization}; and it is utilized, together with the independent test set defined in \secref{sec:gwes}, to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine.
+
+\subsubsection*{Historical dataset for aspiration vectors}
+
+The historical aspiration vectors used by \methodName\ (\secref{sec:many-objective_optimization}) are computed over the full set of $4{,}449$ usable \laprovence pages described in \secref{sec:dataset-preprocessing}.
+
+\subsubsection*{Instance Setup}
+
+An instance set comprising 30 instances was established. To ensure strict validation integrity and prevent data leakage with \neuralmethod, these instances were sampled from the intersection of the exact-match and admissible-elasticity categories described in \secref{sec:dataset-preprocessing} ($2{,}775$ pages) and the independent test set defined in \secref{sec:gwes}. The experimental corpus covers a wide spectrum of visual complexities by varying the number of articles per page, ranging from low-density configurations to a practical upper bound in \melody. The structural distribution of the evaluation suite is detailed in Table~\ref{tab:instance_distribution}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\linewidth}{Xcc}
+\hline
+\textbf{Complexity} & \textbf{Articles per Page ($\numarticles$)} & \textbf{Instance Count} \\ \hline
+Low Density & 2 & 7 \\
+            & 3 & 7 \\ \hline
+Medium Density & 4 & 10 \\
+               & 5 & 4 \\ \hline
+High Density   & 6 & 1 \\
+               & 8 & 1 \\ \hline
+\textbf{Total Number of Instances} & & \textbf{30} \\ \hline
+\end{tabularx}
+\caption{Structural composition and article density distribution of the 30 production layout instances utilized.}
+\label{tab:instance_distribution}
+\end{table}
+
+The sample frequencies for $n=6$ and $n=8$ reflect the exact availability limits within the  test set, rather than an arbitrary choice. The evaluation ceiling is strictly capped at $n=8$ articles; layouts exceeding this threshold represent extreme, anomalous editorial edge cases that fall outside the operational scope of the required task.
+
+For each selected instance, the geometric coordinates, positions, and final template allocations selected by human designers were completely stripped from the metadata. The baseline models and the evolutionary framework were provided exclusively with the article's content and constraints that define the formal input vector $\instance = \langle \page, \articleset \rangle$.  This configuration forces a true blind evaluation, challenging the algorithms to generate layouts purely from raw content specifications.
+
+To account for the stochastic nature of the evolutionary operators and ensure statistical significance, all comparative experiments across the 30 benchmark instances were executed over 30 independent runs, each utilizing a unique random seed.
 
 
 %%%%%%%%% Hyperparameters U%%%%%%%%%%%%%
@@ -88,36 +119,7 @@ The asymmetric population sizes reported in Table~\ref{tab:algorithmic_parameter
 
 \subsection{Comparison with alternative baselines}
 
-This subsection presents a quantitative evaluation of the proposed \methodNameUniform\ framework, that is, the uniform variant of the proposed method. The analysis focuses first on this unbiased formulation to thoroughly assess its global solution space coverage and demonstrate its fundamental superiority over other design paradigms. 
-
-\subsubsection{Experimental Setup and Instances}
-\label{subsec:experimental_setup}
-
-To conduct a rigorous comparative evaluation of the uniform \methodNameUniform\ framework against baselines, a benchmark suite comprising 30 production-grade instances was established. To ensure strict validation integrity and prevent data leakage, these instances were sampled exclusively from the independent test set defined in \secref{sec:gwes}. The experimental corpus covers a wide spectrum of visual complexities by varying the number of articles per page ($\numarticles$), ranging from low-density configurations to the practical upper bound common in professional CMS. The structural distribution of the evaluation suite is detailed in Table~\ref{tab:instance_distribution}.
-
-\begin{table}[htbp]
-\centering
-\begin{tabularx}{\linewidth}{Xcc}
-\hline
-\textbf{Complexity} & \textbf{Articles per Page ($\numarticles$)} & \textbf{Instance Count} \\ \hline
-Low Density & 2 & 7 \\
-            & 3 & 7 \\ \hline
-Medium Density & 4 & 10 \\
-               & 5 & 4 \\ \hline
-High Density   & 6 & 1 \\
-               & 8 & 1 \\ \hline
-\textbf{Total Number of Instances} & & \textbf{30} \\ \hline
-\end{tabularx}
-\caption{Structural composition and article density distribution of the 30 production layout instances utilized.}
-\label{tab:instance_distribution}
-\end{table}
-
-The sample frequencies for $n=6$ and $n=8$ reflect the exact availability limits within the  test set, rather than an arbitrary choice. The evaluation ceiling is strictly capped at $n=8$ articles; layouts exceeding this threshold represent extreme, anomalous editorial edge cases that fall outside the operational scope of the required task. 
-
-For each selected instance, the geometric coordinates, positions, and final template allocations selected by human designers were completely stripped from the metadata. The baseline models and the evolutionary framework were provided exclusively with the article's content and constraints that define the formal input vector $\instance = \langle \page, \articleset \rangle$.  This configuration forces a true blind evaluation, challenging the algorithms to synthesize professional-grade layouts purely from raw content specifications.
-
-To account for the stochastic nature of the evolutionary operators and ensure statistical significance, all comparative experiments across the 30 benchmark instances were executed over 30 independent runs, each utilizing a unique random seed.
-
+This subsection presents a quantitative evaluation of the proposed \methodNameUniform\ framework, that is, the uniform variant of the proposed method. The analysis focuses first on this unbiased formulation to thoroughly assess its global solution space coverage and demonstrate its fundamental superiority over other design paradigms.
 
 \subsubsection{Baseline Methods}
 \label{subsubsec:baselines}
