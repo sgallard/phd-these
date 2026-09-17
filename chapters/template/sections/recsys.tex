@@ -6,7 +6,11 @@
 
 Having established $\gmn{\cdot}{\cdot}$ as the primary metric for topological layout similarity in \secref{section:modelling-similarity}, this structural foundation can now be applied to solve automated template retrieval.
 
-In the single article-per-article context, the template retrieval problem is defined as a top-$\topsize$ retrieval problem over a set of available templates $\templatecatalog$. Given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. A key requirement of this task is structural diversity: retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template. A second critical requirement is novelty, or long-tail coverage~\cite{longtail}: traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized. Together, these requirements echo strategies well documented in the Recommendation Systems (RS) literature~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}.
+In the single article-per-article context, the template retrieval problem is defined as a top-$\topsize$ retrieval problem over a set of available templates $\templatecatalog$: given a query content item and an extensive catalog of templates, the objective is to retrieve a small set of candidates that are both compatible with the content's technical constraints and structurally distinct from one another. 
+
+A key requirement of this task is structural diversity (\secref{sec:sota-diversity}): retrieved objects must vary significantly in their topological and spatial arrangements of internal components (e.g., text blocks, visual assets, titles) rather than representing minor geometric variations of the same underlying design template.
+
+A second critical requirement is novelty, or long-tail coverage~\cite{longtail}: traditional retrieval mechanisms in document repositories frequently rely on historical interaction statistics, favoring layouts that have been frequently selected in the past. While straightforward, this strategy introduces a severe popularity bias, creating a long-tail distribution where a small fraction of dominant designs are repeatedly retrieved, while a vast repository of potentially optimal and structurally unique alternatives remains underutilized. Together, these requirements echo strategies well documented in the Recommendation Systems (RS) literature~\cite{BOBADILLA2013109,vrijenhoek-diversity-2024}.
 
 
 \begin{callout}
@@ -46,7 +50,7 @@ The objective of the offline component is to construct a structure-aware cluster
 d_{GMN}(\templateobj{1},\templateobj{2}) = |\gmn{\templateobj{1}}{\templateobj{2}}|,
 \label{eq:gmn-distance-definition}
 \end{equation}
-templates are organized via agglomerative clustering with a threshold $\clusterthreshold$, producing a set of clusters $\clusters$ (starting from singleton clusters, pairs of clusters are merged when their average inter-template distance is below $\clusterthreshold$).  Unlike methods such as ClusDiv~\cite{clusdiv}, the number of clusters is not tied to the target recommendation list size $\topsize$, but is determined solely by $\clusterthreshold$, which controls the tolerance for structural similarity of templates in the dataset. This clustering provides the foundation for the diversity-aware selection performed during the online retrieval phase.
+templates are organized via agglomerative clustering with a threshold $\clusterthreshold$, producing a set of clusters $\clusters$ (starting from singleton clusters, pairs of clusters are merged when their average inter-template distance is below $\clusterthreshold$).  Unlike methods such as ClusDiv (\secref{sec:sota-clusdiv}), the number of clusters is not tied to the target recommendation list size $\topsize$, but is determined solely by $\clusterthreshold$, which controls the tolerance for structural similarity of templates in the dataset. This clustering provides the foundation for the diversity-aware selection performed during the online retrieval phase.
 
 \subsubsection{Online component: Template Retrieval Framework (\trf)}
 
@@ -120,22 +124,22 @@ Formally, a template $\templateobj{j} \in \templatecatalog$ is classified as adm
 \begin{itemize}
 \item Image Allocation Integrity: The maximum image slot capacity of the template must accommodate the image count required by the article:
 \begin{equation}
-    \Nimg{i} \leq \Nimgmax{j}
+    \Nimg{i} \leq \Nimgmax{j}.
 \end{equation}
 
 \item Title Consistency: The presence of a title element in the article must match the title block availability in the template:
 
 \begin{equation}
-\Tlart{i} = \Tltemp{j}
+\Tlart{i} = \Tltemp{j}.
 \end{equation}
 
 \item Text Capacity Integrity: Assuming $\kactive{i} = \Nimg{i}$ active images are retained, the article's total character count $\Cart{i}$ must fall within the text capacity boundaries defined by the template's capacity matrix $\capacity{j}$, such that:  
 
 \begin{equation}
-    \capacity{j}[n_i, 0] \le c_i \le \capacity{j}[n_i, 1]
+    \capacity{j}[n_i, 0] \le c_i \le \capacity{j}[n_i, 1].
 \end{equation}
 
-\end{itemize}    
+\end{itemize}
 
 
 \paragraph{Stage 3: Cluster-weight–based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
@@ -279,10 +283,12 @@ This clustering structure makes explicit the distinction between generic layouts
 
 \begin{figure}[htbp]
     \centering
+    %todo CHANGE CAPITALS OF FIGURE
+    %todo add a and b to illustrations
     \includegraphics[width=\widthForOneImage]{img/templates_x_usage_x_histograms.pdf}
     \caption{
     Cluster distribution analytics by total usage and template count.
-    Each black point indicates the presence of at least one cluster sharing those specific characteristics. To visualize cluster density, data is grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a single cluster). To maintain visual clarity of the graph, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant.
+    To visualize cluster density, clusters are grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a single cluster). To account for the large axis range, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant. Inserts (a) and (b) illustrates clusters configuration.
     }
     \label{fig:cluster-graphs}
 \end{figure}
@@ -308,6 +314,7 @@ First, it is necessary to examine how template usage is distributed across struc
 These two distributions are illustrated in \figref{fig:cluster-usage}.
 \begin{figure}[htbp]
     \centering
+    %todo change axis. y-axis: number of clusters (bigger). x-axis: Top-N
     \includegraphics[width=\widthForOneImage]{img/cluster_usage.pdf}
     \caption{
    Observed and Synthetic Template Usage Distributions. This figure shows the number of clusters used to group the top-$\topsize$ templates (ranked by usage) for two distinct distribution scenarios. The first scenario, represented by the blue curve, corresponds to the \emph{Original Dataset Distribution} (\ODD), where top-$\topsize$ templates are more evenly distributed across clusters, particularly for low $\topsize$-values (green region). This spread suggests that selecting templates based on usage alone should yield satisfactory diversity. The second scenario, shown by the red curve, simulates a situation where high-usage templates are more frequently concentrated within the same clusters and is termed the \emph{Increasing Slope Distribution} (\ISD). This arrangement is intentionally designed to be nearly symmetric relative to the dotted reference line, creating a more challenging scenario, as selecting templates based solely on usage would likely lead to lower diversity in the output.}
@@ -393,7 +400,7 @@ D(L) = \frac{1}{N(N-1)} \sum_{\templateobj{i} \in \recolist{N}} \sum_{\templateo
 \]
 Higher values indicate more diverse layouts. This metric focuses on absolute structural variation without reference to the dataset distribution.
 
-\item[\textbf{Long-Tail Coverage}] Analyzing the usage distribution of templates, reordered by decreasing usage (see \figref{fig:dataset-info-graphs}(d)), an usage $\templateutilization{k}$ threshold of $8000$ is defined to distinguish between the short head and the long tail. To assess a method's ability to retrieve templates beyond the top 4\% of the most frequently used ones, the \emph{long-tail percentage} (\LTP) for a retrieval list $\recolist{N}$ can be calculated as the proportion of templates in $\recolist{N}$ with usage $\templateutilization{k}$ below $8000$.
+\item[\textbf{Long-Tail Coverage}] Analyzing the usage distribution of templates, reordered by decreasing usage, an usage $\templateutilization{k}$ threshold of $8000$ is defined to distinguish between the short head and the long tail. To assess a method's ability to retrieve templates beyond the top 4\% of the most frequently used ones, the \emph{long-tail percentage} (\LTP) for a retrieval list $\recolist{N}$ can be calculated as the proportion of templates in $\recolist{N}$ with usage $\templateutilization{k}$ below $8000$.
 \end{itemize}
 
 

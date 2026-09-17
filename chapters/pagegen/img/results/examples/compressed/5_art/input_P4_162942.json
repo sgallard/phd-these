@@ -1,0 +1,109 @@
+{
+  "instance_id": "529469",
+  "export_timestamp": "2026-09-14T16:29:42.986793",
+  "metrics": {
+    "f1": 0.01544401544402707,
+    "f2": 1.7707401632983628,
+    "f3": 6.909013913430042,
+    "f4": 0.6403067095972084,
+    "iou": 0.34102565103238847,
+    "align": 0.5985621171296397
+  },
+  "page": {
+    "width": 289.0,
+    "height": 360.0,
+    "margins": {
+      "top": 30.675,
+      "bottom": 15.0,
+      "left": 15.0,
+      "right": 15.0
+    }
+  },
+  "articles_layout": [
+    {
+      "id": "3631693",
+      "char_count": 2379,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": true,
+      "layout": {
+        "template_id": "594723",
+        "page_index": 0,
+        "x": -0.0,
+        "y": -1.073,
+        "width": 171.333,
+        "height": 167.64,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3630870",
+      "char_count": 2223,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594811",
+        "page_index": 0,
+        "x": 0.0,
+        "y": 167.24,
+        "width": 171.333,
+        "height": 146.685,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631771",
+      "char_count": 1271,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": false,
+      "layout": {
+        "template_id": "594785",
+        "page_index": 0,
+        "x": 174.544,
+        "y": -0.419,
+        "width": 83.667,
+        "height": 188.595,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3630861",
+      "char_count": 915,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594902",
+        "page_index": 0,
+        "x": 174.828,
+        "y": 186.472,
+        "width": 83.667,
+        "height": 83.82,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3630859",
+      "char_count": 377,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "602903",
+        "page_index": 0,
+        "x": 174.828,
+        "y": 271.499,
+        "width": 83.667,
+        "height": 41.91,
+        "elasticity_applied": 0
+      }
+    }
+  ]
+}

@@ -4,92 +4,9 @@
 \subsection{Architectural overview}
 \label{sec:method-overview}
 
-The proposed layout generation method, coined \methodNameGeneralLong (\methodNameGeneral), is engineered as a multi-objective evolutionary framework that find a set of layouts $\solution$ for a given instance $\instance$ of the above-detailed problem.  
+The proposed layout generation method, coined \methodNameGeneralLong (\methodNameGeneral), is engineered as a multi-objective evolutionary method that finds a set of layouts $\solution$ for a given instance $\instance$ of the above-detailed problem.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{tikzpicture}[
-        flowbox/.style={draw, rounded corners=2pt, text width=70mm, minimum height=11mm, align=center, font=\small, inner sep=2mm},
-        halfbox/.style={draw, rounded corners=2pt, text width=40mm, minimum height=11mm, align=center, font=\small, inner sep=2mm},
-        smallbox/.style={draw, rounded corners=2pt, text width=24mm, minimum height=13mm, align=center, font=\small, inner sep=1.5mm},
-        arr/.style={->, >=stealth, thick},
-        modtitle/.style={font=\small\bfseries, align=left},
-        node distance=6mm and 8mm
-    ]
-
-    % --- Module A: Many-Objective Evolutionary Optimization Engine ---
-    \node[halfbox] (aspiration) {Historical aspiration points};
-    \node[halfbox, right=of aspiration] (dasdennis) {Das-Dennis reference directions~\cite{das-dennis}};
-
-    \node[halfbox, below=of aspiration] (methodname) {\methodName: preference-guided RNSGA-III~\cite{rnsga-iii}};
-    \node[halfbox, below=of dasdennis] (methodnameuniform) {\methodNameUniform: uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}};
-
-    \node[flowbox] (pop) at ($(methodname.south)!0.5!(methodnameuniform.south)+(0,-13mm)$) {Population of chromosomes $\chromosome$ across generations --- genetic operators: crossover, mutation, selection (\figref{fig:evolutionary_loop})};
-
-    \draw[arr] (aspiration) -- (methodname);
-    \draw[arr] (dasdennis) -- (methodnameuniform);
-    \draw[arr] (methodname.south) -- (pop.north);
-    \draw[arr] (methodnameuniform.south) -- (pop.north);
-
-    \draw[dashed, rounded corners=3pt] ($(aspiration.north west)+(-4mm,9mm)$) rectangle ($(dasdennis.east |- pop.south)+(4mm,-4mm)$);
-    \node[modtitle, anchor=north west] at ($(aspiration.north west)+(-3mm,8mm)$) {Many-Objective Evolutionary Optimization Engine};
-
-    % --- Module B: Packing Decoder Module ---
-    \node[flowbox, below=15mm of pop] (decoder) {Packing decoder engine: extreme-points backtracking routine~\cite{crainic-extreme-points} (\secref{sec:packing_engine})};
-    \node[flowbox, below=of decoder] (layout) {Decoded layout $\solution$};
-
-    \draw[arr] (pop) -- (decoder);
-    \draw[arr] (decoder) -- (layout);
-
-    \draw[dashed, rounded corners=3pt] ($(decoder.north west)+(-4mm,9mm)$) rectangle ($(layout.south east)+(4mm,-4mm)$);
-    \node[modtitle, anchor=north west] at ($(decoder.north west)+(-3mm,8mm)$) {Packing Decoder Module};
-
-    % --- Module C: Multi-Objective Evaluation Module ---
-    \node[smallbox, below=15mm of layout, xshift=-50mm] (f1) {$\objone$: Page coverage};
-    \node[smallbox, right=of f1] (f2) {$\objthree$: Text capacity integrity};
-    \node[smallbox, right=of f2] (f3) {$\objfour$: Positioning quality};
-    \node[smallbox, right=of f3] (f4) {$\objtwo$: \neuralmethod};
-
-    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f1.north);
-    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f2.north);
-    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f3.north);
-    \draw[arr] (layout.south) -- ++(0,-0.5) -| (f4.north);
-
-    \node[flowbox] (objvec) at ($(f2.south)!0.5!(f3.south)+(0,-13mm)$) {$\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
-
-    \draw[arr] (f1.south) -- (objvec.north);
-    \draw[arr] (f2.south) -- (objvec.north);
-    \draw[arr] (f3.south) -- (objvec.north);
-    \draw[arr] (f4.south) -- (objvec.north);
-
-    \draw[dashed, rounded corners=3pt] ($(f1.north west)+(-4mm,9mm)$) rectangle ($(f4.east |- objvec.south)+(4mm,-4mm)$);
-    \node[modtitle, anchor=north west] at ($(f1.north west)+(-3mm,8mm)$) {Multi-Objective Evaluation Module};
-
-    % --- Feedback loop: objective vector drives chromosome selection ---
-    \draw[arr] (objvec.west) -- ++(-6,0) node[pos=0.35, above, font=\small] {drives chromosome selection} |- (pop.west);
-
-    \end{tikzpicture}
-    \caption{Global architectural workflow of the proposed \methodNameGeneral\ framework. The three interconnected modules correspond to the description in this section: the evolutionary optimization engine drives a population of chromosomes $\chromosome$ through either the preference-guided \methodName\ or the uniform \methodNameUniform\ paradigm (the internal generational loop is detailed separately in \figref{fig:evolutionary_loop}); the packing decoder module decodes each chromosome into a layout $\solution$; and the multi-objective evaluation module synthesizes the objective vector $\objvector{\solution}$, which is fed back to drive chromosome selection in the next generation.}
-    \label{fig:method-overview}
-\end{figure}
-
-The global workflow of \methodNameGeneral operates as an optimization pipeline structured across three main interconnected modules, as illustrated in Figure~\ref{fig:method-overview}. 
-
-\begin{itemize}
-    \item \textbf{Many-Objective Evolutionary Optimization Engine:} Operating as the strategic search engine, this module manages the population of abstract chromosomes across generations through specialized genetic operators (crossover, mutation, and pareto-front based selection~\cite{pareto}) detailed in the generational loop of \figref{fig:evolutionary_loop}. The engine navigates the combinatorial search space of chromosomes, which represents template assignments ($\templatesel{i}$), article positioning $\posvar{i}$, and vertical elasticities $\elasticity{i}$.  Additionally, this module implements two distinct paradigms to select the best chromosomes in each generation: a preference-guided RNSGA-III~\cite{rnsga-iii}, coined \methodName, which injects historical human design preferences as multi-dimensional aspiration points to drive convergence toward high-utility regions of the search space, or a standard uniform NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}, coined \methodNameUniform, for unconstrained Pareto front that uses standard Das-Dennis~\cite{das-dennis} reference directions.
-
-    \item \textbf{Packing Decoder Module:} Acting as the layout decoder, this module translates abstract chromosome representations into concrete layouts $\solution$ on the page canvas $\page$ (\secref{sec:packing_engine}). By coupling the evolutionary permutation sequence with an extreme-points backtracking routine~\cite{crainic-extreme-points}, the decoder physically positions each article block while strictly guaranteeing zero spatial overlaps and enforcing sheet margin boundaries. It is important to note that while a faster and greedy heuristic could be used for this task~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, resolving the layout(i.e., resolving each decision variable in \secref{sec:decision-variables}, conditioned to the specifications fixed by the abstract chromosome) remains computationally tractable, given that instances consistently involve a small number of articles ($\numarticles < 9$). This property allows the use of exact backtracking routines such as extreme-points method~\cite{crainic-extreme-points}.
-
-    \item \textbf{Multi-Objective Evaluation Module:} This module dynamically assesses each decoded layout $\solution$ across the four-dimensional objective space (\secref{sec:objective_formulation}) to synthesize the unified objective vector $\objvector(\solution)$. It combines analytical geometric functions ($\objone$: Page coverage, $\objthree$: Text capacity Integrity, and $\objfour$: Positioning of articles quality) with a neural evaluation pipeline ($\objtwo$: \NeuralMethod). The resulting objective vector  $\objvector(\solution)$ is fed back into the evolutionary optimization module to drive chromosome selection in the next generation.
-\end{itemize}
-
-
-\subsection{Many-objective evolutionary optimization engine}
-\label{sec:evolutionary_engine}
-
-The evolutionary engine optimizes layout configurations across the four-dimensional objective space defined in \secref{sec:objective_formulation}. To navigate this search space, each candidate solution $\solution$ is encoded as a chromosome vector that maps abstract decisions prior to layout decoding using the packing engine.
-
-\figref{fig:evolutionary_loop} summarizes the resulting generational loop executed by this engine at each iteration. The remainder of this section formalizes each of its stages: the chromosome encoding is introduced in \secref{sec:chromosome_representation}, the population initialization and genetic operators are detailed in \secref{sec:evolutionary_operators}, and the many-objective selection paradigm is presented in \secref{sec:many-objective_optimization}.
+\figref{fig:evolutionary_loop} summarizes the resulting generational loop executed by \methodNameGeneral. The remainder of this section formalizes each of its stages: the chromosome encoding is introduced in \secref{sec:chromosome_representation}, population initialization in \secref{sec:population_initialization}, the packing decoder in \secref{sec:packing_engine}, the evolutionary operators in \secref{sec:evolutionary_operators}, and the many-objective selection paradigm in \secref{sec:many-objective_optimization}.
 
 \begin{figure}[htbp]
     \centering
@@ -100,17 +17,17 @@ The evolutionary engine optimizes layout configurations across the four-dimensio
         node distance=6mm and 18mm
     ]
 
-    \node[flowbox] (init) {Initialize population $P_0$\\ (chromosomes $\chromosome$, size $\popsize$)};
+    \node[flowbox] (init) {Initialize population $P_0$ of size $\popsize$\\ (chromosomes $\chromosome$)};
     \node[flowbox, below=of init] (decode) {Decode each \chromosome\ into a layout $\solution$ (\secref{sec:packing_engine}); evaluate $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
-    \node[flowbox, below=of decode] (matsel) {Mating ($\frac{\popsize}{2}$)};
-    \node[flowbox, below=of matsel] (crossover) {Crossover: 2 parents produce 2 children (\secref{sec:evolutionary_operators})};
+    \node[flowbox, below=of decode] (matsel) {Mating};
+    \node[flowbox, below=of matsel] (crossover) {Crossover: 2 parents produce 2 children};
     \node[flowbox, below=of crossover] (mutation) {Mutation to each offspring};
     \node[flowbox, below=of mutation] (dedup) {Duplicate offspring are discarded};
     \node[flowbox, below=of dedup] (decode2) {Decode each \chromosome\ into a layout $\solution$ (\secref{sec:packing_engine}); evaluate $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$};
     \node[flowbox, below=of decode2] (envsel) {Selection procedure on current population $\cup$ offspring (NSGA-III / RNSGA-III, \secref{sec:many-objective_optimization}) $\to$ next generation $P_{g+1}$};
     \node[flowbox, below=of envsel] (gplus) {$g = g+1$};
     \node[decision, below=of gplus] (decision) {$g < \ngen$?};
-    \node[flowbox, right=of decision] (output) {Output: Pareto-approximate front of layouts $\solution$};
+    \node[flowbox, right=of decision] (output) {Output: Pareto-approximate frontier of layouts $\solution$};
 
     \draw[arr] (init) -- (decode);
     \draw[arr] (decode) -- (matsel);
@@ -124,14 +41,16 @@ The evolutionary engine optimizes layout configurations across the four-dimensio
     \draw[arr] (decision) -- node[above, font=\small] {no} (output);
     \draw[arr] (decision.west) -- ++(-3,0) node[pos=0.5, above, font=\small] {yes} |- (matsel.west);
 
+    \draw[dashed, rounded corners=3pt] ($(matsel.north west)+(-8mm,4mm)$) rectangle ($(dedup.south east)+(8mm,-4.5mm)$);
+    \node[font=\footnotesize\bfseries, anchor=north west] at ($(matsel.north west)+(-7mm,4mm)$) {(\secref{sec:evolutionary_operators})}; %(9.6mm,4.8mm)
+
     \end{tikzpicture}
-    \caption{Generational loop of the \methodNameGeneral\ evolutionary engine. An initial population of $\popsize$ chromosomes is decoded into layouts and evaluated against the four-dimensional objective vector $\objvector{\solution}$ (\secref{sec:objective_formulation}). At every generation $g$, mating selection, crossover, and mutation jointly produce two new children per pair of parents from the current population; duplicate offspring are discarded, and the surviving offspring are decoded and evaluated. The selection procedure then retains the fittest chromosomes from the union of the current population and this offspring, according to either the uniform (\methodNameUniform) or aspiration point-guided (\methodName) NSGA-III paradigm, to form the next generation $P_{g+1}$. While $g$ remains below the generation budget $\ngen$, the loop resumes at mating selection; once $g = \ngen$, the population is returned as the Pareto-approximate front of layouts.}
+    \caption{Workflow of the \methodNameGeneral\ evolutionary engine. An initial population of $\popsize$ chromosomes is decoded into layouts and evaluated against the four-dimensional objective vector $\objvector{\solution}$ (\secref{sec:objective_formulation}). At every generation $g$, mating selection, crossover, and mutation jointly produce two new children per pair of parents from the current population; duplicate offspring are discarded, and the surviving offspring are decoded and evaluated. The selection procedure then retains the fittest chromosomes from the union of the current population and this offspring, according to either the uniform (\methodNameUniform) or aspiration point-guided (\methodName) NSGA-III paradigm, to form the next generation $P_{g+1}$. Once $g = \ngen$, the population is returned as the Pareto-approximate frontier of layouts.}
     \label{fig:evolutionary_loop}
 \end{figure}
 
-
 %%%% Chromosome Representation %%%
-\subsubsection{Chromosome Representation}
+\subsection{Chromosome Representation}
 \label{sec:chromosome_representation}
 
 Each candidate layout $\solution$ is encoded as a chromosome composes of three sub-vectors $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in \figref{fig:chromosome_representation}:
@@ -188,15 +107,15 @@ Each candidate layout $\solution$ is encoded as a chromosome composes of three s
     \node[idx, above=2mm of e4] {$4$};
 
     % --- Bottom Grouping Braces & Sub-array Labels ---
-    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}]
         ([yshift=-2mm]t1.south west) -- ([yshift=-2mm]t4.south east)
         node[midway, below=5pt, sublabel] {$\chromosomeTemplateSegment$};
 
-    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}]
         ([yshift=-2mm]p1.south west) -- ([yshift=-2mm]p4.south east)
         node[midway, below=5pt, sublabel] {$\chromosomePermutationSegment$};
 
-    \draw[decorate, decoration={brace, mirror, amplitude=4pt}] 
+    \draw[decorate, decoration={brace, mirror, amplitude=4pt}]
         ([yshift=-2mm]e1.south west) -- ([yshift=-2mm]e4.south east)
         node[midway, below=5pt, sublabel] {$\chromosomeElasticitySegment$};
 
@@ -206,20 +125,14 @@ Each candidate layout $\solution$ is encoded as a chromosome composes of three s
 \label{fig:chromosome_representation}
 \end{figure}
 
-%%%%%% Operators %%%%%%%%
+\subsection{Population Initialization}
+\label{sec:population_initialization}
 
-\subsubsection{Population Initialization and Evolutionary Operators}
-\label{sec:evolutionary_operators}
-
-To effectively manipulate the three distinct genetic components within the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$, specialized initialization, crossover, and mutation mechanisms are implemented.
-
-\paragraph{Population Initialization}
-
-Given the vast combinatorial search space and strict constraints, purely random sampling populates early generations with unpromising or bad-quality candidates. Instead, a targeted initialization strategy biases the search toward feasible configurations. 
+Because the initial population conditions the trajectory of the entire search, each chromosome segment is initialized using a dedicated, targeted strategy rather than uniform random sampling.
 
 Accordingly, the initial population is structured across the chromosome segments as follows:
 \begin{itemize}
-    \item \textbf{\chromosomeTemplateSegment:} 50\% of the individuals are sampled using baseline \neuralmethod\ probabilities. Since no geometric layout exists at generation zero, this initial query feeds the Transformer with a \emph{metadata-only tensor}, where spatial coordinates and template zoning are omitted. Due to its training with feature dropout, the model is inherently robust to this missing spatial context, successfully projecting a meaningful predictive distribution that guides the initial sampling away from random choices. Of the remaining population, 30\% are sampled uniformly from a feasible template subset that satisfies all hard constraints and yields zero text capacity penalty ($\objthree = 0$). The final 20\% are randomized from a subset that satisfies all hard constraints. 
+    \item \textbf{\chromosomeTemplateSegment:} 50\% of the individuals are sampled using baseline \neuralmethod\ probabilities. Since no geometric layout exists at generation zero, this initial query feeds the Transformer with a \emph{metadata-only tensor}, where spatial coordinates and template zoning are omitted. Due to its training with feature dropout, the model is inherently robust to this missing spatial context, successfully projecting a meaningful predictive distribution that guides the initial sampling away from random choices. Of the remaining population, 30\% are sampled uniformly from a feasible template subset that satisfies all hard constraints and yields zero text capacity penalty ($\objthree = 0$). The final 20\% are randomized from a subset that satisfies all hard constraints.
 
     \item \textbf{\chromosomePermutationSegment: } Individuals are initialized by generating uniform random permutations of article's sequence $\{1, 2, \dots, \numarticles\}$.  This initialization generates valid permutations of article indices rather than independent random integers, strictly guaranteeing that every article receives a unique sequence index without duplicates or missing elements.
 
@@ -227,8 +140,140 @@ Accordingly, the initial population is structured across the chromosome segments
 \end{itemize}
 
 
+%%%%%%%% Backtracking packing engine %%%%%%%%
+\subsection{Packing decoder engine}
+\label{sec:packing_engine}
 
-\paragraph{Crossover}
+The packing decoder engine is implemented to ensure a deterministic decoding of the abstract chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ into a page layout represented by spatial coordinates and the previously defined decision variables (\secref{sec:decision-variables}). Unlike standard two-dimensional bin packing algorithms that allow arbitrary item reordering (\secref{sec:sota-packing-heuristics}), this engine enforces strict sequence preservation dictated by the evolutionary permutation segment $\chromosomePermutationSegment$.
+
+This sequence preservation is fundamental to the multi-objective nature of the optimization problem, since changing the relative order of articles directly alters $\objvector$, meaning that different permutation sequences yield distinct non-dominated trade-offs across the multi-objective Pareto frontier.
+On the contrary, once a specific sequence $\chromosomePermutationSegment$ is fixed by the evolutionary operators, the packing engine's sole responsibility is to evaluate its geometric feasibility. By coupling a fixed linear sequence with a complete, exhaustive backtracking technique, the decoder guarantees that if a valid spatial configuration exists for that specific permutation, it will be found.
+
+\subsubsection{Dimensions Definition}
+Before triggering the packing routine, the engine maps the active chromosome genes into  physical attributes for each article $\articleobj{i}$. The template gene $\templatesel{i} \in \chromosomeTemplateSegment$ fixes the width $\Wtemp{\templatesel{i}}$ of the article based on its template assignment $\templatesel{i}$ in the catalog $\templatecatalog$. Concurrently, the discrete text elasticity step $\elasticity{i}$ is retrieved from $\chromosomeElasticitySegment$ to compute the effectively scaled height $\Hscaled{\templatesel{i}}$ that the engine will attempt to allocate, as described in Equation~\ref{eq:h-scaled}:
+
+\begin{equation}
+\Hscaled{\templatesel{i}} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right).
+\tag{\ref{eq:h-scaled}}
+\end{equation}
+
+\subsubsection{Extreme Points-based Packing Engine}
+
+Spatial allocation inside the page canvas builds upon the foundational Extreme Points (EPs) paradigm introduced by Crainic et al.~\cite{crainic-extreme-points}. In its standard formulation, when a rectangular item is packed, new insertion candidates are generated by projecting its top and right coordinates along the orthogonal axes until they intersect either the boundaries of an adjacent item or the container walls.
+
+First, the list of available Extreme Points $\extremepointset$ is initially seeded with the page origin $\extremepointset = \{(0,0)\}$.
+
+To maintain a valid and compact search space, the candidate point list $\extremepointset$ is continuously pruned by eliminating coordinates that fall outside the page bounds $(\Weff, \Heff)$ or land inside already allocated articles. The remaining valid points within $\extremepointset$ are sorted following a canonical Bottom-Left priority sequence: any generic candidate point $P = (x_P, y_P) \in \extremepointset$ is ordered ascending by its vertical coordinate $y_P$, breaking ties by its horizontal coordinate $x_P$.
+
+While the previous formulation corresponds to the standard approach proposed by Crainic et al.~\cite{crainic-extreme-points}, in \methodName, this step needs to be adapted to consider the grid imposed by $\colsize$ and $\gutter$. This is already taken into account by the template dimensions (as mentioned in \secref{sec:constraints_space}), but is also necessary that the packing decoder engine introduces a localized alignment shift during point generation to respect the $\gutter$. Specifically, when an article $\articleobj{i}$ is successfully committed to an x-coordinate $\xcoord{i}$, the baseline extreme points are shifted by the $\gutter$ offset:
+\begin{equation}
+\xcoorgutter{i} = (\xcoord{i} + \Wtemp{\templatesel{i}} + \gutter, y).
+\end{equation}
+
+
+
+Although the extreme-point set $\extremepointset$ is complete, in that it discards no optimal placement~\cite{lodi-packing-survey}, generating candidate points alone does not resolve placement: an explicit search routine over $\extremepointset$ is still required to select among them. In this context, doing an exact and complete search remains tractable precisely because, once the evolutionary permutation $\chromosomePermutationSegment$ and template assignments $\chromosomeTemplateSegment$ are fixed, only the small number of articles held within a single page has to be placed, rather than the exponentially large discrete template-selection problem addressed by the evolutionary engine itself (\secref{sec:sota-packing-exact}).
+
+\subsubsection{Sequence-Preserving Backtracking Packing}
+
+
+Algorithm~\ref{alg:packing_decoder} formalizes this search through a dynamic prefix-slicing mechanism. At any point during execution, a tracking index divides the permutation into already packed items and a sub-sequence of remaining unplaced articles. The engine's objective is to isolate and accommodate the largest possible continuous block/prefix of these remaining articles in the page canvas, starting exactly from the tracking index. Crucially, maximizing this prefix size directly minimizes empty or unallocated remnants on the page canvas, thereby significantly optimizing the wasted space objective ($\objone$).
+
+To determine if a targeted prefix can fit within the current page, the engine invokes an exhaustive recursive backtracking solver, structured in Algorithm~\ref{alg:solve_recursive}. For a given batch, the solver processes the articles sequentially, evaluating them against the sorted extreme points list $\extremepointset$. It attempts to position the current item on the first available candidate point; if the item respects the page boundaries and yields zero spatial overlap, the placement is provisionally committed. The extreme points list $\extremepointset$ is then updated, and the solver recursively calls itself to place the next article in the batch. If a downstream article cannot be accommodated on any valid point, the routine backtracks, uncommitting the immediate predecessor to explore alternative spatial configurations across $\extremepointset$. If the solver exhaustively explores all combinations and returns a global failure for that prefix, the outer loop decrementally reduces the batch size by one article and re-tests this smaller prefix on the same page, as outlined in Algorithm~\ref{alg:packing_decoder}. This decremental reduction repeats until a viable prefix successfully converges. Once a batch is committed, if there are still remaining unplaced items left in $\chromosomePermutationSegment$, the engine instantiates a new empty page, updates the tracking index, and restarts the cycle.
+
+Crucially, the total number of pages is simply reported as an output of the decoding phase; the responsibility of enforcing the hard constraints and discarding or penalizing the solution for exceeding the single-page limit (FC~1) rests exclusively with the evolutionary optimization engine.
+
+
+
+
+\begin{algorithm}[h]
+\caption{Sequence-Preserving Prefix Packing Decoder}
+\label{alg:packing_decoder}
+\begin{algorithmic}[1]
+\REQUIRE Evolutionary chromosome segments $\chromosomePermutationSegment$ and $\chromosomeElasticitySegment$, page bounds $(\Weff, \Heff)$, and offsets $(\gutter{x}, \gutter{y})$.
+\ENSURE Layout $\mathcal{S}$ and final $\text{page\_count}$.
+
+\STATE $\text{tracking\_index} \leftarrow 1$
+\STATE $\text{page\_count} \leftarrow 0$
+\STATE $\mathcal{S} \leftarrow \emptyset$
+
+\WHILE{$\text{tracking\_index} \le |\chromosomePermutationSegment|$}
+    \STATE $\text{batch\_size} \leftarrow |\chromosomePermutationSegment| - \text{tracking\_index} + 1$
+    \STATE $\text{success} \leftarrow \text{FALSE}$
+
+    \WHILE{$\text{batch\_size} > 0$ \AND \NOT $\text{success}$}
+        \STATE $\text{batch} \leftarrow \chromosomePermutationSegment[\text{tracking\_index} \dots \text{tracking\_index} + \text{batch\_size} - 1]$
+        \STATE $\extremepointset \leftarrow \{(0,0)\}$ \COMMENT{Page origin}
+        \STATE $\text{page\_layout} \leftarrow \emptyset$
+
+        \STATE $\text{success} \leftarrow \textsc{SolveRecursive}(1, \text{batch}, \text{page\_layout}, \extremepointset, \text{page\_count})$
+
+        \IF{$\text{success}$}
+            \STATE $\mathcal{S} \leftarrow \mathcal{S} \cup \text{page\_layout}$
+            \STATE $\text{tracking\_index} \leftarrow \text{tracking\_index} + \text{batch\_size}$
+            \STATE $\text{page\_count} \leftarrow \text{page\_count} + 1$
+        \ELSE
+            \STATE $\text{batch\_size} \leftarrow \text{batch\_size} - 1$
+        \ENDIF
+    \ENDWHILE
+
+    \IF{\NOT $\text{success}$ \AND $\text{batch\_size} = 0$}
+        \STATE \RETURN $\text{FAILURE}$ \COMMENT{Single isolated article violates spatial bounds}
+    \ENDIF
+\ENDWHILE
+\RETURN $\mathcal{S}, \text{page\_count}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Recursive Spatial Placement Solver (\textsc{SolveRecursive})}
+\label{alg:solve_recursive}
+\begin{algorithmic}[1]
+\REQUIRE Input index $\text{idx}$, targeted $\text{batch}$, current $\text{page\_layout}$, sorted extreme points list $\extremepointset$, and $\text{page\_id}$.
+\ENSURE $\text{TRUE}$ if configuration is successful, $\text{FALSE}$ otherwise.
+
+\IF{$\text{idx} > |\text{batch}|$}
+    \STATE \RETURN $\text{TRUE}$ \COMMENT{Base case: entire batch successfully packed}
+\ENDIF
+
+\STATE $i \leftarrow \text{batch}[\text{idx}]$
+\STATE $w \leftarrow \Wtemp{\templatesel{i}}$
+\STATE $h \leftarrow \Hscaled{\templatesel{i}}$
+
+\FORALL{candidate point $P = (x_P, y_P) \in \extremepointset$}
+    \IF{$x_P + w \le \Weff$ \AND $y_P + h \le \Heff$}
+        \IF{\NOT $\textsc{CheckCollision}(x_P, y_P, w, h, \text{page\_layout}, \gutter{x}, \gutter{y})$}
+            \STATE $\text{placement} \leftarrow \langle i, \text{page\_id}, x_P, y_P, w, h \rangle$
+            \STATE $\text{page\_layout}.\text{append}(\text{placement})$
+
+            \STATE $P_1 \leftarrow (x_P + w + \gutter{x}, y_P)$
+            \STATE $P_2 \leftarrow (x_P, y_P + h + \gutter{y})$
+            \STATE $\extremepointset_{\text{next}} \leftarrow \extremepointset \cup \{P_1, P_2\}$
+            \STATE $\extremepointset_{\text{next}} \leftarrow \textsc{PruneAndSort}(\extremepointset_{\text{next}}, \text{page\_layout}, \Weff, \Heff)$
+
+            \IF{$\textsc{SolveRecursive}(\text{idx} + 1, \text{batch}, \text{page\_layout}, \extremepointset_{\text{next}}, \text{page\_id})$}
+                \STATE \RETURN $\text{TRUE}$
+            \ENDIF
+
+            \STATE $\text{page\_layout}.\text{pop}()$ \COMMENT{Backtrack step}
+        \ENDIF
+    \ENDIF
+\ENDFOR
+\RETURN $\text{FALSE}$
+\end{algorithmic}
+\end{algorithm}
+
+%%%%%% Evolutionary Loop %%%%%%
+\subsection{Evolutionary Loop}
+\label{sec:evolutionary_operators}
+
+At each generation, $\popsize/2$ parent pairs are formed through mating selection. Then, each pair produces two offspring through the crossover and mutation operators, specialized for the three distinct genetic components of the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$.
+
+\subsubsection{Mating}
+
+Parent pairs are formed through a binary tournament: two individuals are drawn at random from the population and compared using the feasibility-based rule of the original NSGA-III algorithm~\cite{nsga-iii-pt2}. If one individual violates the feasibility constraints (\secref{sec:constraints_space}) and the other does not, the feasible one wins. If both are infeasible, the one with the smaller total constraint violation wins. If both are feasible, the winner is chosen at random. This tournament is repeated until $\popsize/2$ parent pairs are formed, each pair later producing two offspring through the crossover and mutation operators described next.
+
+\subsubsection{Crossover}
 
 The crossover operator applies two concurrent strategies, to account for the different nature of the chromosome segments:
 
@@ -374,7 +419,7 @@ The crossover operator applies two concurrent strategies, to account for the dif
 \end{figure}
 
 
-\paragraph{Mutation Roulette}
+\subsubsection{Mutation Roulette}
 
 To navigate the search space defined by the chromosome, a single uniform mutation operator is insufficient. Because the chromosome simultaneously encodes three distinct decision variables, each variable type requires specialized structural manipulation. A multi-operator mutation strategy is therefore designed,
 where each mutation operator is managed by a hierarchical orchestrator. A global mutation probability $\globalmutationprob$ determines whether an individual undergoes modification. If triggered, exactly one specialized mutation operator is selected via a stochastic roulette wheel governed by a weight vector $\mathbf{w} = [\mutationprob{1}, \mutationprob{2}, \mutationprob{3}, \mutationprob{4}, \mutationprob{5}, \mutationprob{6}]$, where $\sum_{m=1}^{6} \mutationprob{m} = 1$. This design balances fine-grained local search, targeted constraint repair, and broad global exploration across all variables represented in the chromosome.
@@ -394,153 +439,25 @@ Crucially, to preserve context, whenever a $\chromosomeTemplateSegment$ mutation
 
 
 %%%%%% NSGA specifics %%%%%%%%%%
-
-\subsubsection{NSGA-III Many-Objective Selection Paradigm}
+\subsection{NSGA-III Many-Objective Selection Paradigm}
 \label{sec:many-objective_optimization}
 
-The evolutionary optimization process runs for $\ngen$ generations over the objective space defined in \secref{sec:objective_formulation}. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection: a targeted aspiration-point design (\methodName) as a preference-based method, and a uniform exploratory variant (\methodNameUniform).
+The evolutionary optimization process runs for $\ngen$ generations. To incorporate domain expertise, \methodNameGeneral\ implements two variants for the multi-objective selection:
+\begin{description}
+    \item[Uniform Exploration (\methodNameUniform):] To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the first variant, coined \methodNameUniformLong\ (\methodNameUniform) uses standard NSGA-III (\secref{sec:sota-nsga3}). Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto frontier. By definition, this configuration maximizes search space coverage, facilitating standardized mathematical benchmarks against other baselines.
 
-\paragraph{Preference-Guided Engine (\methodName)}
-To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the first configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm~\cite{rnsga-iii}. Instead of allowing the population to disperse across regions that, while mathematically non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration vectors computed offline from the same \laprovence historical page corpus described in \secref{subsec:dataset_characterization}, conditioned on the active article count $\numarticles$ of the target instance \instance.
-
-To extract these aspiration vectors, the following procedure is applied offline over the historical training dataset:
+    \item[Preference-Guided Engine (\methodName):] To actively guide the evolutionary search toward layout configurations adhering to real-world publishing standards, the second configuration of the proposed method, coined \methodNameLong\ (\methodName), instantiates a Reference-Point NSGA-III (RNSGA-III) paradigm (\secref{sec:sota-rnsga3}). Instead of allowing the population to disperse across regions that, while non-dominated, deviate from established industry standards, the search is explicitly directed by historical aspiration points, pre-computed offline from a historical page corpus and conditioned on the active article count $\numarticles$ of the target instance \instance. \secref{subsec:dataset_characterization} details the specific corpus and procedure used in this evaluation.
+\end{description}
+To extract these aspiration points, the following procedure is applied offline over the historical page corpus:
 \begin{itemize}
-    \item The four-dimensional objective vector $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$ (\secref{sec:objective_formulation}) is evaluated over every historical layout $\solution$ contained in the training dataset.
-    \item Because the  magnitude of each objective is intrinsically tied to the structural complexity of the page (more articles are inherently harder to fit and align into a single page) historical layouts are first stratified by their article count $\numarticles$, and the following statistics are computed independently within each resulting stratum.
-    \item Within each stratum, the marginal empirical distribution of every individual objective ($\objone, \objtwo, \objthree, \objfour$) is estimated separately, and two component-wise quantile vectors are extracted: one gathering the 25th percentile (first quartile) of each objective, and another gathering the 50th percentile (median).
-    \item Because all objectives follow a minimization paradigm, the first vector establishes a demanding target, matched only by the best quarter of historical designs, while the second reflects the standard of typical professional practice.
-    \item Extending the analysis beyond these two levels was deemed unnecessary: the first quartile and median already bracket the range of ambition relevant to the search, since quantiles above the median would target below-average historical designs, contradicting the purpose of steering the search toward high-utility regions. Moreover, every additional aspiration point would require its own local mesh of reference directions, inflating the resulting population size proportionally. 
-    \item This procedure produces a lookup table of aspiration-vector pairs indexed by article count; at optimization time, the pair matching the article's number $\numarticles$ of the target instance \instance is retrieved to anchor the search to the corresponding pair of aspiration points.
+    \item The four-dimensional objective vector $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$ (\secref{sec:objective_formulation}) is evaluated over every historical layout $\solution$ contained in the corpus.
+    \item Because the  magnitude of each objective is intrinsically tied to the structural complexity of the page (more articles are inherently harder to fit and align into a single page) historical layouts are first grouped by their article count $\numarticles$, and the following statistics are computed independently within each resulting stratum.
+    \item Within each stratum, the marginal empirical distribution of every individual objective ($\objone, \objtwo, \objthree, \objfour$) is estimated separately, and two component-wise quantile points are extracted: one gathering the 25th percentile (first quartile) of each objective, and another gathering the 50th percentile (median).Because all objectives follow a minimization paradigm, the first vector establishes a demanding target, matched only by the best quarter of historical designs, while the second reflects the standard of typical professional practice.
+    %Extending the analysis beyond these two levels was deemed unnecessary: the first quartile and median already bracket the range of ambition relevant to the search, since quantiles above the median would target below-average historical designs, contradicting the purpose of steering the search toward high-utility regions. Moreover, every additional aspiration point would require its own local mesh of reference directions (\secref{sec:sota-rnsga3}), inflating the resulting population size proportionally.
+    \item This procedure produces a lookup table of aspiration point pairs indexed by article count.
 \end{itemize}
-
 At optimization time, a contraction factor $\RNSGAradius \in (0,1)$ scales down the local reference mesh generated around these targeted points, restricting exploration to regions of proven structural and editorial utility~\cite{rnsga-iii}. Then, the framework projects a structured set of reference directions around each aspiration vector using 8 partitions, which mathematically yields exactly 165 local directions for a 4-dimensional space~\cite{rnsga-iii}. Accordingly, this produces a population size of 165 individuals per reference point ($165 \times 2 = 330$ in total), satisfying the preference-guided mechanism requirements while maintaining an equitable search capacity relative to the uniform exploration variant.
 
+\subsection{Output}
 
-\paragraph{Uniform Exploration (\methodNameUniform)}
-
-To ensure an unbiased and wide-reaching exploration of the non-dominated multi-objective frontier, the second variant, coined \methodNameUniformLong\ (\methodNameUniform) uses standard NSGA-III~\cite{nsga-iii-pt1, nsga-iii-pt2}. This variant  operates fully autonomously without requiring historical design aspiration points, making it uniquely valuable when explicit editorial guidelines are unavailable or when the relative priorities among objectives are completely unknown. Reference directions are systematically generated via the Das-Dennis method~\cite{das-dennis} using 10 partitions (corresponding to $\popsize = 286$ individuals), establishing a uniform mesh across the entire Pareto front. By definition, this configuration maximizes search space coverage, facilitating standardized mathematical benchmarks against other baselines.
-
-
-%%%%%%%% Backtracking packing engine %%%%%%%%
-
-\subsection{Packing decoder engine}
-\label{sec:packing_engine}
-
-The packing decoder engine is implemented to ensure a deterministic decoding of the abstract chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ into a page layout represented by spatial coordinates and the previously defined decision variables (\secref{sec:decision-variables}). Unlike standard two-dimensional bin packing algorithms that allow arbitrary item reordering~\cite{lodi-packing-survey, chazelle-bl, burke-bf}, this engine enforces strict sequence preservation dictated by the evolutionary permutation segment $\chromosomePermutationSegment$. 
-
-This sequence preservation is fundamental to the multi-objective nature of the optimization problem, since changing the relative order of articles directly alters $\objvector$, meaning that different permutation sequences yield distinct non-dominated trade-offs across the multi-objective Pareto frontier. 
-On the contrary, once a specific sequence $\chromosomePermutationSegment$ is fixed by the evolutionary operators, the packing engine's sole responsibility is to evaluate its geometric feasibility. By coupling a fixed linear sequence with a complete, exhaustive backtracking technique, the decoder guarantees that if a valid spatial configuration exists for that specific permutation, it will be found.
-
-\subsubsection{Dimensions Definition}
-Before triggering the packing routine, the engine maps the active chromosome genes into  physical attributes for each article $\articleobj{i}$. The template gene $\templatesel{i} \in \chromosomeTemplateSegment$ fixes the width $\Wtemp{\templatesel{i}}$ of the article based on its template assignment $\templatesel{i}$ in the catalog $\templatecatalog$. Concurrently, the discrete text elasticity step $\elasticity{i}$ is retrieved from $\chromosomeElasticitySegment$ to compute the effectively scaled height $\Hscaled{\templatesel{i}}$ that the engine will attempt to allocate, as described in Equation~\ref{eq:h-scaled}:
-
-\begin{equation}
-\Hscaled{\templatesel{i}} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right)
-\tag{\ref{eq:h-scaled}}
-\end{equation}
-
-\subsubsection{Extreme Points-based Packing Engine}
-
-Spatial allocation inside the page canvas builds upon the foundational Extreme Points (EPs) paradigm introduced by Crainic et al.~\cite{crainic-extreme-points}. In its standard formulation, when a rectangular item is packed, new insertion candidates are generated by projecting its top and right coordinates along the orthogonal axes until they intersect either the boundaries of an adjacent item or the container walls.
-
-First, the list of available Extreme Points $\extremepointset$ is initially seeded with the page origin $\extremepointset = \{(0,0)\}$. 
-
-To maintain a valid and compact search space, the candidate point list $\extremepointset$ is continuously pruned by eliminating coordinates that fall outside the page bounds $(\Weff, \Heff)$ or land inside already allocated articles. The remaining valid points within $\extremepointset$ are sorted following a canonical Bottom-Left priority sequence: any generic candidate point $P = (x_P, y_P) \in \extremepointset$ is ordered ascending by its vertical coordinate $y_P$, breaking ties by its horizontal coordinate $x_P$.
-
-While the previous formulation corresponds to the standard approach proposed by Crainic et al.~\cite{crainic-extreme-points}, in \methodName, this step needs to be adapted to consider the grid imposed by $\colsize$ and $\gutter$. This is already taken into account by the template dimensions (as mentioned in \secref{sec:constraints_space}), but is also necessary that the packing decoder engine introduces a localized alignment shift during point generation to respect the $\gutter$. Specifically, when an article $\articleobj{i}$ is successfully committed to an x-coordinate $\xcoord{i}$, the baseline extreme points are shifted by the $\gutter$ offset:
-\begin{equation}
-\xcoorgutter{i} = (\xcoord{i} + \Wtemp{\templatesel{i}} + \gutter, y)
-\end{equation}
-
-
-
-Although the extreme-point set $\extremepointset$ is complete, in that it discards no optimal placement~\cite{lodi-packing-survey}, generating candidate points alone does not resolve placement: an explicit search routine over $\extremepointset$ is still required to select among them. In this context, doing an exact and complete search remains tractable precisely because, once the evolutionary permutation $\chromosomePermutationSegment$ and template assignments $\chromosomeTemplateSegment$ are fixed, only the small number of articles held within a single page has to be placed, rather than the exponentially large discrete template-selection problem addressed by the evolutionary engine itself (\secref{sec:sota-packing-exact}).
-
-\subsubsection{Sequence-Preserving Backtracking Packing}
-
-
-Algorithm~\ref{alg:packing_decoder} formalizes this search through a dynamic prefix-slicing mechanism. At any point during execution, a tracking index divides the permutation into already packed items and a sub-sequence of remaining unplaced articles. The engine's objective is to isolate and accommodate the largest possible continuous block/prefix of these remaining articles in the page canvas, starting exactly from the tracking index. Crucially, maximizing this prefix size directly minimizes empty or unallocated remnants on the page canvas, thereby significantly optimizing the wasted space objective ($\objone$).
-
-To determine if a targeted prefix can fit within the current page, the engine invokes an exhaustive recursive backtracking solver, structured in Algorithm~\ref{alg:solve_recursive}. For a given batch, the solver processes the articles sequentially, evaluating them against the sorted extreme points list $\extremepointset$. It attempts to position the current item on the first available candidate point; if the item respects the page boundaries and yields zero spatial overlap, the placement is provisionally committed. The extreme points list $\extremepointset$ is then updated, and the solver recursively calls itself to place the next article in the batch. If a downstream article cannot be accommodated on any valid point, the routine backtracks, uncommitting the immediate predecessor to explore alternative spatial configurations across $\extremepointset$. If the solver exhaustively explores all combinations and returns a global failure for that prefix, the outer loop decrementally reduces the batch size by one article and re-tests this smaller prefix on the same page, as outlined in Algorithm~\ref{alg:packing_decoder}. This decremental reduction repeats until a viable prefix successfully converges. Once a batch is committed, if there are still remaining unplaced items left in $\chromosomePermutationSegment$, the engine instantiates a new empty page, updates the tracking index, and restarts the cycle.
-
-Crucially, the total number of pages is simply reported as an output of the decoding phase; the responsibility of enforcing the hard constraints and discarding or penalizing the solution for exceeding the single-page limit rests exclusively with the evolutionary optimization engine. 
-
-
-
-
-\begin{algorithm}[h]
-\caption{Sequence-Preserving Prefix Packing Decoder}
-\label{alg:packing_decoder}
-\begin{algorithmic}[1]
-\REQUIRE Evolutionary chromosome segments $\chromosomePermutationSegment$ and $\chromosomeElasticitySegment$, page bounds $(\Weff, \Heff)$, and offsets $(\gutter{x}, \gutter{y})$.
-\ENSURE Layout $\mathcal{S}$ and final $\text{page\_count}$.
-
-\STATE $\text{tracking\_index} \leftarrow 1$
-\STATE $\text{page\_count} \leftarrow 0$
-\STATE $\mathcal{S} \leftarrow \emptyset$
-
-\WHILE{$\text{tracking\_index} \le |\chromosomePermutationSegment|$}
-    \STATE $\text{batch\_size} \leftarrow |\chromosomePermutationSegment| - \text{tracking\_index} + 1$
-    \STATE $\text{success} \leftarrow \text{FALSE}$
-    
-    \WHILE{$\text{batch\_size} > 0$ \AND \NOT $\text{success}$}
-        \STATE $\text{batch} \leftarrow \chromosomePermutationSegment[\text{tracking\_index} \dots \text{tracking\_index} + \text{batch\_size} - 1]$
-        \STATE $\extremepointset \leftarrow \{(0,0)\}$ \COMMENT{Page origin}
-        \STATE $\text{page\_layout} \leftarrow \emptyset$
-        
-        \STATE $\text{success} \leftarrow \textsc{SolveRecursive}(1, \text{batch}, \text{page\_layout}, \extremepointset, \text{page\_count})$
-        
-        \IF{$\text{success}$}
-            \STATE $\mathcal{S} \leftarrow \mathcal{S} \cup \text{page\_layout}$
-            \STATE $\text{tracking\_index} \leftarrow \text{tracking\_index} + \text{batch\_size}$
-            \STATE $\text{page\_count} \leftarrow \text{page\_count} + 1$
-        \ELSE
-            \STATE $\text{batch\_size} \leftarrow \text{batch\_size} - 1$
-        \ENDIF
-    \ENDWHILE
-    
-    \IF{\NOT $\text{success}$ \AND $\text{batch\_size} = 0$}
-        \STATE \RETURN $\text{FAILURE}$ \COMMENT{Single isolated article violates spatial bounds}
-    \ENDIF
-\ENDWHILE
-\RETURN $\mathcal{S}, \text{page\_count}$
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h]
-\caption{Recursive Spatial Placement Solver (\textsc{SolveRecursive})}
-\label{alg:solve_recursive}
-\begin{algorithmic}[1]
-\REQUIRE Input index $\text{idx}$, targeted $\text{batch}$, current $\text{page\_layout}$, sorted extreme points list $\extremepointset$, and $\text{page\_id}$.
-\ENSURE $\text{TRUE}$ if configuration is successful, $\text{FALSE}$ otherwise.
-
-\IF{$\text{idx} > |\text{batch}|$}
-    \STATE \RETURN $\text{TRUE}$ \COMMENT{Base case: entire batch successfully packed}
-\ENDIF
-
-\STATE $i \leftarrow \text{batch}[\text{idx}]$
-\STATE $w \leftarrow \Wtemp{\templatesel{i}}$
-\STATE $h \leftarrow \Hscaled{\templatesel{i}}$
-
-\FORALL{candidate point $P = (x_P, y_P) \in \extremepointset$}
-    \IF{$x_P + w \le \Weff$ \AND $y_P + h \le \Heff$}
-        \IF{\NOT $\textsc{CheckCollision}(x_P, y_P, w, h, \text{page\_layout}, \gutter{x}, \gutter{y})$}
-            \STATE $\text{placement} \leftarrow \langle i, \text{page\_id}, x_P, y_P, w, h \rangle$
-            \STATE $\text{page\_layout}.\text{append}(\text{placement})$
-            
-            \STATE $P_1 \leftarrow (x_P + w + \gutter{x}, y_P)$
-            \STATE $P_2 \leftarrow (x_P, y_P + h + \gutter{y})$
-            \STATE $\extremepointset_{\text{next}} \leftarrow \extremepointset \cup \{P_1, P_2\}$
-            \STATE $\extremepointset_{\text{next}} \leftarrow \textsc{PruneAndSort}(\extremepointset_{\text{next}}, \text{page\_layout}, \Weff, \Heff)$
-            
-            \IF{$\textsc{SolveRecursive}(\text{idx} + 1, \text{batch}, \text{page\_layout}, \extremepointset_{\text{next}}, \text{page\_id})$}
-                \STATE \RETURN $\text{TRUE}$
-            \ENDIF
-            
-            \STATE $\text{page\_layout}.\text{pop}()$ \COMMENT{Backtrack step}
-        \ENDIF
-    \ENDIF
-\ENDFOR
-\RETURN $\text{FALSE}$
-\end{algorithmic}
-\end{algorithm}
+Once the generation budget $\ngen$ is reached, \methodNameGeneral\ terminates and returns the final population as its output: a Pareto frontier (\secref{sec:sota-pareto}) of feasible layouts $\solution$ (\secref{sec:constraints_space}), each representing a distinct trade-off across the four objectives $\objvector{\solution}$ (\secref{sec:objective_formulation}).

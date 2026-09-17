@@ -1,0 +1,160 @@
+{
+  "instance_id": "529441",
+  "export_timestamp": "2026-09-14T16:42:46.552645",
+  "metrics": {
+    "f1": 0.04015302031935908,
+    "f2": 2.4701806064609544,
+    "f3": 1.3312661164114221,
+    "f4": 0.1737406964169652,
+    "iou": 0.1737406964169652,
+    "align": 0.0
+  },
+  "page": {
+    "width": 289.0,
+    "height": 360.0,
+    "margins": {
+      "top": 30.675,
+      "bottom": 15.0,
+      "left": 15.0,
+      "right": 15.0
+    }
+  },
+  "articles_layout": [
+    {
+      "id": "3631340",
+      "char_count": 3463,
+      "nb_photos": 1,
+      "has_title": true,
+      "has_subtitle": true,
+      "main": true,
+      "layout": {
+        "template_id": "594749",
+        "page_index": 0,
+        "x": -0.339,
+        "y": -0.339,
+        "width": 215.167,
+        "height": 188.595,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631342",
+      "char_count": 1090,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594881",
+        "page_index": 0,
+        "x": 218.387,
+        "y": -0.36,
+        "width": 39.833,
+        "height": 188.595,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631344",
+      "char_count": 868,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": -0.339,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631345",
+      "char_count": 884,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": 42.576,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631346",
+      "char_count": 1118,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": 88.998,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631351",
+      "char_count": 979,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": 218.618,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631347",
+      "char_count": 1041,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": 132.524,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    },
+    {
+      "id": "3631349",
+      "char_count": 1002,
+      "nb_photos": 0,
+      "has_title": true,
+      "has_subtitle": false,
+      "main": false,
+      "layout": {
+        "template_id": "594942",
+        "page_index": 0,
+        "x": 174.821,
+        "y": 187.489,
+        "width": 39.833,
+        "height": 125.73,
+        "elasticity_applied": 0
+      }
+    }
+  ]
+}

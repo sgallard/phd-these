@@ -10,7 +10,7 @@ While Chapter~\ref{chapter:template} focused on retrieving templates, an automat
 
 The proposed problem consists of \textbf{concurrently solving a discrete template assignment challenge and a two-dimensional packing problem}: for a given set of input articles $\articleset$, a valid solution maps each article $\articleobj{i}$ to a template $\templateobj{j} \in \templatecatalog$ and discovers a spatial configuration on $\page$ that is both feasible and of high quality.
 
-In this context, a solution is only admissible if it satisfies the hard constraints detailed in \secref{sec:constraints_space}: every article must fit on a single page, its assigned template must accommodate its images and headline, no two articles may overlap or exceed the page boundaries, and grid and gutter alignment must be guaranteed.
+In this context, a solution is only admissible if it satisfies the hard constraints detailed in \secref{sec:constraints_space}: every article must fit on a single page (FC~1), its assigned template must accommodate its images (FC~2) and headline (FC~3), no two articles may overlap (FC~4) or exceed the page boundaries (FC~5), and grid and gutter alignment must be guaranteed (FC~6).
 
 Then, among feasible solutions, quality is assessed along four criteria:
 
@@ -27,7 +27,7 @@ These four criteria are mutually antagonistic, and coupling discrete template se
 
 Addressing the problem introduced above, this chapter makes two contributions, both variants of the same multi-objective evolutionary framework \methodNameGeneral\ (\secref{sec:evopagegen-approach}), which concurrently resolves template assignment and two-dimensional packing by optimizing the four  objectives formalized in \secref{sec:objective_formulation}:
 \begin{itemize}
-    \item \textbf{\methodNameUniform} (\secref{sec:many-objective_optimization}): a uniformly exploratory variant, based on standard NSGA-III, that autonomously covers the Pareto front without requiring historical design preferences.
+    \item \textbf{\methodNameUniform} (\secref{sec:many-objective_optimization}): a uniformly exploratory variant, based on standard NSGA-III, that autonomously covers the Pareto frontier without requiring historical design preferences.
     \item \textbf{\methodName} (\secref{sec:many-objective_optimization}): a preference-guided variant, based on Reference-Point NSGA-III (RNSGA-III), that steers the search toward reference points computed offline from historical human-designed layouts, trading exploration breadth for closer alignment with editorial practice.
 \end{itemize}
 Both variants share a common architecture, including a sequence-preserving backtracking packing decoder (\secref{sec:packing_engine}) that deterministically converts a chromosome-encoded template assignment and article permutation into a feasible two-dimensional page layout.

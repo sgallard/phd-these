@@ -23,6 +23,18 @@
 % TODO(new-prose): cerrar el capítulo retomando las contribuciones (tdIoU, tGMN, TRS, GWES) y su impacto.
 
 
+
+\subsection*{Deployment}
+
+\trs\ was deployed successfully on a pre-production server within \melody's infrastructure, exposed as a Python REST API, and is currently serving as a pilot functionality for the \publihebdos press group~\cite{publihebdos}. This deployment surfaced two a posteriori adaptations, asked directly by this press group:
+
+\begin{itemize}
+    \item \textbf{Relaxed image-slot admissibility:} the criterion originally required an exact match between the number of active image slots retained, $\kactive{i} = \Nimg{i}$, and the article's requested image count. In production, a template with more image slots than strictly required by the article is now also considered admissible, provided the article's body text length $\Cart{i}$ falls within the text capacity interval defined by the capacity matrix $\capacity{j}$ (\secref{sec:template}) for some smaller number of active images $k < \Nimgmax{j}$, leaving the remaining slots unused rather than requiring an exact image-count match.
+    \item \textbf{Re-ranking presentation instead of a highlighted recommendation:} \publihebdos did not want the recommended templates visually distinguished as an ``intelligent recommendation'' within the production interface. The deployed variant of \trs\ therefore sets $\topsize$ to half the size of the admissible template set and adapts $\cwthreshold$ to the minimum value that still guarantees diversity while allowing exactly $\topsize/2$ templates to be recommended. Under this configuration, the interface simply lists templates in the order returned by \trs, without a dedicated recommendation marked as an AI-driven suggestion.
+\end{itemize}
+
+Deployment details specific to \neuralmethod\ (\secref{sec:gwes}) are reported instead in the Deployment section of Chapter~\ref{chapter:pagegen}, since \neuralmethod\ is deployed there as part of \methodNameGeneral.
+
 \subsection*{Publications}
 
 This chapter's contribution on topology-aware template similarity and retrieval is based on the following manuscript, currently under review. The page-aware extension developed in Section~\ref{sec:gwes} (\neuralmethod) is presented here as part of the template retrieval formalism, but is reported instead as a contribution of Chapter~\ref{chapter:pagegen}, whose manuscript is currently in preparation.
@@ -31,3 +43,5 @@ This chapter's contribution on topology-aware template similarity and retrieval 
 \begin{callout}
 S. Gallardo, B. G\'enuit, E. Castet, \& P. Kornprobst (2026). \emph{Diversity-Aware Retrieval of Structured Layout Templates via Graph-Matching Network-Based Clustering}. Submitted to \emph{IEEE Access}, under review~\citemine{gallardo-recsys}.
 \end{callout}
+
+

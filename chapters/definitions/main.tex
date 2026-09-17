@@ -8,12 +8,13 @@ This chapter formalizes, in precise mathematical terms, the page, web article, t
 \subsection{Newspaper page ($\page$)}.
 \label{sec:page-definition}
 
-A page $\page$ (\figref{fig:page}) defines the empty canvas and its physical boundaries. Formally, $\page$ is represented as a tuple containing the structural dimensions:
+A page $\page$  defines the empty canvas and its physical boundaries. A newspaper page is not laid out freely: it follows an underlying column grid, a fixed set of vertical bands of constant width ($\colsize$) separated by narrow blank strips called gutters ($\gutter$), to which every article and template must align (\figref{fig:page}). Articles may span one or several adjacent columns, but their horizontal boundaries always coincide with grid lines, ensuring visual alignment across the page regardless of how many articles it contains. Formally, $\page$ is represented as a tuple containing the structural dimensions:
 \begin{equation}
 \page = \langle \Wpage, \Hpage, \mtop, \mbottom, \mleft, \mright, \colsize, \gutter \rangle,
 \label{eq:page-definition}
 \end{equation}
 where:
+
 \begin{itemize}
     \item $\Wpage \in \mathbb{R}^+$ and $\Hpage \in \mathbb{R}^+$ denote the  width and height of the page, respectively, measured in millimeters (mm).
     \item $\mtop, \mbottom, \mleft, \mright \in \mathbb{R}^+$ represent the  margins that restrict the usable layout space from the outer boundaries of the page.
@@ -23,6 +24,7 @@ where:
 Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
 \begin{figure}[htbp]
     \centering
+    %TODO: CHANGE FIGURE TO SHOW A SHADED REGION WHERE AN ARTICLE GOES
     \includegraphics[width=0.8\widthForOneImage]{img/page-with-notation.pdf}
     \caption{Page $\page$}
     \label{fig:page}
@@ -41,7 +43,7 @@ where:
     \item $\Nimg{i} \in \mathbb{Z}_{\ge 0}$ denotes the number of images that \articleobj{i}\ contains,
     \item $\Tlart{i} \in \{0, 1\}$ is a binary flag indicating the presence ($1$) or absence ($0$) of a headline or title element,
     \item $\Stlart{i} \in \{0, 1\}$ is a binary flag indicating the presence ($1$) or absence ($0$) of an accompanying subtitle,
-    \item $\Mainart{i} \in \{0, 1\}$ is a binary flag indicating whether the article is designated as the main lead story ($1$) within the page context. Only one article per page can be indicated as main.
+    \item $\Mainart{i} \in \{0, 1\}$ is a binary flag indicating whether the article is designated as the main lead story ($1$) within the page context. Only one article per page can be indicated as main. 
 \end{itemize}
 \begin{figure}[htbp]
     \centering
@@ -87,9 +89,9 @@ where:
         \leftarrow \text{1 active image} \\
         \\
         \leftarrow \Nimgmax{j} \text{ active images}
-        \end{array}
+        \end{array},
     \end{equation}
-where the elements in the $k$-th row denote the text capacity bounds when $k$ image slots are active, i.e., $k \leq \Nimgmax{j}$ image slots  are used to allocate an image. Specifically: %todo: add index active image 
+where the elements in the $k$-th row denote the text capacity bounds when $k$ image slots are active, i.e., $k \leq \Nimgmax{j}$ image slots  are used to allocate an image. Specifically:
 \begin{itemize}
     \item $ \capacity{j}[k, 0]$ establishes the minimum character requirement,
     \item $ \capacity{j}[k, 1]$ defines the maximum character capacity.
@@ -181,8 +183,7 @@ In addition to the template catalog, \publihebdos provides a CSV usage log cover
     \label{fig:publihebdos-usage-longtail}
 \end{figure}
 
-\subsubsection{Statistics}
-% TODO: decidir si esta subseccion aporta lo suficiente como para incluirla, y completarla
+
 
 \subsection{\laprovence archive}
 \label{sec:laprovence}
@@ -202,16 +203,19 @@ In addition to its template catalog, the \laprovence archive provides a corpus o
     \item for each article placed on the page:
     \begin{itemize}
         \item a unique identifier;
-        \item its position and size ($x$, $y$, width, and height), expressed relative to the absolute page boundaries, i.e., ignoring the margins;
+        \item its position and size ($x$, $y$, width, and height), expressed relative to the page boundaries;
         \item the identifier $\templatesel{i}$ of the template selected for the article;
         \item a deep copy of the corresponding template's own XML file.
     \end{itemize}
 \end{itemize}
 Advertisements are not always represented in this XML format, since they are typically hardcoded directly onto the page rather than modeled as articles. 
-Because $\Wtemp{j}$ strictly adheres to the column grid $\colsize$ and gutter $\gutter$ of the page $\page$ (\secref{sec:template}), an article's width always matches the width of its selected template exactly.
-In contrast, its height may not, a discrepancy formally captured by the elasticity variable introduced in \secref{sec:decision-variables}. Similarly, an article may occupy fewer image slots than the $\Nimgmax{\templatesel{i}}$ available in the assigned template, though never more.
 
-In practice, the page width $\Wpage$, height $\Hpage$, margins $\mtop, \mbottom, \mleft, \mright$, column size $\colsize$, and gutter $\gutter$ are fixed across the entire \laprovence page corpus:
+Because $\Wtemp{j}$ strictly adheres to the column grid $\colsize$ and gutter $\gutter$ of the page $\page$ (\secref{sec:template}), an article's width always matches the width of its selected template exactly.
+In contrast, its height may not, a discrepancy formally captured by the elasticity variable introduced in \secref{sec:decision-variables}. 
+
+Similarly, an article may occupy fewer image slots than the $\Nimgmax{\templatesel{i}}$ available in the assigned template, though never more.
+
+Note that, even if presented as parameters above, the page width $\Wpage$, height $\Hpage$, margins $\mtop, \mbottom, \mleft, \mright$, column size $\colsize$, and gutter $\gutter$ are fixed across the entire \laprovence page corpus:
 \begin{itemize}
     \item $\Wpage = 289.0$ mm, $\Hpage = 360.0$ mm;
     \item $\mtop = 30.675$ mm, $\mbottom = 15.0$ mm, $\mleft = 15.0$ mm, $\mright = 15.0$ mm;
@@ -227,8 +231,6 @@ A PDF rendering of the composed page is additionally provided alongside each XML
     \caption{Example of a composed \laprovence page layout (PDF rendering).}
     \label{fig:laprovence-page-example}
 \end{figure}
-
-%\subsubsection{Statistics}
 
 \subsection{Preprocessing}
 \label{sec:dataset-preprocessing}

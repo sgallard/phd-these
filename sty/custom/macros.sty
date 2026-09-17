@@ -92,9 +92,9 @@
 \newcommand{\articleobj}[1]{\ensuremath{a_{#1}}}               % Article object a_i
 \newcommand{\Cart}[1]{\ensuremath{c_{#1}}}             % Character count of body text
 \newcommand{\Nimg}[1]{\ensuremath{n_{#1}}}             % Real number of images
-\newcommand{\Tlart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{tit}}}}    % Indicator title flag for article
-\newcommand{\Stlart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{sub}}}}   % Indicator subtitle flag for article
-\newcommand{\Mainart}[1]{\ensuremath{\mathbf{1}_{#1}^{\mathrm{main}}}} % Indicator hierarchy flag (Lead story)
+\newcommand{\Tlart}[1]{\ensuremath{\delta_{#1}^{\mathrm{tit}}}}    % Indicator title flag for article
+\newcommand{\Stlart}[1]{\ensuremath{\delta_{#1}^{\mathrm{sub}}}}   % Indicator subtitle flag for article
+\newcommand{\Mainart}[1]{\ensuremath{\delta_{#1}^{\mathrm{main}}}} % Indicator hierarchy flag (Lead story)
 
 % --- 4. Template and Zoning Attributes (Argument: Template Index 'j' or '\tau_i') ---
 \newcommand{\templateobj}[1]{\ensuremath{t_{#1}}}             % Template object t_j
@@ -180,7 +180,7 @@
 \newcommand{\kactive}[1]{\ensuremath{k_{#1}}}                 % Selected active images count k_i
 
 % --- 7. Derived Layout Variables (Argument: Article Index 'i') ---
-\newcommand{\Hscaled}[1]{\ensuremath{\eta_{#1}}}                 % Effectively scaled height H'_i
+\newcommand{\Hscaled}[1]{\ensuremath{\hat{h}_{#1}}}                 % Effectively scaled height H'_i
 \newcommand{\bbox}[1]{\ensuremath{\textrm{bbox}_{#1}}}           % 2D Bounding box rectangle R_i
 
 % --- 8. Multi-Objective Vectors and Functions ---
@@ -204,7 +204,7 @@
 % Penalizaciones principales y pesos
 \newcommand{\HCZ}{\ensuremath{f^{\textrm{hcz}}}}                     % Penalty Heading Critical Zone
 \newcommand{\VA}{\ensuremath{f^{\textrm{va}}}}                       % Penalty Vertical Alignment
-\newcommand{\betaweight}{\ensuremath{\beta^{\textrm{pos}}}}                   % beta weight
+\newcommand{\betaweight}{\ensuremath{\beta^{\textrm{va}}}}                   % beta weight
 
 % Zona Crítica y Funciones de Área
 \newcommand{\Zcrit}{\ensuremath{\mathcal{Z}_{crit}}}           % Critical zone

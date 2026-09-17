@@ -1,55 +1,55 @@
 \section{Problem formulation}
 \label{sec:problem-formulation-pagegen}
 
-For a given set of input articles $\articleset$, a valid solution requires mapping each article $\articleobj{i} \in \articleset$ to an appropriate template $\templateobj{j} \in \templatecatalog$, and discovering an optimal spatial configuration on the page canvas $\page$ that prevents overlaps, respects page boundaries, and maximizes visual quality.
+For a given set of input articles $\articleset$, a valid solution $\solution$ requires mapping each article $\articleobj{i} \in \articleset$ to a template $\templateobj{j} \in \templatecatalog$, and discovering an optimal spatial configuration on the page canvas $\page$ that prevents overlaps, respects page boundaries, and maximizes visual quality.
 
 \subsection{Inputs and outputs}
 
 Given this setting, a specific problem instance input is denoted as $\instance = \langle \page, \articleset \rangle$, which encapsulates both the global page canvas $\page$ and the set of articles $\articleset$ to be packed. While $\page$ and $\articleset$ constitute the input instance, there is also a static template catalog $\templatecatalog$ available to resolve the layout, which does not depend on the specific instance but is fixed across all problem instances.
 
-Given this input, the desired output is a complete layout solution \solution, aggregating for every article $\articleobj{i} \in \articleset$ a template selection $\templatesel{i}$, a position allocation $\posvar{i}$, and a vertical elasticity $\elasticity{i}$ (formally defined in \secref{sec:decision-variables}) subject to the defined feasibility constraints and optimizing along the multi-objective vector $\objvector{\solution}$.
+Given this input, a candidate output is a complete layout solution \solution, aggregating for every article $\articleobj{i} \in \articleset$ a template selection $\templatesel{i}$, a position allocation $\posvar{i}$, and a vertical elasticity $\elasticity{i}$ (formally defined in \secref{sec:decision-variables}), subject to the defined feasibility constraints and evaluated along the multi-objective vector $\objvector{\solution}$. Because these four objectives measure different aspects of layout quality and may potentially conflict with one another (\secref{sec:objective_formulation}), no single $\solution$ is optimal in general; the method proposed in \secref{sec:evopagegen-approach} therefore returns a Pareto frontier (\secref{sec:sota-pareto}) of such solutions rather than a single one.
 
 \subsection{Decision variables and search space}
 \subsubsection{Decision Variables}
 \label{sec:decision-variables}
 
-Formally, a complete layout solution \solution\ is defined as the configuration that aggregates the individual choices made for all articles. To construct a valid page layout configuration \solution\ from the input instance, a set of three interdependent decision variables must be resolved for each individual article $\articleobj{i} \in \articleset$:
+Formally, a layout solution \solution\ is defined as the configuration that aggregates the individual choices made for all articles. To construct \solution\ from the input instance, a set of three interdependent decision variables must be resolved for each individual article $\articleobj{i} \in \articleset$:
 
 \begin{enumerate}
     \item \textbf{Template Selection (\templatesel{i}):} A discrete decision variable that assigns a specific template from the global catalog \templatecatalog\ to the article. To formalize this, \templatesel{i} denotes the index of the selected template $\templateobj{\templatesel{i}} \in \templatecatalog$ for article $\articleobj{i}$, as defined in Equation~\ref{eq:template-selection-def}:
     \begin{equation}
-    \templatesel{i} \in \{1, 2, \dots, \catalogsize\}, \quad \forall i \in \{1, \dots, \numarticles\}
+    \templatesel{i} \in \{1, 2, \dots, \catalogsize\}, \quad \forall i \in \{1, \dots, \numarticles\}.
     \tag{\ref{eq:template-selection-def}}
     \end{equation}
-    
-    \item \textbf{Position Allocation (\posvar{i}):} A tuple defining the exact geometric placement of the article onto the page canvas.
+
+    \item \textbf{Position Allocation (\posvar{i}):} A tuple defining the placement of the article onto the page canvas.
     \begin{equation}
-    \posvar{i} = (\xcoord{i}, \ycoord{i}, \pageindex{i}), \quad \forall i \in \{1, \dots, \numarticles\}
+    \posvar{i} = (\xcoord{i}, \ycoord{i}, \pageindex{i}), \quad \forall i \in \{1, \dots, \numarticles\},
     \end{equation}
-    Where $\xcoord{i} \in \mathbb{R}^+$ and $\ycoord{i} \in \mathbb{R}^+$ represent the horizontal and vertical coordinates of the top-left corner of the article relative to the page origin, respectively, and $\pageindex{i} \in \mathbb{Z}^+$ signifies the specific page number where the article was allocated.
+    where $\xcoord{i} \in \mathbb{R}^+$ and $\ycoord{i} \in \mathbb{R}^+$ represent the horizontal and vertical coordinates of the top-left corner of the article relative to the page origin, respectively, and $\pageindex{i} \in \mathbb{Z}^+$ signifies the page number where the article was allocated.
     
-    \item \textbf{Vertical Elasticity (\elasticity{i}):} A discrete scaling level that governs the proportional vertical adjustment applied to the assigned template. 
-    
-    Vertical elasticity is introduced to mimic real-world editorial workflows, where designers subtly compress or expand template geometries to manage page layout tightness. Mathematically, this flexibility serves as a optimization mechanism to eliminate empty white space and structurally drive the solution to compress into the page canvas. The elasticity variable is defined as:
+    \item \textbf{Vertical Elasticity (\elasticity{i}):} A discrete scaling level that governs the proportional vertical adjustment applied to the assigned template.
+    This notion was already introduced empirically in the dataset characterization of Chapter~\ref{chapter:definitions} (\secref{sec:dataset-preprocessing}), where it captures the percentage height difference between an article and its assigned template.
+    Vertical elasticity is introduced to mimic real-world editorial workflows, where designers subtly compress or expand template height to manage page layout tightness. Mathematically, this flexibility serves as a optimization mechanism to eliminate empty white space and structurally drive the solution to compress into the page canvas. The elasticity variable is defined as:
     \begin{equation}
-    \elasticity{i} \in \elasticityset \subseteq \mathbb{Z}, \quad \forall i \in \{1, \dots, \numarticles\}
+    \elasticity{i} \in \elasticityset \subseteq \mathbb{R}, \quad \forall i \in \{1, \dots, \numarticles\}.
     \end{equation}
 
-    The vertical elasticity directly alters the height of the selected template $\templateobj{\templatesel{i}}$. Given the height $\Htemp{\templatesel{i}}$, the scaled height \Hscaled{i}\ is formally defined as:
+    The vertical elasticity directly alters the height of the selected template $\templateobj{\templatesel{i}}$. Given the height $\Htemp{\templatesel{i}}$, the scaled height \Hscaled{i}\ is defined as:
     \begin{equation}
-    \Hscaled{i} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right)
+    \Hscaled{i} = \Htemp{\templatesel{i}} \cdot \left(1 + \frac{\elasticity{i}}{100}\right).
     \label{eq:h-scaled}
     \end{equation}
 
-    Conversely, horizontal elasticity (compression or expansion) is strictly prohibited within this formulation, because professional newspaper pages adhere to a rigid horizontal grid structure, defined by columns of size $\colsize$ and an inter-column gutter $\gutter$. Consequently, omitting horizontal elasticity variables significantly reduces the dimensionality of the decision space while preserving grid-based alignment by design.
+    \textbf{Remark: } Horizontal elasticity (compression or expansion) is strictly prohibited within this formulation, because professional newspaper pages adhere to a rigid horizontal grid structure, defined by columns of size $\colsize$ and an inter-column gutter $\gutter$. Consequently, omitting horizontal elasticity variables significantly reduces the dimensionality of the decision space while preserving grid-based alignment by design.
 \end{enumerate}
 
 
 
-\subsubsection{Search Space Complexity}
+\subsubsection{Search space}
 The mathematical coupling of these decision variables generates a massive combinatorial optimization space. For \numarticles\ input articles, the simultaneous evaluation of template selections,  elasticity adjustments, and position allocations described by a sequence-dependent permutation of articles (which determines the spatial ordering) scales the theoretical search space complexity to:
 \begin{equation}
-\mathcal{O}\left(\catalogsize^{\numarticles} \cdot \numarticles! \cdot (|\elasticityset|)^{\numarticles}\right)
+\mathcal{O}\left(\catalogsize^{\numarticles}  \numarticles!  (|\elasticityset|)^{\numarticles}\right).
 \end{equation}
 This exponential growth establishes the NP-hard nature of the proposed task, proving that exact global optimization quickly becomes intractable as \numarticles\ increases and justifying the use of advanced metaheuristics.
 
@@ -61,23 +61,24 @@ This exponential growth establishes the NP-hard nature of the proposed task, pro
 \subsection{Feasibility constraints}
 \label{sec:constraints_space}
 
-A solution $\solution$ is classified as strictly infeasible and is rejected by the optimization framework if it violates any of the following conditions:
+A solution $\solution$ is classified as feasible if it follows each one of the following feasibility constraints (FC):
 
-\paragraph{Page Budget Allocation:}
+\paragraph{FC1: All articles must fit on one page}
 The primary optimization domain restricts the layout canvas to a single-page target to satisfy standard print requirements. Let \pageindex{i}\ be the page index assigned to article \articleobj{i}. The solution space strictly enforces that all articles must fit onto the first page canvas:
 \begin{equation}
-\pageindex{i} = 1, \quad \forall i \in \{1, \dots, \numarticles\}
+\pageindex{i} = 1, \quad \forall i \in \{1, \dots, \numarticles\}.
 \end{equation}
-Multi-page configurations (where $\max_{i} \pageindex{i} > 1$) are treated as structurally infeasible and are mathematically permitted by the underlying framework strictly as a fallback mechanism if and only if the physical volume of the input assets makes a single-page solution impossible.
 
-\paragraph{Image Allocation Integrity:}
+\textbf{Remark:} They are mathematically permitted by the underlying framework strictly as a fallback mechanism if and only if the physical volume of the input articles makes a single-page solution impossible.
+
+\paragraph{FC2: Assigned templates must accommodate an article's required number of images}
 The chosen template \templateobj{\templatesel{i}}\ for any article \articleobj{i}\ must natively feature an internal zoning topology $\zoning{\templatesel{i}}$ capable of hosting the exact number of photographs \Nimg{i}\ requested by the article's content. Therefore, the template's maximum image capacity $\Nimgmax{\templatesel{i}}$ acts as an upper bound:
 \begin{equation}
-\Nimg{i} \le \Nimgmax{\templatesel{i}}, \quad \forall i \in \{1, \dots, \numarticles\}
+\Nimg{i} \le \Nimgmax{\templatesel{i}}, \quad \forall i \in \{1, \dots, \numarticles\},
 \end{equation}
 When this condition is satisfied, the number of active images selected during layout generation is set to exactly $\kactive{i} = \Nimg{i}$, which in turn determines the text capacity range $\capacity{\templatesel{i}}[\kactive{i}, :]$ to respect in the optimization process.
 
-\paragraph{Title Consistency:}
+\paragraph{FC3: Assigned templates must match an article's headline requirement}
 A template layout must strictly match the headline requirements specified by the article content attributes \Tlart{i}. A solution is infeasible if an article requiring a headline is mapped to a template without a title block, or vice versa. This structural compatibility requires that:
 \begin{equation}
 \Tlart{i} = \Tltemp{\templatesel{i}}, \quad \forall i \in \{1, \dots, \numarticles\},
@@ -91,28 +92,28 @@ where $\Tltemp{\templatesel{i}} \in \{0, 1\}$ denotes the explicit presence ($1$
     \end{cases}
 \end{equation}
 
-\paragraph{No-overlap:}
+\paragraph{FC4: No two articles may overlap}
 Articles arranged on the same page canvas cannot intersect or overlap their allocated physical spaces. Let \bbox{i}\ represent the two-dimensional bounding box of article \articleobj{i}\ on the page, bounded horizontally by $[\xcoord{i}, \xcoord{i} + \Wtemp{\templatesel{i}}]$ and vertically by $[\ycoord{i}, \ycoord{i} + \Hscaled{i}]$. For every pair of distinct articles, their bounding rectangles must yield an empty intersection set:
 \begin{equation}
-\bbox{i} \cap \bbox{j} = \emptyset, \quad \forall i, j \in \{1, \dots, \numarticles\} \quad \text{such that} \quad i \neq j
+\bbox{i} \cap \bbox{j} = \emptyset, \quad \forall i, j \in \{1, \dots, \numarticles\} \quad \text{such that} \quad i \neq j.
 \end{equation}
 
-\paragraph{Page limits:}
+\paragraph{FC5: Every article must remain within the page boundaries}
 Every allocated article bounding box \bbox{i}\ must be entirely contained within the physical confines of the effective page width (\Weff) and height (\Heff), preventing elements from clipping into the outer sheet margins:
 \begin{align}
 \xcoord{i} \ge 0 \quad &\text{and} \quad \xcoord{i} + \Wtemp{\templatesel{i}} \le \Weff, \quad \forall i \in \{1, \dots, \numarticles\} \\
-\ycoord{i} \ge 0 \quad &\text{and} \quad \ycoord{i} + \Hscaled{i} \le \Heff, \quad \forall i \in \{1, \dots, \numarticles\}
+\ycoord{i} \ge 0 \quad &\text{and} \quad \ycoord{i} + \Hscaled{i} \le \Heff, \quad \forall i \in \{1, \dots, \numarticles\}.
 \end{align}
 
-\paragraph{Grid-alignment and Gutter preservation}
- The spatial placement of articles must strictly adhere to the horizontal grid structure defined by $\colsize$ and $\gutter$ in the definition of the page $\page$ (Eq. \ref{eq:page-definition}). Formally: 
+\paragraph{FC6: Article placement must align to the horizontal column grid}
+ The spatial placement of articles must strictly adhere to the horizontal grid structure defined by $\colsize$ and $\gutter$ in the definition of the page $\page$ (\secref{sec:page-definition}). Formally: 
 
  \begin{equation}
-    \xcoord{i} \mod (\colsize + \gutter) = 0, \quad \forall i \in \{1, \dots, \numarticles\}
+    \xcoord{i} \mod (\colsize + \gutter) = 0, \quad \forall i \in \{1, \dots, \numarticles\}.
     \label{eq:grid_alignment}
 \end{equation}
- 
- Note that the proposed optimization framework satisfies this constraint by design, because (1) all templates within the catalog are predefined to match these standardized grid metrics, the optimization algorithm inherently preserves the overall grid structure, and (2) the spatial alignment is operationally guaranteed thanks to the explicit incorporation of the $\gutter$ offsetoffset when determining valid insertion coordinates, ensuring perfect horizontal alignment across the layout without expanding the search space (\secref{sec:packing_engine}).
+
+ Note that the proposed optimization framework satisfies this constraint by design, because (1) all templates within the catalog are predefined to match these standardized grid metrics, the optimization algorithm inherently preserves the overall grid structure, and (2) the spatial alignment is operationally guaranteed thanks to the explicit incorporation of the $\gutter$ offset when determining valid insertion coordinates, ensuring perfect horizontal alignment across the layout without expanding the search space (\secref{sec:packing_engine}).
 
 
 
@@ -121,58 +122,62 @@ Every allocated article bounding box \bbox{i}\ must be entirely contained within
 \subsection{Multi-objective formulation}
 \label{sec:objective_formulation}
 
-The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). Following the four layout criteria motivated in \secref{sec:pagegen-challenge}, the optimization goal is to approximate a Pareto-optimal frontier~\cite{pareto} of layout configurations by simultaneously evaluating a vector of four distinct and conflicting objective functions:
+The newspaper layout generation problem is formally modeled as a Multi-Objective Combinatorial Optimization Problem (MOCOP). Following the four layout criteria motivated in \secref{sec:pagegen-challenge}, the optimization goal is to approximate a Pareto-optimal frontier~\cite{pareto} of layout configurations by simultaneously evaluating a vector of four objective functions (OF): 
 \begin{equation}
-\objvector{\solution} = [\objone(\solution), \objthree(\solution), \objfour(\solution), \objtwo(\solution)]
+\objvector{\solution} = [\objone(\solution), \objthree(\solution), \objfour(\solution), \objtwo(\solution)].
 \end{equation}
 
-
-\subsubsection{\objone: Page coverage}
+\subsubsection{OF1: Page coverage (\objone(\solution), \figref{fig:page_coverage_concept})}
 
 \begin{figure}[htbp]
     \centering
-     \includegraphics[width=\widthForOneImage]{img/problem-formulation/cov.pdf}
-    \caption{Illustration of the Page Coverage concept: \objone\ evaluates the total unallocated white space on the page canvas, which is defined as the difference between the effective page area and the cumulative area occupied by all articles under their assigned templates and vertical elasticity levels.}
+    %todo: maybe better remove f_cov from the top and put it below in the format high f_cov (worse), low f_cov (better). Add (a) and (b)
+     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/cov.pdf}
+    \caption{Illustration of page coverage: \solution (a) exhibits a higher (worse) $\objone(\solution)$ due to unallocated white space, whereas (b) exhibits a lower (better) $\objone(\solution)$ by packing articles more tightly against $\page$.}
     \label{fig:page_coverage_concept}
 \end{figure}
 
-\objone\ evaluates the efficiency of the layout configuration in terms of page occupation. The mathematical goal is to minimize the total unallocated empty white space.
+The goal is to minimize the total unallocated empty white space.
 
 The total physical area occupied by an individual article \articleobj{i}\ under its assigned template \templatesel{i}\ and vertical elasticity level \elasticity{i}\ is given by $\Wtemp{\templatesel{i}} \cdot \Hscaled{i}$. The objective function accumulates the total residual empty space:
 
 \begin{equation}
-\objone = (\Weff \cdot \Heff) - \sum_{i=1}^{\numarticles} \left( \Wtemp{\templatesel{i}} \cdot \Hscaled{i} \right)
+\objone(\solution) = (\Weff \cdot \Heff) - \sum_{i=1}^{\numarticles} \left( \Wtemp{\templatesel{i}} \cdot \Hscaled{i} \right).
 \end{equation}
 
-By minimizing \objone, the optimization process directly drives the articles to pack tightly, maximizing layout density. Additionally, in the rare event that the single-page constraint must be relaxed due to the absolute lack of any feasible single-page configuration, \objone\ scales to represent the cumulative sum of empty white space across all utilized pages.
+By minimizing \objone(\solution), the optimization process directly drives the articles to pack tightly, maximizing layout density.
+
+\textbf{Remark:} In case that (FC1) must be relaxed due to the absolute lack of any feasible single-page configuration, \objone(\solution)\ scales to represent the cumulative sum of empty white space across all utilized pages.
 
 
 
 
-\subsubsection{\objthree: Text capacity integrity}
+
+\subsubsection{OF2: Text capacity integrity (\objthree(\solution), \figref{fig:text_capacity_integrity_concept})}
 
 \begin{figure}[htbp]
     \centering
-      \includegraphics[width=\widthForOneImage]{img/problem-formulation/cap.pdf}
+      \includegraphics[width=\widthForTwoImages]{img/problem-formulation/cap.pdf}
 
-    \caption{Illustration of the Text Capacity Integrity concept: the body text of each article must fit within the capacity boundaries defined by its assigned template, which are determined by the number of active images. \objthree penalizes both under-capacity (excessive white space) and over-capacity (text clipping) scenarios.}
+    \caption{Illustration of text capacity integrity concept: the body text of each article must fit within the capacity boundaries defined by its assigned template, which are determined by the number of active images. \objthree penalizes both under-capacity (excessive empty space, green article) and over-capacity (text clipping, blue article) scenarios.}
     \label{fig:text_capacity_integrity_concept}
 \end{figure}
 
-$\objthree$ evaluates the character count of the body text fit between the article's requirements and the text capacity boundaries of its assigned template. For each article \articleobj{i}, the character count $\Cart{i}$ must ideally fall within the permissible capacity interval $[\capacity{\templatesel{i}}[\kactive{i}, 0], \capacity{\templatesel{i}}[\kactive{i}, 1]$ dictated by the selected template $\templatesel{i}$ and the number of active images $\kactive{i} = \Nimg{i}$. 
+The goal is to penalize mismatches between an article's body text length and the text capacity of its assigned template.
+
+For each article \articleobj{i}, the character count $\Cart{i}$ must ideally fall within the permissible capacity interval $[\capacity{\templatesel{i}}[\kactive{i}, 0], \capacity{\templatesel{i}}[\kactive{i}, 1]$ dictated by the selected template $\templatesel{i}$ and the number of active images $\kactive{i} = \Nimg{i}$.
 
 This evaluation is modeled as a quadratic penalty function. Let $\objthreeepsilon$ be a tolerance factor that broadens the acceptable threshold bounds. The text capacity penalty $\penobjthree{i}$ for an individual article $\articleobj{i}$ is formally defined as:
 
 \begin{subnumcases}{\penobjthree{i} =}
     0 & if $(1-\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 0] \le \Cart{i} \le (1+\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 1]$ \label{eq:pen_optimal} \\
     \Klower & if $\Cart{i} = 0$ and $\capacity{\templatesel{i}}[\kactive{i}, 0] > 0$ \label{eq:pen_empty} \\
-    \Klower \cdot \left( \frac{\capacity{\templatesel{i}}[\kactive{i}, 0]}{\Cart{i}} - 1.0 \right)^2 & if $\Cart{i} < (1-\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 0]$ and $\Cart{i} > 0$ \label{eq:pen_under} \\
-    \Kupper \cdot \left( \frac{\Cart{i}}{\capacity{\templatesel{i}}[\kactive{i}, 1]} - 1.0 \right)^2 & if $\Cart{i} > (1+\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 1]$ \label{eq:pen_over}
+    \Klower  \left( \frac{\capacity{\templatesel{i}}[\kactive{i}, 0]}{\Cart{i}} - 1.0 \right)^2 & if $\Cart{i} < (1-\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 0]$ and $\Cart{i} > 0$ \label{eq:pen_under} \\
+    \Kupper  \left( \frac{\Cart{i}}{\capacity{\templatesel{i}}[\kactive{i}, 1]} - 1.0 \right)^2 & if $\Cart{i} > (1+\objthreeepsilon)\capacity{\templatesel{i}}[\kactive{i}, 1]$, \label{eq:pen_over}
 \end{subnumcases}
+where $\Klower$ and $\Kupper$ represent strictly positive penalty coefficients assigned to scale the lower and upper capacity violations, respectively.
 
-Where $\Klower$ and $\Kupper$ represent strictly positive penalty coefficients assigned to scale the lower and upper capacity violations, respectively.
-
-\penobjthree{i} is designed to enforce the following principles:
+The objective function \penobjthree{i} is designed to enforce the following principles:
 
 \begin{itemize}
     \item Optimal fit (Eq. \ref{eq:pen_optimal}): Assigns zero penalty when the article's character count falls within the acceptable capacity limits of the template, including a small tolerance margin $\objthreeepsilon$.
@@ -183,48 +188,53 @@ Where $\Klower$ and $\Kupper$ represent strictly positive penalty coefficients a
 
 
 
-The global text integrity objective function $\objthree$ aggregates the capacity deviations across all articles:
+Then, $\objthree(\solution)$ aggregates the capacity deviations across all articles:
 \begin{equation}
-\objthree = \sum_{i=1}^{\numarticles} \penobjthree{i}
+\objthree(\solution) = \sum_{i=1}^{\numarticles} \penobjthree{i}
 \end{equation}
+By minimizing \objthree(\solution), the optimization process prioritizes solutions where body text blocks are neither heavily clipped due to lack of space nor excessively sparse due to oversized containers.
 
-By minimizing \objthree, the optimization process prioritizes solutions where text blocks are neither heavily clipped due to lack of space nor excessively sparse due to oversized containers.
+\subsubsection{OF3: Positioning of articles quality (\objfour(\solution))}
 
-\subsubsection{\objfour: Positioning of articles quality}
-
-$\objfour$ penalizes improper positioning of articles. This objective is formulated as a linear combination of two independent penalty terms: the Heading Critical Zone penalty (\HCZ), which governs main article positioning, and the Vertical Alignment penalty (\VA), which penalizes edge misalignments between all articles:
+The goal is to penalize improper positioning of articles. This objective is formulated as a linear combination of two independent penalty terms: the Heading Critical Zone penalty (\HCZ(\solution)), which governs main article positioning, and the Vertical Alignment penalty (\VA(\solution)), which penalizes edge misalignments between all articles:
 \begin{equation}
-\objfour = \HCZ + \betaweight \cdot \VA,
+\objfour(\solution) = \HCZ(\solution) + \betaweight \VA(\solution),
 \end{equation}
-where \betaweight\ is a strictly positive weighting parameter utilized to balance the two aesthetic criteria.
+where \betaweight\ is a strictly positive weighting parameter used to balance the two aesthetic criteria.
 
-\paragraph{Privileged Critical Zone Penalty (\HCZ)} 
+\paragraph{Privileged Critical Zone Penalty (\HCZ(\solution), \figref{fig:hcz_concept})}
 
 \begin{figure}[htbp]
     \centering
-     \includegraphics[width=\widthForOneImage]{img/problem-formulation/pos.pdf}
-    \caption{Illustration of the Heading Critical Zone (HCZ) concept: the main article is expected to occupy a privileged upper-center region of the page canvas, defined as the first vertical third of the effective page height \Heff.}
+    %TODO: Write "main zone" and "main article" , exactly like that
+     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/pos.pdf}
+    \caption{Illustration of  Heading Critical Zone (HCZ): the main article is expected to occupy a privileged upper-center region of the page canvas (surrounded by dotted lines), defined as the first vertical third of the effective page height \Heff.}
     \label{fig:hcz_concept}
 \end{figure}
+
+The goal is to reward positioning the main article within a privileged upper-center region of the page.
 
 To respect journalistic hierarchy, the article designated as main ($\Mainart{i} = 1$) must be positioned within a privileged geometric region of the page canvas, defined by default as the upper-center portion (the first vertical third of $\Heff$). The coordinate space of this critical zone is defined by \Zcrit:
 \begin{equation}
 \Zcrit = [0, \Weff] \times \left[0, \frac{1}{3}\Heff\right]
 \end{equation}
-The penalty evaluates the spatial coverage deficit of the main article relative to its area. Formally, the \HCZ\ penalty is defined as:
+The penalty evaluates the spatial coverage deficit of the main article relative to its area. Formally, the \HCZ(\solution)\ penalty is defined as:
 \begin{equation}
-\HCZ = \sum_{i=1}^{\numarticles} \Mainart{i} \cdot \left( 1 - \frac{\Area{\bbox{i} \cap \Zcrit}}{\Area{\bbox{i}}} \right)
+\HCZ(\solution) = \sum_{i=1}^{\numarticles} \Mainart{i}  \left( 1 - \frac{\Area{\bbox{i} \cap \Zcrit}}{\Area{\bbox{i}}} \right)
 \end{equation}
 This formulation yields a penalty of $0$ if the main article bounding box \bbox{i}\ is fully contained within \Zcrit, and approaches $1$ as the content is pushed outside the privileged zone.
 
-\paragraph{Vertical Alignment Penalty (\VA)}
+\paragraph{Vertical Alignment Penalty (\VA(\solution), \figref{fig:vertical_alignment_concept})}
 
-In editorial design, visual harmony heavily relies on the alignment of adjacent articles. When two horizontally neighboring articles share top or bottom boundaries that are nearly aligned, subtle offsets of a few millimeters create visual friction, making the layout appear unpolished or accidental. Conversely, when articles are substantially offset, readers perceive them as intentionally independent blocks, where strict edge continuity is no longer expected. To mathematically capture this human design principle, the Vertical Alignment penalty (\VA) evaluates horizontal sightlines by penalizing visually distracting misalignment noise.
+The goal is to reward well-aligned edges between laterally adjacent articles, penalizing near-misalignments.
+
+In editorial design, visual harmony heavily relies on the alignment of adjacent articles. When two horizontally neighboring articles share top or bottom boundaries that are nearly aligned, subtle offsets of a few millimeters create visual friction, making the layout appear unpolished or accidental. Conversely, when articles are substantially offset, readers perceive them as intentionally independent blocks, where strict edge continuity is no longer expected. To mathematically capture this human design principle, the Vertical Alignment penalty (\VA(\solution)) evaluates horizontal sightlines by penalizing visually distracting misalignment noise.
 
 \begin{figure}[htbp]
     \centering
-     \includegraphics[width=\widthForOneImage]{img/problem-formulation/va.pdf}
-    \caption{Conceptual illustration of vertical edge alignment between laterally adjacent articles: (a) optimal alignment ($d \le \threshalignlower$) forming an aligned layout, (b) misalignment noise zone ($\threshalignlower < d \le \threshalignupper$) creating visual distraction, and (c) independent separation ($d > \threshalignupper$) treated as intentionally separated articles.}
+    %todo legends and markers too small. put (i) (ii) (iii)
+     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/va.pdf}
+    \caption{Illustration of vertical edge alignment between laterally adjacent articles: (i) optimal alignment ($d \le \threshalignlower$) forming an aligned layout, (ii) misalignment noise zone ($\threshalignlower < d \le \threshalignupper$) creating visual distraction, and (iii) independent separation ($d > \threshalignupper$) treated as intentionally separated articles.}
     \label{fig:vertical_alignment_concept}
 \end{figure}
 
@@ -264,38 +274,37 @@ The top edge quality score $\mathcal{Q}_{top}$ is computed as the normalized ave
 1.0 & \text{otherwise.} 
 \end{cases}
 \end{equation}
-The bottom edge quality score $\mathcal{Q}_{bottom}$ is derived identically using \deltaybottom{i}{j}. Finally, the Vertical Alignment penalty \VA\ is defined as the inversion of the equally weighted edge quality scores:
+The bottom edge quality score $\mathcal{Q}_{bottom}$ is derived identically using \deltaybottom{i}{j}. Finally, the Vertical Alignment penalty \VA(\solution)\ is defined as the inversion of the equally weighted edge quality scores:
 \begin{equation}
-\VA = 1.0 - \left( 0.5 \cdot \mathcal{Q}_{top} + 0.5 \cdot \mathcal{Q}_{bottom} \right)
+\VA(\solution) = 1.0 - \left( 0.5 \cdot \mathcal{Q}_{top} + 0.5 \cdot \mathcal{Q}_{bottom} \right)
 \end{equation}
 
-Horizontal alignment evaluation is explicitly omitted from this penalty vector because horizontal grid discipline is required and enforced, as established in Equation~\ref{eq:grid_alignment}.
+\textbf{Remark:} Horizontal alignment evaluation is explicitly omitted from this penalty vector because horizontal grid discipline is required and enforced, as described in \secref{sec:constraints_space} (FC~6).
 
-
-\subsubsection{\objtwo: Template selection editorial style}
+\subsubsection{OF4: Template selection editorial style (\objtwo(\solution), \figref{fig:template_selection_editorial_style_concept})}
 
 \begin{figure}[htbp]
     \centering
-     \includegraphics[width=\widthForOneImage]{img/problem-formulation/sty.pdf}
-    \caption{Illustration of the Template Selection Editorial Style concept: \objtwo\ evaluates how well the assigned templates align with historical editorial template selections, capturing not only historical choices but also tacit dependencies between neighboring articles.}
+    %todo same size for 3 layouts
+     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/sty.pdf}
+    \caption{Illustration of Template Selection Editorial Style: \solution (a) exhibits a higher (worse) $\objtwo(\solution)$ by selecting templates that deviate from the historical distribution, represented by the reference layout (r) in the middle, whereas \solution (b) exhibits a lower (better) $\objtwo(\solution)$ by selecting templates consistent with that historical distribution.}
     \label{fig:template_selection_editorial_style_concept}
 \end{figure}
 
-\objtwo\ evaluates the editorial quality of the layout solution $\solution$ by measuring how well the assigned templates align with historical layouts. Because newspaper layouts rely on tacit structural dependencies where the choice of a template for a given article inherently depends on its neighboring articles, this objective must be evaluated within a global page context.
+The goal is to evaluate the editorial quality of the layout solution $\solution$ by measuring how well the assigned templates align with historical selections. Because newspaper layouts rely on tacit structural dependencies where the choice of a template for a given article inherently depends on its neighboring articles, this objective must be evaluated within a global page context.
 
 Let $\Omega(\articleobj{i}, \templatesel{i} \mid \solution) \in [0, 1]$ be an abstract \textit{editorial suitability function} that quantifies the compliance of mapping article \articleobj{i}\ to template \templatesel{i}\ given the complete context of the layout solution \solution. A value of $1$ represents a perfect match according to historical editorial criteria, while a value of $0$ indicates a complete editorial mismatch. 
 
-Since the optimization vector $\objvector{\solution}$ is formulated as a minimization problem, \objtwo\ is mathematically defined as the minimization of the aggregate editorial suitability across all arranged articles:
+Since the optimization vector $\objvector{\solution}$ is formulated as a minimization problem, \objtwo(\solution)\ is mathematically defined as the minimization of the aggregate editorial suitability across all arranged articles:
 
 \begin{equation}
-\objtwo = \sum_{i=1}^{\numarticles} \left( 1 - \Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution) \right)
+\objtwo(\solution) = \sum_{i=1}^{\numarticles} \left( 1 - \Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution) \right).
 \end{equation}
+By minimizing \objtwo(\solution), the optimization process drives the configuration toward layouts that preserve the signature visual identity and human design choices of templates.
 
-By minimizing \objtwo, the optimization process drives the configuration toward layouts that preserve the signature visual identity and human design choices of templates. 
+\paragraph{\objtwo(\solution)\ implementation}
 
-\paragraph{\objtwo\ implementation}
-
-In particular, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is modeled using the \NeuralMethod (\neuralmethod) defined in \secref{sec:gwes}. Thanks to the page-aware context deep learning architecture, \neuralmethod\ is capable of capturing the complex interdependencies between neighboring articles and their assigned templates, effectively learning the implicit editorial style, thus resolving \objtwo. Of course, this assumes that the model has been trained on a sufficiently large and representative historical dataset of newspaper layouts, in the exact same way as described in \secref{sec:gwes}. Given this, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is formally defined as:
+In particular, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is modeled using the \NeuralMethod (\neuralmethod) defined in \secref{sec:gwes}. Thanks to the page-aware context deep learning architecture, \neuralmethod\ is capable of capturing the complex interdependencies between neighboring articles and their assigned templates, effectively learning the implicit editorial style, thus resolving \objtwo(\solution). Of course, this assumes that the model has been trained on a sufficiently large and representative historical dataset of newspaper layouts, in the exact same way as described in \secref{sec:gwes}. Given this, $\Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution)$ is formally defined as:
 
 \begin{equation}
 \Omega(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution) = \neuralmethod(\articleobj{i}, \templateobj{\templatesel{i}} \mid \solution),
