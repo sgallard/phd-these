@@ -24,7 +24,6 @@ where:
 Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
 \begin{figure}[htbp]
     \centering
-    %TODO: CHANGE FIGURE TO SHOW A SHADED REGION WHERE AN ARTICLE GOES
     \includegraphics[width=0.8\widthForOneImage]{img/page-with-notation.pdf}
     \caption{Page $\page$}
     \label{fig:page}
@@ -165,20 +164,19 @@ At this raw stage, the bounding boxes are allowed to overlap: in practice, the b
 
 \begin{figure}[htbp]
     \centering
-    % TODO: pegar imagen 
-    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+   
+    \includegraphics[width=\widthForTwoImages]{img/template_ph.jpg}
     \caption{Example of a \publihebdos template rendering, with placeholder graphics for each block.}
     \label{fig:publihebdos-template-example} 
 \end{figure}
 
 \subsubsection{Usage log}
 
-In addition to the template catalog, \publihebdos provides a CSV usage log covering the six months preceding the data extraction, reporting for each template its identifier, its overall usage count $\templateutilization{j}$, and its per-month usage count. \figref{fig:publihebdos-usage-longtail} plots the resulting overall usage distribution across the catalog, reordered by decreasing usage: it exhibits a pronounced long-tail shape, with a small subset of templates (empirically, the top 4\% of the catalog, corresponding to a usage $\templateutilization{j}$ above $8000$) concentrating most of the recorded usage, while the majority of templates are used sparingly or not at all. This empirically observed threshold of $8000$ is reused in Chapter~\ref{chapter:template} to separate the short head from the long tail when evaluating template retrieval methods. More generally, this long-tail distribution motivates the design of the template retrieval mechanisms introduced in Chapter~\ref{chapter:template}, which account for popularity bias and long-tail exposure together with structural diversity.
+In addition to the template catalog, \publihebdos provides a CSV usage log covering the six months preceding the data extraction, reporting for each template its identifier, its overall usage count $\templateutilization{j}$, and its per-month usage count. \figref{fig:publihebdos-usage-longtail} plots the resulting overall usage distribution across the catalog, reordered by decreasing usage: it exhibits a pronounced long-tail shape, with a small subset of templates (usage $\templateutilization{j}$ above $8000$) concentrating most of the recorded usage, while the majority of templates are used sparingly or not at all. This empirically observed threshold of $8000$ is reused in Chapter~\ref{chapter:template} to separate the short head from the long tail when evaluating template retrieval methods. More generally, this long-tail distribution motivates the design of the template retrieval mechanisms which account for popularity bias together with structural diversity.
 
 \begin{figure}[htbp]
     \centering
-    % TODO: pegar imagen
-    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+    \includegraphics[width=\widthForOneImage]{img/usage_longtail.pdf}
     \caption{Overall usage distribution across the \publihebdos template catalog, reordered by decreasing usage, showing a pronounced long-tail shape.}
     \label{fig:publihebdos-usage-longtail}
 \end{figure}
@@ -226,9 +224,8 @@ A PDF rendering of the composed page is additionally provided alongside each XML
 
 \begin{figure}[htbp]
     \centering
-    % TODO: pegar imagen
-    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
-    \caption{Example of a composed \laprovence page layout (PDF rendering).}
+    \includegraphics[width=\widthForTwoImages]{img/page_lp.pdf}
+    \caption{Example of a composed \laprovence page layou.}
     \label{fig:laprovence-page-example}
 \end{figure}
 
@@ -243,8 +240,8 @@ Once the zoning $\zoning{j}$ has been cleaned in this way, the text capacity mat
 
 \begin{figure}[htbp]
     \centering
-    % TODO: pegar imagen
-    %\includegraphics[width=\widthForOneImage]{PLACEHOLDER}
+   
+    \includegraphics[width=\widthForTwoImages]{img/template_ph_abstract.png}
     \caption{Cleaned zoning topology of a template, after resolving overlapping raw bounding boxes into real block polygons.}
     \label{fig:template-cleaned-topology}
 \end{figure}

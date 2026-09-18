@@ -21,11 +21,21 @@ The computation of $\tdiou{\cdot}{\cdot}$ involves three steps: rescaling templa
 \tdiou{\templateobj{1}}{\templateobj{2}} = C_S \, C_M \, \frac{\sum_{(\zblock{1}{j},\zblockrescaled{2}{k}) \in M} \diouplusone{\zblock{1}{j}}{\zblockrescaled{2}{k}}}{|M|},
 \label{eq:tdiou}
 \end{equation}
+where:
+\begin{itemize}
+    \item $\zblockrescaled{2}{k}$ are elements of $\tilde{\templateobj{2}}$, which corresponds to $\templateobj{2}$ rescaled to match $\templateobj{1}$, i.e., $\Htemp{\tilde{\templateobj{2}}} = \Htemp{\templateobj{1}} $, $\Wtemp{\tilde{\templateobj{2}}} = \Wtemp{\templateobj{1}}$ (\figref{fig:rescaling-template});
+    \item $M$ is the set of matched element pairs;
+    \item $C_S$ penalizes dimensional differences;
+    \item $C_M$ accounts for unmatched elements.
+\end{itemize}
+The rest of this section gives more details about the different terms and notions introduced here.  
 
-
-where $\zblockrescaled{2}{k}$ are elements of $\tilde{\templateobj{2}}$, which corresponds to $\templateobj{2}$ rescaled to match $\templateobj{1}$ ($\Htemp{\tilde{\templateobj{2}}} = \Htemp{\templateobj{1}} $, $\Wtemp{\tilde{\templateobj{2}}} = \Wtemp{\templateobj{1}}$), $M$ is the set of matched element pairs, $C_S$ penalizes dimensional differences, and $C_M$ accounts for unmatched elements. The rest of this section gives more details about the different terms and notions introduced here.  
-
-%TODO: Image about this
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\widthForOneImage]{img/rescaling-template.pdf}
+    \caption{Illustration of the rescaling step of $\tdiou{\cdot}{\cdot}$: $\templateobj{2}$ is rescaled to $\tilde{\templateobj{2}}$ so that its height and width match those of $\templateobj{1}$.}
+    \label{fig:rescaling-template}
+\end{figure}
 
 \subsubsection*{Similarity measure (\diouplusone{\templateobj{1}}{\templateobj{2}})}
 \label{sec:tdiou:diouplusone}
@@ -41,7 +51,7 @@ CGAL~\cite{cgal} was adopted for this reimplementation because template blocks m
 \subsubsection*{Rescaling and dimensional penalty}
 \label{sec:tdiou:rescaling}
 
-Templates are rescaled for element-wise comparison. Let $\tilde{\templateobj{2}}$ denote $\templateobj{2}$ rescaled to match $\templateobj{1}$. The penalty factor $C_S$ reduces similarity when $\templateobj{2}$ differs substantially from $\templateobj{1}$ in area, aspect ratio, or orientation:
+Templates are rescaled for element-wise comparison. Let $\tilde{\templateobj{2}}$ denote $\templateobj{2}$ rescaled to match $\templateobj{1}$ (\figref{fig:rescaling-template}). The penalty factor $C_S$ accounts for this rescaling; it reduces similarity when $\templateobj{2}$ differs substantially from $\templateobj{1}$ in area, aspect ratio, or orientation:
 \begin{align*} 
     C_S =& f_{\sigma_{1},\gamma_1}(\Htemp{\templateobj{1}}\Wtemp{\templateobj{1}} - \Htemp{\templateobj{2}}\Wtemp{\templateobj{2}}) \,
            f_{\sigma_2,\gamma_2}(\arctan(\Htemp{\templateobj{1}}/\Wtemp{\templateobj{1}}) - \arctan(\Htemp{\templateobj{2}}/\Wtemp{\templateobj{2}})) \nonumber\\
@@ -67,12 +77,18 @@ Both $f_{\sigma,\gamma}$ and $g_{\sigma,\gamma}$ decay smoothly toward zero as t
 
 \subsubsection*{Element matching and penalty}
 \label{sec:tdiou:matching}
-Elements $\zblock{1}{j} \in \templateobj{1}$ and $\zblockrescaled{2}{k} \in \tilde{\templateobj{2}}$ are matched based on $\diouplusone{\templateobj{1}}{\templateobj{2}}$ similarity and class correspondence, formulated as an assignment problem solvable with the Hungarian algorithm~\cite{hungarian}. The set of matched pairs is $M$. Unmatched elements are penalized via:
+Elements $\zblock{1}{j} \in \templateobj{1}$ and $\zblockrescaled{2}{k} \in \tilde{\templateobj{2}}$ are matched based on $\diouplusone{\templateobj{1}}{\templateobj{2}}$ similarity and class correspondence, formulated as an assignment problem solvable with the Hungarian algorithm~\cite{hungarian} (\figref{fig:matching-template}). The set of matched pairs is $M$. Unmatched elements are penalized via:
 \[
 C_M = \frac{1}{2 \, \Htemp{\templateobj{1}}\Wtemp{\templateobj{1}}} \sum_{(\zblock{1}{j},\zblockrescaled{2}{k}) \in M} \big( area(\zblock{1}{j} + area(\zblockrescaled{2}{k}) \big).
 \]
-This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched element quality and structural differences.
-%TODO figure for matching
+This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched element quality and structural differences. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForTwoImages]{img/matching-templates.pdf}
+    \caption{Illustration of the element matching: elements of $\templateobj{1}$ and $\tilde{\templateobj{2}}$ are matched by class correspondence and $\diouplusone{\templateobj{1}}{\templateobj{2}}$ similarity, solved as an assignment problem with the Hungarian algorithm.}
+    \label{fig:matching-template}
+\end{figure}
 
 \subsection{Similarity measure 2: Template-based Graph Matching Network ($\gmn{\cdot}{\cdot}$)}
 
@@ -139,8 +155,18 @@ Results of the online experiment.
 \end{figure}
 
 \subsection{Qualitative comparison}
-%todo complete this
 
+Since the quantitative results reported above proved inconclusive to highlight a clear trend, the triplets in which participants favored $\tdiou{\cdot}{\cdot}$ over $\gmn{\cdot}{\cdot}$ were examined qualitatively. This analysis reveals a pattern, illustrated in \figref{fig:mismatch-triplet}, a close-up of triplet 10 from \figref{fig:online_experiment}(b).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/mismatch-triplet.pdf}
+    \caption{Close-up of triplet 10 (\figref{fig:online_experiment}(b)): although $O_1$ lacks a block present in the reference $\templateobj{R}$ and additionally contains a subtitle absent from $\templateobj{R}$, participants predominantly selected $O_1$ as more similar to $\templateobj{R}$ under $\tdiou{\cdot}{\cdot}$.}
+    \label{fig:mismatch-triplet}
+\end{figure}
+
+As expected from an IoU-based formulation, $\tdiou{\cdot}{\cdot}$ penalizes misalignments~\cite{patil_layoutgmn_2021}; however, it also implicitly overweights larger elements, since matched regions of greater area contribute disproportionately to the aggregated score in \eqref{eq:tdiou}, inflating the resulting similarity. This effect can even offset the penalty $C_M$. This is illustrated by triplet 10 (\figref{fig:mismatch-triplet}): participants selected $O_1$ as more similar to $\templateobj{R}$, even though $O_1$ lacks a block present in $\templateobj{R}$ and additionally contains a subtitle absent from $\templateobj{R}$.
+
+$\gmn{\cdot}{\cdot}$, in contrast, measures topology directly. In the same triplet, $O_2$ contains an additional image block absent from $\templateobj{R}$, yet this discrepancy has little effect on $\gmn{\cdot}{\cdot}$, since the overall topology of $O_2$ remains similar to that of $\templateobj{R}$ and the class-wise correspondence between their elements is one-to-one.
 
 This analysis lead to the selection of $\gmn{\cdot}{\cdot}$ as the main similarity measure to be used in this work.
-%TODO maybe extend unless the previous section is conclusive enough

@@ -282,13 +282,11 @@ This clustering structure makes explicit the distinction between generic layouts
 
 
 \begin{figure}[htbp]
-    \centering
-    %todo CHANGE CAPITALS OF FIGURE
-    %todo add a and b to illustrations
+    \centering    
     \includegraphics[width=\widthForOneImage]{img/templates_x_usage_x_histograms.pdf}
     \caption{
     Cluster distribution analytics by total usage and template count.
-    To visualize cluster density, clusters are grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a single cluster). To account for the large axis range, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant. Inserts (a) and (b) illustrates clusters configuration.
+    To visualize cluster density, clusters are grouped into  bins of 500 units of total usage, represented by overlaid bubbles. The size of these bubbles denote the number of clusters in each case. Numerical labels provide the exact cluster count for each bubble (if absent, corresponds to a single cluster). To account for the large axis range, the visualization employs a dual broken-axis scale (indicated by shaded zones and guide lines). Additionally, marginal distribution plots (KDE) on the top and right axes highlight frequency peaks, visually confirming that the vast majority of clusters are concentrated in the lower-left quadrant. 
     }
     \label{fig:cluster-graphs}
 \end{figure}
@@ -314,10 +312,9 @@ First, it is necessary to examine how template usage is distributed across struc
 These two distributions are illustrated in \figref{fig:cluster-usage}.
 \begin{figure}[htbp]
     \centering
-    %todo change axis. y-axis: number of clusters (bigger). x-axis: Top-N
     \includegraphics[width=\widthForOneImage]{img/cluster_usage.pdf}
     \caption{
-   Observed and Synthetic Template Usage Distributions. This figure shows the number of clusters used to group the top-$\topsize$ templates (ranked by usage) for two distinct distribution scenarios. The first scenario, represented by the blue curve, corresponds to the \emph{Original Dataset Distribution} (\ODD), where top-$\topsize$ templates are more evenly distributed across clusters, particularly for low $\topsize$-values (green region). This spread suggests that selecting templates based on usage alone should yield satisfactory diversity. The second scenario, shown by the red curve, simulates a situation where high-usage templates are more frequently concentrated within the same clusters and is termed the \emph{Increasing Slope Distribution} (\ISD). This arrangement is intentionally designed to be nearly symmetric relative to the dotted reference line, creating a more challenging scenario, as selecting templates based solely on usage would likely lead to lower diversity in the output.}
+   Observed and Synthetic Template Usage Distributions. This figure shows the number of clusters used to group the top-$\topsize$ templates (ranked by usage) for two distinct distribution scenarios. The first scenario, represented by the blue curve, corresponds to the \emph{Original Dataset Distribution} (\ODD), where top-$\topsize$ templates are more evenly distributed across clusters, particularly for low $\topsize$-values (green region). This spread suggests that selecting templates based on usage alone should yield satisfactory diversity. The second scenario, shown by the red curve, simulates a situation where high-usage templates are more frequently concentrated within the same clusters and is termed the \emph{Increasing Slope Distribution} (\ISD). This arrangement is intentionally designed to be nearly symmetric relative to the dotted reference line, creating a more challenging scenario, as selecting templates based solely on usage would likely lead to lower diversity in the output. Inserts (a) and (b) illustrates both configurations.}
    \label{fig:cluster-usage}
 \end{figure}
 
@@ -506,3 +503,28 @@ Execution time is measured as a function of \topsize for fixed $\cwthreshold=3$ 
 
 Both examples show that \trs effectively promotes diversity while complying with historical comformity. \classicclusdiv fails to achieve template diversity due to its lack of consideration for structural layout. Although \adaptedclusdiv improves diversity by accounting for layout structure, our approach goes further by leveraging inter-cluster distances and an optimized selection process to maximize structural differences and further enhance diversity.
 
+
+
+\section{Discussion}
+\label{sec:trs-discussion}
+\subsection{Retrieval Stability (Top-$N$ Preservation)}
+\label{sec:discussion:preservation}
+
+In operational settings, \trs\ is used interactively, where editors may progressively increase the number of suggested templates. In such contexts, it is desirable that expanding the list size does not invalidate previously proposed candidates. \trs\ satisfies this requirement through a Top-$N$ preservation property.
+
+Formally, let $\recolist{N}$ denote the list of $N$ retrieved templates.
+
+\begin{proposition}
+\label{proposition:trs}
+$\recolist{N} \subset \recolist{N+1}$.
+\end{proposition}
+
+This property guarantees that increasing the retrieval size preserves every previously selected template, while allowing their relative ordering to change. Such behavior is important in newspaper editorial workflows, as it ensures consistency across successive retrieval requests and avoids introducing instability.
+
+\subsection{Extensibility to User-Aware Scenarios}
+
+\trs\ operates in a user-agnostic setting, where retrieval is driven exclusively by template characteristics rather than individual user preferences. This design choice aligns with many industrial environments, where maintaining visual consistency across content is a primary concern.
+
+Nevertheless, \trs\ can be extended to user-aware scenarios by incorporating historical usage data at the user level. In such a setting, a template--user interaction matrix could be constructed and combined with collaborative filtering techniques~\cite{cf-techniques}. Importantly, this extension would rely on additional similarity measures distinct from $\gmn{\cdot}{\cdot}$, since structural layout similarity does not necessarily reflect user preferences or popularity.
+
+This separation between structural similarity modeling and preference modeling highlights the modularity of \trs\ and suggests a clear pathway for integrating personalization mechanisms without altering its core retrieval logic. It would also allow the integration of business-driven constraints, such as prioritizing templates with higher ad-revenue potential, without compromising the core requirement of structural diversity.

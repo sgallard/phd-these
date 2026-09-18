@@ -1,6 +1,5 @@
 \section{Experimental evaluation}
 \label{sec:results}
-%todo: check entire section looking for overcomplex paragraphs or too many ideas in a single one
 \subsection{Experimental setup and implementation details}
 
 \subsubsection{Implementation and Hardware Details}
@@ -31,11 +30,11 @@ Moreover, since these pages were actually published, they are known a priori to 
 
 This dataset serves two purposes within this evaluation: it supplies the empirical objective distributions from which the historical aspiration vectors guiding the preference-based selection of \methodName are extracted, as detailed in \secref{sec:many-objective_optimization}; and it is utilized, together with the independent test set defined in \secref{sec:gwes}, to construct the evaluation problem instances~$\instance$ used to benchmark \methodName. Concurrently, the static template catalog~$\templatecatalog$ coming from the same newspaper group serves as part of the search domain for the evolutionary optimization engine.
 
-\subsubsection*{Historical dataset for aspiration vectors}
+\subsubsection*{Aspiration points dataset}
 
 The historical aspiration vectors used by \methodName\ (\secref{sec:many-objective_optimization}) are computed over the full set of $4{,}449$ usable \laprovence pages described in \secref{sec:dataset-preprocessing}.
 
-\subsubsection*{Instance Setup}
+\subsubsection*{Instance selection setup}
 
 
 An instance set comprising 30 instances was established. To ensure strict validation integrity and prevent data leakage with \neuralmethod, these instances were sampled from the intersection of the exact-match and admissible-elasticity categories described in \secref{sec:dataset-preprocessing} ($2{,}775$ pages) and the independent test set defined in \secref{sec:gwes}. The experimental corpus covers a wide spectrum of visual complexities by varying the number of articles per page, ranging from low-density configurations to a practical upper bound in \melody. The structural distribution of the instance setup is detailed in Table~\ref{tab:instance_distribution}.
@@ -114,10 +113,10 @@ Category & Symbol & Parameter Description & Value \\
 \label{tab:algorithmic_parameters}
 \end{table}
 
-The asymmetric population sizes reported in Table~\ref{tab:algorithmic_parameters} ($\popsize = 286$ versus $\popsize_R = 330$) are not arbitrary hyperparameter selections; rather, they are strictly dictated by the underlying combinatorial requirements of the reference direction generation methods inside the \texttt{pymoo} framework:
+The asymmetric population sizes reported in Table~\ref{tab:algorithmic_parameters} ($\popsize = 286$ versus $\popsize_R = 330$) are not arbitrary hyperparameter selections; rather, they are strictly dictated by the underlying combinatorial requirements of the reference direction generation methods:
 \begin{enumerate}
-    \item For \methodNameUniform, deploying the canonical Das-Dennis boundary intersection method with $10$ structured partitions across the $4$-dimensional objective space mathematically yields exactly $\binom{4 + 10 - 1}{10} = 286$ unique reference vectors, necessitating an identical population size to guarantee niche coverage. 
-    \item Conversely, \methodName\ projects a structured mesh of $8$ internal partitions around each of the $2$ extracted historical aspiration points (the 25th and 50th percentiles of empirical human designs), which generates exactly $165$ localized reference lines per target zone, culminating in a combined population tracking space of $165 \times 2 = 330$ individuals to preserve directional diversity. The deliberate selection of $8$ internal partitions for the preference-guided approach was specifically enforced to maintain an equitable computational budget and search capacity per generation, thereby ensuring a balanced comparative analysis between both paradigms.
+    \item For \methodNameUniform, deploying the canonical Das-Dennis boundary intersection method with $10$ structured partitions across the $4$-dimensional objective space yields exactly $\binom{4 + 10 - 1}{10} = 286$ unique reference directions, necessitating an identical population size to guarantee niche coverage. 
+    \item Conversely, \methodName\ projects a structured mesh of $8$ internal partitions around each of the $2$ aspiration points, which generates exactly $165$ localized reference directions per target zone, culminating in a combined population tracking space of $165 \times 2 = 330$ individuals to preserve directional diversity. The deliberate selection of $8$ internal partitions for the preference-guided approach was specifically enforced to maintain an equitable computational budget and search capacity per generation, ensuring a balanced comparative analysis between both methods.
 \end{enumerate}
 
 
@@ -183,59 +182,59 @@ Mathematically, the compromise solution represents the best trade-off within a P
 \toprule
 $\numarticles$ & Method & $N_{pages}$ & \objone & \objthree & \objfour & \objtwo \\
 \midrule
-\multirow[c]{6}{*}{2} & B1 & \cellcolor{red!15}1.62 $\pm$ 0.49 & 0.81 $\pm$ 0.31 & 1.89 $\pm$ 1.67 & 0.38 $\pm$ 0.25 & 1.71 $\pm$ 0.37 \\
+\multirow[c]{6}{*}{2} & B1 & \cellcolor{red!15}1.62 $\pm$ 0.49 & 0.81 $\pm$ 0.31 & 1.89 $\pm$ 1.67 & 0.38 $\pm$ 0.25 & \cellcolor{green!15}1.71 $\pm$ 0.37 \\
  & B2 & \bfseries1.00 $\pm$ 0.00 & 0.29 $\pm$ 0.10 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.59 $\pm$ 0.13 & 1.87 $\pm$ 0.17 \\
  & B3 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.29 $\pm$ 0.10 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.59 $\pm$ 0.13 & 1.84 $\pm$ 0.17 \\
  & B4 & \cellcolor{red!15}1.14 $\pm$ 0.35 & 0.30 $\pm$ 0.30 & 0.11 $\pm$ 0.07 & \cellcolor{green!15}0.05 $\pm$ 0.12 & \cellcolor{green!15}1.41 $\pm$ 0.44 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries 0.02 $\pm$ 0.04 & \cellcolor{green!15}0.11 $\pm$ 0.16 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & \cellcolor{green!15}1.10 $\pm$ 0.36 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries 0.02 $\pm$ 0.04 & \cellcolor{green!15}0.11 $\pm$ 0.16 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & --- \\ %\cellcolor{green!15}1.10 $\pm$ 0.36
  & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.04 $\pm$ 0.07 & 0.18 $\pm$ 0.13 & \cellcolor{green!15}0.01 $\pm$ 0.05 & \cellcolor{green!15}\bfseries0.32 $\pm$ 0.17 \\
   \hline
 \multirow[c]{6}{*}{3} & B1 & \cellcolor{red!15}2.28 $\pm$ 0.73 & 1.11 $\pm$ 0.48 & 2.37 $\pm$ 1.38 & 0.47 $\pm$ 0.30 & 2.55 $\pm$ 0.41 \\
  & B2 & \cellcolor{red!15}1.14 $\pm$ 0.35 & 0.36 $\pm$ 0.36 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.66 $\pm$ 0.18 & 2.56 $\pm$ 0.28 \\
- & B3 & \cellcolor{red!15}1.14 $\pm$ 0.35 & \cellcolor{green!15}0.36 $\pm$ 0.36 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.66 $\pm$ 0.18 & 2.50 $\pm$ 0.28 \\
+ & B3 & \cellcolor{red!15}1.14 $\pm$ 0.35 & \cellcolor{green!15}0.36 $\pm$ 0.36 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.66 $\pm$ 0.18 & \cellcolor{green!15}2.50 $\pm$ 0.28 \\
  & B4 & \cellcolor{red!15}1.57 $\pm$ 0.50 & 0.81 $\pm$ 0.45 & \cellcolor{green!15}0.19 $\pm$ 0.18 & \cellcolor{green!15}0.38 $\pm$ 0.31 & \cellcolor{green!15}1.92 $\pm$ 0.38 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.04 $\pm$ 0.03 & 0.29 $\pm$ 0.40 & \cellcolor{green!15}0.14 $\pm$ 0.20 & \cellcolor{green!15}1.60 $\pm$ 0.40 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.04 $\pm$ 0.03 & 0.29 $\pm$ 0.40 & \cellcolor{green!15}0.14 $\pm$ 0.20 & --- \\ %\cellcolor{green!15}1.60 $\pm$ 0.40
  & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.04 $\pm$ 0.02 & 0.26 $\pm$ 0.13 & \cellcolor{green!15}\bfseries0.09 $\pm$ 0.13 & \cellcolor{green!15}\bfseries0.64 $\pm$ 0.23 \\
    \hline
 \multirow[c]{6}{*}{4} & B1 & \cellcolor{red!15}2.87 $\pm$ 0.82 & 1.39 $\pm$ 0.49 & 2.58 $\pm$ 0.96 & 0.54 $\pm$ 0.33 & 3.43 $\pm$ 0.47 \\
- & B2 & \cellcolor{red!15}1.40 $\pm$ 0.49 & 0.65 $\pm$ 0.45 & 3.12 $\pm$ 0.38 & 0.65 $\pm$ 0.16 &\cellcolor{green!15}\bfseries 0.01 $\pm$ 0.03 \\
- & B3 & \cellcolor{red!15}1.40 $\pm$ 0.49 & \cellcolor{green!15}0.65 $\pm$ 0.45 & \cellcolor{green!15}\bfseries0.01 $\pm$ 0.03 & 0.65 $\pm$ 0.16 & 2.85 $\pm$ 0.35 \\
+ & B2 & \cellcolor{red!15}1.40 $\pm$ 0.49 & 0.65 $\pm$ 0.45 & \cellcolor{green!15}\bfseries0.01 $\pm$ 0.03 & 0.65 $\pm$ 0.16 & 3.12 $\pm$ 0.38 \\
+ & B3 & \cellcolor{red!15}1.40 $\pm$ 0.49 & \cellcolor{green!15}0.65 $\pm$ 0.45 & \cellcolor{green!15}\bfseries0.01 $\pm$ 0.03 & 0.65 $\pm$ 0.16 & \cellcolor{green!15}2.85 $\pm$ 0.35 \\
  & B4 & \cellcolor{red!15}1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.50 & 0.85 $\pm$ 0.33 & \cellcolor{green!15}0.53 $\pm$ 0.26 & \cellcolor{green!15}2.34 $\pm$ 0.42 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.03 & \cellcolor{green!15}0.38 $\pm$ 0.42 & \cellcolor{green!15}0.23 $\pm$ 0.23 & 2.55 $\pm$ 0.51 \\
- & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.08 $\pm$ 0.03 & \cellcolor{green!15}0.44 $\pm$ 0.27 & \cellcolor{green!15}\bfseries0.23 $\pm$ 0.15 & \cellcolor{green!15}\bfseries1.24 $\pm$ 0.32 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.03 & \cellcolor{green!15}0.38 $\pm$ 0.42 & \cellcolor{green!15}0.23 $\pm$ 0.23 & --- \\ %2.55 $\pm$ 0.51
+ & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.08 $\pm$ 0.03 & 0.44 $\pm$ 0.27 & \cellcolor{green!15}\bfseries0.23 $\pm$ 0.15 & \cellcolor{green!15}\bfseries1.24 $\pm$ 0.32 \\
   \hline
 \multirow[c]{6}{*}{5} & B1 & \cellcolor{red!15}3.54 $\pm$ 0.98 & 1.70 $\pm$ 0.62 & 2.81 $\pm$ 0.81 & 0.56 $\pm$ 0.32 & 4.33 $\pm$ 0.47 \\
  & B2 & \cellcolor{red!15}1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.48 & \cellcolor{green!15}\bfseries0.07 $\pm$ 0.09 & 0.83 $\pm$ 0.04 & 4.00 $\pm$ 0.33 \\
  & B3 & \cellcolor{red!15}1.50 $\pm$ 0.50 & 0.68 $\pm$ 0.48 & \cellcolor{green!15}\bfseries0.07 $\pm$ 0.09 & 0.81 $\pm$ 0.06 & \cellcolor{green!15}3.39 $\pm$ 0.32 \\
  & B4 & \cellcolor{red!15}1.50 $\pm$ 0.50 & \cellcolor{green!15}0.63 $\pm$ 0.37 & 1.37 $\pm$ 0.32 & \cellcolor{green!15}0.50 $\pm$ 0.12 & \cellcolor{green!15}2.26 $\pm$ 0.37 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.04 & 0.77 $\pm$ 0.63 & \cellcolor{green!15}0.35 $\pm$ 0.27 & 3.46 $\pm$ 0.54 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.04 & 0.77 $\pm$ 0.63 & \cellcolor{green!15}0.35 $\pm$ 0.27 & --- \\ %3.46 $\pm$ 0.54
  & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.08 $\pm$ 0.03 & \cellcolor{green!15}0.49 $\pm$ 0.27 & \cellcolor{green!15}\bfseries0.26 $\pm$ 0.16 & \cellcolor{green!15}\bfseries1.85 $\pm$ 0.46 \\
   \hline
 \multirow[c]{6}{*}{6} & B1 & \cellcolor{red!15}4.10 $\pm$ 1.09 & 1.94 $\pm$ 0.64 & 3.01 $\pm$ 0.63 & 0.57 $\pm$ 0.33 & 5.22 $\pm$ 0.46 \\
  & B2 & \cellcolor{red!15}2.00 $\pm$ 0.00 & 1.22 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.51 $\pm$ 0.00 & 4.86 $\pm$ 0.00 \\
  & B3 & \cellcolor{red!15}2.00 $\pm$ 0.00 & 1.22 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.51 $\pm$ 0.00 & \cellcolor{green!15}4.67 $\pm$ 0.00 \\
  & B4 & \cellcolor{red!15}2.00 $\pm$ 0.00 & \cellcolor{green!15}1.06 $\pm$ 0.00 & 1.41 $\pm$ 0.00 & \cellcolor{green!15}0.34 $\pm$ 0.00 & \cellcolor{green!15}4.03 $\pm$ 0.00 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.04 & 0.73 $\pm$ 0.56 & \cellcolor{green!15}\bfseries0.24 $\pm$ 0.22 & 4.91 $\pm$ 0.51 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.06 $\pm$ 0.04 & 0.73 $\pm$ 0.56 & \cellcolor{green!15}\bfseries0.24 $\pm$ 0.22 & --- \\ %4.91 $\pm$ 0.51
  & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.12 $\pm$ 0.02 & \cellcolor{green!15}0.44 $\pm$ 0.24 & \cellcolor{green!15}0.26 $\pm$ 0.16 &\cellcolor{green!15}\bfseries 2.44 $\pm$ 0.51 \\
   \hline
 \multirow[c]{6}{*}{8} & B1 & \cellcolor{red!15}4.63 $\pm$ 1.38 & 2.07 $\pm$ 0.79 & 3.25 $\pm$ 0.73 & 0.57 $\pm$ 0.30 & 7.02 $\pm$ 0.63 \\
  & B2 & \cellcolor{red!15}2.00 $\pm$ 0.00 & 1.15 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.60 $\pm$ 0.00 & 5.94 $\pm$ 0.00 \\
- & B3 & \cellcolor{red!15}2.00 $\pm$ 0.00 & 1.15 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.60 $\pm$ 0.00 & 5.87 $\pm$ 0.00 \\
+ & B3 & \cellcolor{red!15}2.00 $\pm$ 0.00 & 1.15 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.00 $\pm$ 0.00 & 0.60 $\pm$ 0.00 & \cellcolor{green!15}5.87 $\pm$ 0.00 \\
  & B4 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.10 $\pm$ 0.00 & 1.41 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.17 $\pm$ 0.00 & \cellcolor{green!15}\bfseries1.25 $\pm$ 0.00 \\
- & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.09 $\pm$ 0.05 & 0.54 $\pm$ 0.78 & \cellcolor{green!15}0.30 $\pm$ 0.24 & \cellcolor{green!15}5.53 $\pm$ 0.77 \\
+ & B5 & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}0.09 $\pm$ 0.05 & 0.54 $\pm$ 0.78 & \cellcolor{green!15}0.30 $\pm$ 0.24 & --- \\ %\cellcolor{green!15}5.53 $\pm$ 0.77
  & \methodNameUniform & \bfseries1.00 $\pm$ 0.00 & \cellcolor{green!15}\bfseries0.08 $\pm$ 0.01 & \cellcolor{green!15}0.20 $\pm$ 0.10 & \cellcolor{green!15}0.18 $\pm$ 0.04 & \cellcolor{green!15}2.25 $\pm$ 0.46 \\
 \bottomrule
 \end{tabular}
 
-\caption{Quantitative compromise-solution evaluation of multi-objective methods ($\baseline{5}$ and \methodNameUniform) against decoupled single-solution baselines ($\baseline{1}$--$\baseline{4}$) across different article counts ($\numarticles$). Metrics express the $\text{mean} \pm \text{standard deviation}$ computed over all runs and instances in the corresponding stratum. Bold entries indicate the best-performing method within each complexity tier for each individual objective (all formulated as minimization targets). Green-shaded cells mark the three best-performing methods per objective and stratum. Red-shaded $N_{pages}$ cells flag configurations that exceed a single page.}
+\caption{Quantitative compromise-solution evaluation of methods across different article counts ($\numarticles$). Metrics express the $\text{mean} \pm \text{standard deviation}$ computed over all runs and instances in the corresponding stratum. Bold entries indicate the best-performing method within each complexity tier for each individual objective (all formulated as minimization targets). Green-shaded cells mark the three best-performing methods per objective and stratum. Red-shaded $N_{pages}$ cells flag configurations that exceed a single page. A dash (--) indicates that $\objtwo$ does not apply to $\baseline{5}$, since this objective is deactivated in this ablated baseline.}
 \label{tab:compromise_solution_metrics}
 \end{table}
 
-The aggregated scores in Table~\ref{tab:compromise_solution_metrics} highlight the structural limitations of sequential design. While the evolutionary approaches ($\baseline{5}$ and \methodNameUniform) maintain absolute number of pages feasibility ($1.00 \pm 0.00$), the decoupled backtracking baselines ($\baseline{3}$ and $\baseline{4}$) frequently overflow into two pages as article density scales ($n \ge 6$). Even though $\baseline{3}$ and $\baseline{4}$ utilize exact permutation searches to minimize \objone, freezing the template selection beforehand forces the packing engine to operate over a fundamentally flawed geometric space, proving that decoupled pipelines cannot guarantee basic number of pages feasibility. A Friedman test confirms this variation is significant ($\chi^2 = 104.39, p < 0.001$, effect size $W = 0.70$) . Post-hoc Wilcoxon signed-rank tests with Bonferroni correction indicate no statistically significant difference between $\baseline{5}$ and \methodNameUniform\ in page counts.
+The aggregated scores in Table~\ref{tab:compromise_solution_metrics} highlight the structural limitations of sequential design. While the evolutionary approaches ($\baseline{5}$ and \methodNameUniform) maintain absolute number of pages feasibility ($1.00 \pm 0.00$), the decoupled backtracking baselines ($\baseline{3}$ and $\baseline{4}$) frequently overflow into two pages as article density scales ($n \ge 6$). Even though $\baseline{3}$ and $\baseline{4}$ utilize exact permutation searches to minimize \objone, freezing the template selection beforehand forces the packing engine to operate over a restricted geometric space, proving that decoupled pipelines cannot guarantee FC~1. A Friedman test confirms this variation is significant ($\chi^2 = 104.39, p < 0.001$, effect size $W = 0.70$) . Post-hoc Wilcoxon signed-rank tests with Bonferroni correction indicate no statistically significant difference between $\baseline{5}$ and \methodNameUniform\ in page counts.
 
-When evaluating the entire objective space $\objvector$, a clear and strong trade-off effect characterizes the decoupled baselines ($\baseline{2}$, $\baseline{3}$, and $\baseline{4}$). These methods excel in isolated dimensions but collapse in others: $\baseline{2}$ and $\baseline{3}$ achieve near-perfect text capacity ($\objthree \approx 0.00$) at the expense of editorial styling ($\objtwo$), whereas $\baseline{4}$ improves $\objtwo$ but sacrifices text integrity ($\objthree$). Conversely, the simultaneous optimization paradigm proves its structural superiority through both the ablated baseline ($\baseline{5}$) and the proposed \methodNameUniform\ method, as both maintain a stable, harmonic balance across their active targets. While $\baseline{5}$ naturally exhibits high penalty scores in $\objtwo$ by design, since it serves as an ablation with this specific objective deactivated, it closely mirrors the proposed method in achieving exceptional scores in all objectives, validating the core strength of population-based multi-objective search.
-
-This global behavior is validated by the Friedman test across $\objone$ ($\chi^2 = 126.16, p < 0.001, W = 0.84$), $\objtwo$ ($\chi^2 = 117.68, p < 0.001, W = 0.78$), $\objthree$ ($\chi^2 = 126.44, p < 0.001, W = 0.84$), and $\objfour$ ($\chi^2 = 119.25, p < 0.001, W = 0.80$). Pairwise post-hoc comparisons confirm that \methodNameUniform\ significantly outperforms $\baseline{5}$ in editorial historical alignment ($\objtwo$), while $\baseline{5}$ holds a slight but significant advantage in minimizing $\objone$. No statistically significant differences are detected between them for $\objthree$ and $\objfour$.
+When evaluating the entire objective space $\objvector$, a strong trade-off effect characterizes the decoupled baselines ($\baseline{2}$, $\baseline{3}$, and $\baseline{4}$). These methods excel in isolated dimensions but collapse in others: $\baseline{2}$ and $\baseline{3}$ achieve near-perfect text capacity ($\objthree \approx 0.00$) at the expense of editorial styling ($\objtwo$), whereas $\baseline{4}$ improves $\objtwo$ but sacrifices text integrity ($\objthree$). 
+Conversely, the simultaneous optimization paradigm proves its superiority through the proposed \methodNameUniform\ method, maintaining a stable, harmonic balance across all objectives.
+This global behavior is validated by the Friedman test across $\objone$ ($\chi^2 = 126.16, p < 0.001, W = 0.84$), $\objtwo$ ($\chi^2 = 117.68, p < 0.001, W = 0.78$), $\objthree$ ($\chi^2 = 126.44, p < 0.001, W = 0.84$), and $\objfour$ ($\chi^2 = 119.25, p < 0.001, W = 0.80$). %Pairwise post-hoc comparisons confirm that \methodNameUniform\ significantly outperforms $\baseline{5}$ in editorial historical alignment ($\objtwo$), while $\baseline{5}$ holds a slight but significant advantage in minimizing $\objone$. No statistically significant differences are detected between them for $\objthree$ and $\objfour$.
 
 
 \subsubsection{Pareto Dominance over Decoupled Single-Solution Baselines}
@@ -275,32 +274,82 @@ The only notable exception occurs at the highest complexity stratum ($\numarticl
 
 \subsubsection{Comparison between $\baseline{5}$ and \methodNameUniform}
 
-To isolate and quantify the exact architectural contribution of the deep learning component within the optimization engine, a rigorous ablation analysis is conducted between the ablated method ($\baseline{5}$) and the proposed \methodNameUniform. Since both methods operate under the multi-objective paradigm and generate full Pareto frontiers rather than single solutions, traditional scalar metrics are insufficient. Instead, their performance is evaluated directly in their multi-objective domain using the Hypervolume (HV) indicator~\cite{hv}.
+To isolate and quantify the exact architectural contribution of the deep learning component within the optimization engine, an ablation analysis is conducted between the ablated method ($\baseline{5}$) and the proposed \methodNameUniform. Since both methods operate under the multi-objective paradigm and generate full Pareto frontiers rather than single solutions, traditional scalar metrics are insufficient. Instead, their performance is evaluated directly in their multi-objective domain using the Hypervolume (HV) indicator~\cite{hv}.
 
-Intuitively, HV measures how much of the objective space a frontier covers toward improvement. Formally, a reference point $z^{\text{ref}}$ is fixed once, slightly worse than every objective's worst attainable value. Then, every solution in a frontier $A$ dominates the box of objective space delimited by itself and $z^{\text{ref}}$, and $HV(A)$ is the volume of the union of all these boxes across the frontier, $HV(A) = \Lambda\big(\bigcup_{a \in A} [a, z^{\text{ref}}]\big)$, where $\Lambda$ denotes that volume (the Lebesgue measure). A frontier that is both closer to the true Pareto frontier and more spread out across it covers a larger volume under this construction, so HV captures convergence and diversity jointly in a single number, where higher is always better. In this evaluation, $z^{\text{ref}}$ is set component-wise to $1.1$ times the empirical nadir point observed across the compared frontiers, i.e., $10\%$ beyond the worst value attained by each objective, a common convention in the field for fixing a reference point that remains slightly outside every attainable frontier, ensuring HV never collapses to zero and stays comparable across runs~\cite{ishibuchi-2018}.
+Intuitively, HV measures how much of the objective space a frontier covers toward improvement, and is calculated as follows (\figref{fig:hv-illustration}):
+\begin{itemize}
+  \item A reference point $z^{\text{ref}}$ is fixed once, slightly worse than every objective's worst attainable value.
+  \item Then, every solution in a frontier $A$ dominates the box of objective space delimited by itself and $z^{\text{ref}}$, and $HV(A)$ is the volume of the union of all these boxes across the frontier: $$HV(A) = \Lambda\big(\bigcup_{a \in A} [a, z^{\text{ref}}]\big).$$
+\end{itemize}
+In this evaluation, $z^{\text{ref}}$ is set component-wise to $1.1$ times the empirical nadir point observed across the compared frontiers, i.e., $10\%$ beyond the worst value attained by each objective, a common convention in the field for fixing a reference point that remains slightly outside every attainable frontier, ensuring HV never collapses to zero and stays comparable across runs~\cite{ishibuchi-2018}.
 
-%todo: figure to show hypervolume, based exactly on the figure in chapter 2 SOTA
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        dominatedpt/.style={circle, fill=gray!55, draw=black, inner sep=1.4pt},
+        paretopt/.style={circle, fill=black, draw=black, inner sep=1.6pt},
+        refpt/.style={circle, fill=white, draw=black, thick, inner sep=1.6pt},
+        >=stealth
+    ]
+        % Hypervolume: union of boxes delimited by each point in A and z^{\text{ref}}
+        \fill[blue!12] (1,5.8) -- (7.5,5.8) -- (7.5,1) -- (6.5,1) -- (6.5,1.8) -- (5,1.8) -- (5,2.5) -- (3.5,2.5) -- (3.5,3.5) -- (2,3.5) -- (2,5) -- (1,5) -- (1,5.8) -- cycle;
+        \node[blue!40!black] at (5.3,4.6) {\footnotesize $HV(A)$};
+
+        % Axes
+        \draw[->, thick] (0,0) -- (8.6,0) node[right] {$f_1(\mathbf{x})$};
+        \draw[->, thick] (0,0) -- (0,6.6) node[above] {$f_2(\mathbf{x})$};
+        \draw[->, gray!60!black] (1.3,1.3) -- (0.3,0.3) node[midway, above left, font=\footnotesize] {better};
+
+        % Pareto front A: staircase through the non-dominated points
+        \draw[thick] (1,5) -- (2,5) -- (2,3.5) -- (3.5,3.5) -- (3.5,2.5) -- (5,2.5) -- (5,1.8) -- (6.5,1.8) -- (6.5,1);
+
+        % Non-dominated points forming A
+        \node[paretopt] at (1,5) {};
+        \node[paretopt] at (2,3.5) {};
+        \node[paretopt] at (3.5,2.5) {};
+        \node[paretopt] at (5,1.8) {};
+        \node[paretopt] at (6.5,1) {};
+
+        % Dominated points, excluded from A
+        \node[dominatedpt] at (2.5,5) {};
+        \node[dominatedpt] at (3,4.5) {};
+        \node[dominatedpt] at (4,4) {};
+        \node[dominatedpt] at (6,3) {};
+        \node[dominatedpt] at (7.5,2) {};
+
+        % Reference point, projected onto the axes
+        \node[refpt, label={above right:$z^{\text{ref}}$}] at (7.5,5.8) {};
+        \draw[dotted] (7.5,5.8) -- (7.5,0);
+        \draw[dotted] (7.5,5.8) -- (0,5.8);
+    \end{tikzpicture}
+    \caption{Hypervolume (HV) of a non-dominated frontier $A$ (black points) with respect to a reference point $z^{\text{ref}}$, in an illustrative bi-objective minimization problem. Each point $a \in A$ delimits a box $[a, z^{\text{ref}}]$; the shaded region is the union of these boxes, and $HV(A) = \Lambda\big(\bigcup_{a \in A} [a, z^{\text{ref}}]\big)$. Gray points are dominated and therefore excluded from $A$.}
+    \label{fig:hv-illustration}
+\end{figure}
 
 \paragraph{Convergence}
 
-First, it is necessary to evaluate the overall convergence of both evolutionary approaches. \figref{fig:convergence_analysis} tracks the hypervolume evolution over $\ngen = 300$ generations for a representative large-scale instance ($\numarticles = 8$).
-
-
-
+Before analyizing the HV quality, it is necessary to evaluate the overall convergence of both evolutionary approaches. Since $\baseline{5}$ never optimizes for $\objtwo$, this convergence analysis is restricted to the reduced 3D objective subspace $(\objone, \objthree, \objfour)$, so that the resulting curves remain comparable between both methods. \figref{fig:convergence_analysis} tracks this 3D hypervolume evolution over $\ngen = 300$ generations for two representative instances, $\numarticles = 4$ and $\numarticles = 8$.
 
 \begin{figure}[htbp]
 \centering
-%todo: show also convergence curve of 4 articles or 5
-%todo IMPORTANT THIS REQUIRE RE CHECKING THE CODE OF ANALYSIS.  CHECK THIS GRAPH IN CODE FOR SOME REASON IT DOES NOT FOLLOW THE TABLE
-%todo: show better three cases (b5, methodname, and methodname with 3 objectives)
-\includegraphics[width=\widthForOneImage]{img/results/convergence_curve.png} 
-\caption{Generational convergence analysis tracking the full hypervolume over 300 generations for a highly constrained instance ($\numarticles=8$). Solid lines represent the mean trajectory across all independent runs, while the shaded regions denote the standard deviation.}
+\begin{subfigure}[b]{\widthForOneImage}
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/results/convergence_curve_4.png}
+    \caption{$\numarticles = 4$.}
+    \label{fig:convergence_analysis_4}
+\end{subfigure}
+\vskip 0.8em
+\begin{subfigure}[b]{\widthForOneImage}
+    \centering
+    \includegraphics[width=\widthForOneImage]{img/results/convergence_curve_8.png}
+    \caption{$\numarticles = 8$.}
+    \label{fig:convergence_analysis_8}
+\end{subfigure}
+\caption{Generational convergence analysis tracking the 3D hypervolume ($\objone, \objthree, \objfour$) over 300 generations, for a moderate ($\numarticles=4$) and a high complexity ($\numarticles=8$) instance. Solid lines represent the mean trajectory across all independent runs, while the shaded regions denote the standard deviation.}
 \label{fig:convergence_analysis}
 \end{figure}
 
-As illustrated in \figref{fig:convergence_analysis}, both methods reach a stable optimization plateau well before the $\ngen$ threshold.
-
-Interestingly, for this specific high-density instance, the ablated baseline ($\baseline{5}$) converges toward a higher average hypervolume. However, it is critical to note that this behavior does not reflect the general performance, as will be demonstrated in the following subsection.
+As illustrated in \figref{fig:convergence_analysis}, both methods reach a stable optimization plateau well before the $\ngen$ threshold, with the $\numarticles=4$ instance (\figref{fig:convergence_analysis_4}) converging earlier than the $\numarticles=8$ instance (\figref{fig:convergence_analysis_8}).
 
 \paragraph{Frontier Size}
 
@@ -511,27 +560,25 @@ $\numarticles$ & \methodNameUniform & \methodName \\
 The density of solutions within the AE in Table~\ref{tab:roi_density_comparison} confirms the mechanism behind the frontier compression. As instance complexity scales ($\numarticles \ge 4$), the uniform paradigm suffers a severe convergence collapse, with its AE density dropping to single-digit efficiency. This drop mathematically proves that standard uniform environmental selection wastes massive computational budget exploring unviable regions.
 
 
-Conversely, \methodName\ successfully counteracts this. By anchoring the survival selection around preference-derived aspiration points, \methodName\ concentrates its population within the target zone, maintaining remarkably high densities ($58.1\%$ at $\numarticles=6$ and $47.1\%$ at $\numarticles=8$). When cross-referenced with the cardinality reduction shown in Table~\ref{tab:frontier_cardinality_comparison}, these results deliver a definitive conclusion: \methodName\ does not suffer from a loss of valuable diversity, but rather performs a highly targeted pruning of non-viable space, ensuring the generated alternatives are strictly tailored to the newsroom's operational requirements. To confirm this behavioral shift, a Wilcoxon signed-rank test across all instances was conducted. The test decisively rejects the null hypothesis ($W = 5.0$, $p < 0.001$, effect size of $r = 1.03$), validating that the AE density superiority of \methodName\ is statistically significant.
+Conversely, \methodName\ successfully counteracts this. By anchoring the survival selection around preference-derived aspiration points, \methodName\ concentrates its population within the target zone, maintaining remarkably high densities, with the gap over \methodNameUniform\ ranging from $+17.1$ percentage points at $\numarticles=3$ ($86.0\%$ vs. $68.9\%$) up to $+51.4$ percentage points at $\numarticles=6$ ($58.1\%$ vs. $6.7\%$). When cross-referenced with the cardinality reduction shown in Table~\ref{tab:frontier_cardinality_comparison}, these results deliver a definitive conclusion: \methodName\ does not suffer from a loss of valuable diversity, but rather performs a highly targeted pruning of non-viable space, ensuring the generated alternatives are strictly tailored to the newsroom's operational requirements. To confirm this behavioral shift, a Wilcoxon signed-rank test across all instances was conducted. The test decisively rejects the null hypothesis ($W = 5.0$, $p < 0.001$, effect size of $r = 1.03$), validating that the AE density superiority of \methodName\ is statistically significant.
 
 
 \begin{figure}[htbp]
 \centering
     \begin{subfigure}{\columnwidth}
       \centering
-      %todo: put boxplots here to highlight both aspirations points and AE. Refer to section where asp points are defined. put boxplots directly in the graph
-      \includegraphics[width=\widthForOneImage]{img/results/nsga_parallel_coordinates_521112_seed_84.png} 
+      \includegraphics[width=\widthForOneImage]{img/results/nsga_parallel_coordinates_521112_seed_84.png}
       \caption{\methodNameUniform}
       \label{fig:parallel_uniform}
     \end{subfigure}
     \vspace{0.3cm} % Espaciado controlado entre ambos paneles
     \begin{subfigure}{\columnwidth}
       \centering
-      %todo: put boxplots here to highlight both aspirations points and AE. Refer to section where asp points are defined. put boxplots directly in the graph
-      \includegraphics[width=\widthForOneImage]{img/results/rnsga_parallel_coordinates_521112_seed_84.png} 
+      \includegraphics[width=\widthForOneImage]{img/results/rnsga_parallel_coordinates_521112_seed_84.png}
       \caption{\methodName}
       \label{fig:parallel_rnsga}
     \end{subfigure}
-\caption{Visual trade-off comparison using parallel coordinates for a representative medium-complexity instance ($\numarticles=5$) under shared global axis scaling. The gray shaded region represents the AE, while the black lines denote the aspiration points targeted by \methodName. The color gradient reflects the performance on $\objone$. (a) shows \methodNameUniform's non-dominated solutions scattered widely across the objective space, largely outside the AE; (b) shows \methodName's solutions concentrated within the AE, closely following the targeted aspiration points.}
+\caption{Visual trade-off comparison using parallel coordinates for a representative medium-complexity instance ($\numarticles=5$) under shared global axis scaling. The gray shaded region represents the AE, while the black lines denote the aspiration points $r^{(k)}$ targeted by \methodName\ (\secref{sec:sota-rnsga3}); the boxplot overlaid on each axis is included for reference, showing the historical distribution from which the corresponding aspiration point was derived. The color gradient reflects the performance on $\objone$. (a) shows \methodNameUniform's non-dominated solutions scattered widely across the objective space, largely outside the AE; (b) shows \methodName's solutions concentrated within the AE, closely following the aspiration points.}
 \label{fig:parallel_coordinates_comparison}
 \end{figure}
 
@@ -574,14 +621,41 @@ The measurements reveal that \methodName\ incurs a systematically higher executi
 Two properties of this overhead deserve to be noted. First, it remains proportionally stable across the complexity strata instead of degrading as the article count grows, which indicates that the additional cost scales with the population and the selection mechanism rather than with the combinatorial difficulty of the instance. Second, the most demanding instance evaluated ($\numarticles = 8$) is still resolved in $111.77$s, hence below two minutes per page. The preference-guided paradigm of \methodName\ therefore justify its operational advantages, namely a frontier reduced by an order of magnitude and a substantially higher density within the acceptability envelope, at a bounded and predictable computational time, which is acceptable in a production setting where page building is not a real-time task. These runtimes correspond to the reference configuration reported in \secref{sec:implementation_details}; on less capable hardware the absolute values scale accordingly, in which case the mitigation strategies examined in \secref{sec:computational-performance} become directly applicable.
 
 
-\subsection{Comparison with input}
-%todo do a pareto dominance analysis and maybe knee point
+\subsection{Comparison with original input}
+\label{sec:comparison-with-input}
+
+Together with the qualitative results presented next, this subsection is the only place in this chapter where the complete input page is used, rather than only the content and constraints it was stripped down to. As already noted when the instances were introduced above, \methodName\ never observes this original layout or its true objective scores during optimization: it only receives the formal input vector $\instance = \langle \page, \articleset \rangle$. 
+Dominating the input page was consequently never the design objective of the system; Table~\ref{tab:input_dominance} nonetheless measures how often the generated frontier happens to Pareto-dominate it.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+$\numarticles$ & Full 4D ($\objvector$) & 3D, excluding $\objone$  \\
+\midrule
+2 & 0.00\% & 99.52\% \\
+3 & 4.29\% & 95.71\% \\
+4 & 4.67\% & 58.67\% \\
+5 & 3.33\% & 98.33\% \\
+6 & 0.00\% & 80.00\% \\
+8 & 0.00\% & 83.33\% \\
+\bottomrule
+\end{tabular}
+\caption{Pareto dominance of \methodName\ over the original input page. Percentage of optimization runs (seeds) in which \methodName's frontier contains at least one solution that Pareto-dominates the input, stratified by article count ($\numarticles$). The left column evaluates the full 4D objective space $\objvector$; the right column excludes $\objone$ to isolate its effect, restricting the comparison to the reduced 3D subspace $(\objtwo,\objthree,\objfour)$.}
+\label{tab:input_dominance}
+\end{table}
+
+As shown in the left column of Table~\ref{tab:input_dominance}, \methodName\ almost never Pareto-dominates the input page when the full objective vector $\objvector$ is considered, with dominance rates below $5\%$ across every stratum. This is explained by $\objone$: since the human designer composes the page with full visibility of its final geometry, the resulting layout wastes essentially no space, a level of geometric efficiency that a combinatorial search operating blindly on content alone rarely matches exactly.
+
+Restricting the comparison to the reduced 3D subspace $(\objtwo,\objthree,\objfour)$, however, reverses this outcome almost completely: the right column of Table~\ref{tab:input_dominance} shows dominance rates between $58.7\%$ and $99.5\%$. Once $\objone$ is set aside, \methodName's frontier therefore contains, in the large majority of runs, at least one solution that simultaneously improves on the input page in editorial style ($\objtwo$), text capacity ($\objthree$), and positioning ($\objfour$).
+
+Beyond what this quantitative analysis alone can establish, informal discussions with \melody team suggest an explanation for this asymmetry: operators do pay close, conscious attention to the geometric occupation of the page, since it is the one property directly visible while editing, which is consistent with the near-perfect $\objone$ scores observed above. The permissiveness of the Melody authoring interface, however, does not strictly enforce the remaining objectives to the same extent, letting operators overflow text blocks beyond their nominal capacity ($\objthree$), introduce new or unusual templates rather than the historically recommended ones ($\objtwo$), or freely position the main article ($\objfour$). This interpretation is not derivable from the dataset itself and is reported here solely as context gathered from the industrial partner.
 
 \subsection{Qualitative results}
 
-To complement the quantitative evaluation, this section provides a few examples of the pages synthesized by the framework. \figref{fig:qualitative_2art}, \figref{fig:qualitative_4art}, \figref{fig:qualitative_5art}, and \figref{fig:qualitative_8art} present four representative instances of increasing complexity ($\numarticles = 2, 4, 5, 8$). For each instance, the original input page is shown alongside three design alternatives (A, B, C) drawn from the non-dominated frontier produced by \methodName, together with their corresponding objective scores ($\objone, \objthree, \objfour, \objtwo$), visually illustrating the structural diversity and design plasticity achieved by \methodName.
+This section provides a few examples of the pages synthesized by the framework. \figref{fig:qualitative_2art}, \figref{fig:qualitative_4art}, \figref{fig:qualitative_5art}, and \figref{fig:qualitative_8art} present four representative instances of increasing complexity ($\numarticles = 2, 4, 5, 8$). For each instance, the original input page is shown alongside three design alternatives (A, B, C) drawn from the non-dominated frontier produced by \methodName, together with their corresponding objective scores ($\objone, \objthree, \objfour, \objtwo$), visually illustrating the structural diversity and design plasticity achieved by \methodName.
 
-It must be emphasized that the original input page displayed in each figure is included solely as a visual reference, corresponding to the real, human-designed page available for that instance within \laprovence archive. This layout is never observed by \methodName\. The optimization method only receives the formal input vector $\instance = \langle \page, \articleset \rangle$, that is, the article content and page constraints, while every geometric coordinate, template assignment, and positioning decision is stripped prior to optimization. Consequently, the objective scores reported for the original input page must not be interpreted as a baseline that \methodName\ is expected to systematically outperform, but merely as a reference illustrating how the same content was historically composed by a human designer, since in a real deployment scenario the original layout would remain entirely unknown to the system.
+%It must be emphasized that the original input page displayed in each figure is included solely as a visual reference, corresponding to the real, human-designed page available for that instance within \laprovence archive. This layout is never observed by \methodName\. The optimization method only receives the formal input vector $\instance = \langle \page, \articleset \rangle$, that is, the article content and page constraints, while every geometric coordinate, template assignment, and positioning decision is stripped prior to optimization. Consequently, the objective scores reported for the original input page must not be interpreted as a baseline that \methodName\ is expected to systematically outperform, but merely as a reference illustrating how the same content was historically composed by a human designer, since in a real deployment scenario the original layout would remain entirely unknown to the system.
 
 \begin{figure}[htbp]
 \centering
@@ -747,7 +821,7 @@ A qualitative inspection of \figref{fig:qualitative_2art}--\figref{fig:qualitati
 \begin{enumerate}
     \item Homogeneous Template Replication: All three design alternatives generated for the highest-density instance ($\numarticles=8$, \ref{fig:qual_n8_A}--\ref{fig:qual_n8_C}) group the majority of their secondary articles into a repeated sequence of the same narrow-column template, regardless of the specific trade-off targeted by each alternative. This consistency across independently sampled solutions of the non-dominated frontier indicates that \methodName\ reliably discovers this journalistic convention of building clean, tabular sections whenever a page must accommodate a large number of short secondary articles.
 
-    \item Improvement over the Human Baseline: Although outperforming the original input page is not the primary goal of \methodName, since its layout is never observed by the method (as discussed above), the generated alternatives frequently improve upon it. This is most apparent for text capacity ($\objthree$): 11 of the 12 alternatives shown across the four instances attain a lower (better) $\objthree$ score than the corresponding input, the only exception being Alternative~\ref{fig:qual_n4_A}. The largest gap is observed for the $\numarticles=5$ instance, where $\objthree$ falls from $6.91$ in the original page to values between $0.66$ and $1.58$ among the three alternatives. A comparable, though less systematic, trend appears for $\objtwo$, most clearly for the $\numarticles=2$ instance, where all three alternatives improve over the input's $\objtwo = 1.55$, down to as low as $0.35$. Wasted space ($\objone$), in contrast, is equal to or higher for the generated alternatives than for the original page in 11 of the 12 cases, which is expected: human designers compose the page with full knowledge of its final layout, whereas \methodName\ operates blindly on content alone and trades a small amount of page occupation efficiency for gains along the remaining objectives.
+    \item Improvement over the Human Baseline: Although outperforming the original input page is not the primary goal of \methodName, since its layout is never observed by the method (as discussed above), the generated alternatives frequently improve upon it. This is most apparent for text capacity ($\objthree$): 11 of the 12 alternatives shown across the four instances attain a lower (better) $\objthree$ score than the corresponding input, the only exception being Alternative~\ref{fig:qual_n4_A}. The largest gap is observed for the $\numarticles=5$ instance, where $\objthree$ falls from $6.91$ in the original page to values between $0.66$ and $1.58$ among the three alternatives. A comparable, though less systematic, trend appears for $\objtwo$, most clearly for the $\numarticles=2$ instance, where all three alternatives improve over the input's $\objtwo = 1.55$, down to as low as $0.35$. Wasted space ($\objone$), in contrast, is equal to or higher for the generated alternatives than for the original page in 11 of the 12 cases, which is expected, as human designers compose the page with full knowledge of its final layout as explained in the previous section.
 
     \item Pareto-Optimal Trade-offs: \figref{fig:qualitative_5art} illustrates the intrinsically Pareto-optimal nature of the non-dominated frontier explored by \methodName. Among the three alternatives generated for the $\numarticles=5$ instance, Design Alternative~\ref{fig:qual_n5_C} attains the lowest positioning penalty ($\objfour = 0.34$, against $0.51$ for both~\ref{fig:qual_n5_A} and~\ref{fig:qual_n5_B}) and the lowest text capacity penalty ($\objthree = 0.66$, against $1.54$ and $1.58$), at the cost of a visibly lower page occupation efficiency: a small rectangular gap remains unfilled in the lower-left region of the page, raising its wasted space score to $\objone = 0.06$, the highest of the three alternatives ($0.04$ and $0.05$, respectively). This exemplifies how \methodName\ willingly sacrifices a marginal amount of page coverage in exchange for a substantial gain along the remaining dimensions, rather than converging onto a single compromise solution.
 \end{enumerate}
@@ -756,18 +830,26 @@ Crucially, the system learns and deploys these complex, real-world layout rules 
 \section{Discussion}
 \label{sec:pagegen-discussion}
 
-While the quantitative and qualitative findings validate the efficacy of \methodNameGeneral, two primary aspects require a critical analysis regarding its  industrial deployment, and architectural extensibility.
+While the quantitative and qualitative findings validate the efficiency of \methodNameGeneral, two primary aspects require a critical analysis regarding its deployment and extensibility.
 
 \subsection{Computational performance and scalability}
 \label{sec:computational-performance}
 Execution time represents the primary computational bottleneck of \methodNameGeneral\ when contrasted against the constructive baselines, whose runtimes remain in the millisecond range. This overhead is nonetheless bounded: even \methodName, which is the more costly of the two paradigms, resolves the most demanding instance evaluated in under two minutes per page (Table~\ref{tab:exec_time_rnsga_comparison}). 
-Beyond this, several optimization approaches can be deployed to further mitigate the overhead in production environments. First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) from $300$ to $200$ generations provides an immediate mechanism to accelerate response times without compromising frontier quality; assuming a cost roughly proportional to the number of generations, this measure alone would bring the most demanding instance from $111.77$s down to approximately $75$s. 
-Moreover, since convergence speed itself varies with instance complexity (e.g., lower-density instances such as $\numarticles=5$ already converge faster than the high-density $\numarticles=8$ case analyzed above), adapting $\ngen$ per instance based on observed convergence, rather than applying a single fixed budget across all strata, would yield further speedups.
+Beyond this, two optimization approaches can be deployed to further mitigate this overhead in production environments. 
+\begin{enumerate}
+  \item First, as observed during the convergence analysis, the evolutionary search stabilizes early, around generation 200. Consequently, reducing the total generation horizon ($\ngen$) from $300$ to $200$ generations provides an immediate mechanism to accelerate response times without compromising frontier quality; assuming a cost roughly proportional to the number of generations, this measure alone would bring the most demanding instance from $111.77$s down to approximately $75$s. 
+  Moreover, since convergence speed itself varies with instance complexity (e.g., lower-density instances such as $\numarticles=5$ already converge faster than the high-density $\numarticles=8$ case analyzed above), adapting $\ngen$ per instance based on observed convergence, rather than applying a single fixed budget across all strata, would yield further speedups.
 
-Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and ensure deterministic architectural simplicity, deploying a multi-threaded asynchronous pipeline would drastically reduce processing times. However, even under the current sequential configuration, the execution times achieved by \methodNameGeneral\ are already operationally viable within the specific industrial newsroom production environment targeted by this investigation. The most demanding instance evaluated, resolved in $111.77$s by the more costly of the two paradigms, remains within the tolerance of a few minutes per page specified by the industrial partner (\secref{sec:industrial-motivation}), and therefore satisfies the temporal criterion of the main objective stated in \secref{sec:multi-objective-page-generation}, in contrast with the fifteen to twenty minutes of manual editing per page that \melody's current workflow still demands (\secref{sec:industrial-motivation}).
+  \item Second, a more aggressive reduction in execution time can be achieved through concurrent computing. Both the global evolutionary engine and the localized packing decoder are highly susceptible to parallelization. While sequential execution was maintained in this study to eliminate race conditions and simplify the implementation, deploying a multi-threaded pipeline would reduce processing times. 
+\end{enumerate}
+However, even under the current sequential configuration, the execution times achieved by \methodNameGeneral\ are already operationally viable within the specific industrial newsroom production environment targeted by this investigation. The most demanding instance evaluated, resolved in $111.77$s by the more costly of the two paradigms, remains within the tolerance of a few minutes per page specified by the industrial partner (\secref{sec:industrial-motivation}), and therefore satisfies the temporal criterion of the main objective stated in \secref{sec:multi-objective-page-generation}, in contrast with the fifteen to twenty minutes of manual editing per page that \melody's current workflow still demands (\secref{sec:industrial-motivation}).
+
+
+
 
 \subsection{Architectural extensibility to advertisement placement}
-The current implementation of \methodNameGeneral\ omits the placement of advertisement elements. This omission stems strictly from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.
+The current implementation of \methodNameGeneral\ omits the placement of advertisement elements. This omission stems from dataset limitations, as historical layout records lack consistent metadata regarding advertisement coordinates and dimensions. However, the underlying mathematical framework is fully generalizable and capable of incorporating these elements.
 
-To integrate advertisements, these assets can be modeled as static, fixed-size bounding boxes within the chromosome representation. Unlike standard articles, advertisement blocks would bypass the template selection layer, as their aspect ratios are predetermined, and feed directly into the spatial packing decoder. Furthermore, to guide their placement, a localized spatial penalty function can be formulated. This function would operate analogously to the main article zone objective ($\HCZ$), penalizing configurations that displace advertisements outside of the newspaper's historically preferred advertising quadrants. Beyond this parameterization, the core mechanisms of \methodNameGeneral\ remain robust and inherently scalable.
+To integrate advertisements, these assets can be modeled as static, fixed-size bounding boxes within the chromosome representation. Unlike standard articles, advertisement blocks would bypass the template selection layer, as their aspect ratios are predetermined, and feed directly into the spatial packing decoder. Furthermore, to guide their placement, a localized spatial penalty function can be formulated. This function would operate analogously to the main article zone objective ($\HCZ$), penalizing configurations that displace advertisements outside of the newspaper's historically preferred advertising quadrants. 
+Beyond this parameterization, the core mechanisms of \methodNameGeneral\ remain robust and inherently scalable.
 

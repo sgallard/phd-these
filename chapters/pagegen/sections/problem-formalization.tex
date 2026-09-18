@@ -131,8 +131,7 @@ The newspaper layout generation problem is formally modeled as a Multi-Objective
 
 \begin{figure}[htbp]
     \centering
-    %todo: maybe better remove f_cov from the top and put it below in the format high f_cov (worse), low f_cov (better). Add (a) and (b)
-     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/cov.pdf}
+     \includegraphics[width=0.7\widthForOneImage]{img/problem-formulation/cov.pdf}
     \caption{Illustration of page coverage: \solution (a) exhibits a higher (worse) $\objone(\solution)$ due to unallocated white space, whereas (b) exhibits a lower (better) $\objone(\solution)$ by packing articles more tightly against $\page$.}
     \label{fig:page_coverage_concept}
 \end{figure}
@@ -157,7 +156,7 @@ By minimizing \objone(\solution), the optimization process directly drives the a
 
 \begin{figure}[htbp]
     \centering
-      \includegraphics[width=\widthForTwoImages]{img/problem-formulation/cap.pdf}
+      \includegraphics[width=0.7\widthForOneImage]{img/problem-formulation/cap.pdf}
 
     \caption{Illustration of text capacity integrity concept: the body text of each article must fit within the capacity boundaries defined by its assigned template, which are determined by the number of active images. \objthree penalizes both under-capacity (excessive empty space, green article) and over-capacity (text clipping, blue article) scenarios.}
     \label{fig:text_capacity_integrity_concept}
@@ -206,8 +205,7 @@ where \betaweight\ is a strictly positive weighting parameter used to balance th
 
 \begin{figure}[htbp]
     \centering
-    %TODO: Write "main zone" and "main article" , exactly like that
-     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/pos.pdf}
+     \includegraphics[width=0.7\widthForOneImage]{img/problem-formulation/pos.pdf}
     \caption{Illustration of  Heading Critical Zone (HCZ): the main article is expected to occupy a privileged upper-center region of the page canvas (surrounded by dotted lines), defined as the first vertical third of the effective page height \Heff.}
     \label{fig:hcz_concept}
 \end{figure}
@@ -232,8 +230,7 @@ In editorial design, visual harmony heavily relies on the alignment of adjacent 
 
 \begin{figure}[htbp]
     \centering
-    %todo legends and markers too small. put (i) (ii) (iii)
-     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/va.pdf}
+     \includegraphics[width=0.7\widthForOneImage]{img/problem-formulation/va.pdf}
     \caption{Illustration of vertical edge alignment between laterally adjacent articles: (i) optimal alignment ($d \le \threshalignlower$) forming an aligned layout, (ii) misalignment noise zone ($\threshalignlower < d \le \threshalignupper$) creating visual distraction, and (iii) independent separation ($d > \threshalignupper$) treated as intentionally separated articles.}
     \label{fig:vertical_alignment_concept}
 \end{figure}
@@ -285,8 +282,7 @@ The bottom edge quality score $\mathcal{Q}_{bottom}$ is derived identically usin
 
 \begin{figure}[htbp]
     \centering
-    %todo same size for 3 layouts
-     \includegraphics[width=\widthForTwoImages]{img/problem-formulation/sty.pdf}
+     \includegraphics[width=0.7\widthForOneImage]{img/problem-formulation/sty.pdf}
     \caption{Illustration of Template Selection Editorial Style: \solution (a) exhibits a higher (worse) $\objtwo(\solution)$ by selecting templates that deviate from the historical distribution, represented by the reference layout (r) in the middle, whereas \solution (b) exhibits a lower (better) $\objtwo(\solution)$ by selecting templates consistent with that historical distribution.}
     \label{fig:template_selection_editorial_style_concept}
 \end{figure}

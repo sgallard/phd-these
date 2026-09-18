@@ -16,11 +16,27 @@
 \section{Discussion}
 \label{sec:template-discussion}
 
-% TODO(new-prose): discutir trade-offs tdIoU vs. tGMN, TRS vs. GWES, limitaciones.
+\subsection{\trs vs. \neuralmethod}
+
+Although \trs\ (\secref{section:template-retrieval-single-article}) and \neuralmethod\ (\secref{sec:gwes}) both build on the topology-aware similarity measures introduced in \secref{section:modelling-similarity}, they address distinct scoring problems and serve distinct consumers.
+\begin{itemize}
+    \item \trs\ operates in a single-article, interactive retrieval setting: given one article, it returns a ranked candidate list intended for direct review by an editor, with an offline clustering stage and a millisecond-range online response.
+    \item \neuralmethod, in contrast, operates in a page-aware, joint scoring setting: given a full page canvas with several articles already assigned candidate templates, it evaluates the contextual compatibility of that assignment as a whole. Its output feeds directly into the evolutionary search engine of Chapter~\ref{chapter:pagegen} as the editorial-style objective $\objtwo$ (\secref{sec:objective_formulation}), rather than being presented to an editor directly.
+\end{itemize}
+Both methods nonetheless share the same structural backbone: $\gmn{\cdot}{\cdot}$, selected in \secref{section:modelling-similarity} over the analytical $\tdiou{\cdot}{\cdot}$ measure precisely because it better captures the topological relationships that both retrieval and page-aware scoring rely on. \neuralmethod\ extends this shared backbone beyond single-template similarity by combining it, through $\gmnMatrix$, with a Transformer-based editorial intent model that reasons over the joint page context.
+
+\trs\ and \neuralmethod\ can therefore be seen as two applications of the same underlying similarity model to two different points in the editorial pipeline: one supporting a human decision, the other supporting a page generation task.
 
 \section{Conclusion}
 
-% TODO(new-prose): cerrar el capítulo retomando las contribuciones (tdIoU, tGMN, TRS, GWES) y su impacto.
+This chapter addressed template retrieval and page-aware scoring, both grounded in the topology-aware similarity measure $\gmn{\cdot}{\cdot}$ selected in \secref{section:modelling-similarity}. 
+
+\trs\ (\secref{section:template-retrieval-single-article}) tackles single-article, interactive retrieval, structuring the template catalog offline and balancing relevance, structural diversity, and novelty at query time. \neuralmethod\ (\secref{sec:gwes}) extends this same similarity backbone to a page-aware, joint scoring setting, combining a Transformer-based editorial intent model with $\gmnMatrix$ to evaluate the compatibility of each template assignment considering its neighboring articles in the same page canvas.
+
+\trs\ demonstrated substantial gains over clustering-based baselines: under the challenging Increasing Slope Distribution, structural diversity nearly doubled ($2\times$) relative to the best baseline, and long-tail exposure improved by approximately $1.5\times$ (\secref{section:trs-eval}), while retaining millisecond-range online latency. 
+\neuralmethod\ likewise validated both of its components: the Transformer encoder reached $82.62\%$ Top-1 accuracy when given full spatial and zoning context, and the integration of $\gmnMatrix$ expanded the average pool of viable template alternatives per article by $1.7\times$, transforming an otherwise rigid probability distribution into one suitable for the page generation method in Chapter~\ref{chapter:pagegen}.
+
+Open directions include extending \trs\ toward user-aware personalization, and validating both methods beyond the French regional press catalogs considered in this thesis.
 
 
 

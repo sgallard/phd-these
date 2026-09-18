@@ -1,0 +1,72 @@
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proof of Proposition 1}
+\label{sec:proof-trs-properties}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Given a list $\recolist{N}$, let $\templatenocluster{i}^{N}$ denote the template in the $i$-th position and its corresponding usage as $\utilizationnocluster{i}^{N}$. The proof of Proposition~\ref{proposition:trs} relies on the following two lemmas.
+
+\begin{lemma}
+Assume two cluster weight distributions $\{CW_j^{N}\}$ and $\{CW_j^{N+1}\}$ used to obtain retrieval lists $\recolist{N}$ and $\recolist{N+1}$ via the selection step in Algorithm~\ref{alg:cw} (lines 19--32). If there exists a unique $k$ such that
+\begin{equation}
+\propertycw{k} 
+\quad
+\left\{
+\begin{array}{l}
+    CW_{k}^{N+1} = CW_{k}^{N} + 1, \\
+    CW_j^{N+1} = CW_j^{N}, \quad \forall j \neq k,
+\end{array}
+\right.
+\end{equation}
+then
+\begin{equation}
+\recolist{N} \subset \recolist{N+1}.
+\label{eq:lemma-1:conclusion}
+\end{equation}
+\label{lemma:lemma-1}
+\end{lemma}
+
+\begin{proof}
+Consider one iteration of the selection step to obtain the $i$-th element. For $\recolist{N}$, we select template $\templatenocluster{i}^{N}$ from cluster $\cluster{p}$; for $\recolist{N+1}$, we select $\templatenocluster{i}^{N+1}$ from cluster $\cluster{q}$.
+
+As long as $p \neq k$, or $p = k$ but $CW_{k}^{N} > 0$, we have $q = p$ and $\templatenocluster{i}^{N} = \templatenocluster{i}^{N+1}$, because there is no difference between the two executions when the cluster contains enough templates (i.e., the cluster weights are positive for both $\recolist{N}$ and $\recolist{N+1}$). 
+
+Eventually, when $p = k$ and $CW_{k}^{N} = 0$, a template $\templatenocluster{i*}^{N+1}$ will be included in $\recolist{N+1}$ at position $i*$, while no corresponding template exists in $\recolist{N}$. Any removal of neighboring templates in $\cluster{p}$ during this selection does not affect the result, since $\templatenocluster{i*}^{N+1}$ is necessarily the last template selected from $\cluster{p}$.
+
+For subsequent iterations, we then have $\templatenocluster{i}^{N} = \templatenocluster{i+1}^{N+1}$ for all $i \ge i*$, where all templates come from clusters $\cluster{l}$ with $l \neq k$. 
+
+Hence, the offset in $\recolist{N+1}$ proves (\ref{eq:lemma-1:conclusion}).
+\end{proof}
+
+\begin{lemma}\label{lemma:lemma-2}
+Assume two cluster weight distributions $\{CW_j^{N}\}$ and $\{CW_j^{N+1}\}$. If a unique $k_1$ satisfies property $\propertycw{k_1}$, then after one iteration of the reassignment for-loop in Algorithm~\ref{alg:cw} (lines 10--18), there exists a unique $k_2$ (possibly different from $k_1$) such that the new cluster weight distributions satisfy property $\propertycw{k_2}$.
+\end{lemma}
+
+\begin{proof}
+Consider an iteration focused on a specific source cluster $\cluster{k}$. Three cases arise.
+
+\paragraph{Case 1: $k_1 = k$ (source cluster)} 
+\begin{itemize}
+\item[(i)] If $CW_{k_1}^{N} < CW_{k_1}^{N+1} < \cwthreshold$, the cluster weights remain unchanged, so $\propertycw{k_2}$ holds with $k_2 = k_1$.
+\item[(ii)] If $CW_{k_1}^{N+1} > CW_{k_1}^{N} \ge \cwthreshold$, reassignment decreases $CW_{k_1}$ and increases $CW_j$ for another cluster $\cluster{j}$ in both executions. Hence, $\propertycw{k_2}$ holds with $k_2 = j$.
+\item[(iii)] If $CW_{k_1}^{N} = \cwthreshold$, no reassignment occurs for $\recolist{N}$, but $\recolist{N+1}$ reassigns to target cluster $\cluster{j}$. Thus $\propertycw{k_2}$ holds with $k_2 = j$.
+\end{itemize}
+
+\paragraph{Case 2: $k_1 \neq k$ but $\cluster{k_1}$ is a target cluster} 
+\begin{itemize}
+\item[(i)] If $\cluster{k_1}$ is a target in both executions, $CW_{k_1}^{N}$ and $CW_{k_1}^{N+1}$ each increase by 1, so $\propertycw{k_2}$ holds with $k_2 = k_1$.
+\item[(ii)] If $\cluster{k_1}$ is a target only for $\recolist{N}$, then $CW_{k_1}^{N}$ increases by 1, $CW_{k_1}^{N+1} = CW_{k_1}^{N}$, while another cluster $\cluster{j}$ in $\recolist{N+1}$ satisfies $CW_j^{N+1} = CW_j^N + 1$, so $\propertycw{k_2}$ holds with $k_2 = j$.
+\end{itemize}
+
+\paragraph{Case 3: $\cluster{k_1}$ is neither source nor target} 
+No change occurs for $CW_{k_1}$ in either execution, so $\propertycw{k_2}$ holds with $k_2 = k_1$.
+\end{proof}
+
+\begin{proof} (Proposition~\ref{proposition:trs})
+At initialization, forming $\recolist{N+1}$ requires one additional template, increasing only one $CW_j$. Hence, a unique $k_0$ satisfies $\propertycw{k_0}$. During reassignment, Lemma~\ref{lemma:lemma-2} ensures that after successive iterations $i$, a unique $k_i$ always satisfies $\propertycw{k_i}$. Lemma~\ref{lemma:lemma-1} then guarantees $\recolist{N} \subset \recolist{N+1}$.
+\end{proof}

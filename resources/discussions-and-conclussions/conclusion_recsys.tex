@@ -1,0 +1,14 @@
+\section{Conclusion} 
+\label{sec:conclusion}
+
+We presented sa template retrieval framework designed to promote structural diversity and novelty, while accounting for historical usage patterns and user-specific requirements. The approach consists of two phases: 
+
+\begin{itemize}
+    \item An offline phase that organizes the template space. By leveraging a Graph Matching Neural Network (GMN), our method learns a structural similarity metric that mimics expert perception, grouping templates into structurally coherent clusters without the need of handcraft/heuristic or analytical metrics.
+    \item An online component that allows diversity and novelty-based selection of templates. By combining usage data with a cluster-based selection mechanism, diverse and novel templates are selected from the catalog, ensuring a broader range of layout options.
+\end{itemize}
+
+Experimental results, conducted on real-world industry data, demonstrate that our framework significantly outperforms baseline approaches (\classicclusdiv and \adaptedclusdiv), particularly in challenging scenarios where frequently used templates are concentrated within a few clusters. 
+Specifically, it achieves a $2x$ increase in structural diversity and a $1.5x$ improvement in exposure to underused templates. Additionally, we provide qualitative examples that further illustrate the framework’s ability to offer diverse and contextually relevant templates for editorial workflows.
+
+Future work will explore extensions beyond single-template selection. In particular, we plan to consider multi-template retrieval considering full-layout designs with multiple templates in a single presentation, which introduce additional structural constraints and dependencies. Integrating such considerations will require further collaboration with industry partners to validate the approach and ensure its applicability. These efforts will support the broader goal of providing effective, diversity-aware retrieval tools for layout management.

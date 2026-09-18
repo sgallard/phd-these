@@ -1,0 +1,55 @@
+\section{Discussion}
+\label{sec:discussion}
+
+This section discusses several practical and conceptual aspects of the proposed method that are not fully captured by the quantitative evaluation alone. In particular, we examine properties related to retrieval stability, generalization beyond the training dataset, extensibility to user-aware scenarios, and operational feasibility in real-world deployments.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Retrieval Stability (Top-$N$ Preservation)} 
+\label{sec:discussion:preservation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In operational settings, template retrieval systems are often used interactively, where editors may progressively increase the number of suggested templates. In such contexts, it is highly desirable that expanding the list size does not invalidate previously proposed candidates. Our method satisfies this requirement through a Top-$N$ preservation property.
+
+Formally, let $\recolist{N}$ denote the list of $N$ retrieved templates. We establish the following property:
+\begin{proposition}
+\label{proposition:trs}
+$\recolist{N} \subset \recolist{N+1}$.
+\end{proposition}
+
+The proof is provided in~\ref{sec:proof-trs-properties}. This property guarantees that increasing the retrieval size preserves all previously selected templates, while allowing their relative ordering to change. Such behavior is particularly important in newspaper editorial/production workflows, as it ensures consistency across successive retrieval requests and avoids introducing instability. Also, from a decision-making perspective, this property is crucial for building user trust. By ensuring that TRF does not produce contradictory suggestions when parameters change, we reduce the cognitive friction often associated with ``black-box AI tools'' in creative environments.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Generalization}
+\label{sec:discussion:generalization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+An important question concerns the generalization capability of our approach, which was trained and evaluated using templates originating from a single source. Although empirical validation was conducted on this dataset, several design choices suggest that the method is not intrinsically tied to a specific template collection.
+
+First, the $\gmn$ model is trained to learn a structural similarity function between pairs of templates, rather than memorizing template-specific patterns. As a result, the learned representation is expected to capture layout-related properties that are transferable across datasets sharing similar geometric organization principles. In this sense, the model is not restricted to the templates seen during training.
+
+Second, the template repository used in our experiments exhibits substantial structural diversity, ranging from dense, image-rich layouts to minimal, text-only designs. This variability exposes the model to a broad spectrum of layout configurations, enabling it to distinguish both coarse and fine-grained structural differences.
+
+While further empirical validation on additional datasets would be required to fully assess cross-domain generalization, these characteristics suggest that the proposed method is applicable beyond the specific source considered in this study. It could also serve as a foundational architectural pattern for layout-based decision support in multiple domains, such as digital advertising, web design, or other types of documents.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Extensibility to Multi-user Scenarios}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The proposed framework operates in a user-agnostic setting, where retrieval is driven exclusively by template characteristics rather than individual user preferences. This design choice aligns with many industrial enviroments and with IR literature~\cite{wu-survey-2022}, where maintaining visual consistency across content is a primary concern.
+
+Nevertheless, the method can be extended to user-aware scenarios by incorporating historical usage data at the user level. In such a setting, a template--user interaction matrix could be constructed and combined with collaborative filtering techniques~\cite{cf-techniques}. Importantly, this extension would rely on additional similarity measures distinct from those learned by the $\gmn$, as structural layout similarity does not necessarily reflect user preferences or popularity.
+
+This separation between structural similarity modeling and preference modeling highlights the modularity of the proposed framework and suggests a clear pathway for integrating personalization mechanisms without altering the core retrieval logic. Furthermore, this allows for the integration of business-driven constraints (e.g., prioritizing templates with high ad-revenue potential) without compromising the core requirement of structural diversity.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Practical Considerations for Deployment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Beyond effectiveness, the practical viability of the proposed framework in both operational stages (offline and online) depends on its computational cost and responsiveness. We analyze these aspects by considering the different stages of the proposed method.
+
+The offline training of the $\gmn$ model constitutes the most computationally intensive component, typically requiring several hours. However, this step is performed once per template catalog and does not affect runtime performance. Moreover, retraining is not required when new templates are added, as the pre-trained model can directly process unseen layouts. For related datasets, model reuse or light fine-tuning is sufficient, further reducing deployment overhead (see Sec.~\ref{sec:discussion:generalization}).
+
+The clustering stage involves computing a pairwise distance matrix, which requires a few minutes for the dataset considered, followed by agglomerative clustering that completes within seconds. This step is executed offline and only needs to be updated periodically as the template catalog evolves.
+
+Finally, the online retrieval phase exhibits negligible latency, with response times in the order of milliseconds in our experiments. This ensures that this framework can be seamlessly integrated into interactive editorial workflows without impacting user experience and ensuring agility of the decision-making process.
