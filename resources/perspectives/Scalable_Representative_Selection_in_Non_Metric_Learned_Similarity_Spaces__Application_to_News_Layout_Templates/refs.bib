@@ -1,0 +1,290 @@
+
+
+@article{gonzalez1985clustering,
+  author  = {Teofilo F. Gonzalez},
+  title   = {Clustering to Minimize the Maximum Intercluster Distance},
+  journal = {Theoretical Computer Science},
+  volume  = {38},
+  pages   = {293--306},
+  year    = {1985},
+  doi     = {10.1016/0304-3975(85)90224-5}
+}
+
+
+@book{kaufman1987clustering,
+  author    = {Kaufman, Leonard and Rousseeuw, Peter J.},
+  title     = {Clustering by Means of Medoids},
+  year      = {1987},
+  publisher = {Faculty of Mathematics and Informatics, Delft University of Technology},
+  address   = {Delft, The Netherlands}
+}
+
+
+
+
+@article{schubert2021fast,
+  author  = {Schubert, Erich and Rousseeuw, Peter J.},
+  title   = {Fast and Eager k-Medoids Clustering: O(k) Runtime Improvement of the PAM, CLARA, and CLARANS Algorithms},
+  journal = {Information Systems},
+  year    = {2021},
+  volume  = {101},
+  pages   = {101804},
+  doi     = {10.1016/j.is.2021.101804}
+}
+
+@inproceedings{garg2020banditpam,
+  author    = {Garg, Saurabh and Guo, Yuxin and others},
+  title     = {BanditPAM: Almost Linear Time k-Medoids Clustering via Multi-Armed Bandits},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2020},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2020/hash/73b817090081cef1bca77232f4532c5d-Abstract.html}
+}
+
+@article{ariascastro2021consistency,
+  author  = {Arias-Castro, Ery and Jiang, He},
+  title   = {On the Consistency of Metric and Non-Metric K-Medoids},
+  journal = {Proceedings of Machine Learning Research},
+  year    = {2021},
+  volume  = {130},
+  pages   = {1--20},
+  url     = {https://proceedings.mlr.press/v130/jiang21c.html}
+}
+
+@article{dematelin2025onebatchpam,
+  author  = {de Mathelin, Antoine and Cecchi, Nicolas Enrique and Deheeger, Fran{\c{c}}ois and Mougeot, Mathilde and Vayatis, Nicolas},
+  title   = {OneBatchPAM: A Fast and Frugal K-Medoids Algorithm},
+  journal = {arXiv preprint arXiv:2501.19285},
+  year    = {2025},
+  url     = {https://arxiv.org/abs/2501.19285}
+}
+
+@Article{kayabilge2019deeplearningsurvey,
+    AUTHOR = {Kaya, Mahmut and Bilge, Hasan Sakir},
+    TITLE = {Deep Metric Learning: A Survey},
+    JOURNAL = {Symmetry},
+    VOLUME = {11},
+    YEAR = {2019},
+    NUMBER = {9},
+    ARTICLE-NUMBER = {1066},
+    URL = {https://www.mdpi.com/2073-8994/11/9/1066},
+    ISSN = {2073-8994},
+    ABSTRACT = {Metric learning aims to measure the similarity among samples while using an optimal distance metric for learning tasks. Metric learning methods, which generally use a linear projection, are limited in solving real-world problems demonstrating non-linear characteristics. Kernel approaches are utilized in metric learning to address this problem. In recent years, deep metric learning, which provides a better solution for nonlinear data through activation functions, has attracted researchers’ attention in many different areas. This article aims to reveal the importance of deep metric learning and the problems dealt with in this field in the light of recent studies. As far as the research conducted in this field are concerned, most existing studies that are inspired by Siamese and Triplet networks are commonly used to correlate among samples while using shared weights in deep metric learning. The success of these networks is based on their capacity to understand the similarity relationship among samples. Moreover, sampling strategy, appropriate distance metric, and the structure of the network are the challenging factors for researchers to improve the performance of the network model. This article is considered to be important, as it is the first comprehensive study in which these factors are systematically analyzed and evaluated as a whole and supported by comparing the quantitative results of the methods.},
+    DOI = {10.3390/sym11091066} 
+}
+
+@article{skopal2007nonmetricsimilarity,
+    author = {Skopal, Tomás},
+    year = {2007},
+    month = {01},
+    pages = {},
+    title = {Unified framework for fast exact and approximate search in dissimilarity spaces.},
+    volume = {32},
+    journal = {ACM Trans. Database Syst.}
+}
+
+@article{schubert2021fastPAM,
+    title = {Fast and eager k-medoids clustering: O(k) runtime improvement of the PAM, CLARA, and CLARANS algorithms},
+    journal = {Information Systems},
+    volume = {101},
+    pages = {101804},
+    year = {2021},
+    issn = {0306-4379},
+    doi = {https://doi.org/10.1016/j.is.2021.101804},
+    url = {https://www.sciencedirect.com/science/article/pii/S0306437921000557},
+    author = {Erich Schubert and Peter J. Rousseeuw},
+    keywords = {Cluster analysis, k-medoids, PAM, CLARA, CLARANS},
+    abstract = {Clustering non-Euclidean data is difficult, and one of the most used algorithms besides hierarchical clustering is the popular algorithm Partitioning Around Medoids (PAM), also simply referred to as k-medoids clustering. In Euclidean geometry the mean – as used in k-means – is a good estimator for the cluster center, but this does not exist for arbitrary dissimilarities. PAM uses the medoid instead, the object with the smallest dissimilarity to all others in the cluster. This notion of centrality can be used with any (dis-)similarity, and thus is of high relevance to many domains and applications. A key issue with PAM is its high run time cost. We propose modifications to the PAM algorithm that achieve an O(k)-fold speedup in the second (“SWAP”) phase of the algorithm, but will still find the same results as the original PAM algorithm. If we relax the choice of swaps performed (while retaining comparable quality), we can further accelerate the algorithm by eagerly performing additional swaps in each iteration. With the substantially faster SWAP, we can now explore faster initialization strategies, because (i) the classic (“BUILD”) initialization now becomes the bottleneck, and (ii) our swap is fast enough to compensate for worse starting conditions. We also show how the CLARA and CLARANS algorithms benefit from the proposed modifications. While we do not study the parallelization of our approach in this work, it can easily be combined with earlier approaches to use PAM and CLARA on big data (some of which use PAM as a subroutine, hence can immediately benefit from these improvements), where the performance with high k becomes increasingly important. In experiments on real data with k=100,200, we observed a 458× respectively 1191× speedup compared to the original PAM SWAP algorithm, making PAM applicable to larger data sets, and in particular to higher k.}
+}
+
+@inproceedings{tiwari2020banditPAM-old,
+ author = {Tiwari, Mo and Zhang, Martin J and Mayclin, James and Thrun, Sebastian and Piech, Chris and Shomorony, Ilan},
+ booktitle = {Advances in Neural Information Processing Systems},
+ editor = {H. Larochelle and M. Ranzato and R. Hadsell and M.F. Balcan and H. Lin},
+ pages = {10211--10222},
+ publisher = {Curran Associates, Inc.},
+ title = {BanditPAM: Almost Linear Time k-Medoids Clustering via Multi-Armed Bandits},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2020/file/73b817090081cef1bca77232f4532c5d-Paper.pdf},
+ volume = {33},
+ year = {2020}
+}
+
+@misc{tiwari2020banditpam,
+      title={BanditPAM: Almost Linear Time $k$-Medoids Clustering via Multi-Armed Bandits}, 
+      author={Mo Tiwari and Martin Jinye Zhang and James Mayclin and Sebastian Thrun and Chris Piech and Ilan Shomorony},
+      year={2020},
+      eprint={2006.06856},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2006.06856}, 
+}
+
+@misc{shen2021layoutparser,
+      title={LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis}, 
+      author={Zejiang Shen and Ruochen Zhang and Melissa Dell and Benjamin Charles Germain Lee and Jacob Carlson and Weining Li},
+      year={2021},
+      eprint={2103.15348},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2103.15348}, 
+}
+
+@inproceedings{pfitzmann2022doclaynet, 
+   series={KDD ’22},
+   title={DocLayNet: A Large Human-Annotated Dataset for Document-Layout Segmentation},
+   url={http://dx.doi.org/10.1145/3534678.3539043},
+   DOI={10.1145/3534678.3539043},
+   booktitle={Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+   publisher={ACM},
+   author={Pfitzmann, Birgit and Auer, Christoph and Dolfi, Michele and Nassar, Ahmed S. and Staar, Peter},
+   year={2022},
+   month=Aug, pages={3743–3751},
+   collection={KDD ’22} 
+}
+
+@misc{patil2021layoutgmn,
+      title={LayoutGMN: Neural Graph Matching for Structural Layout Similarity}, 
+      author={Akshay Gadi Patil and Manyi Li and Matthew Fisher and Manolis Savva and Hao Zhang},
+      year={2021},
+      eprint={2012.06547},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2012.06547}, 
+}
+
+@unpublished{gallardo-gmn,
+  TITLE = {{Diversity-Aware Retrieval of Structured Layout Templates via Graph-Matching Network-Based Clustering}},
+  AUTHOR = {Gallardo, Sebasti{\'a}n and G{\'e}nuit, Bruno and Castet, Eric and Kornprobst, Pierre},
+  URL = {https://inria.hal.science/hal-04801949},
+  NOTE = {working paper or preprint},
+  PAGES = {32},
+  YEAR = {2026},
+  MONTH = Feb,
+  KEYWORDS = {clustering-based recommendation ; graph neural networks ; newspaper layout ; journalism ; diversity ; R{\'e}seaux neuronaux bas{\'e}s sur des graphes ; mise en page de journaux ; journalisme ; diversit{\'e} ; Recommandation bas{\'e}e sur le clustering},
+  PDF = {https://inria.hal.science/hal-04801949v2/file/Recsys_for_EM_system.pdf},
+  HAL_ID = {hal-04801949},
+  HAL_VERSION = {v2},
+}
+
+@article{binmakhasen2020doclayoutanalysis,
+author = {Binmakhashen, Galal M. and Mahmoud, Sabri A.},
+title = {Document Layout Analysis: A Comprehensive Survey},
+year = {2019},
+issue_date = {November 2020},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {52},
+number = {6},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/3355610},
+doi = {10.1145/3355610},
+abstract = {Document layout analysis (DLA) is a preprocessing step of document understanding systems. It is responsible for detecting and annotating the physical structure of documents. DLA has several important applications such as document retrieval, content categorization, text recognition, and the like. The objective of DLA is to ease the subsequent analysis/recognition phases by identifying the document-homogeneous blocks and by determining their relationships. The DLA pipeline consists of several phases that could vary among DLA methods, depending on the documents’ layouts and final analysis objectives. In this regard, a universal DLA algorithm that fits all types of document-layouts or that satisfies all analysis objectives has not been developed, yet. In this survey paper, we present a critical study of different document layout analysis techniques. The study highlights the motivational reasons for pursuing DLA and discusses comprehensively the different phases of the DLA algorithms based on a general framework that is formed as an outcome of reviewing the research in the field. The DLA framework consists of preprocessing, layout analysis strategies, post-processing, and performance evaluation phases. Overall, the article delivers an essential baseline for pursuing further research in document layout analysis.},
+journal = {ACM Comput. Surv.},
+month = oct,
+articleno = {109},
+numpages = {36},
+keywords = {physical document structure, layout analysis, document structure analysis, document image understanding, document image retrieval, Document segmentation}
+}
+
+@article{frey2007clustering,
+author = {Brendan J. Frey  and Delbert Dueck },
+title = {Clustering by Passing Messages Between Data Points},
+journal = {Science},
+volume = {315},
+number = {5814},
+pages = {972-976},
+year = {2007},
+doi = {10.1126/science.1136800},
+URL = {https://www.science.org/doi/abs/10.1126/science.1136800},
+eprint = {https://www.science.org/doi/pdf/10.1126/science.1136800},
+abstract = {Clustering data by identifying a subset of representative examples is important for processing sensory signals and detecting patterns in data. Such “exemplars” can be found by randomly choosing an initial subset of data points and then iteratively refining it, but this works well only if that initial choice is close to a good solution. We devised a method called “affinity propagation,” which takes as input measures of similarity between pairs of data points. Real-valued messages are exchanged between data points until a high-quality set of exemplars and corresponding clusters gradually emerges. We used affinity propagation to cluster images of faces, detect genes in microarray data, identify representative sentences in this manuscript, and identify cities that are efficiently accessed by airline travel. Affinity propagation found clusters with much lower error than other methods, and it did so in less than one-hundredth the amount of time.}}
+
+@ARTICLE{garcia2012prototype,
+  author={Garcia, Salvador and Derrac, Joaquin and Cano, Jose and Herrera, Francisco},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
+  title={Prototype Selection for Nearest Neighbor Classification: Taxonomy and Empirical Study}, 
+  year={2012},
+  volume={34},
+  number={3},
+  pages={417-435},
+  keywords={Training;Accuracy;Prototypes;Taxonomy;Classification algorithms;Noise;Noise measurement;Prototype selection;nearest neighbor;taxonomy;condensation;edition;classification.},
+  doi={10.1109/TPAMI.2011.142}}
+
+
+@inproceedings{lin2011docsummarization,
+    title = "A Class of Submodular Functions for Document Summarization",
+    author = "Lin, Hui  and
+      Bilmes, Jeff",
+    editor = "Lin, Dekang  and
+      Matsumoto, Yuji  and
+      Mihalcea, Rada",
+    booktitle = "Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies",
+    month = jun,
+    year = "2011",
+    address = "Portland, Oregon, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/P11-1052/",
+    pages = "510--520"
+}
+
+@inproceedings{shmoys1997facilitylocation,
+  author    = {Shmoys, David B. and Tardos, {\'E}va and Aardal, Karen},
+  title     = {Approximation algorithms for facility location problems},
+  booktitle = {Proceedings of the 29th Annual ACM Symposium on Theory of Computing},
+  pages     = {265--274},
+  year      = {1997},
+  doi       = {10.1145/258533.258600}
+}
+
+@misc{li2019graphmatchingnetworkslearning,
+      title={Graph Matching Networks for Learning the Similarity of Graph Structured Objects}, 
+      author={Yujia Li and Chenjie Gu and Thomas Dullien and Oriol Vinyals and Pushmeet Kohli},
+      year={2019},
+      eprint={1904.12787},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1904.12787}, 
+}
+
+@misc{chen2020simpleframeworkcontrastivelearning,
+      title={A Simple Framework for Contrastive Learning of Visual Representations}, 
+      author={Ting Chen and Simon Kornblith and Mohammad Norouzi and Geoffrey Hinton},
+      year={2020},
+      eprint={2002.05709},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2002.05709}, 
+}
+
+@inproceedings{xu2020layoutlm,
+  author    = {Xu, Yiheng and Li, Minghao and Cui, Lei and Huang, Shaohan and Wei, Furu and Zhou, Ming},
+  title     = {LayoutLM: Pre-training of text and layout for document image understanding},
+  booktitle = {Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+  pages     = {1192--1200},
+  year      = {2020},
+  doi       = {10.1145/3394486.3403172}
+}
+
+
+@article{Ganti1999ClusteringLD,
+  title={Clustering large datasets in arbitrary metric spaces},
+  author={Venkatesh Ganti and Raghu Ramakrishnan and Johannes Gehrke and Allison L. Powell and James C. French},
+  journal={Proceedings 15th International Conference on Data Engineering (Cat. No.99CB36337)},
+  year={1999},
+  pages={502-511},
+  url={https://api.semanticscholar.org/CorpusID:8332479}
+}
+
+@InProceedings{Nanni2005Expensivemetrics,
+author="Nanni, Mirco",
+editor="Ho, Tu Bao
+and Cheung, David
+and Liu, Huan",
+title="Speeding-Up Hierarchical Agglomerative Clustering in Presence of Expensive Metrics",
+booktitle="Advances in Knowledge Discovery and Data Mining",
+year="2005",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="378--387",
+abstract="In several contexts and domains, hierarchical agglomerative clustering (HAC) offers best-quality results, but at the price of a high complexity which reduces the size of datasets which can be handled. In some contexts, in particular, computing distances between objects is the most expensive task. In this paper we propose a pruning heuristics aimed at improving performances in these cases, which is well integrated in all the phases of the HAC process and can be applied to two HAC variants: single-linkage and complete-linkage. After describing the method, we provide some theoretical evidence of its pruning power, followed by an empirical study of its effectiveness over different data domains, with a special focus on dimensionality issues.",
+isbn="978-3-540-31935-1"
+}

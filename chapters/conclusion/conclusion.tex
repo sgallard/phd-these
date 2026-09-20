@@ -1,5 +1,165 @@
-% !TEX root = ../sommaire.tex
-
 \chapter{Conclusion}
 \label{ref:conclusion}
+
+
+\section{Summary of Contributions}
+
+This thesis addressed the web-to-print workflow of \melody, in which operators manually select each article's template and manually compose the resulting page. This workflow was automatized by combining learned template retrieval and multi-objective page generation, each targeting one of these two  steps. Additionally, the same underlying principle of automated re-layouting was further evaluated for its applicability to newspaper large-print adaptation.
+
+\subsection{Learned Template Retrieval}
+
+Template retrieval was addressed through \trs, which recommends templates based on structural similarity $\gmn{\cdot}{\cdot}$, computed with a graph matching network, rather than by usage frequency alone. Relative to baselines, \trs was shown to nearly double structural diversity and to improve long-tail template exposure by approximately $1.5\times$, at a bounded loss of conformity to \melody's historical assignments, and at millisecond-range latency. 
+
+This similarity-based scoring was further extended to a page-aware setting through \neuralmethod, which combines a Transformer encoder, reaching $82.62\%$ Top-1 accuracy in predicting \melody's historical assignments, with $\gmnMatrix$ computed with $\gmn{\cdot}{\cdot}$ metric, expanding the average pool of viable template alternatives per article by $1.7\times$ so as to assist the search performed by the multi-objective page generation method described next, which incorporates this scoring as one of its optimization objectives. 
+
+Both methods were deployed on \melody's pre-production infrastructure to be used by  \publihebdos press group.
+
+\subsection{Multi-objective Page Generation}
+
+Multi-objective page generation constituted the central objective of this thesis: automating \melody's page generation step, building a complete print page from a set of web articles without template assignment or placement, in a few minutes per page against the fifteen to twenty minutes currently required, while keeping objective values within the ranges observed in operator-produced pages.
+
+This was addressed through \methodNameGeneral, a multi-objective method that jointly resolves template assignment and two-dimensional packing across four editorial objectives. Its two variants, uniform \methodNameUniform and preference-guided \methodName, were shown to discover Pareto-dominating solutions over constructive and ablated baselines across the large majority of evaluated instances.  
+\methodName further compressed the non-dominated frontier by an order of magnitude and concentrated up to $51.4\%$ more solutions within the acceptable range.
+
+\methodNameGeneral was deployed on \melody's pre-production infrastructure  to be used by \laprovence press group.
+
+\subsection{Large-print Adaptation}
+
+Under the same automated re-layouting principle, large-print adaptation addressed the societal motivation of this thesis: validating that large-print layouts reduce reading time and perceived workload, and better preserve the behavioral integrity of reading, relative to gesture-based magnification, for readers \NV under device-related visual constraints and for readers \LV.
+
+A controlled user study showed that \condtwonot restores the behavioral integrity of the reading process, with reading paths remaining significantly closer to the natural, left-to-right and top-to-bottom strategy than under \condonenot, while also yielding faster task completion and lower perceived workload.
+
+
+%%%%%%%%%%%%%%%%%%%%
+Together, these three contributions substantiate the argument that \melody's print production workflow can be automatized through intelligent, computational methods, yielding both industrial gains in production efficiency and a societal extension toward readibility.
+
+
+\section{Limitations}
+
+
+\subsection{Learned Template Retrieval}
+
+\subsubsection*{\trs user-agnostic setting}
+\trs operates in a user-agnostic setting, retrieving templates exclusively from their structural characteristics rather than from individual user preferences. While this design choice aligns with the importance of visual consistency in industrial environments, it leaves unexploited any editor-specific or reader-specific preference input that a personalized retrieval strategy could capture.
+
+\subsubsection*{\neuralmethod historical data dependency}
+
+\neuralmethod, in turn, requires a substantial, venue-specific historical page corpus to learn editorial intent; whether this requirement generalizes favorably to smaller or less digitized archives than the press groups asociated to \melody remains an open question.
+
+\subsection{Multi-objective Page Generation}
+
+\subsubsection*{Restriction to single-page generation}
+
+The formalization of the page generation problem restricts its optimization domain to a single-page canvas. Consequently, \methodNameGeneral treats each page as an independent instance, rather than jointly sequencing and assigning articles across the multiple pages of a full edition. Addressing this limitation is a natural next step for this line of work, discussed in \secref{sec:future-perspectives}.
+
+\subsubsection*{Absence of advertisement placement}
+
+The current implementation of \methodNameGeneral omits the placement of advertisement elements. This omission stems from a data limitation rather than a design choice: the historical layout records available at \melody lack consistent metadata regarding advertisement coordinates and dimensions. Incorporating advertisement placement into the optimization is discussed as a future extension in \secref{sec:future-perspectives}.
+
+\subsubsection*{Computational cost and scalability}
+
+Execution time is the primary computational bottleneck of \methodNameGeneral relative to baselines, whose runtimes remain in the millisecond range; \methodName, the costlier of its two variants, resolves the most demanding instance (\numarticles = 8) in under two minutes per page. 
+
+This was not considered a limiting factor for the current implementation, for two reasons. First, this overhead falls within an operationally viable range for the specific industrial newsroom production environment targeted by this investigation. Second, this range was reached without parallelizing the computation, suggesting that a multi-threaded implementation would improve performance considerably.
+
+Dedicated performance optimization and parallelization of \methodNameGeneral are not regarded as a direction for future research, but as a near-term engineering iteration on its deployment already underway at \melody.
+
+\subsubsection*{Expert-only calibration of the objectives}
+
+Both the editorial objectives themselves and the domain-specific coefficients that weight them were validated through focus-group meetings conducted with \melody experts, rather than through broader empirical studies involving end readers or a wider panel of newsroom practitioners. Calibrating them against such broader user studies remains an open direction, discussed in \secref{sec:future-perspectives}.
+
+\subsection{Large-print adaptation}
+
+\subsubsection*{Restriction to text-only stimuli}
+
+The controlled study was conducted exclusively on text-only newspaper pages, and reading paths were tracked through a reading-aloud protocol, which only captures textual entry points. Extending the study to richer layouts, incorporating images and other non-textual entry points, would accordingly require an adapted protocol capable of capturing content that participants do not read aloud. This extension is discussed in \secref{sec:future-perspectives}.
+
+\subsubsection*{Limited recruitment of participants with low vision}
+
+Only 5 participants \LV were recruited for this study, through the ophthalmology department of CHU Pasteur (Nice), and further recruitment proved difficult. While this sample size does not invalidate the study's findings, a larger cohort would have supported a dedicated study focused specifically on readers \LV.
+
+\subsection{General scope limitations}
+
+\subsubsection*{Strict attachment to \melody}
+
+All empirical work in this thesis is grounded in a single CMS, \melody, and validated with two of its press groups, \publihebdos\ and \laprovence, both operating within the French regional press. Extending these results to other CMSs, other markets or languages, or to architectures adapted to different industrial contexts, was not attempted. 
+This validation also rests on the elasticity thresholds and admissibility rules used to classify the page corpus, that were imposed by \melody's own production guidelines rather than derived empirically from field or user studies.
+
+This attachment to \melody does not invalidate these results, since the underlying methods were designed to generalize to any structurally similar layout domain, such as magazines or user interfaces organized around comparable structures. 
+Whether it applies directly to such contexts, however, remains an open question.
+
+
+
+
+\section{Future Perspectives}
+\label{sec:future-perspectives}
+
+\subsection{Extended applications of the developed methods}
+
+\subsubsection{Representative template selection}
+
+The non-metric (i.e., not satisfying properties such as symmetry or the triangle inequality) learned similarity $\gmn{\cdot}{\cdot}$ underlying \trs was further applied to a related problem: given a large historical corpus of previously produced pages, automatically selecting a small subset of print articles that captures the corpus's main design patterns, so as to initialize a CMS's template catalog \templatecatalog. 
+In this setting, the objects under consideration are not abstract templates but print articles, i.e., the concrete instantiations extracted from previously produced pages, from which a small representative subset is subsequently distilled into a set of candidate templates that will form \templatecatalog.
+
+Because $\gmn{\cdot}{\cdot}$ is non-metric and computationally expensive to evaluate, it admits none of the acceleration strategies available to classical $k$-medoids-based selection procedures such as PAM~\cite{kaufman1987clustering}, and computing its full pairwise similarity matrix over a corpus of the scale considered here (10000+ print articles) is computationally prohibitive. Beyond curating the small subset of representative templates itself, avoiding this exhaustive similarity computation constitutes the main gap this contribution addresses.
+
+
+\paragraph*{Proposed method}
+Two complementary strategies were proposed to avoid this exhaustive computation. 
+
+\begin{enumerate}
+\item The first recursively partitions the corpus into locally homogeneous subsets, using auxiliary object features that are inexpensive to compute, interpretable, and independent of $\gmn{\cdot}{\cdot}$ itself. Then, $k$-medoids selection is then applied locally, independently within each of these small subsets, where exhaustive pairwise evaluation of $\gmn{\cdot}{\cdot}$ remains tractable, rather than globally over the full corpus.
+\item The second incrementally constructs the representative set by repeatedly sampling print articles not yet covered by the current representatives at a given similarity threshold, and applying $k$-medoids selection in batches over these samples.
+\end{enumerate} 
+Both strategies avoid ever computing the complete pairwise similarity matrix, restricting the computationally expensive evaluation of $\gmn{\cdot}{\cdot}$ to  smaller subsets or samples iteratively.
+
+\paragraph*{Evaluation}
+Evaluated over a corpus of 15,289 print articles from \laprovence, both strategies reduced computation time by two to three orders of magnitude relative to standard $k$-medoids selection, by respectively up to $480\times$ and $1{,}740\times$.
+Additionally, the representative set of templates covers between $86\%$ and $98\%$ of the corpus at the reference similarity threshold ($\theta=-2$), depending on the strategy and the number of representatives selected.
+
+A further comparison was made against \laprovence's template catalog, which for this application comprises $379$ templates: the $\catalogsize=345$ templates defined in \secref{sec:laprovence-templates}, together with those originally excluded from that catalog, since the business-driven exclusions applied elsewhere in this thesis were not relevant to this application.
+This comparison further validated the selected representatives: 33 of the 50 of them were identical to an existing template, and only one of the nineteen most representative layouts did not correspond to an existing template, indicating that this automated procedure recovers layout patterns.
+
+This application of $\gmn{\cdot}{\cdot}$-based similarity to representative template selection is detailed in the following manuscript, currently under review, to which the author of this thesis contributed as a co-author.
+\begin{callout}
+G. Arlabosse, S. Gallardo, \& P. Kornprobst (2026). \emph{Scalable Representative Selection in Non-Metric Learned Similarity Spaces: Application to News Layout Templates}. Submitted to \emph{IEEE Access}, under review~\citemine{arlabosse-repselect}.
+\end{callout}
+
+\subsubsection{VR-based layout display}
+
+A further, more exploratory direction concerns displaying print layouts within a virtual-reality environment, rendered in landscape orientation as a large dashboard rather than the portrait orientation currently targeted by \melody. 
+Beyond offering a wide-format display, such an environment would relax the physical screen-size constraint addressed by the large-print adaptation described in this thesis, providing an alternative avenue toward the same objective of preserving reading efficiency under space-constrained conditions. 
+
+This direction remains speculative and has not been formalized beyond this initial framing. It could, however, build on the item-based magnification principles introduced by SASI (Select and Augment Segmented Items)~\cite{delachambre-sasi}, which lets users select individual segmented items and stabilize their magnified version in space within a dynamic, three-dimensional virtual-reality environment. A comparable selection-and-stabilization mechanism could support magnifying individual layout elements within the proposed VR dashboard.
+
+\subsection{Generalizing the Automated Workflow}
+
+\subsubsection*{Multi-page and full-edition generation}
+
+The restriction of \methodNameGeneral to a single-page canvas, noted above as a limitation of this thesis, constitutes the most direct extension of the automated workflow: jointly sequencing and assigning articles across the multiple pages of a full edition, rather than treating each page as an independent instance. 
+
+This extension is not a straightforward scaling of the existing formulation, since generating a full edition additionally requires assigning each article to one of several pages according to its editorial section (e.g., sports, politics), which constitutes a third assignment problem layered on top of the template assignment and packing problems already jointly resolved by \methodNameGeneral.
+
+\subsubsection*{Advertisement placement}
+
+The current implementation of \methodNameGeneral omits the placement of advertisement elements, a limitation stemming from the absence of consistent metadata on advertisement coordinates and dimensions in \melody's historical layout records, rather than from a limitation of the optimization formulation itself.
+
+The underlying formulation of \methodNameGeneral is already generalizable to incorporate advertisement elements as an additional class of placeable objects, so  this extension is restricted by the availability of the corresponding metadata.
+
+\subsubsection*{Generalization beyond \melody}
+
+All empirical work in this thesis was grounded in a single CMS, \melody, and validated with two of its press groups operating within the French regional press. Extending these results to other CMSs, other press groups, other markets or languages, or to structurally similar layout domains such as magazines or user interfaces, was not attempted, and constitutes a natural direction for assessing the generality of the proposed methods beyond the specific industrial context considered here.
+
+\subsection{Extending Empirical Validation}
+
+\subsubsection*{Broader validation of editorial objectives}
+
+The objectives optimized by \methodNameGeneral, together with the domain-specific coefficients weighting them, were validated through focus-group meetings conducted with \melody experts, rather than through broader empirical studies. Calibrating these objectives and their weights against a wider panel of newsroom practitioners, or against end readers, remains an open direction for validating the extent to which the current formulation generalizes beyond the judgment of a limited group of experts.
+
+\subsubsection*{Extending the large-print study to richer layouts}
+
+The controlled study reported in this thesis was conducted exclusively on text-only newspaper pages, with reading paths tracked through a reading-aloud protocol that captures only textual entry points. Extending this study to richer layouts, incorporating images and other non-textual entry points, would accordingly require an adapted protocol capable of capturing content that participants do not read aloud, so as to assess whether the behavioral benefits observed under \condtwonot generalize to  \melody's multimodal page layouts.
+
+%%%%%%%%%%%%%%%%%%%%
+Taken together, these perspectives outline coherent research guidelines extending the contributions of this thesis along three directions: from single-page to full-edition automation, from a single CMS to a broader industrial context, and from expert-driven calibration to empirically validated criteria.
 

@@ -135,7 +135,7 @@ After stimulus onset (time $t_0$, when the newspaper page is displayed), partici
     \label{fig:taskone-timeline}
 \end{figure}
 
-\subsubsection{Success ratio}
+\subsubsection*{Success ratio}
 The analysis revealed significant effects for three factor considering success ratio:
 \begin{itemize}
 \item {NewspaperID:} Although significant differences existed between newspapers (\statreport{5}{215.94}{5.72}{<.001}{0.12}), performance was consistently high, with the lowest-performing newspaper still achieving a $93.4\%$ success ratio.
@@ -147,7 +147,7 @@ The analysis revealed significant effects for three factor considering success r
 Most importantly, there was no significant effect of Condition, indicating that neither \condonenot nor \condtwonot affected the participants' ability to read headlines correctly.
 
 
-\subsubsection{Completion time}
+\subsubsection*{Completion time}
 Our analysis revealed significant effects for all our factors of interest:
 \begin{itemize}
     \item {Condition:} The main result is that, as anticipated due to the reduction in navigational overhead, \condtwonot had $37\%$ lower completion time than \condonenot \comparison{$71.7$\seconds}{$45.2$\seconds} (\statreport{1}{209.43}{116.5}{<.001}{0.42}). An interaction with \CVAS (\statreport{1}{209.18}{146.3}{<.001}{0.41}) showed that this improvement was larger for  participants \LV, with a $42\%$ reduction \comparison{$114.7$\seconds}{$66.3$\seconds} compared to a reduction of $16\%$ for participants \NV \comparison{$28.6$\seconds}{$24.1$\seconds}). This finding supports Hypothesis~\hypperformance.
@@ -160,7 +160,7 @@ Our analysis revealed significant effects for all our factors of interest:
 
 \end{itemize}
 
-\subsubsection{Reading path}
+\subsubsection*{Reading path}
 
 To analyze reading paths, a reference reading strategy in \condzeronot trials was identified. Visual inspection initially suggested a left-to-right, top-to-bottom reading pattern in \condzeronot trials. Then, the similarity between each path and this candidate pattern is quantified using a Levenshtein-based similarity measure~\cite{levenshtein2007}: given two paths $p_1$ and $p_2$, the similarity is defined as $Sim(p_1,p_2) = 100*(1.0 - levenshtein(p_1,p_2)/max(length(p_1), length(p_2)))
 $, using the Levenshtein distance~\cite{levenshtein2007}. The similarity  $Sim(p_1,p_2)$ ranges from 0, indicating completely different paths, to 100, indicating $p_1 = p_2$. An ANOVA test confirmed no significant deviation between this left-to-right, top-to-bottom strategy and \condzeronot trials. Based on this validation,  the {\itshape reference path} is defined as the theoretical left-to-right, top-to-bottom reading order implied by the page layout, independent of any experimental data.
@@ -212,7 +212,7 @@ The analysis revealed three significant factors:
 \end{figure}
 
 
-\subsubsection{Participant-level performance}
+\subsubsection*{Participant-level performance}
 
 To visualize individual performance, \figref{fig:phaseone} plots reading path similarity against completion time for each participant, separated by \CVAS to account for different data ranges. The absolute performance plots (a,c) confirm that \condtwonot resulted in shorter times and paths more similar to the reference compared to \condonenot. The relative improvement plots (b, d) make these performance gains explicit. The plots also highlight that the improvements in both metrics were substantially larger for participants \LV than for participants \NV.
 
@@ -239,7 +239,7 @@ To visualize individual performance, \figref{fig:phaseone} plots reading path si
     \label{fig:phaseone}
 \end{figure}
 
-\subsubsection{Reading and transition times}
+\subsubsection*{Reading and transition times}
 \label{section:reading-transition}
 
 Analysis of reading time revealed four significant factors: 
@@ -299,13 +299,13 @@ Regarding Task 2, two metrics to test hypotheses \hypfindingperformance and \hyp
 \end{enumerate}
 
 
-\subsubsection{Success ratio}
+\subsubsection*{Success ratio}
 
 The analysis revealed a significant effect of NewspaperID (\statreport{5}{219.47}{4.10}{= 0.001}{0.09}), and an interaction between NewspaperID and \CVAS  (\statreport{5}{219.66}{ 3.30}{= .006}{0.07}) related to one specific newspaper layout (\#13). This was traced to a single participant \LV who, likely due to fatigue on his final trials, failed to find the target in either condition. Given the small sample size, this single failure disproportionately skewed the result for that specific case ($48.9\%$ success ratio).
 
 Apart from this statistical artifact, no other factors had a significant effect on the success ratio. Overall, participants performed very well, achieving a success rate of over 90\% in both the \condonenot and \condtwonot conditions.
 
-\subsubsection{Completion time}
+\subsubsection*{Completion time}
 
 Completion time for each trial, measured in seconds, was extracted. The corresponding analysis identified two significant factors:
 \begin{itemize}
@@ -332,7 +332,7 @@ These results are illustrated in \figref{fig:phasetwo}.
 \end{figure}
 
 
-\subsubsection{Headline zone in Task 2}
+\subsubsection*{Headline zone in Task 2}
 
 Finally, the influence of the target headline's location ("zone") in task completion time was analyzed. The analysis revealed no statistically significant effect (\statreport{2}{209.75}{2.73}{=.067}{0.03}) and therefore is not possible to confirm the hypothesis \hypfindingpositions.
 
@@ -399,15 +399,15 @@ Based on the previous results, a summary focused in each hypothesis is presented
 \section{Discussion}
 \label{sec:magnification-discussion}
 
-\subsection{ConditionOrder impact}
+\subsection*{ConditionOrder impact}
 As shown in Table~\ref{tab:lmm}, conditions are modeled using a within-subject factor,  counterbalanced  by systematic alternation to balance order (illustrated in Fig.~\ref{fig:conditions-setup}).
 In addition, statistical analysis on ConditionOrder showed no significant results, indicating a lack of fatigue effects.
 
-\subsection{Generalization of the study}
+\subsection*{Generalization of the study}
 
 Findings are expected to generalize within structured, layout-based documents, as loss of global context and interface manipulability are content-independent properties of GB vs. LP.
 While this study quantified text-only reading, the methodology could potentially be extended to richer layouts with additional entry points~\cite{ozretic_dosen_key_2018}. This would require identifying the specific natural reading paths associated with such layouts, which would differ from the one defined here. Furthermore, future protocols would likely need adaptations to address this use case, such as moving beyond reading aloud or accounting for CPS limitations when integrating visual elements.
 
-\subsection{Training and familiarity effects}
+\subsection*{Training and familiarity effects}
 
 The potential role of training and familiarity also merits consideration; observed patterns were similar for participants with normal-vision (already familiar with magnification) and low vision, though effects were larger for the latter. This suggests that training could reduce difference magnitude for them, but their visual acuity will prevent eliminating the gap, and the qualitative pattern between GB and LP is unlikely to change.

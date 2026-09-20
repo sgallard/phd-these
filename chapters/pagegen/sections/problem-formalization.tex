@@ -10,7 +10,7 @@ Given this setting, a specific problem instance input is denoted as $\instance =
 Given this input, a candidate output is a complete layout solution \solution, aggregating for every article $\articleobj{i} \in \articleset$ a template selection $\templatesel{i}$, a position allocation $\posvar{i}$, and a vertical elasticity $\elasticity{i}$ (formally defined in \secref{sec:decision-variables}), subject to the defined feasibility constraints and evaluated along the multi-objective vector $\objvector{\solution}$. Because these four objectives measure different aspects of layout quality and may potentially conflict with one another (\secref{sec:objective_formulation}), no single $\solution$ is optimal in general; the method proposed in \secref{sec:evopagegen-approach} therefore returns a Pareto frontier (\secref{sec:sota-pareto}) of such solutions rather than a single one.
 
 \subsection{Decision variables and search space}
-\subsubsection{Decision Variables}
+\subsubsection*{Decision Variables}
 \label{sec:decision-variables}
 
 Formally, a layout solution \solution\ is defined as the configuration that aggregates the individual choices made for all articles. To construct \solution\ from the input instance, a set of three interdependent decision variables must be resolved for each individual article $\articleobj{i} \in \articleset$:
@@ -46,7 +46,7 @@ Formally, a layout solution \solution\ is defined as the configuration that aggr
 
 
 
-\subsubsection{Search space}
+\subsubsection*{Search space}
 The mathematical coupling of these decision variables generates a massive combinatorial optimization space. For \numarticles\ input articles, the simultaneous evaluation of template selections,  elasticity adjustments, and position allocations described by a sequence-dependent permutation of articles (which determines the spatial ordering) scales the theoretical search space complexity to:
 \begin{equation}
 \mathcal{O}\left(\catalogsize^{\numarticles}  \numarticles!  (|\elasticityset|)^{\numarticles}\right).
@@ -127,7 +127,7 @@ The newspaper layout generation problem is formally modeled as a Multi-Objective
 \objvector{\solution} = [\objone(\solution), \objthree(\solution), \objfour(\solution), \objtwo(\solution)].
 \end{equation}
 
-\subsubsection{OF1: Page coverage (\objone(\solution), \figref{fig:page_coverage_concept})}
+\subsubsection*{OF1: Page coverage (\objone(\solution), \figref{fig:page_coverage_concept})}
 
 \begin{figure}[htbp]
     \centering
@@ -152,7 +152,7 @@ By minimizing \objone(\solution), the optimization process directly drives the a
 
 
 
-\subsubsection{OF2: Text capacity integrity (\objthree(\solution), \figref{fig:text_capacity_integrity_concept})}
+\subsubsection*{OF2: Text capacity integrity (\objthree(\solution), \figref{fig:text_capacity_integrity_concept})}
 
 \begin{figure}[htbp]
     \centering
@@ -193,7 +193,7 @@ Then, $\objthree(\solution)$ aggregates the capacity deviations across all artic
 \end{equation}
 By minimizing \objthree(\solution), the optimization process prioritizes solutions where body text blocks are neither heavily clipped due to lack of space nor excessively sparse due to oversized containers.
 
-\subsubsection{OF3: Positioning of articles quality (\objfour(\solution))}
+\subsubsection*{OF3: Positioning of articles quality (\objfour(\solution))}
 
 The goal is to penalize improper positioning of articles. This objective is formulated as a linear combination of two independent penalty terms: the Heading Critical Zone penalty (\HCZ(\solution)), which governs main article positioning, and the Vertical Alignment penalty (\VA(\solution)), which penalizes edge misalignments between all articles:
 \begin{equation}
@@ -278,7 +278,7 @@ The bottom edge quality score $\mathcal{Q}_{bottom}$ is derived identically usin
 
 \textbf{Remark:} Horizontal alignment evaluation is explicitly omitted from this penalty vector because horizontal grid discipline is required and enforced, as described in \secref{sec:constraints_space} (FC~6).
 
-\subsubsection{OF4: Template selection editorial style (\objtwo(\solution), \figref{fig:template_selection_editorial_style_concept})}
+\subsubsection*{OF4: Template selection editorial style (\objtwo(\solution), \figref{fig:template_selection_editorial_style_concept})}
 
 \begin{figure}[htbp]
     \centering
