@@ -35,3 +35,6 @@ main.pdf
 #resources/*
 
 .claude/
+
+biblio_backup.bib
+final_biblio_backup.bib

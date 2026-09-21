@@ -1,11 +1,5 @@
-% Bibliografia consolidada - generada automaticamente a partir de biblio_nsga.bib, biblio_study.bib y biblio_temp.bib
-
-% Duplicados eliminados manteniendo la clave de cita ya usada en el texto (ver notas al final del proceso de consolidacion)
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Origen: biblio_nsga.bib
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 @InProceedings{li-gmn-2019,
@@ -20,13 +14,15 @@
   month = 	 {09--15 Jun},
   publisher =    {PMLR},
   pdf = 	 {http://proceedings.mlr.press/v97/li19d/li19d.pdf},
-  url = 	 {https://proceedings.mlr.press/v97/li19d.html}
+  url = 	 {https://proceedings.mlr.press/v97/li19d.html},
+  abstract = 	 {This paper addresses the challenging problem of retrieval and matching of graph structured objects, and makes two key contributions. First, we demonstrate how Graph Neural Networks (GNN), which have emerged as an effective model for various supervised prediction problems defined on structured data, can be trained to produce embedding of graphs in vector spaces that enables efficient similarity reasoning. Second, we propose a novel Graph Matching Network model that, given a pair of graphs as input, computes a similarity score between them by jointly reasoning on the pair through a new cross-graph attention-based matching mechanism. We demonstrate the effectiveness of our models on different domains including the challenging problem of control-flow graph based function similarity search that plays an important role in the detection of vulnerabilities in software systems. The experimental analysis demonstrates that our models are not only able to exploit structure in the context of similarity learning but they can also outperform domain specific baseline systems that have been carefully hand-engineered for these problems.}
 }
 
-@INPROCEEDINGS{rnsga-iii,
+
+@inproceedings{rnsga-iii,
   author={Vesikar, Yash and Deb, Kalyanmoy and Blank, Julian},
-  booktitle={2018 IEEE Symposium Series on Computational Intelligence (SSCI)}, 
-  title={Reference Point Based NSGA-III for Preferred Solutions}, 
+  booktitle={2018 {IEEE} Symposium Series on Computational Intelligence (SSCI)}, 
+  title={Reference Point Based {NSGA-III} for Preferred Solutions}, 
   year={2018},
   volume={},
   number={},
@@ -34,7 +30,7 @@
   keywords={Task analysis;Sociology;Statistics;Decision making;Computer science;Optimization methods;Reference point approach;interactive multi-objective decision making;multi-objective optimization;EMO},
   doi={10.1109/SSCI.2018.8628819}}
 
-@ARTICLE{nsga-iii-pt1,
+@article{nsga-iii-pt1,
   author={Deb, Kalyanmoy and Jain, Himanshu},
   journal={IEEE Transactions on Evolutionary Computation}, 
   title={An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point-Based Nondominated Sorting Approach, Part {I}: Solving Problems With Box Constraints}, 
@@ -45,10 +41,10 @@
   keywords={Sociology;Statistics;Optimization;Vectors;Measurement;Zirconium;Educational institutions;Many-objective optimization;evolutionary computation;large dimension;NSGA-III;non-dominated sorting;multi-criterion optimization;Evolutionary computation;large dimension;many-objective optimization;multicriterion optimization;nondominated sorting;NSGA-III},
   doi={10.1109/TEVC.2013.2281535}}
 
-@ARTICLE{nsga-iii-pt2,
+@article{nsga-iii-pt2,
   author={Jain, Himanshu and Deb, Kalyanmoy},
   journal={IEEE Transactions on Evolutionary Computation}, 
-  title={An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point Based Nondominated Sorting Approach, Part II: Handling Constraints and Extending to an Adaptive Approach}, 
+  title={An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point Based Nondominated Sorting Approach, Part {II}: Handling Constraints and Extending to an Adaptive Approach}, 
   year={2014},
   volume={18},
   number={4},
@@ -65,7 +61,6 @@ number = {3},
 pages = {631-657},
 year = {1998},
 doi = {10.1137/S1052623496307510},
-URL = {https://doi.org/10.1137/S1052623496307510},
 eprint = { https://doi.org/10.1137/S1052623496307510}
 }
 
@@ -79,16 +74,27 @@ number = {2},
 pages = {241-252},
 year = {2002},
 issn = {0377-2217},
-doi = {https://doi.org/10.1016/S0377-2217(02)00123-6},
-url = {https://www.sciencedirect.com/science/article/pii/S0377221702001236},
+doi = {10.1016/S0377-2217(02)00123-6},
 author = {Andrea Lodi and Silvano Martello and Michele Monaci},
 keywords = {Two-dimensional packing, Bin packing problems, Strip packing problems}
+}
+
+@article{jourdan-hybrid-2009,
+title = {Hybridizing exact methods and metaheuristics: A taxonomy},
+journal = {European Journal of Operational Research},
+volume = {199},
+number = {3},
+pages = {620-629},
+year = {2009},
+issn = {0377-2217},
+doi = {10.1016/j.ejor.2007.10.070},
+author = {Laetitia Jourdan and Matthieu Basseur and El-Ghazali Talbi},
+keywords = {Metaheuristics, Hybridization, Cooperation, Exact methods}
 }
 
 @article{dyckhoff-typology,
 author = {Dyckhoff, Harald},
 year = {1990},
-month = {01},
 pages = {145-159},
 title = {A Typology of Cutting and Packing Problems},
 volume = {44},
@@ -104,13 +110,12 @@ number = {10},
 pages = {1591-1600},
 year = {2012},
 issn = {0166-218X},
-doi = {https://doi.org/10.1016/j.dam.2012.02.020},
-url = {https://www.sciencedirect.com/science/article/pii/S0166218X12000819},
+doi = {10.1016/j.dam.2012.02.020},
 author = {Boaz Patt-Shamir and Dror Rawitz},
 keywords = {Approximation algorithms, Multiple-choice vector bin packing, Multiple-choice multidimensional knapsack}
 }
 
-@ARTICLE{chazelle-bl,
+@article{chazelle-bl,
   author={Chazelle},
   journal={IEEE Transactions on Computers}, 
   title={The Bottom-Left Bin-Packing Heuristic: An Efficient Implementation}, 
@@ -124,7 +129,6 @@ keywords = {Approximation algorithms, Multiple-choice vector bin packing, Multip
 @article{burke-bf,
 author = {Burke, Edmund and Kendall, Graham and Whitwell, Glenn},
 year = {2004},
-month = {08},
 pages = {655-671},
 title = {A New Placement Heuristic for the Orthogonal Stock-Cutting Problem},
 volume = {52},
@@ -136,7 +140,6 @@ doi = {10.1287/opre.1040.0109}
 	title = {Extreme {Point}-{Based} {Heuristics} for {Three}-{Dimensional} {Bin} {Packing}},
 	volume = {20},
 	issn = {1091-9856, 1526-5528},
-	url = {https://pubsonline.informs.org/doi/10.1287/ijoc.1070.0250},
 	doi = {10.1287/ijoc.1070.0250},
 	abstract = {One of the main issues in addressing three-dimensional packing problems is finding an efficient and accurate definition of the points where to place the items inside the bins. The performance of exact and heuristic methods is actually strongly influenced by the choice of a placement rule. We introduce the Extreme Point concept and present a new Extreme Point-based rule for packing items inside a three dimensional container. The Extreme Point rule is independent from the particular packing problem addressed and can handle additional constraints, such as fixing the position of the items. The new Extreme Point rule is also used to derive new constructive heuristics for the Three-Dimensional Bin Packing problem. Extensive computational results show the effectiveness of the new heuristics compared to state-of-the-art results. Moreover, the same heuristics, when applied to the Two-Dimensional Bin Packing problem, outperforms those specifically designed for the problem.},
 	language = {en},
@@ -144,7 +147,6 @@ doi = {10.1287/opre.1040.0109}
 	urldate = {2026-01-15},
 	journal = {INFORMS Journal on Computing},
 	author = {Crainic, Teodor Gabriel and Perboli, Guido and Tadei, Roberto},
-	month = aug,
 	year = {2008},
 	pages = {368--384},
 	file = {Crainic et al. - 2008 - Extreme Point-Based Heuristics for Three-Dimension.pdf:/Users/sgallard/Zotero/storage/KD82M742/Crainic et al. - 2008 - Extreme Point-Based Heuristics for Three-Dimension.pdf:application/pdf},
@@ -158,8 +160,9 @@ doi = {10.1287/opre.1040.0109}
   journal={Complex \& Intelligent Systems},
   year={2024},
   volume={10},
+  number = {4},
   pages={5933 - 5949},
-  url={https://api.semanticscholar.org/CorpusId:269912770}
+  doi={10.1007/s40747-024-01465-5}
 }
 
 @article{li-2024,
@@ -168,18 +171,18 @@ doi = {10.1287/opre.1040.0109}
   journal={IEEE Transactions on Evolutionary Computation},
   year={2024},
   volume={29},
+  issue = {5},
   pages={1707-1728},
-  url={https://api.semanticscholar.org/CorpusID:267068398}
+  doi={10.1109/TEVC.2024.3443913}
 }
 
 @inproceedings{teixeira-2025,
 author = {Teixeira, Matheus C{\^a}ndido and Pappa, Gisele Lobo},
-title = {Transformers as Surrogate Models for Genetic Programming in AutoML Tasks},
+title = {Transformers as Surrogate Models for Genetic Programming in Auto{ML} Tasks},
 year = {2025},
 isbn = {9798400714658},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3712256.3726396},
 doi = {10.1145/3712256.3726396},
 abstract = {In applications where the fitness function has a high computational cost, one of the main drawbacks of Evolutionary Algorithms when compared to other search methods is a prohibitive computational cost. The use of surrogates as proxies for fitness function calculation to alleviate this problem is not new, but addressing the problem as a binary relation learning, i.e., evaluating if one individual is better or worse than another without estimating the actual value of the fitness, is a recent trend.This paper proposes a transformer-encoder as a surrogate to evaluate pairs of solutions and determine their relationship, i.e., which one is better/worse than the other. We experimented the model in the context of AutoML, which seeks to find the best combination of algorithms for a classification problem. To optimize the pipeline, we can use a genetic programming, but the cost of evaluating each individual is generally expensive.We trained the encoder with several parameters and compared its performance against traditional GP - evaluating fitness at each generation. Results confirm using the encoder as a surrogate does not degrade the fitness values of the evolved population of ML pipelines and can even improve it in some cases (up to 285 times faster).},
 booktitle = {Proceedings of the Genetic and Evolutionary Computation Conference},
@@ -197,8 +200,7 @@ volume = {71},
 pages = {57-68},
 year = {2017},
 issn = {0957-4174},
-doi = {https://doi.org/10.1016/j.eswa.2016.11.025},
-url = {https://www.sciencedirect.com/science/article/pii/S0957417416306601},
+doi = {10.1016/j.eswa.2016.11.025},
 author = {Peng Guo and Wenming Cheng and Yi Wang},
 keywords = {Facility location, Evolutionary algorithm, Fitness approximation, Local search, Extreme machine learning}
 }
@@ -206,7 +208,7 @@ keywords = {Facility location, Evolutionary algorithm, Fitness approximation, Lo
 @article{attention,
   title={Attention is all you need},
   author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
-  journal={Advances in neural information processing systems},
+  journal={Advances in Neural Information Processing Systems},
   volume={30},
   year={2017}
 }
@@ -214,7 +216,6 @@ keywords = {Facility location, Evolutionary algorithm, Fitness approximation, Lo
 @article{crossovers,
 author = {Larranaga, Pedro and Kuijpers, Cindy and Murga, R. and Inza, Inaki and Dizdarevic, S.},
 year = {1999},
-month = {01},
 pages = {129-170},
 title = {Genetic Algorithms for the Travelling Salesman Problem: A Review of Representations and Operators},
 volume = {13},
@@ -232,7 +233,7 @@ doi = {10.1023/A:1006529012972}
   NOTE = {Submitted to IEEE Access, under review},
   PAGES = {32},
   YEAR = {2026},
-  MONTH = Feb,
+  MONTH = feb,
   KEYWORDS = {clustering-based recommendation ; graph neural networks ; newspaper layout ; journalism ; diversity ; R{\'e}seaux neuronaux bas{\'e}s sur des graphes ; mise en page de journaux ; journalisme ; diversit{\'e} ; Recommandation bas{\'e}e sur le clustering},
   PDF = {https://inria.hal.science/hal-04801949v2/file/Recsys_for_EM_system.pdf},
   HAL_ID = {hal-04801949},
@@ -257,7 +258,7 @@ doi = {10.1023/A:1006529012972}
 
 %results
 
-@ARTICLE{pymoo,
+@article{pymoo,
     author={J. {Blank} and K. {Deb}},
     journal={IEEE Access},
     title={pymoo: Multi-Objective Optimization in Python},
@@ -282,17 +283,19 @@ numpages = {12}
 @misc{laprovence,
   author       = {{La Provence}},
   title        = {La Provence: Actualités en direct, info en continu},
-  howpublished = {\url{https://www.laprovence.com/}},
+  url = {https://www.laprovence.com/},
   year         = {2026},
-  note         = {Accessed: 2026-07-14}
+  lastchecked= {September 21, 2026},
+  urldate         = {2026-07-14}
 }
 
 @misc{publihebdos,
   author       = {{Publihebdos}},
   title        = {Publihebdos},
-  howpublished = {\url{https://publihebdos.actu.fr/}},
+  url = {https://publihebdos.actu.fr/},
   year         = {2026},
-  note         = {Accessed: 2026-09-15}
+  lastchecked= {September 21, 2026},
+  urldate         = {2026-09-15}
 }
 
 
@@ -325,9 +328,8 @@ year = {2023},
 isbn = {9798400700286},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3573381.3596152},
 doi = {10.1145/3573381.3596152},
-booktitle = {Proceedings of the 2023 ACM International Conference on Interactive Media Experiences},
+booktitle = {Proceedings of the 2023 {ACM} International Conference on Interactive Media Experiences},
 pages = {140–149},
 numpages = {10},
 keywords = {virtual reality, user experience, presence, immersive tendencies, immersive journalism, 360 video},
@@ -337,12 +339,11 @@ series = {IMX '23}
 
 @inproceedings{vatavu-imx2021,
 author = {Vatavu, Radu-Daniel},
-title = {Accessibility of Interactive Television and Media Experiences: Users with Disabilities Have Been Little Voiced at IMX and TVX},
+title = {Accessibility of Interactive Television and Media Experiences: Users with Disabilities Have Been Little Voiced at {IMX} and {TVX}},
 year = {2021},
 isbn = {9781450383899},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3452918.3465485},
 doi = {10.1145/3452918.3465485},
 booktitle = {Proceedings of the 2021 ACM International Conference on Interactive Media Experiences},
 pages = {218–222},
@@ -360,10 +361,13 @@ series = {IMX '21}
 @misc{marcotte_responsive_2010,
   author       = {Marcotte, Ethan},
   title        = {Responsive Web Design},
-  howpublished = {\url{https://alistapart.com/article/responsive-web-design/}},
+  url = {https://alistapart.com/article/responsive-web-design/},
   year         = {2010},
-  note         = {Accessed: December 3rd, 2025},
-  publisher    = {A List Apart}
+  month = {May},
+  day = {25},
+  urldate         = {2025-12-03},
+  publisher    = {A List Apart},
+  lastchecked= {September 21, 2026}
 }
 
 @mastersthesis{chesham_master_2003,
@@ -377,7 +381,6 @@ series = {IMX '21}
 @inproceedings{chiou_2024,
 	title = {Automatically {Detecting} {Reflow} {Accessibility} {Issues} in {Responsive} {Web} {Pages}},
 	isbn = {9798400702174},
-	url = {https://dl.acm.org/doi/10.1145/3597503.3639229},
 	doi = {10.1145/3597503.3639229},
 	language = {en},
 	urldate = {2025-12-03},
@@ -385,7 +388,6 @@ series = {IMX '21}
 	publisher = {ACM},
     address = {New York, NY, USA},
 	author = {Chiou, Paul T. and Winn, Robert and Alotaibi, Ali S. and Halfond, William G. J.},
-	month = apr,
 	year = {2024},
 	pages = {1--13}
 }
@@ -397,9 +399,8 @@ year = {1997},
 isbn = {0897918029},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/258549.258787},
 doi = {10.1145/258549.258787},
-booktitle = {Proceedings of the ACM SIGCHI Conference on Human Factors in Computing Systems},
+booktitle = {Proceedings of the {ACM} {SIGCHI} Conference on Human Factors in Computing Systems},
 pages = {335–342},
 numpages = {8},
 keywords = {Web, design, digital documents, digital libraries, hypertext, paper, reading},
@@ -411,10 +412,9 @@ series = {CHI '97}
 @inproceedings{almeraj_user_2019,
 author = {Almeraj, Zainab and Alsumait, Asmaa},
 year = {2019},
-month = {02},
 pages = {},
 title = {A User Centered Design Roadmap for Researchers and Designers Working with Visually Impaired and Blind Children},
-booktitle = {ACHI 2019 : The Twelfth International Conference on Advances in Computer-Human Interactions},
+booktitle = {{ACHI} 2019 : The Twelfth International Conference on Advances in Computer-Human Interactions},
 publisher = {IARIA},
 address = {Athens, Greece}
 }
@@ -424,14 +424,12 @@ address = {Athens, Greece}
 	title = {{GazePrompt}: {Enhancing} {Low} {Vision} {People}'s {Reading} {Experience} with {Gaze}-{Aware} {Augmentations}},
 	isbn = {9798400703300},
 	shorttitle = {{GazePrompt}},
-	url = {https://dl.acm.org/doi/10.1145/3613904.3642878},
 	doi = {10.1145/3613904.3642878},
 	language = {en},
 	urldate = {2025-11-19},
 	booktitle = {Proceedings of the {CHI} {Conference} on {Human} {Factors} in {Computing} {Systems}},
 	publisher = {ACM},
 	author = {Wang, Ru and Potter, Zach and Ho, Yun and Killough, Daniel and Zeng, Linxiu and Mondal, Sanbrita and Zhao, Yuhang},
-	month = may,
 	year = {2024},
 	pages = {1--17},
 }
@@ -440,7 +438,6 @@ address = {Athens, Greece}
 	address = {Hamburg Germany},
 	title = {Understanding {How} {Low} {Vision} {People} {Read} {Using} {Eye} {Tracking}},
 	isbn = {978-1-4503-9421-5},
-	url = {https://dl.acm.org/doi/10.1145/3544548.3581213},
 	doi = {10.1145/3544548.3581213},
 	abstract = {While being able to read with screen magnifers, low vision people have slow and unpleasant reading experiences. Eye tracking has the potential to improve their experience by recognizing fne-grained gaze behaviors and providing more targeted enhancements. To inspire gaze-based low vision technology, we investigate the suitable method to collect low vision users’ gaze data via commercial eye trackers and thoroughly explore their challenges in reading based on their gaze behaviors. With an improved calibration interface, we collected the gaze data of 20 low vision participants and 20 sighted controls who performed reading tasks on a computer screen; low vision participants were also asked to read with diferent screen magnifers. We found that, with an accessible calibration interface and data collection method, commercial eye trackers can collect gaze data of comparable quality from low vision and sighted people. Our study identifed low vision people’s unique gaze patterns during reading, building upon which, we propose design implications for gaze-based low vision technology.},
 	language = {en},
@@ -448,7 +445,6 @@ address = {Athens, Greece}
 	booktitle = {Proceedings of the 2023 {CHI} {Conference} on {Human} {Factors} in {Computing} {Systems}},
 	publisher = {ACM},
 	author = {Wang, Ru and Zeng, Linxiu and Zhang, Xinyong and Mondal, Sanbrita and Zhao, Yuhang},
-	month = apr,
 	year = {2023},
 	pages = {1--17},
 }
@@ -457,14 +453,12 @@ address = {Athens, Greece}
 	title = {Saccadic and smooth-pursuit eye movements during reading of drifting texts},
 	volume = {13},
 	issn = {1534-7362},
-	url = {http://jov.arvojournals.org/Article.aspx?doi=10.1167/13.10.8},
 	doi = {10.1167/13.10.8},
 	language = {en},
 	number = {10},
 	urldate = {2025-11-19},
 	journal = {Journal of Vision},
 	author = {Valsecchi, M. and Gegenfurtner, K. R. and Schutz, A. C.},
-	month = aug,
 	year = {2013},
 	pages = {8--8},
 }
@@ -478,8 +472,7 @@ address = {Athens, Greece}
     pages = {573-605},
     year = {2003},
     isbn = {978-0-444-51020-4},
-    doi = {https://doi.org/10.1016/B978-044451020-4/50031-1},
-    url = {https://www.sciencedirect.com/science/article/pii/B9780444510204500311},
+    doi = {10.1016/B978-044451020-4/50031-1},
     author = {Robert J.K. Jacob and Keith S. Karn}
 }
 
@@ -488,7 +481,6 @@ address = {Athens, Greece}
 	title = {Reading with {Screen} {Magnification}: {Eye} {Movement} {Analysis} {Using} {Compensated} {Gaze} {Tracks}},
 	isbn = {9798400706073},
 	shorttitle = {Reading with {Screen} {Magnification}},
-	url = {https://dl.acm.org/doi/10.1145/3649902.3656493},
 	doi = {10.1145/3649902.3656493},
 	abstract = {Eye movements while reading with screen magnification (which requires manual scrolling to center the magnified portion of the screen within the viewport) pose interpretation challenges. Standard representations in terms of alternating fixations and saccades don’t apply to this case. This is because, during scrolling, eyes often track a moving text element, generating a movement akin to smooth pursuit. We propose a new representation that uses information from the mouse (which the reader uses to move the center of magnification) to undo the effect of magnification and scrolling. After this “compensation” operation, gaze tracks can again be described as alternating fixations and saccades. We present an analysis of gaze tracks obtained by applying this transformation on an existing dataset, recorded from low vision readers using two modalities of screen magnification. This analysis highlights similarities and differences in terms of dynamic properties of compensated gaze tracks vis-à-vis gaze during regular reading.},
 	language = {en},
@@ -496,7 +488,6 @@ address = {Athens, Greece}
 	booktitle = {Proceedings of the 2024 {Symposium} on {Eye} {Tracking} {Research} and {Applications}},
 	publisher = {ACM},
 	author = {Heo, Seongsil and Manduchi, Roberto and Chung, Suzana},
-	month = jun,
 	year = {2024},
 	pages = {1--6},
 }
@@ -505,13 +496,11 @@ address = {Athens, Greece}
 	title = {Key design elements of daily newspapers: {Impact} on the reader's perception and visual impression},
 	issn = {20637330},
 	shorttitle = {Key design elements of daily newspapers},
-	url = {http://komejournal.com/files/KOME_DOD&LB.pdf},
 	doi = {10.17646/KOME.75692.93},
 	language = {en},
 	urldate = {2025-11-19},
 	journal = {KOME},
 	author = {Ozretić Došen, {\DJ}ur{\dj}ana and Brkljačić, Lidija},
-	month = aug,
 	year = {2018},
 }
 
@@ -530,7 +519,6 @@ address = {Athens, Greece}
 	title = {Screen {Magnification} for {Readers} with {Low} {Vision}: {A} {Study} on {Usability} and {Performance}},
 	isbn = {9798400702204},
 	shorttitle = {Screen {Magnification} for {Readers} with {Low} {Vision}},
-	url = {https://dl.acm.org/doi/10.1145/3597638.3608383},
 	doi = {10.1145/3597638.3608383},
 	abstract = {We present a study with 20 participants with low vision who operated two types of screen magnification (lens and full) on a laptop computer to read two types of document (text and web page). Our purposes were to comparatively assess the two magnification modalities, and to obtain some insight into how people with low vision use the mouse to control the center of magnification. These observations may inform the design of systems for the automatic control of the center of magnification. Our results show that there were no significant differences in reading performances or in subjective preferences between the two magnification modes. However, when using the lens mode, our participants adopted more consistent and uniform mouse motion patterns, while longer and more frequent pauses and shorter overall path lengths were measured using the full mode.},
 	language = {en},
@@ -538,7 +526,6 @@ address = {Athens, Greece}
 	booktitle = {The 25th {International} {ACM} {SIGACCESS} {Conference} on {Computers} and {Accessibility}},
 	publisher = {ACM},
 	author = {Tang, Meini and Manduchi, Roberto and Chung, Susana and Prado, Raquel},
-	month = oct,
 	year = {2023},
 	pages = {1--15},
 }
@@ -546,26 +533,34 @@ address = {Athens, Greece}
 @phdthesis{buring_zoomable,
 	title = {Zoomable {User} {Interfaces} on {Small} {Screens} - {Presentation}  {Interaction} {Design} for {Pen}-{Operated} {Mobile} {Devices}},
 	author = {Büring, Thorsten},
-	year = 2001,
-	month = {July},
-	type = {PhD Thesis},
+	year = {2001},
+	type = {Doctoral Thesis},
 	school = {University of Konstanz},
 
 }
-
-@article{hornb_reading_2001,
-	title = {Reading of {Electronic} {Documents}: {The} {Usability} of {Linear}, {Fisheye}, and {Overview}+{Detail} {Interfaces}},
-	abstract = {Reading of electronic documents is becoming increasingly important as more information is disseminated electronically. We present an experiment that compares the usability of a linear, a fisheye, and an overview+detail interface for electronic documents. Using these interfaces, 20 subjects wrote essays and answered questions about scientific documents. Essays written using the overview+detail interface received higher grades, while subjects using the fisheye interface read documents faster. However, subjects used more time to answer questions with the overview+detail interface. All but one subject preferred the overview+detail interface. The most common interface in practical use, the linear interface, is found to be inferior to the fisheye and overview+detail interfaces regarding most aspects of usability. We recommend using overview+detail interfaces for electronic documents, while fisheye interfaces mainly should be considered for time-critical tasks.},
-	language = {en},
-	author = {Hornbæk, Kasper and Frøkj, Erik},
-	year = {2001},
+@inproceedings{hornb_reading_2001,
+author = {Hornb{\ae}k, Kasper and Fr{\o}kj{\ae}r, Erik},
+title = {Reading of electronic documents: the usability of linear, fisheye, and overview+detail interfaces},
+year = {2001},
+isbn = {1581133278},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/365024.365118},
+doi = {10.1145/365024.365118},
+abstract = {Reading of electronic documents is becoming increasingly important as more information is disseminated electronically. We present an experiment that compares the usability of a linear, a fisheye, and an overview+detail interface for electronic documents. Using these interfaces, 20 subjects wrote essays and answered questions about scientific documents. Essays written using the overview+detail interface received higher grades, while subjects using the fisheye interface read documents faster. However, subjects used more time to answer questions with the overview+detail interface. All but one subject preferred the overview+detail interface. The most common interface in practical use, the linear interface, is found to be inferior to the fisheye and overview+detail interfaces regarding most aspects of usability. We recommend using overview+detail interfaces for electronic documents, while fisheye interfaces mainly should be considered for time-critical tasks.},
+booktitle = {Proceedings of the {SIGCHI} Conference on Human Factors in Computing Systems},
+pages = {293–300},
+numpages = {8},
+keywords = {electronic documents, information retrieval, information visualization, reading activity, usability, user study},
+location = {Seattle, Washington, USA},
+series = {CHI '01}
 }
+
 
 @article{atata_evaluating_2025,
 	title = {Evaluating {Visual} {Hierarchies} and {Navigation} {Patterns} to {Improve} {Accessibility}},
 	volume = {6},
 	issn = {25827421},
-	url = {https://ijarpr.com/uploads/V2ISSUE8/IJARPR0851.pdf},
 	doi = {10.55248/gengpi.6.0825.3080},
 	abstract = {Accessibility and user engagement remain central to the design of contemporary digital platforms, where increasingly diverse audiences interact with content across devices, operating systems, and assistive technologies. From a broad perspective, accessibility compliance is not only a legal and ethical requirement but also a strategic enabler of inclusivity and retention. Central to this objective is the effective use of visual hierarchies and navigation patterns, which determine how users perceive, interpret, and interact with digital content. A well-structured hierarchy facilitates cognitive processing by guiding attention toward essential elements while reducing cognitive overload, thereby enabling smoother user journeys. At the same time, coherent navigation patterns ensure that users can move seamlessly through interfaces regardless of platform or device, reinforcing consistency and predictability. This study evaluates the interplay between visual design principles and navigational structures in fostering accessibility compliance with frameworks such as WCAG 2.1, while also examining their influence on cross-platform user engagement. It considers design elements such as contrast, typography, spatial organization, and the integration of adaptive layouts, alongside navigational strategies like linear flows, breadcrumb trails, and multimodal inputs. Findings highlight that platforms adopting accessible hierarchies and consistent navigation achieve higher engagement, particularly among users with disabilities and those accessing content across multiple devices. Furthermore, evidence suggests that accessibility-driven design directly correlates with brand loyalty, reduced abandonment rates, and improved cross-platform experiences. The research underscores the need for organizations to prioritize accessibility as a driver of engagement, rather than an afterthought, by embedding it into design processes that emphasize clarity, inclusivity, and universal usability.},
 	language = {en},
@@ -573,7 +568,6 @@ address = {Athens, Greece}
 	urldate = {2025-11-19},
 	journal = {International Journal of Research Publication and Reviews},
 	author = {Atata, Raheemat},
-	month = aug,
 	year = {2025},
 	pages = {617--641},
 }
@@ -584,7 +578,7 @@ address = {Athens, Greece}
 	language = {en},
 	year = {2020},
 	author = {Aljoudi, Ahmad},
-    school = {Malmö University, Faculty of Culture and Society (KS), School of Arts and Communication (K3)},
+  school = {Malmö University, Faculty of Culture and Society (KS), School of Arts and Communication (K3)},
 	type={Bachelor's Thesis}
 }
 
@@ -599,30 +593,26 @@ address = {Athens, Greece}
 	year = {2024}
 }
 
+
 @article{shneiderman_direct_1983,
-	title = {Direct {Manipulation}: {A} {Step} {Beyond} {Programming} {Languages}},
-	volume = {16},
-	copyright = {https://ieeexplore.ieee.org/Xplorehelp/downloads/license-information/IEEE.html},
-	issn = {0018-9162},
-	shorttitle = {Direct {Manipulation}},
-	url = {http://ieeexplore.ieee.org/document/1654471/},
-	doi = {10.1109/MC.1983.1654471},
-	language = {en},
-	number = {8},
-	urldate = {2025-11-19},
-	journal = {Computer},
-	author = {{Shneiderman}},
-	month = aug,
-	year = {1983},
-	
-pages = {57--69},
-}
+  author={Shneiderman},
+  journal={Computer}, 
+  title={Direct Manipulation: A Step Beyond Programming Languages}, 
+  year={1983},
+  volume={16},
+  number={8},
+  pages={57-69},
+  keywords={Computer languages;Displays;Interactive systems;Power system modeling;Command languages;Office automation;User interfaces;Human factors;Computer interfaces;Publishing},
+  doi={10.1109/MC.1983.1654471}
+  }
+
+
+
 
 @article{granquist_how_2018,
 	title = {How {People} with {Low} {Vision} {Achieve} {Magnification} in {Digital} {Reading}},
 	volume = {95},
 	issn = {1538-9235, 1040-5488},
-	url = {https://journals.lww.com/00006324-201809000-00005},
 	doi = {10.1097/OPX.0000000000001261},
 	abstract = {PURPOSE: Subjects responded to an online survey concerning their vision history, reading technology, display preferences, and reading habits. Here, we report on findings concerning acuity and magnification.
 METHODS: The survey asked subjects to arrange a text passage for typical reading and to report viewing distance, screen dimensions, and the number of characters per line. Seventy-five adult subjects (most with early-onset low vision, few with central field loss) completed all survey questions relevant to the analysis of acuity and magnification. Mean acuity was .92 logMAR (range, 0.1 to 1.6), and mean age was 44.8 years (range, 18 to 71 years). Twelve normally sighted controls reported the same information while viewing the passage on cell phones, tablets, and computers.
@@ -633,7 +623,6 @@ CONCLUSIONS: Our survey shows that people with a wide range of acuities are enga
 	urldate = {2024-06-06},
 	journal = {Optometry and Vision Science},
 	author = {Granquist, Christina and Wu, Yueh-Hsun and Gage, Rachel and Crossland, Michael D. and Legge, Gordon E.},
-	month = sep,
 	year = {2018},
 	pages = {711--719},
 }
@@ -656,19 +645,21 @@ whisperX,
 https://mistral.ai/
 
 @misc{mistralai,
-  title        = {MistralAI},
-  author       = {Mistral AI},
-  year         = 2025,
-  note         = {Accessed: September 6th, 2025},
-  howpublished = {\url{https://mistral.ai/}}
+  title        = {Mistral {AI}},
+  author       = {{Mistral AI}},
+  year         = {2025},
+  urldate         = {2025-09-06},
+  url = {https://mistral.ai/},
+  lastchecked= {September 21, 2026}
 }
 
 @misc{R,
-  title        = {R: The R Project for Statistical Computing},
-  author       = {R Project},
-  year         = 2025,
-  note         = {Accessed: September 6th, 2025},
-  howpublished = {\url{https://www.r-project.org/}}
+  title        = {{R}: The {R} Project for Statistical Computing},
+  author       = {{R Project}},
+  year         = {2025},
+  urldate         = {2025-09-06},
+  url = {https://www.r-project.org/},
+  lastchecked= {September 21, 2026}
 }
 
 @article{legge1992psychophysics,
@@ -683,7 +674,7 @@ https://mistral.ai/
 
 %levensthein
 
-@ARTICLE{levenshtein2007,
+@article{levenshtein2007,
   author={Yujian, Li and Bo, Liu},
   journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
   title={A Normalized Levenshtein Distance Metric}, 
@@ -706,7 +697,6 @@ https://mistral.ai/
     year = {2016},
     issn = {0099-1333},
     doi = {https://doi.org/10.1016/j.acalib.2016.08.007},
-    url = {https://www.sciencedirect.com/science/article/pii/S0099133316301768},
     author = {Peng Wang and Dickson K.W. Chiu and Kevin K.W. Ho and Patrick Lo},
     keywords = {e-magazines, Mobile devices, Reading habit, Questionnaire, Survey},
 }
@@ -730,9 +720,6 @@ number = {2},
 pages = {233-244},
 year = {2021},
 doi = {10.1177/0961000620938119},
-URL = { 
-        https://doi.org/10.1177/0961000620938119
-},
 eprint = { 
         https://doi.org/10.1177/0961000620938119
 }
@@ -747,7 +734,6 @@ eprint = {
     publisher = {Optica Publishing Group},
     title = {Commentary on Section 4 - A New Reading-Acuity Chart for Normal and Low Vision},
     year = {1993},
-    url = {https://opg.optica.org/abstract.cfm?URI=NAVS-1993-NSuD.3},
     doi = {10.1364/NAVS.1993.NSuD.3}
 }
 
@@ -757,7 +743,7 @@ eprint = {
   URL = {https://hal.science/hal-04210840},
   NOTE = {Submitted to Displays, under review},
   YEAR = {2026},
-  MONTH = Jul,
+  MONTH = jul,
   KEYWORDS = {Newspaper layout optimization ; small-screen reading ; evolutionary algorithm ; constrained optimization ; digital newspapers ; readability optimization},
   PDF = {https://hal.science/hal-04210840v3/file/NMPEP___manuscript%20%285%29.pdf},
   HAL_ID = {hal-04210840},
@@ -780,9 +766,10 @@ doi = {10.1073/pnas.2007514117}
 @misc{wikipedia,
   title        = {Wikipédia: L'encyclopédie libre},
   author       = {Wikimedia},
-  year         = 2025,
-  note         = {Accessed: May 15th, 2025},
-  howpublished = {\url{https://www.wikipedia.fr}}
+  year         = {2025},
+  urldate         = {2025-05-15},
+  url = {https://www.wikipedia.fr},
+  lastchecked= {September 21, 2026}
 }
 
 %real-life scenarios for dual case
@@ -790,7 +777,6 @@ doi = {10.1073/pnas.2007514117}
 @article{Hajek2023,
 author = {Hajek, André and Gyasi, Razak and Kretzler, Benedikt and König, Hans-Helmut},
 year = {2023},
-month = {11},
 pages = {1-8},
 title = {Vision and hearing problems and psychosocial outcomes: longitudinal evidence from the German Ageing Survey},
 volume = {59},
@@ -801,7 +787,7 @@ doi = {10.1007/s00127-023-02588-9}
 
 %visually rich documents
 
-@INPROCEEDINGS{shneiderman1996,
+@inproceedings{shneiderman1996,
   author={Shneiderman, B.},
   booktitle={Proceedings 1996 IEEE Symposium on Visual Languages}, 
   title={The eyes have it: a task by data type taxonomy for information visualizations}, 
@@ -832,8 +818,7 @@ volume = {150},
 pages = {110314},
 year = {2024},
 issn = {0031-3203},
-doi = {https://doi.org/10.1016/j.patcog.2024.110314},
-url = {https://www.sciencedirect.com/science/article/pii/S0031320324000657},
+doi = {10.1016/j.patcog.2024.110314},
 author = {Liang Qiao and Can Li and Zhanzhan Cheng and Yunlu Xu and Yi Niu and Xi Li},
 keywords = {Document understanding, Reading order detection, Layout-aware positional embedding},
 abstract = {Reading order detection aims to arrange the text logically, which is essential in understanding visual documents. Current methods mostly model the problem as a sequence generation task, which use insufficient modalities information ignore the various reading habits under different document layouts, leading to the lack of robustness for some complex scenarios. To address these challenges, we present a novel approach with the Multi-Modal Layout-Aware Relation Prediction. It employs a straightforward yet highly effective task formulation for predicting the order relation between text instances. Our model leverages visual, semantic, and positional features, with the positional features being adaptively generated through a layout-aware position embedding module. Then, different modality features are enhanced via a two-staged position-guided multi-modal fusion module. Additionally, we introduce two novel loss functions, Degree Loss and Cycle Loss, to effectively impose network constraints at multiple levels. Our experimental results, conducted on three real-world datasets, demonstrate that our proposed method achieves a new state-of-the-art level of performance.}
@@ -861,7 +846,6 @@ year = {2024},
 isbn = {9798400718281},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3670947.3670959},
 doi = {10.1145/3670947.3670959},
 abstract = {Mobile device users frequently experience Situational Visual Impairments (SVIs) when viewing screen content in bright outdoor environments. Designers could help alleviate SVIs if they had design tools that illustrated the effects that bright outdoor environments have on screen content. However, the exact nature of the underlying factors that lead to bright environment SVIs is poorly understood. To address this, we build on previous work by exploring the effects of bright environmental lighting on display content visibility using in-lab studies. In particular, we measured the differentiability of achromatic colours under a variety of realistic screen content and environmental brightnesses. Surprisingly, we found that environmental brightness makes a significant but relatively small contribution to reducing screen content visibility, with screen content brightness having a larger effect. As such, we conclude that non-glare ambient light reflecting off a screen has little influence on the visibility of that screen’s content, and make recommendations for future research to help map the true factors underlying SVIs.},
 booktitle = {Proceedings of the 50th Graphics Interface Conference},
@@ -879,7 +863,6 @@ year = {2017},
 isbn = {9781450353793},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3152771.3156161},
 doi = {10.1145/3152771.3156161},
 abstract = {User interaction with mobile devices can be negatively affected by contextual factors, known as situationally-induced impairments. In this paper, we provide a systematic overview of established situational impairments and their impact on interaction with mobile devices, as well as existing methods for their detection and design guidelines to overcome them. We also propose a research roadmap for this topic where we argue that more experiments are required regarding the less investigated situational impairments. Furthermore, we argue that successful detection of the presence of a specific situational impairment is paramount before solutions can be proposed to adapt mobile interfaces to accommodate potential situational impairments.},
 booktitle = {Proceedings of the 29th Australian Conference on Computer-Human Interaction},
@@ -897,7 +880,6 @@ year = {2018},
 isbn = {9781450351980},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3196709.3196760},
 doi = {10.1145/3196709.3196760},
 abstract = {Mobile devices are a substantial part of our lives, supporting communication, work, and play. However, situational visual impairments (SVIs) can make completing tasks a challenge (e.g., browsing online in bright sunlight) and poorly designed content can cause or exacerbate SVIs. We surveyed 43 mobile content designers and ran four follow-on interviews to understand what designers currently do regarding SVIs, what resources they know of, and what is required to best support them in designing to reduce SVIs. Our findings highlight key similarities and differences between accessibility and designing to reduce SVIs. Our participants requested improved guidelines, education, and digital design tools for SVIs. To accommodate the growing number of people affected by SVIs and improve the inclusion of accessibility in design, we introduce recommendations that leverage the overlap between accessibility and SVIs to minimise the effort required in extending current design processes.},
 booktitle = {Proceedings of the 2018 Designing Interactive Systems Conference},
@@ -911,25 +893,35 @@ series = {DIS '18}
 @misc{moran2016reading,
   author       = {Kate Moran},
   title        = {Reading Content on Mobile Devices},
-  howpublished = {\url{https://www.nngroup.com/articles/mobile-content/}},
-  note         = {Accessed: August 18th, 2025},
+  url = {https://www.nngroup.com/articles/mobile-content/},
+  urldate         = {2025-08-18},
   year         = {2016},
+  month = {December},
+  day = {11},
+  lastchecked={September 21, 2026}
 }
 
 @misc{Nielsen2011,
   author       = {Jakob Nielsen},
   title        = {Mobile Content Is Twice as Difficult},
-  howpublished = {\url{https://www.nngroup.com/articles/mobile-content-is-twice-as-difficult-2011/}},
-  note         = {Accessed: August 25th, 2025},
+  url = {https://www.nngroup.com/articles/mobile-content-is-twice-as-difficult-2011/},
+  urldate         = {2025-08-25},
   year         = {2011},
+  month = {February},
+  day = {27},
+  lastchecked={September 21, 2026}
 }
 
 @misc{Budiu2015,
   author       = {Raluca Budiu},
   title        = {Mobile User Experience: Limitations and Strengths},
-  howpublished = {\url{https://www.nngroup.com/articles/mobile-ux/}},
-  note         = {Accessed: August 25th, 2025},
+  url = {https://www.nngroup.com/articles/mobile-ux/},
+  urldate         = {2025-08-25},
   year         = {2015},
+  month = {April},
+  day = {19},
+  lastchecked={September 21, 2026}
+
 }
 
 https://www.nngroup.com/articles/mobile-ux/
@@ -942,7 +934,7 @@ https://www.nngroup.com/articles/mobile-content-is-twice-as-difficult-2011/
   year         = {2024},
   month        = oct,
   day          = {12},
-  journal      = {arXiv preprint},
+  journal      = {arXiv Preprint},
   archivePrefix= {arXiv},
   eprint       = {2410.09562},
   url          = {https://arxiv.org/abs/2410.09562},
@@ -959,11 +951,9 @@ address = {New York, NY, USA},
 volume = {9},
 number = {4},
 issn = {1073-0516},
-url = {https://doi.org/10.1145/586081.586086},
 doi = {10.1145/586081.586086},
 abstract = {The literature on information visualization establishes the usability of interfaces with an overview of the information space, but for zoomable user interfaces, results are mixed. We compare zoomable user interfaces with and without an overview to understand the navigation patterns and usability of these interfaces. Thirty-two subjects solved navigation and browsing tasks on two maps. We found no difference between interfaces in subjects' ability to solve tasks correctly. Eighty percent of the subjects preferred the interface with an overview, stating that it supported navigation and helped keep track of their position on the map. However, subjects were faster with the interface without an overview when using one of the two maps. We conjecture that this difference was due to the organization of that map in multiple levels, which rendered the overview unnecessary by providing richer navigation cues through semantic zooming. The combination of that map and the interface without an overview also improved subjects' recall of objects on the map. Subjects who switched between the overview and the detail windows used more time, suggesting that integration of overview and detail windows adds complexity and requires additional mental and motor effort.},
 journal = {ACM Trans. Comput.-Hum. Interact.},
-month = dec,
 pages = {362–389},
 numpages = {28},
 keywords = {Information visualization, levels of detail, maps, navigation, overview+detail interfaces, overviews, usability, zoomable user interfaces (ZUIs)}
@@ -979,9 +969,7 @@ keywords = {Information visualization, levels of detail, maps, navigation, overv
     publisher = {Public Library of Science},
     title = {Evaluation of a gaze-controlled vision enhancement system for reading in visually impaired people},
     year = {2017},
-    month = {04},
     volume = {12},
-    url = {https://doi.org/10.1371/journal.pone.0174910},
     pages = {1-24},
 
     number = {4},
@@ -991,25 +979,26 @@ keywords = {Information visualization, levels of detail, maps, navigation, overv
 @misc{nyt-large-type-1967,
   author       = {The New York Times},
   title        = {Times Begins an Edition Printed in Large Type},
-  howpublished = {\url{https://www.nytimes.com/1967/03/06/archives/times-begins-an-edition-printed-in-large-type.html}},
-  note         = {Accessed: August 14th, 2025},
+  url = {https://www.nytimes.com/1967/03/06/archives/times-begins-an-edition-printed-in-large-type.html},
+  urldate         = {2025-08-14},
   year         = {1967},
+  month = {March},
+  day = {6},
+  lastchecked={September 21, 2026}
 }
 
 @article{reading-digital-legge,
 author = {Legge, Gordon},
 year = {2016},
-month = {08},
 pages = {102-125},
 title = {Reading Digital with Low Vision},
 volume = {50},
-journal = {Visible language}
+journal = {Visible Language}
 }
 
 @article{magnification-low-vision,
 author = {Christen, Michael and Abegg, Mathias},
 year = {2017},
-month = {05},
 pages = {},
 title = {The Effect of Magnification and Contrast on Reading Performance in Different Types of Simulated Low Vision},
 volume = {10},
@@ -1020,11 +1009,10 @@ doi = {10.16910/jemr.10.2.5}
 @article{bowers-reading,
 author = {Bowers, Alex and Cheong, Allen and Lovie-Kitchin, Jan},
 year = {2007},
-month = {02},
 pages = {9-20},
 title = {Reading With Optical Magnifiers: Page Navigation Strategies and Difficulties},
 volume = {84},
-journal = {Optometry and vision science : official publication of the American Academy of Optometry},
+journal = {Optometry and Vision Science: Official Publication of the American Academy of Optometry},
 doi = {10.1097/01.opx.0000254035.39055.05}
 }
 
@@ -1033,7 +1021,6 @@ doi = {10.1097/01.opx.0000254035.39055.05}
 @article{responsive-design,
 author = {Almeida, Fernando and Monteiro, J.},
 year = {2017},
-month = {12},
 pages = {48-65},
 title = {The role of responsive design in web development},
 volume = {14},
@@ -1042,10 +1029,11 @@ journal = {Webology}
 
 @misc{reflow,
 author = {{W3C Web Accessibility Initiative (WAI)}},
-title = {Understanding {SC} 1.4.10: Reflow (Level AA)},
-howpublished = {\url{https://www.w3.org/WAI/WCAG21/Understanding/reflow.html}},
+title = {Understanding {SC} 1.4.10: Reflow (Level {AA})},
+url = {https://www.w3.org/WAI/WCAG21/Understanding/reflow.html},
 year = {2018},
-note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding document for WCAG~2.1, SC 1.4.10}
+note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding document for WCAG~2.1, SC 1.4.10},
+lastchecked={September 21, 2026}
 }
 
 %entry points
@@ -1055,7 +1043,6 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
 	volume = {5},
 	issn = {1470-3572, 1741-3214},
 	shorttitle = {Entry points and reading paths on newspaper spreads},
-	url = {http://journals.sagepub.com/doi/10.1177/1470357206061005},
 	doi = {10.1177/1470357206061005},
 	abstract = {The aim of this article is to compare general assumptions about newspaper reading with eye-tracking data from readers’ actual interaction with a newspaper. First, we extract assumptions about the way people read newspapers from socio-semiotic research. Second, we apply these assumptions by analysing a newspaper spread; this is done without any previous knowledge of actual reading behaviour. Finally, we use eyetracking to empirically examine so-called entry points and reading paths. Eye movement data on reading newspaper spreads are analysed in three different ways: the time sequence in which different areas attract attention is calculated in order to determine reading priorities; the amount of time spent on different areas is calculated in order to determine which areas have been read most; the depth of attention is calculated in order to determine how carefully those areas have been read. General assumptions extracted from the socio-semiotic framework are compared to the results of the actual behaviour of subjects reading the newspaper spread. The results show that the empirical data confirm some of the extracted assumptions. The reading paths of the five subjects participating in the eye-tracking tests suggest that there are three main categories of readers: editorial readers, overview readers and focused readers.},
 	language = {en},
@@ -1063,14 +1050,13 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
 	urldate = {2023-06-30},
 	journal = {Visual Communication},
 	author = {Holsanova, Jana and Rahm, Henrik and Holmqvist, Kenneth},
-	month = feb,
 	year = {2006},
 	keywords = {notion},
 	pages = {65--93},
 	file = {Holsanova et al. - 2006 - Entry points and reading paths on newspaper spread.pdf:/Users/sgallard/Zotero/storage/VA6Q3CYS/Holsanova et al. - 2006 - Entry points and reading paths on newspaper spread.pdf:application/pdf},
 }
 
-@TechReport{holmqvist_role_2005,
+@techreport{holmqvist_role_2005,
   author       = {Holmqvist, Kenneth and Wartenberg, Constanze},
   title        = {The role of local design factors for newspaper reading behaviour: An eye-tracking perspective},
   institution  = {Lund University, Cognitive Studies},
@@ -1080,7 +1066,7 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
   note         = {ISSN 1101-8453},
 }
 
-@Article{zambarbieri_eye_2008,
+@article{zambarbieri_eye_2008,
   author    = {Zambarbieri, Daniela and Carniglia, Elena and Robino, Carlo},
   title     = {Eye Tracking Analysis in Reading Online Newspapers},
   journal   = {Journal of Eye Movement Research},
@@ -1088,12 +1074,9 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
   volume    = {2},
   number    = {4},
   pages     = {7},
-  doi       = {10.16910/jemr.2.4.7},
-  url       = {https://bop.unibe.ch/JEMR/article/view/2279},
-  month     = nov
-}
+  doi       = {10.16910/jemr.2.4.7}}
 
-@MastersThesis{holmberg_eye_2004,
+@mastersthesis{holmberg_eye_2004,
   author       = {Holmberg, Nils},
   title        = {Eye movement patterns and newspaper design factors: An experimental approach},
   school       = {Lund University, Cognitive Science},
@@ -1102,7 +1085,7 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
   address      = {Lund, Sweden},
 }
 
-@Article{eraslan_eye_2015,
+@article{eraslan_eye_2015,
   author    = {Eraslan, Sukru and Yesilada, Yeliz and Harper, Simon},
   title     = {Eye tracking scanpath analysis techniques on web pages: A survey, evaluation and comparison},
   journal   = {Journal of Eye Movement Research},
@@ -1111,40 +1094,38 @@ note = {World Wide Web Consortium (W3C). Accessed 2025-08-13. Understanding docu
   number    = {1},
   pages     = {2},
   doi       = {10.16910/jemr.9.1.2},
-  url       = {https://www.mdpi.com/1995-8692/9/1/2},
 }
 
-@misc{wang_layoutreader_2021,
-	title = {{LayoutReader}: {Pre}-training of {Text} and {Layout} for {Reading} {Order} {Detection}},
-	shorttitle = {{LayoutReader}},
-	url = {http://arxiv.org/abs/2108.11591},
-	doi = {10.48550/arXiv.2108.11591},
-	abstract = {Reading order detection is the cornerstone to understanding visually-rich documents (e.g., receipts and forms). Unfortunately, no existing work took advantage of advanced deep learning models because it is too laborious to annotate a large enough dataset. We observe that the reading order of WORD documents is embedded in their XML metadata; meanwhile, it is easy to convert WORD documents to PDFs or images. Therefore, in an automated manner, we construct ReadingBank, a benchmark dataset that contains reading order, text, and layout information for 500,000 document images covering a wide spectrum of document types. This ﬁrst-ever large-scale dataset unleashes the power of deep neural networks for reading order detection. Speciﬁcally, our proposed LayoutReader captures the text and layout information for reading order prediction using the seq2seq model. It performs almost perfectly in reading order detection and significantly improves both open-source and commercial OCR engines in ordering text lines in their results in our experiments. We will release the dataset and model at https:// aka.ms/layoutreader.},
-	language = {en},
-	urldate = {2025-04-15},
-	publisher = {arXiv},
-	author = {Wang, Zilong and Xu, Yiheng and Cui, Lei and Shang, Jingbo and Wei, Furu},
-	month = aug,
-	year = {2021},
-	note = {arXiv:2108.11591 [cs]},
-	keywords = {Computer Science - Computation and Language},
-	file = {Wang et al. - 2021 - LayoutReader Pre-training of Text and Layout for .pdf:/Users/sgallard/Zotero/storage/RKELAUXC/Wang et al. - 2021 - LayoutReader Pre-training of Text and Layout for .pdf:application/pdf},
+@inproceedings{wang_layoutreader_2021,
+    title = "{L}ayout{R}eader: Pre-training of Text and Layout for Reading Order Detection",
+    author = "Wang, Zilong  and
+      Xu, Yiheng  and
+      Cui, Lei  and
+      Shang, Jingbo  and
+      Wei, Furu",
+    editor = "Moens, Marie-Francine  and
+      Huang, Xuanjing  and
+      Specia, Lucia  and
+      Yih, Scott Wen-tau",
+    booktitle = "Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2021",
+    address = "Online and Punta Cana, Dominican Republic",
+    publisher = "Association for Computational Linguistics",
+    doi = "10.18653/v1/2021.emnlp-main.389",
+    pages = "4735--4744"
 }
 
 @misc{zhang_modeling_2024,
 	title = {Modeling {Layout} {Reading} {Order} as {Ordering} {Relations} for {Visually}-rich {Document} {Understanding}},
-	url = {http://arxiv.org/abs/2409.19672},
 	doi = {10.48550/arXiv.2409.19672},
-	abstract = {Modeling and leveraging layout reading order in visually-rich documents (VrDs) is critical in document intelligence as it captures the rich structure semantics within documents. Previous works typically formulated layout reading order as a permutation of layout elements, i.e. a sequence containing all the layout elements. However, we argue that this formulation does not adequately convey the complete reading order information in the layout, which may potentially lead to performance decline in downstream VrD tasks. To address this issue, we propose to model the layout reading order as ordering relations over the set of layout elements, which have sufficient expressive capability for the complete reading order information. To enable empirical evaluation on methods towards the improved form of reading order prediction (ROP), we establish a comprehensive benchmark dataset including the reading order annotation as relations over layout elements, together with a relation-extraction-based method that outperforms previous methods. Moreover, to highlight the practical benefits of introducing the improved form of layout reading order, we propose a reading-order-relation-enhancing pipeline to improve model performance on any arbitrary VrD task by introducing additional reading order relation inputs. Comprehensive results demonstrate that the pipeline generally benefits downstream VrD tasks: (1) with utilizing the reading order relation information, the enhanced downstream models achieve SOTA results on both two task settings of the targeted dataset; (2) with utilizing the pseudo reading order information generated by the proposed ROP model, the performance of the enhanced models has improved across all three models and eight cross-domain VrD-IE/QA task settings without targeted optimization.},
 	language = {en},
 	urldate = {2025-04-15},
 	publisher = {arXiv},
 	author = {Zhang, Chong and Tu, Yi and Zhao, Yixi and Yuan, Chenshu and Chen, Huan and Zhang, Yue and Chai, Mingxu and Guo, Ya and Zhu, Huijia and Zhang, Qi and Gui, Tao},
 	month = sep,
 	year = {2024},
-	note = {arXiv:2409.19672 [cs]},
-	keywords = {Computer Science - Computation and Language, Computer Science - Multimedia},
-	file = {Zhang et al. - 2024 - Modeling Layout Reading Order as Ordering Relation.pdf:/Users/sgallard/Zotero/storage/9UZ2BV3B/Zhang et al. - 2024 - Modeling Layout Reading Order as Ordering Relation.pdf:application/pdf},
+	keywords = {Computer Science - Computation and Language, Computer Science - Multimedia}
 }
 
 
@@ -1153,24 +1134,26 @@ https://dbaron.org/css/fonts/aspect_results
 @misc{aspectratios,
   title        = {Aspect Ratio Results},
   author       = {David Baron},
-  year         = 1999,
-  note         = {Accessed: August 4th, 2025},
-  howpublished = {\url{https://dbaron.org/css/fonts/aspect_results}}
+  year         = {1999},
+  urldate         = {2025-08-04},
+  url = {https://dbaron.org/css/fonts/aspect_results},
+  lastchecked={September 21, 2026}
+  
 }
 
 @misc{melody,
   title        = {Melody -- Produce your media with ease},
   author       = {{Demain Un Autre Jour}},
-  year         = 2026,
-  howpublished = {\url{https://www.melody-360.com/en/}},
+  year         = {2026},
+  url = {https://www.melody-360.com/en/},
   lastchecked  = {September 8, 2026}
 }
 
 @misc{vocalepresse,
   title        = {Vocale Presse -- Journal Audio pour Malvoyants et Seniors},
   author       = {{Vocale Presse}},
-  year         = 2026,
-  howpublished = {\url{https://fr.vocalepresse.com}},
+  year         = {2026},
+  url = {https://fr.vocalepresse.com},
   lastchecked  = {September 10, 2026}
 }
 
@@ -1180,14 +1163,12 @@ https://dbaron.org/css/fonts/aspect_results
 	copyright = {http://www.springer.com/tdm},
 	issn = {1554-3528},
 	shorttitle = {{NASA} {TLX}},
-	url = {http://link.springer.com/10.3758/BRM.41.1.113},
 	doi = {10.3758/BRM.41.1.113},
 	language = {en},
 	number = {1},
 	urldate = {2025-05-16},
 	journal = {Behavior Research Methods},
 	author = {Cao, Alex and Chintamani, Keshav K. and Pandya, Abhilash K. and Ellis, R. Darin},
-	month = feb,
 	year = {2009},
 	pages = {113--117},
 	file = {Cao et al. - 2009 - NASA TLX Software for assessing subjective mental.pdf:/Users/sgallard/Zotero/storage/XLY97TAR/Cao et al. - 2009 - NASA TLX Software for assessing subjective mental.pdf:application/pdf},
@@ -1195,7 +1176,7 @@ https://dbaron.org/css/fonts/aspect_results
 
 @article{hart_nasa-task_2006,
 author = {Sandra G. Hart},
-title ={Nasa-Task Load Index (NASA-TLX); 20 Years Later},
+title ={Nasa-Task Load Index ({NASA-TLX}); 20 Years Later},
 
 journal = {Proceedings of the Human Factors and Ergonomics Society Annual Meeting},
 volume = {50},
@@ -1212,14 +1193,12 @@ doi = {10.1177/154193120605000909},
 	title = {An {Empirical} {Evaluation} of the {System} {Usability} {Scale}},
 	volume = {24},
 	issn = {1044-7318, 1532-7590},
-	url = {http://www.tandfonline.com/doi/abs/10.1080/10447310802205776},
 	doi = {10.1080/10447310802205776},
 	language = {en},
 	number = {6},
 	urldate = {2025-07-31},
 	journal = {International Journal of Human-Computer Interaction},
 	author = {Bangor, Aaron and Kortum, Philip T. and Miller, James T.},
-	month = jul,
 	year = {2008},
 	pages = {574--594},
 	file = {Bangor et al. - 2008 - An Empirical Evaluation of the System Usability Sc.pdf:/Users/sgallard/Zotero/storage/T59XZH58/Bangor et al. - 2008 - An Empirical Evaluation of the System Usability Sc.pdf:application/pdf},
@@ -1228,9 +1207,8 @@ doi = {10.1177/154193120605000909},
 @inbook{brooke-1996,
 author = {Brooke, John},
 year = {1996},
-month = {01},
 pages = {189-194},
-title = {SUS -- a quick and dirty usability scale}
+title = {{SUS} -- a quick and dirty usability scale}
 }
 
 @book{legge2006,
@@ -1249,7 +1227,6 @@ year = {2006},
 @article{latham-2022,
 author = {Latham, Keziah and Macnaughton, Jane},
 year = {2022},
-month = {02},
 pages = {482-490},
 title = {Is patient identification of ‘comfortable’ print size a useful clinical parameter for low vision reading assessment?},
 volume = {42},
@@ -1262,14 +1239,12 @@ doi = {10.1111/opo.12946}
 	volume = {36},
 	copyright = {https://www.elsevier.com/tdm/userlicense/1.0/},
 	issn = {00426989},
-	url = {https://linkinghub.elsevier.com/retrieve/pii/0042698996000843},
 	doi = {10.1016/0042-6989(96)00084-3},
 	language = {en},
 	number = {22},
 	urldate = {2024-06-06},
 	journal = {Vision Research},
 	author = {Beckmann, Paul J. and Legge, Gordon E.},
-	month = nov,
 	year = {1996},
 	pages = {3723--3733},
 	file = {Beckmann and Legge - 1996 - Psychophysics of Reading—XIV. The Page Navigation .pdf:/Users/sgallard/Zotero/storage/QSKII6EF/Beckmann and Legge - 1996 - Psychophysics of Reading—XIV. The Page Navigation .pdf:application/pdf},
@@ -1280,7 +1255,6 @@ doi = {10.1111/opo.12946}
 	volume = {99},
 	issn = {1538-9235, 1040-5488},
 	shorttitle = {Digital {Reading} with {Low} {Vision}},
-	url = {https://journals.lww.com/10.1097/OPX.0000000000001919},
 	doi = {10.1097/OPX.0000000000001919},
 	abstract = {Significance.—Digital reading devices have become increasingly popular among people with low vision. Because displays come in many sizes ranging from smart watches to large desktop computer displays, it is important to have principles to guide people with low vision in selecting suitable displays for reading.},
 	language = {en},
@@ -1288,7 +1262,6 @@ doi = {10.1111/opo.12946}
 	urldate = {2024-06-06},
 	journal = {Optometry and Vision Science},
 	author = {Xiong, Ying-Zi and Atilgan, Nilsu and Fletcher, Donald C. and Legge, Gordon E.},
-	month = aug,
 	year = {2022},
 	pages = {655--661},
 	file = {Xiong et al. - 2022 - Digital Reading with Low Vision Principles for Se.pdf:/Users/sgallard/Zotero/storage/GYQIGH6Z/Xiong et al. - 2022 - Digital Reading with Low Vision Principles for Se.pdf:application/pdf},
@@ -1299,7 +1272,6 @@ doi = {10.1111/opo.12946}
 	volume = {57},
 	copyright = {http://creativecommons.org/licenses/by-nc-nd/4.0/},
 	issn = {1552-5783},
-	url = {http://iovs.arvojournals.org/article.aspx?doi=10.1167/iovs.16-19580},
 	doi = {10.1167/iovs.16-19580},
 	abstract = {PURPOSE. The continuous-text reading-acuity test MNREAD is designed to measure the reading performance of people with normal and low vision. This test is used to estimate maximum reading speed (MRS), critical print size (CPS), reading acuity (RA), and the reading accessibility index (ACC). Here we report the age dependence of these measures for normally sighted individuals, providing baseline data for MNREAD testing.
 METHODS. We analyzed MNREAD data from 645 normally sighted participants ranging in age from 8 to 81 years. The data were collected in several studies conducted by different testers and at different sites in our research program, enabling evaluation of robustness of the test.
@@ -1310,7 +1282,6 @@ CONCLUSIONS. We found a weak dependence of the MNREAD parameters on age in norma
 	urldate = {2025-05-16},
 	journal = {Investigative Opthalmology \& Visual Science},
 	author = {Calabrèse, Aurélie and Cheong, Allen M. Y. and Cheung, Sing-Hang and He, Yingchen and Kwon, MiYoung and Mansfield, J. Stephen and Subramanian, Ahalya and Yu, Deyue and Legge, Gordon E.},
-	month = jul,
 	year = {2016},
 	pages = {3836},
 	file = {Calabrèse et al. - 2016 - Baseline MNREAD Measures for Normally Sighted Subj.pdf:/Users/sgallard/Zotero/storage/65GSZ95T/Calabrèse et al. - 2016 - Baseline MNREAD Measures for Normally Sighted Subj.pdf:application/pdf},
@@ -1324,11 +1295,9 @@ CONCLUSIONS. We found a weak dependence of the MNREAD parameters on age in norma
     number = {5},
     pages = {8-8},
     year = {2011},
-    month = {08},
     abstract = { The size and shape of printed symbols determine the legibility of text. In this paper, we focus on print size because of its crucial role in understanding reading performance and its significance in the history and contemporary practice of typography. We present evidence supporting the hypothesis that the distribution of print sizes in historical and contemporary publications falls within the psychophysically defined range of fluent print size—the range over which text can be read at maximum speed. The fluent range extends over a factor of 10 in angular print size (x-height) from approximately 0.2° to 2°. Assuming a standard reading distance of 40 cm (16 inches), the corresponding physical x-heights are 1.4 mm (4 points) and 14 mm (40 points). We provide new data on the distributions of print sizes in published books and newspapers and in typefounders' specimens, and consider factors influencing these distributions. We discuss theoretical concepts from vision science concerning visual size coding that help inform our understanding of historical and modern typographical practices. While economic, social, technological, and artistic factors influence type design and selection, we conclude that properties of human visual processing play a dominant role in constraining the distribution of print sizes in common use. },
     issn = {1534-7362},
     doi = {10.1167/11.5.8},
-    url = {https://doi.org/10.1167/11.5.8},
     eprint = {https://arvojournals.org/arvo/content\_public/journal/jov/933487/jov-11-5-8.pdf},
 }
 
@@ -1337,15 +1306,14 @@ CONCLUSIONS. We found a weak dependence of the MNREAD parameters on age in norma
 
 @inproceedings{caine-2016,
 author = {Caine, Kelly},
-title = {Local Standards for Sample Size at CHI},
+title = {Local Standards for Sample Size at {CHI}},
 year = {2016},
 isbn = {9781450333627},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/2858036.2858498},
 doi = {10.1145/2858036.2858498},
 abstract = {We describe the primary ways researchers can determine the size of a sample of research participants, present the benefits and drawbacks of each of those methods, and focus on improving one method that could be useful to the CHI community: local standards. To determine local standards for sample size within the CHI community, we conducted an analysis of all manuscripts published at CHI2014. We find that sample size for manuscripts published at CHI ranges from 1 -- 916,000 and the most common sample size is 12. We also find that sample size differs based on factors such as study setting and type of methodology employed. The outcome of this paper is an overview of the various ways sample size may be determined and an analysis of local standards for sample size within the CHI community. These contributions may be useful to researchers planning studies and reviewers evaluating the validity of results.},
-booktitle = {Proceedings of the 2016 CHI Conference on Human Factors in Computing Systems},
+booktitle = {Proceedings of the 2016 {CHI} Conference on Human Factors in Computing Systems},
 pages = {981–992},
 numpages = {12},
 keywords = {N, evaluation, meta-HCI, methodology, number of participants, research methods, sample size},
@@ -1394,29 +1362,28 @@ address = {New York, NY, USA},
 volume = {52},
 number = {6},
 issn = {0360-0300},
-url = {https://doi.org/10.1145/3355610},
 doi = {10.1145/3355610},
 journal = {ACM Computing Surveys},
-month = oct,
 articleno = {109},
 numpages = {36},
 keywords = {Document segmentation, document image retrieval, document image understanding, document structure analysis, layout analysis, physical document structure}
 }
 
 @inproceedings{vanbeusekom-distance-2006,
-author = {Beusekom, Joost and Keysers, Daniel and Shafait, Faisal and Breuel, Thomas},
-year = {2006},
-month = {05},
-pages = {11 pp.-},
-title = {Distance measures for layout-based document image retrieval},
-volume = {2006},
-isbn = {0-7695-2531-8},
-doi = {10.1109/DIAL.2006.16}
+author={van Beusekom, J. and Keysers, D. and Shafait, F. and Breuel, T.M.},
+booktitle={Second International Conference on Document Image Analysis for Libraries (DIAL'06)}, 
+title={Distance measures for layout-based document image retrieval}, 
+year={2006},
+volume={},
+number={},
+pages={11 pp.-242},
+keywords={Image retrieval;Databases;Optical character recognition software;Algorithm design and analysis;Information retrieval;Pattern recognition;Artificial intelligence;Nearest neighbor searches;Area measurement;Current measurement},
+doi={10.1109/DIAL.2006.16}
 }
 
 @inbook{chiaramella-sdr-2001,
 author = {Chiaramella, Yves},
-title = {Information retrieval and structured documents},
+title = {Information {R}etrieval and {S}tructured {D}ocuments},
 year = {2001},
 isbn = {3540419330},
 publisher = {Springer-Verlag},
@@ -1434,7 +1401,6 @@ year = {2013},
 isbn = {9781450319584},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/2448556.2448616},
 doi = {10.1145/2448556.2448616},
 booktitle = {Proceedings of the 7th International Conference on Ubiquitous Information Management and Communication},
 articleno = {60},
@@ -1455,11 +1421,9 @@ address = {USA},
 volume = {36},
 number = {10},
 issn = {1041-4347},
-url = {https://doi.org/10.1109/TKDE.2024.3382262},
 doi = {10.1109/TKDE.2024.3382262},
 abstract = {Diversifying return results is an important research topic in retrieval systems in order to satisfy both the various interests of customers and the equal market exposure of providers. There has been growing attention on diversity-aware research during recent years, accompanied by a proliferation of literature on methods to promote diversity in search and recommendation. However, diversity-aware studies in retrieval systems lack a systematic organization and are rather fragmented. In this survey, we are the first to propose a unified taxonomy for classifying the metrics and approaches of diversification in both search and recommendation, which are two of the most extensively researched fields of retrieval systems. We begin the survey with a brief discussion of why diversity is important in retrieval systems, followed by a summary of the various diversity concerns in search and recommendation, highlighting their relationship and differences. For the survey's main body, we present a unified taxonomy of diversification metrics and approaches in retrieval systems, from both the search and recommendation perspectives. In the later part of the survey, we discuss the open research questions of diversity-aware research in search and recommendation in an effort to inspire future innovations and encourage the implementation of diversity in real-world systems.},
 journal = {IEEE Transactions on Knowledge and Data Engineering},
-month = oct,
 pages = {5354–5373},
 numpages = {20}
 }
@@ -1471,9 +1435,8 @@ numpages = {20}
     isbn = {9781605581644},
     publisher = {Association for Computing Machinery},
     address = {New York, NY, USA},
-    url = {https://doi.org/10.1145/1390334.1390446},
     doi = {10.1145/1390334.1390446},
-    booktitle = {Proceedings of the 31st Annual International ACM SIGIR Conference on Research and Development in Information Retrieval},
+    booktitle = {Proceedings of the 31st Annual International {ACM} {SIGIR} Conference on Research and Development in Information Retrieval},
     pages = {659–666},
     numpages = {8},
     keywords = {test collections, novelty, evaluation},
@@ -1487,7 +1450,7 @@ numpages = {20}
   school       = {University of Waterloo},
   year         = {2012},
   address      = {Waterloo, Ontario, Canada},
-  type         = {Doctor of Philosophy in Computer Science}
+  type         = {Doctoral Thesis}
 }
 
 @article{zheng-survey-2017,
@@ -1500,10 +1463,8 @@ address = {Berlin, Heidelberg},
 volume = {51},
 number = {1},
 issn = {0219-1377},
-url = {https://doi.org/10.1007/s10115-016-0990-4},
 doi = {10.1007/s10115-016-0990-4},
 journal = {Knowledge and Information Systems},
-month = apr,
 pages = {1–36},
 numpages = {36},
 keywords = {Diversity, Information retrieval, Query processing}
@@ -1519,8 +1480,7 @@ volume = {101},
 pages = {106-114},
 year = {2017},
 issn = {0167-9236},
-doi = {https://doi.org/10.1016/j.dss.2017.06.005},
-url = {https://www.sciencedirect.com/science/article/pii/S0167923617301173},
+doi = {10.1016/j.dss.2017.06.005},
 author = {Shuai Ding and Chengyi Xia and Chengjiang Wang and Desheng Wu and Youtao Zhang},
 keywords = {Multi-objective optimization, QoS ranking, Cloud service, Service diversity, Service recommendation},
 abstract = {Performing effective ranking prediction for cloud services can help customers make prompt decisions when they are confronted by a large number of choices. This can also enhance web service user satisfaction levels. Improving ranking prediction of QoS-based services continues to be an active topic of research in cloud service recommendation. Most service recommendation algorithms focus on prediction accuracy, ignoring diversity, which also may be an important consideration. In this paper we view service recommendation as a multi-objective optimization problem, and give two modified ranking prediction and recommendation algorithms that simultaneously consider accuracy and diversity. Existing algorithm recommendations can be made much more diverse by adjusting weights on service origin and substantially reducing the risk of inappropriate recommendations. Our experiments show that the algorithms we propose can yield greater diversity without greatly sacrificing prediction accuracy.}
@@ -1533,8 +1493,7 @@ volume = {118},
 pages = {58-69},
 year = {2019},
 issn = {0167-9236},
-doi = {https://doi.org/10.1016/j.dss.2019.01.003},
-url = {https://www.sciencedirect.com/science/article/pii/S0167923619300119},
+doi = {10.1016/j.dss.2019.01.003},
 author = {Yue Guan and Qiang Wei and Guoqing Chen},
 keywords = {Multi-view information, Deep learning, Information integration, Personalized recommendation, Representation learning},
 abstract = {With the rapid proliferation of images on e-commerce platforms today, embracing and integrating versatile information sources have become increasingly important in recommender systems. Owing to the heterogeneity in information sources and consumers, it is necessary and meaningful to consider the potential synergy between visual and textual content as well as consumers' different cognitive styles. This paper proposes a multi-view model, namely, Deep Multi-view Information iNtEgration (Deep-MINE), to take multiple sources of content (i.e., product images, descriptions and review texts) into account and design an end-to-end recommendation model. In doing so, stacked auto-encoder networks are deployed to map multi-view information into a unified latent space, a cognition layer is added to depict consumers' heterogeneous cognition styles and an integration module is introduced to reflect the interaction of multi-view latent representations. Extensive experiments on real world data demonstrate that Deep-MINE achieves high accuracy in product ranking, especially in the cold-start case. In addition, Deep-MINE is able to boost overall model performance compared with models taking a single view, further verifying the proposed model's effectiveness on information integration.}
@@ -1547,8 +1506,7 @@ volume = {74},
 pages = {12-32},
 year = {2015},
 issn = {0167-9236},
-doi = {https://doi.org/10.1016/j.dss.2015.03.008},
-url = {https://www.sciencedirect.com/science/article/pii/S0167923615000627},
+doi = {10.1016/j.dss.2015.03.008},
 author = {Jie Lu and Dianshuang Wu and Mingsong Mao and Wei Wang and Guangquan Zhang},
 keywords = {Recommender systems, E-service personalization, E-commerce, E-learning, E-government},
 abstract = {A recommender system aims to provide users with personalized online product or service recommendations to handle the increasing online information overload problem and improve customer relationship management. Various recommender system techniques have been proposed since the mid-1990s, and many sorts of recommender system software have been developed recently for a variety of applications. Researchers and managers recognize that recommender systems offer great opportunities and challenges for business, government, education, and other domains, with more recent successful developments of recommender systems for real-world applications becoming apparent. It is thus vital that a high quality, instructive review of current trends should be conducted, not only of the theoretical research results but more importantly of the practical developments in recommender systems. This paper therefore reviews up-to-date application developments of recommender systems, clusters their applications into eight main categories: e-government, e-business, e-commerce/e-shopping, e-library, e-learning, e-tourism, e-resource services and e-group activities, and summarizes the related recommendation techniques used in each category. It systematically examines the reported recommender systems through four dimensions: recommendation methods (such as CF), recommender systems software (such as BizSeeker), real-world application domains (such as e-business) and application platforms (such as mobile-based platforms). Some significant new topics are identified and listed as new directions. By providing a state-of-the-art knowledge, this survey will directly support researchers and practical professionals in their understanding of developments in recommender system applications.}
@@ -1556,7 +1514,7 @@ abstract = {A recommender system aims to provide users with personalized online 
 
 %eswa
 
-@ARTICLE{longtail-deep,
+@article{longtail-deep,
   author={Zhang, Yifan and Kang, Bingyi and Hooi, Bryan and Yan, Shuicheng and Feng, Jiashi},
   journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
   title={Deep Long-Tailed Learning: A Survey}, 
@@ -1582,14 +1540,12 @@ abstract = {A recommender system aims to provide users with personalized online 
 	volume = {3},
 	issn = {25839888},
 	shorttitle = {{AI} and the {Newsroom}},
-	url = {https://urfjournals.org/open-access/ai-and-the-newsroom-transforming-journalism-with-intelligent-systems.pdf},
 	doi = {10.51219/JAIMLD/Elfredah-Kevin-Alerechi/426},
 	language = {en},
 	number = {1},
 	urldate = {2026-02-04},
 	journal = {Journal of Artificial Intelligence, Machine Learning and Data Science},
 	author = {Kevin-Alerechi, Elfredah and Abutu, Ilemona and Oladunni, Olashile and Osanyinro, Elizabeth and Ojumah, Onyekachukwu and Ogundele, Richard},
-	month = jan,
 	year = {2025},
 	pages = {1629--1633},
 	file = {Kevin-Alerechi et al. - 2025 - AI and the Newsroom Transforming Journalism with .pdf:/Users/sgallard/Zotero/storage/A4VXHNIS/Kevin-Alerechi et al. - 2025 - AI and the Newsroom Transforming Journalism with .pdf:application/pdf},
@@ -1599,14 +1555,12 @@ abstract = {A recommender system aims to provide users with personalized online 
 	title = {A decision support system for automating document retrieval and citation screening},
 	volume = {182},
 	issn = {09574174},
-	url = {https://linkinghub.elsevier.com/retrieve/pii/S095741742100693X},
 	doi = {10.1016/j.eswa.2021.115261},
 	abstract = {The systematic literature review (SLR) process includes several steps to collect secondary data and analyze it to answer research questions. In this context, the document retrieval and primary study selection steps are heavily intertwined and known for their repetitiveness, high human workload, and difficulty identifying all relevant literature. This study aims to reduce human workload and error of the document retrieval and primary study selection processes using a decision support system (DSS). An open-source DSS is proposed that supports the document retrieval step, dataset preprocessing, and citation classification. The DSS is domain-independent, as it has proven to carefully select an article’s relevance based solely on the title and abstract. These features can be consistently retrieved from scientific database APIs. Additionally, the DSS is designed to run in the cloud without any required programming knowledge for reviewers. A Multi-Channel CNN architecture is implemented to support the citation screening process. With the provided DSS, reviewers can fill in their search strategy and manually label only a subset of the citations. The remaining unlabeled citations are automatically classified and sorted based on probability. It was shown that for four out of five review datasets, the DSS’s use achieved sig­ nificant workload savings of at least 10\%. The cross-validation results show that the system provides consistent results up to 88.3\% of work saved during citation screening. In two cases, our model yielded a better perfor­ mance over the benchmark review datasets. As such, the proposed approach can assist the development of systematic literature reviews independent of the domain. The proposed DSS is effective and can substantially decrease the document retrieval and citation screening steps’ workload and error rate.},
 	language = {en},
 	urldate = {2025-12-17},
 	journal = {Expert Systems with Applications},
 	author = {Van Dinter, Raymon and Catal, Cagatay and Tekinerdogan, Bedir},
-	month = nov,
 	year = {2021},
 	pages = {115261},
 	file = {Van Dinter et al. - 2021 - A decision support system for automating document .pdf:/Users/sgallard/Zotero/storage/YTT3LWFP/Van Dinter et al. - 2021 - A decision support system for automating document .pdf:application/pdf},
@@ -1626,7 +1580,6 @@ abstract = {A recommender system aims to provide users with personalized online 
 	title = {Evolution of {AI}-{Driven} {Decision} {Making} with {Decision} {Support} {Systems}, {Expert} {Systems}, {Recommender} {Systems}, and {XAI}},
 	volume = {42},
 	issn = {0256-4602, 0974-5971},
-	url = {https://www.tandfonline.com/doi/full/10.1080/02564602.2025.2512086},
 	doi = {10.1080/02564602.2025.2512086},
 	abstract = {In contemporary society, decision-making processes have grown increasingly intricate across sectors such as business, healthcare, finance, and technology. To navigate this complexity, sophisticated tools like Decision Support Systems (DSS), Expert Systems (ES), Recommender Systems, and explainable Artificial Intelligence (XAI) have emerged, all aimed at improving decision-making efficiency. DSS, developed in the 1960s and 1970s, strategically integrates automation and data processing to enhance human decision-making. Unlike ES, which attempts to replicate human expertise, DSS collaboratively assists decision-makers. ES excel in specialized domains by mimicking human decision-making processes. Recommender Systems, are user-centric, transform digital interactions by analyzing preferences to provide personalized recommendations. XAI addresses the need for transparency in AI-driven decisions by clarifying outcomes from complex algorithms. In this paper, we aim to bridge the gap between traditional decision-making methods and emerging explanationdriven architectures by conducting a comparative analysis of DSS, ES, Recommender Systems, and XAI. It explores their historical origins, objectives, methodologies, applications, challenges, limitations, and user contexts. By elucidating their strengths and limitations, this analysis offers insights for decision-makers, researchers, and practitioners aiming to improve decision-making across diverse domains. At the end we explain the case study on software defect prediction.},
 	language = {en},
@@ -1634,7 +1587,6 @@ abstract = {A recommender system aims to provide users with personalized online 
 	urldate = {2025-12-17},
 	journal = {IETE Technical Review},
 	author = {Ravi, Mudavath and Negi, Atul and Bommi, Nitin Sai and Rouf, Nusrat},
-	month = jul,
 	year = {2025},
 	pages = {428--465},
 	file = {Ravi et al. - 2025 - Evolution of AI-Driven Decision Making with Decisi.pdf:/Users/sgallard/Zotero/storage/UN5Z8AVL/Ravi et al. - 2025 - Evolution of AI-Driven Decision Making with Decisi.pdf:application/pdf},
@@ -1645,7 +1597,6 @@ abstract = {A recommender system aims to provide users with personalized online 
 	volume = {7},
 	issn = {25828266},
 	shorttitle = {Optimizing automation systems with {AI}},
-	url = {https://wjaets.com/node/1777},
 	doi = {10.30574/wjaets.2022.7.2.0118},
 	abstract = {This research examines how Artificial Intelligence (AI) enhances the efficiency of automation systems by analyzing resource use and adaptability. Classic automation frameworks regularly deal with difficulties with variable environments and involve heavy human interaction—innovative automation driven by AI promises to improve operations by allowing real-time choices and reducing errors. The investigation incorporates cases and simulations from different industries to show increased resource efficiency by 20 to 30\% and less human input by 40 to 50\%. Tests and regression models indicated noteworthy improvements in AI-equipped systems over conventional ones. Obvious gains are seen from integrating AI, yet difficulties with data quality and system complexity persist. The study shows that AI will be vital for the progress of automation systems and will increase efficiency in operations alongside workforce shifts.},
 	language = {en},
@@ -1653,7 +1604,6 @@ abstract = {A recommender system aims to provide users with personalized online 
 	urldate = {2025-12-17},
 	journal = {World Journal of Advanced Engineering Technology and Sciences},
 	author = {{Prathyusha Nama}},
-	month = dec,
 	year = {2022},
 	pages = {269--307},
 	file = {Prathyusha Nama - 2022 - Optimizing automation systems with AI A study on .pdf:/Users/sgallard/Zotero/storage/IN34QYDQ/Prathyusha Nama - 2022 - Optimizing automation systems with AI A study on .pdf:application/pdf},
@@ -1664,13 +1614,11 @@ abstract = {A recommender system aims to provide users with personalized online 
 	volume = {76},
 	issn = {09574174},
 	shorttitle = {Trends in expert system development},
-	url = {https://linkinghub.elsevier.com/retrieve/pii/S0957417417300386},
 	doi = {10.1016/j.eswa.2017.01.028},
 	language = {en},
 	urldate = {2025-12-17},
 	journal = {Expert Systems with Applications},
 	author = {Wagner, William P.},
-	month = jun,
 	year = {2017},
 	pages = {85--96},
 	file = {Wagner - 2017 - Trends in expert system development A longitudina.pdf:/Users/sgallard/Zotero/storage/3SJU6VCQ/Wagner - 2017 - Trends in expert system development A longitudina.pdf:application/pdf},
@@ -1683,17 +1631,19 @@ abstract = {A recommender system aims to provide users with personalized online 
 @misc{labvanced,
   title        = {Labvanced: Online Experiment Creation},
   author       = {Labvanced},
-  year         = 2024,
-  note         = {Accessed: April 29th, 2024},
-  howpublished = {\url{https://www.labvanced.com}}
+  year         = {2024},
+  urldate         = {2024-04-29},
+  url = {https://www.labvanced.com},
+  lastchecked={September 21, 2026}
 }
 
 @misc{prolific,
   title        = {Prolific },
   author       = {Prolific},
-  year         = 2024,
-  note         = {Accessed: April 29th, 2024},
-  howpublished = {\url{https://www.prolific.com}}
+  year         = {2024},
+  urldate         = {2024-04-29},
+  url = {https://www.prolific.com},
+  lastchecked={September 21, 2026}
 }
 
 @inproceedings{gmn-cf,
@@ -1703,7 +1653,6 @@ year = {2021},
 isbn = {9781450380379},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3404835.3462833},
 doi = {10.1145/3404835.3462833},
 abstract = {User and item attributes are essential side-information; their interactions (i.e., their co-occurrence in the sample data) can significantly enhance prediction accuracy in various recommender systems. We identify two different types of attribute interactions, inner interactions and cross interactions: inner interactions are those between only user attributes or those between only item attributes; cross interactions are those between user attributes and item attributes. Existing models do not distinguish these two types of attribute interactions, which may not be the most effective way to exploit the information carried by the interactions. To address this drawback, we propose a neural Graph Matching based Collaborative Filtering model (GMCF), which effectively captures the two types of attribute interactions through modeling and aggregating attribute interactions in a graph matching structure for recommendation. In our model, the two essential recommendation procedures, characteristic learning and preference matching, are explicitly conducted through graph learning (based on inner interactions) and node matching (based on cross interactions), respectively. Experimental results show that our model outperforms state-of-the-art models. Further studies verify the effectiveness of GMCF in improving the accuracy of recommendation.},
 booktitle = {Proceedings of the 44th International ACM SIGIR Conference on Research and Development in Information Retrieval},
@@ -1722,7 +1671,6 @@ series = {SIGIR '21}
 	volume = {42},
 	copyright = {http://www.springer.com/tdm},
 	issn = {0925-9902, 1573-7675},
-	url = {http://link.springer.com/10.1007/s10844-013-0252-9},
 	doi = {10.1007/s10844-013-0252-9},
 	abstract = {The major aim of recommender algorithms has been to predict accurately the rating value of items. However, it has been recognized that accurate prediction of rating values is not the only requirement for achieving user satisfaction. One other requirement, which has gained importance recently, is the diversity of recommendation lists. Being able to recommend a diverse set of items is important for user satisfaction since it gives the user a richer set of items to choose from and increases the chance of discovering new items. In this study, we propose a novel method which can be used to give each user an option to adjust the diversity levels of their own recommendation lists. Experiments show that the method eﬀectively increases the diversity levels of recommendation lists with little decrease in accuracy. Compared to the existing methods, the proposed method, while achieving similar diversiﬁcation performance, has a very low computational time complexity, which makes it highly scalable and allows it to be used in the online phase of the recommendation process.},
 	language = {en},
@@ -1730,7 +1678,6 @@ series = {SIGIR '21}
 	urldate = {2024-04-17},
 	journal = {Journal of Intelligent Information Systems},
 	author = {Aytekin, Tevfik and Karakaya, Mahmut Ozge},
-	month = feb,
 	year = {2014},
 	pages = {1--18},
 	file = {Aytekin and Karakaya - 2014 - Clustering-based diversity improvement in top-N re.pdf:/Users/sgallard/Zotero/storage/9BAVWJAE/Aytekin and Karakaya - 2014 - Clustering-based diversity improvement in top-N re.pdf:application/pdf},
@@ -1753,7 +1700,7 @@ series = {SIGIR '21}
 
 %diversity
 
-@ARTICLE{div1,
+@article{div1,
   author={Adomavicius, Gediminas and Kwon, YoungOk},
   journal={IEEE Transactions on Knowledge and Data Engineering}, 
   title={Improving Aggregate Recommendation Diversity Using Ranking-Based Techniques}, 
@@ -1767,7 +1714,6 @@ series = {SIGIR '21}
 @article{div2,
 author = {Hurley, Neil and Zhang, Mi},
 year = {2011},
-month = {03},
 pages = {14},
 title = {Novelty and Diversity in Top-N Recommendation -- Analysis and Evaluation},
 volume = {10},
@@ -1778,7 +1724,6 @@ doi = {10.1145/1944339.1944341}
 @article{div3,
 author = {Ge, Mouzhi and Gedikli, Fatih and Jannach, Dietmar},
 year = {2011},
-month = {01},
 pages = {65-68},
 title = {Placing high-diversity items in top-N recommendation lists},
 journal = {Proceedings of the 9th Workshop on Intelligent Techniques for Web Personalization \& Recommender Systems at IJCAI 2011}
@@ -1787,7 +1732,6 @@ journal = {Proceedings of the 9th Workshop on Intelligent Techniques for Web Per
 @inproceedings{div4,
 author = {Tintarev, Nava and Dennis, Matt and Masthoff, Judith},
 year = {2013},
-month = {06},
 pages = {190-202},
 title = {Adapting Recommendation Diversity to Openness to Experience: A Study of Human Behaviour},
 volume = {7899},
@@ -1802,7 +1746,6 @@ year = {2014},
 isbn = {9781450326681},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/2645710.2645737},
 doi = {10.1145/2645710.2645737},
 booktitle = {Proceedings of the 8th ACM Conference on Recommender Systems},
 pages = {161–168},
@@ -1816,14 +1759,12 @@ series = {RecSys '14}
    title={A probabilistic model to resolve diversity–accuracy challenge of recommendation systems},
    volume={44},
    ISSN={0219-3116},
-   url={http://dx.doi.org/10.1007/s10115-014-0779-2},
    DOI={10.1007/s10115-014-0779-2},
    number={3},
    journal={Knowledge and Information Systems},
    publisher={Springer Science and Business Media LLC},
    author={Javari, Amin and Jalili, Mahdi},
-   year={2014},
-   month=aug, pages={609–627} }
+   year={2014}, pages={609–627} }
 
 @article{div7,
 author = {Ribeiro, Marco Tulio and Ziviani, Nivio and Moura, Edleno Silva De and Hata, Itamar and Lacerda, Anisio and Veloso, Adriano},
@@ -1835,10 +1776,8 @@ address = {New York, NY, USA},
 volume = {5},
 number = {4},
 issn = {2157-6904},
-url = {https://doi.org/10.1145/2629350},
 doi = {10.1145/2629350},
 journal = {ACM Trans. Intell. Syst. Technol.},
-month = {dec},
 articleno = {53},
 numpages = {20},
 keywords = {Pareto efficiency, Multiobjective recommender systems}
@@ -1848,13 +1787,11 @@ keywords = {Pareto efficiency, Multiobjective recommender systems}
 	title = {Diversity in recommender systems – {A} survey},
 	volume = {123},
 	issn = {09507051},
-	url = {https://linkinghub.elsevier.com/retrieve/pii/S0950705117300680},
 	doi = {10.1016/j.knosys.2017.02.009},
 	language = {en},
 	urldate = {2024-04-07},
 	journal = {Knowledge-Based Systems},
 	author = {Kunaver, Matevž and Požrl, Tomaž},
-	month = may,
 	year = {2017},
 	pages = {154--162},
 	file = {Kunaver and Požrl - 2017 - Diversity in recommender systems – A survey.pdf:/Users/sgallard/Zotero/storage/4GKDKZEP/Kunaver and Požrl - 2017 - Diversity in recommender systems – A survey.pdf:application/pdf},
@@ -1867,21 +1804,18 @@ keywords = {Pareto efficiency, Multiobjective recommender systems}
   year={2022}
 }
 
-@misc{zheng_distance-iou_2019,
-	title = {Distance-{IoU} {Loss}: {Faster} and {Better} {Learning} for {Bounding} {Box} {Regression}},
-	shorttitle = {Distance-{IoU} {Loss}},
-	url = {http://arxiv.org/abs/1911.08287},
-	abstract = {Bounding box regression is the crucial step in object detection. In existing methods, while n-norm loss is widely adopted for bounding box regression, it is not tailored to the evaluation metric, i.e., Intersection over Union (IoU). Recently, IoU loss and generalized IoU (GIoU) loss have been proposed to beneﬁt the IoU metric, but still suffer from the problems of slow convergence and inaccurate regression. In this paper, we propose a Distance-IoU (DIoU) loss by incorporating the normalized distance between the predicted box and the target box, which converges much faster in training than IoU and GIoU losses. Furthermore, this paper summarizes three geometric factors in bounding box regression, i.e., overlap area, central point distance and aspect ratio, based on which a Complete IoU (CIoU) loss is proposed, thereby leading to faster convergence and better performance. By incorporating DIoU and CIoU losses into state-of-the-art object detection algorithms, e.g., YOLO v3, SSD and Faster RCNN, we achieve notable performance gains in terms of not only IoU metric but also GIoU metric. Moreover, DIoU can be easily adopted into non-maximum suppression (NMS) to act as the criterion, further boosting performance improvement. The source code and trained models are available at https://github.com/Zzh-tju/DIoU.},
-	language = {en},
-	urldate = {2024-02-19},
-	publisher = {arXiv},
-	author = {Zheng, Zhaohui and Wang, Ping and Liu, Wei and Li, Jinze and Ye, Rongguang and Ren, Dongwei},
-	month = nov,
-	year = {2019},
-	note = {arXiv:1911.08287 [cs]},
-	keywords = {Computer Science - Computer Vision and Pattern Recognition},
-	file = {Zheng et al. - 2019 - Distance-IoU Loss Faster and Better Learning for .pdf:/Users/sgallard/Zotero/storage/ATMWCU3P/Zheng et al. - 2019 - Distance-IoU Loss Faster and Better Learning for .pdf:application/pdf},
+@article{zheng_distance-iou_2019,
+  author  = {Zheng, Zhaohui and Wang, Ping and Liu, Wei and Li, Jinze and Ye, Rongguang and Ren, Dongwei},
+  title   = {Distance-{IoU} Loss: Faster and Better Learning for Bounding Box Regression},
+  journal = {Proceedings of the {AAAI} Conference on Artificial Intelligence},
+  year    = {2020},
+  volume  = {34},
+  number  = {07},
+  pages   = {12993--13000},
+  doi     = {10.1609/aaai.v34i07.6999},
 }
+
+
 
 @misc{patil_layoutgmn_2021,
 	title = {{LayoutGMN}: {Neural} {Graph} {Matching} for {Structural} {Layout} {Similarity}},
@@ -1899,13 +1833,23 @@ keywords = {Pareto efficiency, Multiobjective recommender systems}
 	file = {Patil et al. - 2021 - LayoutGMN Neural Graph Matching for Structural La.pdf:/Users/sgallard/Zotero/storage/2INDXVM6/Patil et al. - 2021 - LayoutGMN Neural Graph Matching for Structural La.pdf:application/pdf},
 }
 
-@InProceedings{Rezatofighi_2019_CVPR,
-author = {Rezatofighi, Hamid and Tsoi, Nathan and Gwak, JunYoung and Sadeghian, Amir and Reid, Ian and Savarese, Silvio},
-title = {Generalized Intersection Over Union: A Metric and a Loss for Bounding Box Regression},
-booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-month = {June},
-year = {2019}
-}
+
+@inproceedings{Rezatofighi_2019_CVPR,
+author = { Rezatofighi, Hamid and Tsoi, Nathan and Gwak, JunYoung and Sadeghian, Amir and Reid, Ian and Savarese, Silvio },
+booktitle = { 2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) },
+title = {{ Generalized Intersection Over Union: A Metric and a Loss for Bounding Box Regression }},
+year = {2019},
+volume = {},
+ISSN = {},
+pages = {658-666},
+abstract = { Intersection over Union (IoU) is the most popular evaluation metric used in the object detection benchmarks. However, there is a gap between optimizing the commonly used distance losses for regressing the parameters of a bounding box and maximizing this metric value. The optimal objective for a metric is the metric itself. In the case of axis-aligned 2D bounding boxes, it can be shown that IoU can be directly used as a regression loss. However, IoU has a plateau making it infeasible to optimize in the case of non-overlapping bounding boxes. In this paper, we address the this weakness by introducing a generalized version of IoU as both a new loss and a new metric. By incorporating this generalized IoU ( GIoU) as a loss into the state-of-the art object detection frameworks, we show a consistent improvement on their performance using both the standard, IoU based, and new, GIoU based, performance measures on popular object detection benchmarks such as PASCAL VOC and MS COCO. },
+keywords = {Measurement;Computer vision;Art;Three-dimensional displays;Shape;Object detection;Benchmark testing;Loss measurement;Pattern recognition;Standards},
+doi = {10.1109/CVPR.2019.00075},
+url = {https://doi.ieeecomputersociety.org/10.1109/CVPR.2019.00075},
+publisher = {IEEE Computer Society},
+address = {Los Alamitos, CA, USA},
+month =Jun}
+
 
 @article{hungarian,
 author = {Kuhn, H. W.},
@@ -1914,8 +1858,7 @@ journal = {Naval Research Logistics Quarterly},
 volume = {2},
 number = {1-2},
 pages = {83-97},
-doi = {https://doi.org/10.1002/nav.3800020109},
-url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/nav.3800020109},
+doi = {10.1002/nav.3800020109},
 eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/nav.3800020109},
 abstract = {Abstract Assuming that numerical scores are available for the performance of each of n persons on each of n jobs, the “assignment problem” is the quest for an assignment of persons to jobs so that the sum of the n scores so obtained is as large as possible. It is shown that ideas latent in the work of two Hungarian mathematicians may be exploited to yield a new method of solving this problem.},
 year = {1955}
@@ -1926,7 +1869,7 @@ year = {1955}
 , author      = "{The CGAL Project}"
 , publisher     = "{CGAL Editorial Board}"
 , edition     = "{5.6.1}"
-, year         = 2024
+, year         = {2024}
 , url =    "https://doc.cgal.org/5.6.1/Manual/packages.html"
 }
 
@@ -1937,7 +1880,6 @@ year = {2022},
 isbn = {9781450391320},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3488560.3498458},
 doi = {10.1145/3488560.3498458},
 abstract = {Click-through rate prediction is a critical task in online advertising. Currently, many existing methods attempt to extract user potential interests from historical click behavior sequences. However, it is difficult to handle sparse user behaviors or broaden interest exploration. Recently, some researchers incorporate the item-item co-occurrence graph as an auxiliary. Due to the elusiveness of user interests, those works still fail to determine the real motivation of user click behaviors. Besides, those works are more biased towards popular or similar commodities. They lack an effective mechanism to break the diversity restrictions. In this paper, we point out two special properties of triangles in the item-item graphs for recommendation systems: Intra-triangle homophily and Inter-triangle heterophiy. Based on this, we propose a novel and effective framework named Triangle Graph Interest Network (TGIN). For each clicked item in user behavior sequences, we introduce the triangles in its neighborhood of the item-item graphs as a supplement. TGIN regards these triangles as the basic units of user interests, which provide the clues to capture the real motivation for a user clicking an item. We characterize every click behavior by aggregating the information of several interest units to alleviate the elusive motivation problem. The attention mechanism determines users' preference for different interest units. By selecting diverse and relative triangles, short brings in novel and serendipitous items to expand exploration opportunities of user interests. Then, we aggregate the multi-level interests of historical behavior sequences to improve CTR prediction. Extensive experiments on both of public and industrial datasets clearly verify the effectiveness of our framework.},
 booktitle = {Proceedings of the Fifteenth ACM International Conference on Web Search and Data Mining},
@@ -1948,10 +1890,10 @@ location = {Virtual Event, AZ, USA},
 series = {WSDM '22}
 }
 
-@ARTICLE{gnn-2,
+@article{gnn-2,
   author={Liu, Han and Wei, Yinwei and Yin, Jianhua and Nie, Liqiang},
   journal={IEEE Transactions on Knowledge and Data Engineering}, 
-  title={HS-GCN: Hamming Spatial Graph Convolutional Networks for Recommendation}, 
+  title={{HS-GCN}: Hamming Spatial Graph Convolutional Networks for Recommendation}, 
   year={2023},
   volume={35},
   number={6},
@@ -1966,7 +1908,6 @@ year = {2018},
 isbn = {9781450355520},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3219819.3219890},
 doi = {10.1145/3219819.3219890},
 abstract = {Recent advancements in deep neural networks for graph-structured data have led to state-of-the-art performance on recommender system benchmarks. However, making these methods practical and scalable to web-scale recommendation tasks with billions of items and hundreds of millions of users remains an unsolved challenge. Here we describe a large-scale deep recommendation engine that we developed and deployed at Pinterest. We develop a data-efficient Graph Convolutional Network (GCN) algorithm, which combines efficient random walks and graph convolutions to generate embeddings of nodes (i.e., items) that incorporate both graph structure as well as node feature information. Compared to prior GCN approaches, we develop a novel method based on highly efficient random walks to structure the convolutions and design a novel training strategy that relies on harder-and-harder training examples to improve robustness and convergence of the model. We also develop an efficient MapReduce model inference algorithm to generate embeddings using a trained model. Overall, we can train on and embed graphs that are four orders of magnitude larger than typical GCN implementations. We show how GCN embeddings can be used to make high-quality recommendations in various settings at Pinterest, which has a massive underlying graph with 3 billion nodes representing pins and boards, and 17 billion edges. According to offline metrics, user studies, as well as A/B tests, our approach generates higher-quality recommendations than comparable deep learning based systems. To our knowledge, this is by far the largest application of deep graph embeddings to date and paves the way for a new generation of web-scale recommender systems based on graph convolutional architectures.},
 booktitle = {Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
@@ -1979,12 +1920,11 @@ series = {KDD '18}
 
 @inproceedings{gnn-4,
 author = {Li, Zekun and Cui, Zeyu and Wu, Shu and Zhang, Xiaoyu and Wang, Liang},
-title = {Fi-GNN: Modeling Feature Interactions via Graph Neural Networks for CTR Prediction},
+title = {Fi-{GNN}: Modeling Feature Interactions via Graph Neural Networks for {CTR} Prediction},
 year = {2019},
 isbn = {9781450369763},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3357384.3357951},
 doi = {10.1145/3357384.3357951},
 abstract = {Click-through rate (CTR) prediction is an essential task in web applications such as online advertising and recommender systems, whose features are usually in multi-field form. The key of this task is to model feature interactions among different feature fields. Recently proposed deep learning based models follow a general paradigm: raw sparse input multi-field features are first mapped into dense field embedding vectors, and then simply concatenated together to feed into deep neural networks (DNN) or other specifically designed networks to learn high-order feature interactions. However, the simple unstructured combination of feature fields will inevitably limit the capability to model sophisticated interactions among different fields in a sufficiently flexible and explicit fashion. In this work, we propose to represent the multi-field features in a graph structure intuitively, where each node corresponds to a feature field and different fields can interact through edges. The task of modeling feature interactions can be thus converted to modeling node interactions on the corresponding graph. To this end, we design a novel model Feature Interaction Graph Neural Networks (Fi-GNN). Taking advantage of the strong representative power of graphs, our proposed model can not only model sophisticated feature interactions in a flexible and explicit fashion, but also provide good model explanations for CTR prediction. Experimental results on two real-world datasets show its superiority over the state-of-the-arts.},
 booktitle = {Proceedings of the 28th ACM International Conference on Information and Knowledge Management},
@@ -2002,7 +1942,6 @@ year = {2020},
 isbn = {9781450368599},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3340531.3412332},
 doi = {10.1145/3340531.3412332},
 abstract = {Re-ranking is a critical task for large-scale commercial recommender systems. Given the initial ranked lists, top candidates are re-ranked to improve the accuracy of the ranking results. However, existing re-ranking strategies are sub-optimal due to (i) most prior works do not consider explicit item relationships, like being substitutable or complementary, which may mutually influence the user satisfaction on other items in the lists, and (ii) they usually apply an identical re-ranking strategy for all users, with personalized user preferences and intents ignored. To resolve the problem, we construct a heterogeneous graph to fuse the initial scoring information and item relationships information. We develop a graph neural network based framework, IRGPR, to explicitly model transitive item relationships by recursively aggregating relational information from multi-hop neighborhoods. We also incorporate a novel intent embedding network to embed personalized user intents into the propagation. We conduct extensive experiments on real-world datasets, demonstrating the effectiveness of IRGPR in re-ranking. Further analysis reveals that modeling the item relationships and personalized intents are particularly useful for improving the performance of re-ranking.},
 booktitle = {Proceedings of the 29th ACM International Conference on Information \& Knowledge Management},
@@ -2017,7 +1956,6 @@ series = {CIKM '20}
 	title = {Efficient Exploration and Exploitation for Sequential Music Recommendation},
 	volume = {2},
 	issn = {2770-6699},
-	url = {https://dl.acm.org/doi/10.1145/3625827},
 	doi = {10.1145/3625827},
 	abstract = {Music streaming services heavily rely upon recommender systems to acquire, engage, and retain users. One notable component of these services are playlists, which can be dynamically generated in a sequential manner based on the user’s feedback during a listening session. Online learning to rank approaches have recently been shown effective at leveraging such feedback to learn users’ preferences in the space of song features. Nevertheless, these approaches can suffer from slow convergence as a result of their random exploration component and their session-agnostic exploitation component. To overcome these limitations, we propose a novel online learning to rank approach which efficiently explores the space of candidate recommendation models by restricting itself to the orthogonal complement of the subspace of previous underperforming exploration directions. Moreover, we propose a session-aware exploitation component which leverages the momentum of the current best model during updates. Our thorough evaluation using simulated listening sessions from two large Last.fm datasets demonstrates substantial improvements over state-of-the-art approaches in terms of early-stage performance, which results in an improved user experience during online learning. In addition, we demonstrate that long-term convergence can be further enhanced by adaptively relaxing exploration constraints along the way.},
 	language = {en},
@@ -2025,7 +1963,6 @@ series = {CIKM '20}
 	urldate = {2024-08-19},
 	journal = {ACM Transactions on Recommender Systems},
 	author = {Pereira, Bruno Laporais and Chaves, Pedro Dalla Vecchia and Santos, Rodrygo L. T.},
-	month = dec,
 	year = {2024},
 	pages = {1--23},
 	file = {Pereira et al. - 2024 - Efficient Exploration and Exploitation for Sequent.pdf:/Users/sgallard/Zotero/storage/LJBLXSCI/Pereira et al. - 2024 - Efficient Exploration and Exploitation for Sequent.pdf:application/pdf},
@@ -2035,7 +1972,6 @@ series = {CIKM '20}
 	address = {Amsterdam Netherlands},
 	title = {Exploration in Recommender Systems},
 	isbn = {978-1-4503-8458-2},
-	url = {https://dl.acm.org/doi/10.1145/3460231.3474601},
 	doi = {10.1145/3460231.3474601},
 	abstract = {In the era of increasing choices, recommender systems are becoming indispensable in helping users navigate the million or billion pieces of content on recommendation platforms. As the focus of these systems shifts from attracting short-term user attention toward optimizing long term user experience on these platforms, reinforcement learning (and bandits) have emerged as appealing techniques to power these systems [5, 9, 26, 27]. The explorationexploitation tradeoff, being the foundation of bandits and RL research, has been extensively studied [1, 2, 4, 6, 8, 10, 11, 18, 20–23]. An agent is incentivized to exploit to maximize its return, i.e., by repeating actions taken in the past that produced high rewards. On the other hand, the agent needs to explore previously unseen actions in order to discover potentially better ones. Exploration has been shown to be extremely useful in solving tasks of long horizons or sparse reward in many RL applications [2, 14–16, 19]. While effective exploration is believed to positively influence the user experience on the platform, the exact value of exploration in recommender systems has not been well established.},
 	language = {en},
@@ -2043,7 +1979,6 @@ series = {CIKM '20}
 	booktitle = {Fifteenth {ACM} {Conference} on {Recommender} {Systems}},
 	publisher = {ACM},
 	author = {Chen, Minmin},
-	month = sep,
 	year = {2021},
 	pages = {551--553},
 	file = {Chen - 2021 - Exploration in Recommender Systems.pdf:/Users/sgallard/Zotero/storage/M55IG3WY/Chen - 2021 - Exploration in Recommender Systems.pdf:application/pdf},
@@ -2051,18 +1986,16 @@ series = {CIKM '20}
 
 @article{vrijenhoek-radio-nodate,
 	author = {Vrijenhoek, Sanne and B\'{e}n\'{e}dict, Gabriel and Gutierrez Granada, Mateo and Odijk, Daan},
-    title = {RADio* – An Introduction to Measuring Normative Diversity in News Recommendations},
+    title = {{RAD}io* – An Introduction to Measuring Normative Diversity in News Recommendations},
     year = {2024},
     issue_date = {March 2025},
     publisher = {Association for Computing Machinery},
     address = {New York, NY, USA},
     volume = {3},
     number = {1},
-    url = {https://doi.org/10.1145/3636465},
     doi = {10.1145/3636465},
     abstract = {In traditional recommender system literature, diversity is often seen as the opposite of similarity and typically defined as the distance between identified topics, categories, or word models. However, this is not expressive of the social science’s interpretation of diversity, which accounts for a news organization’s norms and values and which we here refer to as normative diversity. We introduce RADio, a versatile metrics framework to evaluate recommendations according to these normative goals.RADio introduces a rank-aware Jensen Shannon (JS) divergence. This combination accounts for (i) a user’s decreasing propensity to observe items further down a list and (ii) full distributional shifts as opposed to point estimates. We evaluate RADio’s ability to reflect five normative concepts in news recommendations on the Microsoft News Dataset and six (neural) recommendation algorithms, with the help of our metadata enrichment pipeline. We find that RADio provides insightful estimates that can potentially be used to inform news recommender system design.},
     journal = {ACM Trans. Recomm. Syst.},
-    month = {aug},
     articleno = {5},
     numpages = {29},
     keywords = {News recommendation, diversity, divergence, normative framework}
@@ -2075,7 +2008,6 @@ series = {CIKM '20}
     isbn = {9781450319652},
     publisher = {Association for Computing Machinery},
     address = {New York, NY, USA},
-    url = {https://doi.org/10.1145/2449396.2449411},
     doi = {10.1145/2449396.2449411},
     abstract = {In this paper, we present a recommendation system for the automatic design of magazine covers. Our users are non-designer designers: individuals or small and medium businesses who want to design without hiring a professional designer while still wanting to create aesthetically compelling designs. Because a design should have a purpose, we suggest a number of semantic features to the user, e.g., "clean and clear," "dynamic and active," or "formal," to describe the color mood for the purpose of his/her design. Based on these high level features and a number of low level features, such as the complexity of the visual balance in a photo, our system selects the best photos from the user's album for his/her design. Our system then generates several alternative designs that can be rated by the user. Consequently, our system generates future designs based on the user's style. In this fashion, our system personalizes the designs of a user based on his/her preferences.},
     booktitle = {Proceedings of the 2013 International Conference on Intelligent User Interfaces},
@@ -2086,12 +2018,11 @@ series = {CIKM '20}
     series = {IUI '13}
 }
 
-@article{machado-evaluation-nodate, title={Evaluation of a Recommender System for Assisting Novice Game Designers}, volume={15}, url={https://ojs.aaai.org/index.php/AIIDE/article/view/5240}, DOI={10.1609/aiide.v15i1.5240}, abstractNote={&lt;p&gt;Game development is a complex task involving multiple disciplines and technologies. Developers and researchers alike have suggested that AI-driven game design assistants may improve developer workflow. We present a recommender system for assisting humans in game design as well as a rigorous human subjects study to validate it. The AI-driven game design assistance system suggests game mechanics to designers based on characteristics of the game being developed. We believe this method can bring creative insights and increase user’s productivity. We conducted quantitative studies that showed the recommender system increases users’ levels of accuracy and computational affect, and decreases their levels of workload.&lt;/p&gt;}, number={1}, journal={Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment}, author={Machado, Tiago and Gopstein, Daniel and Wang, Angela and Nov, Oded and Nealen, Andrew and Togelius, Julian}, year={2019}, month={Oct.}, pages={167-173} }
+@article{machado-evaluation-nodate, title={Evaluation of a Recommender System for Assisting Novice Game Designers}, volume={15}, DOI={10.1609/aiide.v15i1.5240}, abstractNote={&lt;p&gt;Game development is a complex task involving multiple disciplines and technologies. Developers and researchers alike have suggested that AI-driven game design assistants may improve developer workflow. We present a recommender system for assisting humans in game design as well as a rigorous human subjects study to validate it. The AI-driven game design assistance system suggests game mechanics to designers based on characteristics of the game being developed. We believe this method can bring creative insights and increase user’s productivity. We conducted quantitative studies that showed the recommender system increases users’ levels of accuracy and computational affect, and decreases their levels of workload.&lt;/p&gt;}, number={1}, journal={Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment}, author={Machado, Tiago and Gopstein, Daniel and Wang, Angela and Nov, Oded and Nealen, Andrew and Togelius, Julian}, year={2019}, pages={167-173} }
 
 @article{deldjoo-recommender-nodate,
     author = {Deldjoo, Yashar and Schedl, Markus and Cremonesi, Paolo and Pasi, Gabriella},
     year = {2020},
-    month = {09},
     pages = {1-38},
     title = {Recommender Systems Leveraging Multimedia Content},
     volume = {53},
@@ -2108,11 +2039,9 @@ series = {CIKM '20}
     address = {New York, NY, USA},
     volume = {2},
     number = {3},
-    url = {https://doi.org/10.1145/3654805},
     doi = {10.1145/3654805},
     abstract = {In the recommender systems field, it is increasingly recognized that focusing on accuracy measures is limiting and misguided. Unsurprisingly, in recent years, the field has witnessed more interest in the research of values “beyond accuracy.” This trend is particularly pronounced in the news domain where recommender systems perform parts of the editorial function, required to uphold journalistic values of news organizations. In the literature, various values and approaches have been proposed and evaluated. This article reviews the current state of the proposed news recommender systems (NRS). We perform a systematic literature review, analyzing 183 papers. The primary aim is to study the development, scope, and focus of value-aware NRS over time. In contrast to previous surveys, we are particularly interested in identifying the range of values discussed and evaluated in the context of NRS and embrace an interdisciplinary view. We identified a total of 40 values, categorized into five value groups. Most research on value-aware NRS has taken an algorithmic approach, whereas conceptual discussions are comparably scarce. Often, algorithms are evaluated by accuracy-based metrics, but the values are not evaluated with respective measures. Overall, our work identifies research gaps concerning values that have not received much attention. Values need to be targeted on a more fine-grained and specific level.},
     journal = {ACM Trans. Recomm. Syst.},
-    month = {jun},
     articleno = {23},
     numpages = {40},
     keywords = {Recommender systems, human values, systematic literature review, news recommendation}
@@ -2125,10 +2054,9 @@ series = {CIKM '20}
     isbn = {9798400704505},
     publisher = {Association for Computing Machinery},
     address = {New York, NY, USA},
-    url = {https://doi.org/10.1145/3630106.3658926},
     doi = {10.1145/3630106.3658926},
     abstract = {Diversity is a commonly known principle in the design of recommender systems, but also ambiguous in its conceptualization. Through semi-structured interviews we explore how practitioners at three different public service media organizations in the Netherlands conceptualize diversity within the scope of their recommender systems. We provide an overview of the goals that they have with diversity in their systems, which aspects are relevant, and how recommendations should be diversified. We show that even within this limited domain, conceptualization of diversity greatly varies, and argue that it is unlikely that a standardized conceptualization will be achieved. Instead, we should focus on effective communication of what diversity in this particular system means, thus allowing for operationalizations of diversity that are capable of expressing the nuances and requirements of that particular domain.},
-    booktitle = {Proceedings of the 2024 ACM Conference on Fairness, Accountability, and Transparency},
+    booktitle = {Proceedings of the 2024 {ACM} Conference on Fairness, Accountability, and Transparency},
     pages = {573–584},
     numpages = {12},
     keywords = {Diversity, Public service media, Recommender Systems},
@@ -2143,7 +2071,6 @@ series = {CIKM '20}
     isbn = {9798400702419},
     publisher = {Association for Computing Machinery},
     address = {New York, NY, USA},
-    url = {https://doi.org/10.1145/3604915.3608878},
     doi = {10.1145/3604915.3608878},
     abstract = {We present the use of a contextual multi-armed bandit approach to improve the personalization of marketing emails sent to Wayfair’s customers. Emails are a critical outreach tool as they economically unlock a significant amount of revenue. We describe how we formulated our problem of selecting the optimal personalized email layout to use as a contextual multi-armed bandit problem. We also explain how we approximated a solution with an Epsilon-greedy strategy. We detail the thorough evaluations we ran, including offline experiments, an off-policy evaluation, and an online A/B test. Our results demonstrate that our approach is able to select personalized email layouts that lead to significant gains in topline business metrics including engagement and conversion rates.},
     booktitle = {Proceedings of the 17th ACM Conference on Recommender Systems},
@@ -2187,11 +2114,9 @@ publisher = {John Wiley and Sons Ltd.},
 address = {GBR},
 volume = {2021},
 issn = {1530-8669},
-url = {https://doi.org/10.1155/2021/7536316},
 doi = {10.1155/2021/7536316},
 abstract = {Recommender systems represent a critical field of AI technology applications. The core function of a recommender system is to recommend items of interest to users, but if it is only user history-based (purchasing or browsing data), it can only recommend similar products to a user, which makes the user feel fatigued (creating so-called “Information Cocoons”). Besides, transaction data (purchasing or browsing data) in various fields usually follow Pareto distributions. Accordingly, 20\% of products are purchased or viewed a greater number of times (short-head items), while the remaining 80\% of products are purchased or viewed less frequently (long-tail items). Using the traditional recommendation method, considering only the accuracy of recommendations, the coverage rate is relatively low, and most of the recommended items are short-head items. The long-tail item recommendation method not only considers the recommendation of short-head items but also considers recommending more long-tail items to users, thus improving the coverage and diversity of the recommendation results. Long-tail item recommendation research has become a frontier issue in recommendation systems in recent years. While the current research paper is still scarce, there have been related research achievements in top-level conferences in the field of computers, such as VLDB and IJCAI. Due to the fact that there is no review literature in this field, to allow readers to better understand the research status of the long-tail item recommendation method, this paper summarizes the progress of the research on long-tail item recommendation methods (from clustering-based, which began in 2008, to deep learning-based methods, which began in 2020) and the future directions associated with this research.},
 journal = {Wirel. Commun. Mob. Comput.},
-month = {jan},
 numpages = {14}
 }
 
@@ -2213,7 +2138,6 @@ year = {2010},
 isbn = {9781605589060},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/1864708.1864721},
 doi = {10.1145/1864708.1864721},
 abstract = {In many commercial systems, the 'best bet' recommendations are shown, but the predicted rating values are not. This is usually referred to as a top-N recommendation task, where the goal of the recommender system is to find a few specific items which are supposed to be most appealing to the user. Common methodologies based on error metrics (such as RMSE) are not a natural fit for evaluating the top-N recommendation task. Rather, top-N performance can be directly measured by alternative methodologies based on accuracy metrics (such as precision/recall).An extensive evaluation of several state-of-the art recommender algorithms suggests that algorithms optimized for minimizing RMSE do not necessarily perform as expected in terms of top-N recommendation task. Results show that improvements in RMSE often do not translate into accuracy improvements. In particular, a naive non-personalized algorithm can outperform some common recommendation approaches and almost match the accuracy of sophisticated algorithms. Another finding is that the very few top popular items can skew the top-N performance. The analysis points out that when evaluating a recommender algorithm on the top-N recommendation task, the test set should be chosen carefully in order to not bias accuracy metrics towards non-personalized solutions. Finally, we offer practitioners new variants of two collaborative filtering algorithms that, regardless of their RMSE, significantly outperform other recommender algorithms in pursuing the top-N recommendation task, with offering additional practical advantages. This comes at surprise given the simplicity of these two methods.},
 booktitle = {Proceedings of the Fourth ACM Conference on Recommender Systems},
@@ -2231,10 +2155,9 @@ year = {2008},
 isbn = {9781605580937},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/1454008.1454012},
 doi = {10.1145/1454008.1454012},
 abstract = {The paper studies the Long Tail problem of recommender systems when many items in the Long Tail have only few ratings, thus making it hard to use them in recommender systems. The approach presented in the paper splits the whole itemset into the head and the tail parts and clusters only the tail items. Then recommendations for the tail items are based on the ratings in these clusters and for the head items on the ratings of individual items. If such partition and clustering are done properly, we show that this reduces the recommendation error rates for the tail items, while maintaining reasonable computational performance.},
-booktitle = {Proceedings of the 2008 ACM Conference on Recommender Systems},
+booktitle = {Proceedings of the 2008 {ACM} Conference on Recommender Systems},
 pages = {11–18},
 numpages = {8},
 keywords = {clustering, data mining, long tail, recommendation},
@@ -2251,11 +2174,9 @@ publisher = {VLDB Endowment},
 volume = {5},
 number = {9},
 issn = {2150-8097},
-url = {https://doi.org/10.14778/2311906.2311916},
 doi = {10.14778/2311906.2311916},
 abstract = {The success of "infinite-inventory" retailers such as Amazon.com and Netflix has been largely attributed to a "long tail" phenomenon. Although the majority of their inventory is not in high demand, these niche products, unavailable at limited-inventory competitors, generate a significant fraction of total revenue in aggregate. In addition, tail product availability can boost head sales by offering consumers the convenience of "one-stop shopping" for both their mainstream and niche tastes. However, most of existing recommender systems, especially collaborative filter based methods, can not recommend tail products due to the data sparsity issue. It has been widely acknowledged that to recommend popular products is easier yet more trivial while to recommend long tail products adds more novelty yet it is also a more challenging task.In this paper, we propose a novel suite of graph-based algorithms for the long tail recommendation. We first represent user-item information with undirected edge-weighted graph and investigate the theoretical foundation of applying Hitting Time algorithm for long tail item recommendation. To improve recommendation diversity and accuracy, we extend Hitting Time and propose efficient Absorbing Time algorithm to help users find their favorite long tail items. Finally, we refine the Absorbing Time algorithm and propose two entropy-biased Absorbing Cost algorithms to distinguish the variation on different user-item rating pairs, which further enhances the effectiveness of long tail recommendation. Empirical experiments on two real life datasets show that our proposed algorithms are effective to recommend long tail items and outperform state-of-the-art recommendation techniques.},
 journal = {Proc. VLDB Endow.},
-month = may,
 pages = {896–907},
 numpages = {12}
 }
@@ -2267,7 +2188,6 @@ year = {2017},
 isbn = {9781450349512},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3106426.3106439},
 doi = {10.1145/3106426.3106439},
 abstract = {Given that the Internet and sophisticated transportation networks have made an increasingly huge number of products and services available to the public, consumers are unable to identify, much less evaluate the usefulness of, such goods accessible to them. Modern recommendation systems filter out products of lesser utility to the customer, showcasing those items of higher preference to the user. While current state-of-the-art recommendation systems perform fairly well, they generally do better at recommending the popular subset of all products available rather than matching consumers with the vast amount of niche products in what has been termed the "Long Tail". In their seminal work, "Challenging the Long Tail Recommendation", Yin et al. make an eloquent argument that the long tail is where organizations can create the most value for their consumers. They also argue that existing recommender systems operate fundamentally different for long tail products than for mainstream goods. While matrix factorization, nearest-neighbors, and clustering work well for the "head" market, the long tail is better represented by a graph, specifically a bipartite graph that connects a set of users to a set of goods. In this paper, we discuss the algorithms presented by Yin et al., as well as a set of similar algorithms proposed by Shang et al., which traverse the bipartite graphs through a random walker in order to identify similar users and products. We build on elements from each work, as well as elements from a Markov process, to facilitate the random walker's traversal of tripartitle graphs into the long tail regions. This method specifically constructs paths into regions of the long tail that are favorable to users.},
 booktitle = {Proceedings of the International Conference on Web Intelligence},
@@ -2278,7 +2198,7 @@ location = {Leipzig, Germany},
 series = {WI '17}
 }
 
-@INPROCEEDINGS{graphmethod-3,
+@inproceedings{graphmethod-3,
   author={Luke, Andrew and Johnson, Joseph and Ng, Yiu-Kai},
   booktitle={2018 IEEE International Conference on Big Knowledge (ICBK)}, 
   title={Recommending Long-Tail Items Using Extended Tripartite Graphs}, 
@@ -2296,28 +2216,22 @@ volume = {49},
 pages = {101089},
 year = {2021},
 issn = {1567-4223},
-doi = {https://doi.org/10.1016/j.elerap.2021.101089},
-url = {https://www.sciencedirect.com/science/article/pii/S1567422321000612},
+doi = {10.1016/j.elerap.2021.101089},
 author = {Rama Syamala Sreepada and Bidyut Kr. Patra},
 keywords = {Long tail items, Collaborative filtering, Power-law distribution, Econophysics, Rating injection},
 abstract = {Recommender systems have been immensely successful in overcoming information overload problem through personalized suggestions to consumers. Traditional recommendation algorithms tend to recommend more popular items. A significant number of items in an enterprise are non-popular (long tail items) due to lack of visibility in recommendations. These long tail items are left unsold and result in a significant loss to the business. The consumers on the other end are deprived of receiving relevant item recommendations. In this paper, we propose two approaches inspired from econophysics to recommend long tail items. The proposed approaches selectively inject ratings to the long tail items to diminish the bias towards the popular items by utilizing the existing rating information. Subsequently, the injected rating datasets are used to provide recommendations. The results on real-world datasets show that the proposed approaches outperform the existing techniques in mitigating long tail effect with little or no drop in accuracy.}
 }
 
 @article{dl-2,
-author = {Sreepada, Rama Syamala and Patra, Bidyut Kr.},
 title = {Mitigating long tail effect in recommendations using few shot learning technique},
-year = {2020},
-issue_date = {Feb 2020},
-publisher = {Pergamon Press, Inc.},
-address = {USA},
+journal = {Expert {S}ystems with {A}pplications},
 volume = {140},
-number = {C},
+pages = {112887},
+year = {2020},
 issn = {0957-4174},
-url = {https://doi.org/10.1016/j.eswa.2019.112887},
-doi = {10.1016/j.eswa.2019.112887},
-journal = {Expert Syst. Appl.},
-month = feb,
-numpages = {17},
+doi = {https://doi.org/10.1016/j.eswa.2019.112887},
+url = {https://www.sciencedirect.com/science/article/pii/S0957417419305974},
+author = {Rama Syamala Sreepada and Bidyut Kr. Patra},
 keywords = {Long tail items, Hierarchical clustering, Few shot learning, Siamese networks}
 }
 
@@ -2328,7 +2242,6 @@ year = {2020},
 isbn = {9781450375832},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3383313.3412222},
 doi = {10.1145/3383313.3412222},
 abstract = {Session-based recommendation focuses on the prediction of user actions based on anonymous sessions and is a necessary method in the lack of user historical data. However, none of the existing session-based recommendation methods explicitly takes the long-tail recommendation into consideration, which plays an important role in improving the diversity of recommendation and producing the serendipity. As the distribution of items with long-tail is prevalent in session-based recommendation scenarios (e.g., e-commerce, music, and TV program recommendations), more attention should be put on the long-tail session-based recommendation. In this paper, we propose a novel network architecture, namely TailNet, to improve long-tail recommendation performance, while maintaining competitive accuracy performance compared with other methods. We start by classifying items into short-head (popular) and long-tail (niche) items based on click frequency. Then a novel preference mechanism is proposed and applied in TailNet to determine user preference between two types of items, so as to softly adjust and personalize recommendations. Extensive experiments on two real-world datasets verify the superiority of our method compared with state-of-the-art works.},
 booktitle = {Proceedings of the 14th ACM Conference on Recommender Systems},
@@ -2339,10 +2252,10 @@ location = {Virtual Event, Brazil},
 series = {RecSys '20}
 }
 
-@ARTICLE{dl-4,
+@article{dl-4,
   author={Bai, Bing and Fan, Yushun and Tan, Wei and Zhang, Jia},
   journal={IEEE Transactions on Services Computing}, 
-  title={DLTSR: A Deep Learning Framework for Recommendations of Long-Tail Web Services}, 
+  title={{DLTSR}: A Deep Learning Framework for Recommendations of Long-Tail Web Services}, 
   year={2020},
   volume={13},
   number={1},
@@ -2353,7 +2266,6 @@ series = {RecSys '20}
 @article{pred-algo-1,
 author = {Deshpande, Mukund and Karypis, George},
 year = {2004},
-month = {01},
 pages = {143-177},
 title = {Item-based top- N recommendation algorithms},
 volume = {22},
@@ -2361,7 +2273,7 @@ journal = {ACM Transactions on Information Systems - TOIS},
 doi = {10.1145/963770.963776}
 }
 
-@ARTICLE{pred-algo-3,
+@article{pred-algo-3,
   author={Linden, G. and Smith, B. and York, J.},
   journal={IEEE Internet Computing}, 
   title={Amazon.com recommendations: item-to-item collaborative filtering}, 
@@ -2372,26 +2284,29 @@ doi = {10.1145/963770.963776}
   keywords={Collaboration;Clustering algorithms;Filtering algorithms;Aggregates;Information filtering;Information filters;Demography;Pediatrics;Electronic mail;Advertising},
   doi={10.1109/MIC.2003.1167344}}
 
-@article{jaccard2021,
-  title={Further generalizations of the Jaccard index},
-  author={Costa, Luciano da F},
-  journal={arXiv preprint arXiv:2110.09619},
-  year={2021}
+@misc{jaccard2021,
+      title={Further Generalizations of the Jaccard Index}, 
+      author={Luciano da F. Costa},
+      year={2021},
+      eprint={2110.09619},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2110.09619}, 
 }
 
 
 
 %for the intro
 
-@online{newman2024,
+@misc{newman2024,
   author = {Newman, Nick},
   title = {Journalism, media, and technology trends and predictions 2024},
-  year = 2024,
+  year = {2024},
   url = {https://reutersinstitute.politics.ox.ac.uk/journalism-media-and-technology-trends-and-predictions-2024#header--0},
   urldate = {2024-10-28}
 }
 
-@BOOK{digitizing-news,
+@book{digitizing-news,
   author = {Boczkowski, Pablo J.}, 
   title = {Digitizing the News: Innovation in Online Newspapers}, 
   year = {2004}, 
@@ -2401,9 +2316,9 @@ doi = {10.1145/963770.963776}
 }
 
 @article{weiss2008delicate,
-  title={The delicate relationship in journalism: Where content and production meet in the content management system. A comparative study of US and Brazil Newsroom Operations},
+  title={The delicate relationship in journalism: Where content and production meet in the content management system. A comparative study of {US} and Brazil Newsroom Operations},
   author={Weiss, Amy Schmitz and Schwingel, Carla},
-  journal={Brazilian journalism research},
+  journal={Brazilian Journalism Research},
   volume={4},
   number={2},
   pages={88--107},
@@ -2428,8 +2343,7 @@ journal = {Advances in Artificial Intelligence},
 volume = {2009},
 number = {1},
 pages = {421425},
-doi = {https://doi.org/10.1155/2009/421425},
-url = {https://onlinelibrary.wiley.com/doi/abs/10.1155/2009/421425},
+doi = {10.1155/2009/421425},
 eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1155/2009/421425},
 abstract = {As one of the most successful approaches to building recommender systems, collaborative filtering (CF) uses the known preferences of a group of users to make recommendations or predictions of the unknown preferences for other users. In this paper, we first introduce CF tasks and their main challenges, such as data sparsity, scalability, synonymy, gray sheep, shilling attacks, privacy protection, etc., and their possible solutions. We then present three main categories of CF techniques: memory-based, model-based, and hybrid CF algorithms (that combine CF with other recommendation techniques), with examples for representative algorithms of each category, and analysis of their predictive performance and their ability to address the challenges. From basic techniques to the state-of-the-art, we attempt to present a comprehensive survey for CF techniques, which can be served as a roadmap for research and practice in this area.},
 year = {2009}
@@ -2442,7 +2356,6 @@ year = {2001},
 isbn = {1581133480},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/371920.372071},
 doi = {10.1145/371920.372071},
 booktitle = {Proceedings of the 10th International Conference on World Wide Web},
 pages = {285–295},
@@ -2458,38 +2371,58 @@ volume = {46},
 pages = {109-132},
 year = {2013},
 issn = {0950-7051},
-doi = {https://doi.org/10.1016/j.knosys.2013.03.012},
-url = {https://www.sciencedirect.com/science/article/pii/S0950705113001044},
+doi = {10.1016/j.knosys.2013.03.012},
 author = {J. Bobadilla and F. Ortega and A. Hernando and A. Gutiérrez},
 keywords = {Recommender systems, Collaborative filtering, Similarity measures, Evaluation metrics, Prediction, Recommendation, Hybrid, Social, Internet of things, Cold-start},
 abstract = {Recommender systems have developed in parallel with the web. They were initially based on demographic, content-based and collaborative filtering. Currently, these systems are incorporating social information. In the future, they will use implicit, local and personal information from the Internet of things. This article provides an overview of recommender systems as well as collaborative filtering methods and algorithms; it also explains their evolution, provides an original classification for these systems, identifies areas of future implementation and develops certain areas selected for past, present or future importance.}
 }
 
+
 @article{xie-set-function-survey-2025,
-title={Advances in Set Function Learning: A Survey of Techniques and Applications},
-author={Jia-Hao Xie and G. Tong},
-journal={ACM Computing Surveys},
-year={2025},
-volume={57},
-pages={1--37},
-url={https://api.semanticscholar.org/CorpusId:275921540}
+author = {Xie, Jiahao and Tong, Guangmo},
+title = {Advances in Set Function Learning: A Survey of Techniques and Applications},
+year = {2025},
+issue_date = {July 2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {57},
+number = {7},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/3715905},
+doi = {10.1145/3715905},
+abstract = {Set function learning has emerged as a crucial area in machine learning, addressing the challenge of modeling functions that take sets as inputs. Unlike traditional machine learning that involves fixed-size input vectors where the order of features matters, set function learning demands methods that are invariant to permutations of the input set, presenting a unique and complex problem. This survey provides a comprehensive overview of the current development in set function learning, covering foundational theories, key methodologies, and diverse applications. We categorize and discuss existing approaches, focusing on deep learning approaches, such as DeepSets and Set Transformer-based methods, as well as other notable alternative methods beyond deep learning, offering a complete view of current models. We also introduce various applications and relevant datasets, such as point cloud processing and multi-label classification, highlighting the significant progress achieved by set function learning methods in these domains. Finally, we conclude by summarizing the current state of set function learning approaches and identifying promising future research directions, aiming to guide and inspire further advancements in this promising field.},
+journal = {ACM Computing Surveys},
+month = feb,
+articleno = {179},
+numpages = {37},
+keywords = {Set function learning, deep learning, permutation-invariance, pooling, aggregation}
 }
 
-@article{kim-transformers-deepsets-2021,
-title={Transformers Generalize DeepSets and Can be Extended to Graphs and Hypergraphs},
-author={Jinwoo Kim and Saeyoon Oh and Seunghoon Hong},
-journal={ArXiv},
-year={2021},
-volume={abs/2110.14416},
-url={https://api.semanticscholar.org/CorpusId:239998288}
+
+@inproceedings{kim-transformers-deepsets-2021,
+author = {Kim, Jinwoo and Oh, Saeyoon and Hong, Seunghoon},
+title = {Transformers generalize DeepSets and can be extended to graphs and hypergraphs},
+year = {2021},
+isbn = {9781713845393},
+publisher = {Curran Associates Inc.},
+address = {Red Hook, NY, USA},
+abstract = {We present a generalization of Transformers to any-order permutation invariant data (sets, graphs, and hypergraphs). We begin by observing that Transformers generalize DeepSets, or first-order (set-input) permutation invariant MLPs. Then, based on recently characterized higher-order invariant MLPs, we extend the concept of self-attention to higher orders and propose higher-order Transformers for order-k data (k = 2 for graphs and k > 2 for hypergraphs). Unfortunately, higher-order Transformers turn out to have prohibitive complexity O(n2k) to the number of input nodes n. To address this problem, we present sparse higher-order Transformers that have quadratic complexity to the number of input hyperedges, and further adopt the kernel attention approach to reduce the complexity to linear. In particular, we show that the sparse second-order Transformers with kernel attention are theoretically more expressive than message passing operations while having an asymptotically identical complexity. Our models achieve significant performance improvement over invariant MLPs and message-passing graph neural networks in large-scale graph regression and set-to-(hyper)graph prediction tasks.},
+booktitle = {Proceedings of the 35th International Conference on Neural Information Processing Systems},
+articleno = {2146},
+numpages = {13},
+series = {NIPS '21}
 }
 
-@inproceedings{nguyen-ramen-2025,
-title={RaMen: Multi-Strategy Multi-Modal Learning for Bundle Construction},
-author={Huy-Son Nguyen and Quang-Huy Nguyen and Duc-Hoang Pham and Duc-Trong Le and Hoang-Quynh Le and Padipat Sitkrongwong and Atsuhiro Takasu and M. Mansoury},
-booktitle={European Conference on Artificial Intelligence},
-year={2025},
-url={https://api.semanticscholar.org/CorpusId:280272381}
+@inbook{nguyen-ramen-2025,
+author = {Huy-Son Nguyen and Quang-Huy Nguyen and Duc-Hoang Pham and Duc-Trong Le and Hoang-Quynh Le and Padipat Sitkrongwong and Atsuhiro Takasu and Masoud Mansoury},
+editor = {Inês Lynce and Nello Murano and Mauro Vallati and Serena Villata and Federico Chesani and Michela Milano and Andrea Omicini and Mehdi Dastani},
+title = {RaMen: Multi-Strategy Multi-Modal Learning for Bundle Construction},
+booktitle = {{ECAI} 2025},
+pages = {1889-1896},
+doi = {10.3233/FAIA251022},
+publisher = {{SAGE} Publications},
+address = {},
+edition = {}
 }
 
 @article{yu-dsetrec-2025,
@@ -2498,26 +2431,40 @@ author={Tianhao Yu and Xianghong Zhou and Xinrong Deng},
 journal={PeerJ Computer Science},
 year={2025},
 volume={11},
-url={https://api.semanticscholar.org/CorpusId:276536949}
+doi={https://doi.org/10.7717/peerj-cs.2734}
 }
 
 @article{buterez-edge-set-attention-2024,
 title={An end-to-end attention-based approach for learning on graphs},
-author={David Buterez and J. Janet and Dino Oglic and Pietro Lio'},
+author={David Buterez and J. Janet and Dino Oglic and Pietro Lio},
 journal={Nature Communications},
-year={2024},
+year={2025},
 volume={16},
-url={https://api.semanticscholar.org/CorpusId:267740349}
+doi={https://doi.org/10.1038/s41467-025-60252-z}
 }
 
-@article{carion-detr-2020,
-title={End-to-End Object Detection with Transformers},
-author={Nicolas Carion and Francisco Massa and Gabriel Synnaeve and Nicolas Usunier and Alexander Kirillov and Sergey Zagoruyko},
-journal={ArXiv},
-year={2020},
-volume={abs/2005.12872},
-url={https://arxiv.org/pdf/2005.12872.pdf}
+
+@inproceedings{carion-detr-2020,
+author="Carion, Nicolas
+and Massa, Francisco
+and Synnaeve, Gabriel
+and Usunier, Nicolas
+and Kirillov, Alexander
+and Zagoruyko, Sergey",
+editor="Vedaldi, Andrea
+and Bischof, Horst
+and Brox, Thomas
+and Frahm, Jan-Michael",
+title="End-to-End Object Detection with Transformers",
+booktitle="Computer {V}ision -- {ECCV} 2020",
+year="2020",
+publisher="Springer International Publishing",
+address="Cham",
+pages="213--229",
+isbn="978-3-030-58452-8"
 }
+
+
 
 @article{wolf-mobile-news-2015,
 title={News Consumption in the Mobile Era: The Role of Mobile Devices and Traditional Journalism's Content within the User's Information Repertoire},
@@ -2553,15 +2500,11 @@ doi={10.1080/14241270109389962}
 }
 
 @techreport{radcliffe-wan-ifra-2025-2026,
-title={WAN-IFRA: World Press Trends Outlook 2025-2026},
+title={{WAN-IFRA}: World Press Trends Outlook 2025-2026},
 author={Damian Radcliffe and Fran{\c{c}}ois Nel},
 institution={SSRN},
 year={2026},
-month={jan},
-day={19},
-doi={10.2139/ssrn.6361979},
-url={https://ssrn.com/abstract=6361979}
-}
+doi={10.2139/ssrn.6361979}}
 
 @article{benson-paywalls-2019,
 title={Paywalls and Public Knowledge: How Can Journalism Provide Quality News for Everyone?},
@@ -2575,10 +2518,10 @@ doi={10.1177/1464884918806733}
 }
 
 @misc{lefigaro-apig-ai-overviews-2026,
-title={Lancement de Google AI Overviews en France~: les {\'e}diteurs de presse saisissent l'Autorit{\'e} de la concurrence},
+title={Lancement de Google {AI} Overviews en France~: les {\'e}diteurs de presse saisissent l'Autorit{\'e} de la concurrence},
 author={{Le Figaro}},
 year={2026},
-month={aug},
+month=aug,
 day={11},
 url={https://www.lefigaro.fr/medias/lancement-de-google-ai-overviews-en-france-les-editeurs-de-presse-saisissent-l-autorite-de-la-concurrence-20260811},
 lastchecked={September 7, 2026}
@@ -2587,9 +2530,8 @@ lastchecked={September 7, 2026}
 @misc{Mor16,
 title={Design as a Driving Force for Audience Engagement},
 author={Ricki Morell},
-howpublished={Nieman Reports},
 year={2016},
-month={dec},
+month=dec,
 day={9},
 url={https://niemanreports.org/design-as-a-driving-force-for-audience-engagement/},
 lastchecked={September 8, 2026}
@@ -2610,7 +2552,6 @@ url={https://www.pewresearch.org/journalism/2016/07/07/the-modern-news-consumer/
   NUMBER = {RR-9597},
   INSTITUTION = {{Centre Inria d'Universit{\'e} C{\^o}te d'Azur}},
   YEAR = {2025},
-  MONTH = Sep,
   KEYWORDS = {low vision aid ; magnification ; social interaction ; virtual reality},
   PDF = {https://hal.science/hal-05244873v1/file/RR-9597.pdf},
   HAL_ID = {hal-05244873},
@@ -2624,10 +2565,9 @@ year = {2026},
 isbn = {9798400724480},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3788851.3805017},
 doi = {10.1145/3788851.3805017},
 abstract = {Understanding how diverse audiences engage with structured media is critical to ensure a consistent quality of experience. In this context, we quantify the behavioral and performance cost of manual navigation (e.g., pinch and zoom) versus direct structural access in layout-based digital documents. We specifically investigate newspaper reading when visual access to structural cues (headlines as entry points) is constrained. Participants completed two tasks—reading all headlines aloud and locating target articles—under two conditions: (1) original edition with gesture-based magnification (pan and zoom), which is the industry standard for digital documents, and (2) large-print edition supporting direct-access reading. We collected performance measures (success ratio and completion time), behavioral integrity through reading path analysis, alongside perceived workload and preferences (NASA-TLX). Results from linear mixed-effects models show that the large-print condition yielded not only better performance than gesture-based magnification (18\% improvement in reading speed, 30\% improvement in speed to locate a target), but more importantly, restored the natural reading strategy that gesture-based magnification interaction disrupts. Readers also reported lower workload and higher preference. These findings highlight the importance of developing automated methods for generating large-print editions, where layout adaptation complements font scaling to support accessibility and quality of experience.},
-booktitle = {Proceedings of the 2026 ACM International Conference on Interactive Media Experiences},
+booktitle = {Proceedings of the 2026 {ACM} International Conference on Interactive Media Experiences},
 pages = {298–315},
 numpages = {18},
 keywords = {Digital media consumption; Layout-based documents; Manipulable interaction; Behavioral cost; Reading behaviour; Low vision accessibility},
@@ -2641,7 +2581,6 @@ series = {IMX '26}
 	copyright = {https://doi.org/10.15223/policy-029},
 	isbn = {978-1-6654-2812-5},
 	shorttitle = {{LayoutTransformer}},
-	url = {https://ieeexplore.ieee.org/document/9710883/},
 	doi = {10.1109/ICCV48922.2021.00104},
 	abstract = {We address the problem of scene layout generation for diverse domains such as images, mobile applications, documents, and 3D objects. Most complex scenes, natural or human-designed, can be expressed as a meaningful arrangement of simpler compositional graphical primitives. Generating a new layout or extending an existing layout requires understanding the relationships between these primitives. To do this, we propose LayoutTransformer, a novel framework that leverages self-attention to learn contextual relationships between layout elements and generate novel layouts in a given domain. Our framework allows us to generate a new layout either from an empty set or from an initial seed set of primitives, and can easily scale to support an arbitrary of primitives per layout. Furthermore, our analyses show that the model is able to automatically capture the semantic properties of the primitives. We propose simple improvements in both representation of layout primitives, as well as training methods to demonstrate competitive performance in very diverse data domains such as object bounding boxes in natural images (COCO bounding box), documents (PubLayNet), mobile applications (RICO dataset) as well as 3D shapes (PartNet). Code and other materials will be made available at https://kampta.github.io/layout.},
 	language = {en},
@@ -2649,7 +2588,6 @@ series = {IMX '26}
 	booktitle = {2021 {IEEE}/{CVF} {International} {Conference} on {Computer} {Vision} ({ICCV})},
 	publisher = {IEEE},
 	author = {Gupta, Kamal and Lazarow, Justin and Achille, Alessandro and Davis, Larry and Mahadevan, Vijay and Shrivastava, Abhinav},
-	month = oct,
 	year = {2021},
 	pages = {984--994},
 	file = {Gupta et al. - 2021 - LayoutTransformer Layout Generation and Completio.pdf:/Users/sgallard/Zotero/storage/2UJ78Z4F/Gupta et al. - 2021 - LayoutTransformer Layout Generation and Completio.pdf:application/pdf},
@@ -2658,15 +2596,14 @@ series = {IMX '26}
 
 @inproceedings{kong-2022,
 author = {Kong, Xiang and Jiang, Lu and Chang, Huiwen and Zhang, Han and Hao, Yuan and Gong, Haifeng and Essa, Irfan},
-title = {BLT: Bidirectional Layout Transformer for Controllable Layout Generation},
+title = {{BLT}: Bidirectional Layout Transformer for Controllable Layout Generation},
 year = {2022},
 isbn = {978-3-031-19789-5},
 publisher = {Springer-Verlag},
 address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-3-031-19790-1_29},
 doi = {10.1007/978-3-031-19790-1_29},
 abstract = {Creating visual layouts is a critical step in graphic design. Automatic generation of such layouts is essential for scalable and diverse visual designs. To advance conditional layout generation, we introduce BLT, a bidirectional layout transformer. BLT differs from previous work on transformers in adopting non-autoregressive transformers. In training, BLT learns to predict the masked attributes by attending to surrounding attributes in two directions. During inference, BLT first generates a draft layout from the input and then iteratively refines it into a high-quality layout by masking out low-confident attributes. The masks generated in both training and inference are controlled by a new hierarchical sampling policy. We verify the proposed model on six benchmarks of diverse design tasks. Experimental results demonstrate two benefits compared to the state-of-the-art layout transformer models. First, our model empowers layout transformers to fulfill controllable layout generation. Second, it achieves up to 10x speedup in generating a layout at inference time than the layout transformer baseline. Code is released at .},
-booktitle = {Computer Vision – ECCV 2022: 17th European Conference, Tel Aviv, Israel, October 23–27, 2022, Proceedings, Part XVII},
+booktitle = {Computer Vision – {ECCV} 2022: 17th European Conference, Tel Aviv, Israel, October 23–27, 2022, Proceedings, Part XVII},
 pages = {474–490},
 numpages = {17},
 keywords = {Design, Layout creation, Transformer, Non-autoregressive},
@@ -2680,10 +2617,9 @@ year = {2020},
 isbn = {978-3-030-58579-2},
 publisher = {Springer-Verlag},
 address = {Berlin, Heidelberg},
-url = {https://doi.org/10.1007/978-3-030-58580-8_29},
 doi = {10.1007/978-3-030-58580-8_29},
 abstract = {Graphic design is essential for visual communication with layouts being fundamental to composing attractive designs. Layout generation differs from pixel-level image synthesis and is unique in terms of the requirement of mutual relations among the desired components. We propose a method for design layout generation that can satisfy user-specified constraints. The proposed neural design network (NDN) consists of three modules. The first module predicts a graph with complete relations from a graph with user-specified relations. The second module generates a layout from the predicted graph. Finally, the third module fine-tunes the predicted layout. Quantitative and qualitative experiments demonstrate that the generated layouts are visually similar to real design layouts. We also construct real designs based on predicted layouts for a better understanding of the visual quality. Finally, we demonstrate a practical application on layout recommendation.},
-booktitle = {Computer Vision – ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part III},
+booktitle = {Computer Vision – {ECCV} 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part III},
 pages = {491–506},
 numpages = {16},
 location = {Glasgow, United Kingdom}
@@ -2696,10 +2632,9 @@ year = {2021},
 isbn = {9781450386517},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3474085.3475497},
 doi = {10.1145/3474085.3475497},
 abstract = {It is common in graphic design humans visually arrange various elements according to their design intent and semantics. For example, a title text almost always appears on top of other elements in a document. In this work, we generate graphic layouts that can flexibly incorporate such design semantics, either specified implicitly or explicitly by a user. We optimize using the latent space of an off-the-shelf layout generation model, allowing our approach to be complementary to and used with existing layout generation models. Our approach builds on a generative layout model based on a Transformer architecture, and formulates the layout generation as a constrained optimization problem where design constraints are used for element alignment, overlap avoidance, or any other user-specified relationship. We show in the experiments that our approach is capable of generating realistic layouts in both constrained and unconstrained generation tasks with a single model. The code is available at https://github.com/ktrk115/const_layout.},
-booktitle = {Proceedings of the 29th ACM International Conference on Multimedia},
+booktitle = {Proceedings of the 29th {ACM} International Conference on Multimedia},
 pages = {88–96},
 numpages = {9},
 keywords = {layout generation, latent space exploration, generative adversarial network, constrained optimization},
@@ -2714,8 +2649,7 @@ volume = {100},
 pages = {101940},
 year = {2023},
 issn = {1566-2535},
-doi = {https://doi.org/10.1016/j.inffus.2023.101940},
-url = {https://www.sciencedirect.com/science/article/pii/S1566253523002567},
+doi = {10.1016/j.inffus.2023.101940},
 author = {Yong Shi and Mengyu Shang and Zhiquan Qi},
 keywords = {Layout generation, Deep learning, Generative models, Information presentation, Artificial Intelligence-Generated Content (AIGC)},
 abstract = {Layout generation, as a crucial stage in Artificial Intelligence-Generated Content (AIGC) task information presentation generation, is a fascinating and significant research topic. Automatically generating layouts intrigued the computer vision community dating back to the 1990s, and the advancement was sluggish for a time due to the inherent complexity of the issue. Thanks to the success of deep learning, layout generation is leading to a surge in both academic literature and business applications recently. Yet a systematic and comprehensive literature review of this domain is still missing. In this study, we provide a comprehensive overview of the state-of-the-art layout generation methods. Primarily, we discuss the problem of layout generation and associated background knowledge including layout representation, layout aesthetics, and generative models. Subsequently, recent advances in the field of intelligent layout generation are organized and summarized from three perspectives: innovations, models & algorithms, and applications. Furthermore, the paper outlines the datasets and evaluation methodology, both qualitative and quantitative, and briefly analyzes the selection of them for specific tasks. To sum up, we conclude the current challenges of intelligent layout generation and suggest possible directions for future endeavors.}
@@ -2731,11 +2665,9 @@ address = {New York, NY, USA},
 volume = {38},
 number = {4},
 issn = {0730-0301},
-url = {https://doi.org/10.1145/3306346.3322971},
 doi = {10.1145/3306346.3322971},
 abstract = {Layout is fundamental to graphic designs. For visual attractiveness and efficient communication of messages and ideas, graphic design layouts often have great variation, driven by the contents to be presented. In this paper, we study the problem of content-aware graphic design layout generation. We propose a deep generative model for graphic design layouts that is able to synthesize layout designs based on the visual and textual semantics of user inputs. Unlike previous approaches that are oblivious to the input contents and rely on heuristic criteria, our model captures the effect of visual and textual contents on layouts, and implicitly learns complex layout structure variations from data without the use of any heuristic rules. To train our model, we build a large-scale magazine layout dataset with fine-grained layout annotations and keyword labeling. Experimental results show that our model can synthesize high-quality layouts based on the visual semantics of input images and keyword-based summary of input text. We also demonstrate that our model internally learns powerful features that capture the subtle interaction between contents and layouts, which are useful for layout-aware design retrieval.},
 journal = {ACM Trans. Graph.},
-month = jul,
 articleno = {133},
 numpages = {15},
 keywords = {layout, graphic design, deep generative networks, content-aware}
@@ -2750,9 +2682,7 @@ number = {1},
 pages = {1502242},
 year = {2018},
 publisher = {Taylor \& Francis},
-doi = {10.1080/23311916.2018.1502242},
-url = {https://doi.org/10.1080/23311916.2018.1502242}
-}
+doi = {10.1080/23311916.2018.1502242}}
 @article{shen-2025,
 author = {Shen, I-Chao and Shamir, Ariel and Igarashi, Takeo},
 title = {LayoutRectifier: An Optimization-based Post-processing for Graphic Design Layout Generation},
@@ -2760,8 +2690,7 @@ journal = {Computer Graphics Forum},
 volume = {44},
 number = {7},
 pages = {e70273},
-doi = {https://doi.org/10.1111/cgf.70273},
-url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/cgf.70273},
+doi = {10.1111/cgf.70273},
 eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/cgf.70273},
 abstract = {Abstract Recent deep learning methods can generate diverse graphic design layouts efficiently. However, these methods often create layouts with flaws, such as misalignment, unwanted overlaps, and unsatisfied containment. To tackle this issue, we propose an optimization-based method called LayoutRectifier, which gracefully rectifies auto-generated graphic design layouts to reduce these flaws while minimizing deviation from the generated layout. The core of our method is a two-stage optimization. First, we utilize grid systems, which professional designers commonly use to organize elements, to mitigate misalignments through discrete search. Second, we introduce a novel box containment function designed to adjust the positions and sizes of the layout elements, preventing unwanted overlapping and promoting desired containment. We evaluate our method on content-agnostic and content-aware layout generation tasks and achieve better-quality layouts that are more suitable for downstream graphic design tasks. Our method complements learning-based layout generation methods and does not require additional training.},
 year = {2025}
@@ -2769,15 +2698,14 @@ year = {2025}
 
 @inproceedings{Dayama-2020,
 author = {Dayama, Niraj Ramesh and Todi, Kashyap and Saarelainen, Taru and Oulasvirta, Antti},
-title = {GRIDS: Interactive Layout Design with Integer Programming},
+title = {{GRIDS}: Interactive Layout Design with Integer Programming},
 year = {2020},
 isbn = {9781450367080},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/3313831.3376553},
 doi = {10.1145/3313831.3376553},
 abstract = {Grid layouts are used by designers to spatially organise user interfaces when sketching and wireframing. However, their design is largely time consuming manual work. This is challenging due to combinatorial explosion and complex objectives, such as alignment, balance, and expectations regarding positions. This paper proposes a novel optimisation approach for the generation of diverse grid-based layouts. Our mixed integer linear programming (MILP) model offers a rigorous yet efficient method for grid generation that ensures packing, alignment, grouping, and preferential positioning of elements. Further, we present techniques for interactive diversification, enhancement, and completion of grid layouts. These capabilities are demonstrated using GRIDS, a wireframing tool that provides designers with real-time layout suggestions. We report findings from a ratings study (N = 13) and a design study (N = 16), lending evidence for the benefit of computational grid generation during early stages of design.},
-booktitle = {Proceedings of the 2020 CHI Conference on Human Factors in Computing Systems},
+booktitle = {Proceedings of the 2020 {CHI} Conference on Human Factors in Computing Systems},
 pages = {1–13},
 numpages = {13},
 keywords = {computational design, creativity support, design tools, grid layouts, mixed-initiative, optimisation},
@@ -2792,23 +2720,34 @@ year = {2003},
 isbn = {1581137095},
 publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
-url = {https://doi.org/10.1145/1201775.882353},
 doi = {10.1145/1201775.882353},
 abstract = {Grid-based page designs are ubiquitous in commercially printed publications, such as newspapers and magazines. Yet, to date, no one has invented a good way to easily and automatically adapt such designs to arbitrarily-sized electronic displays. The difficulty of generalizing grid-based designs explains the generally inferior nature of on-screen layouts when compared to their printed counterparts, and is arguably one of the greatest remaining impediments to creating on-line reading experiences that rival those of ink on paper. In this work, we present a new approach to adaptive grid-based document layout, which attempts to bridge this gap. In our approach, an adaptive layout style is encoded as a set of grid-based templates that know how to adapt to a range of page sizes and other viewing conditions. These templates include various types of layout elements (such as text, figures, etc.) and define, through constraint-based relationships, just how these elements are to be laid out together as a function of both the properties of the content itself, such as a figure's size and aspect ratio, and the properties of the viewing conditions under which the content is being displayed. We describe an XML-based representation for our templates and content, which maintains a clean separation between the two. We also describe the various parts of our research prototype system: a layout engine for formatting the page; a paginator for determining a globally optimal allocation of content amongst the pages, as well as an optimal pairing of templates with content; and a graphical user interface for interactively creating adaptive templates. We also provide numerous examples demonstrating the capabilities of this prototype, including this paper, itself, which has been laid out with our system.},
-booktitle = {ACM SIGGRAPH 2003 Papers},
+booktitle = {{ACM} {SIGGRAPH} 2003 Papers},
 pages = {838–847},
 numpages = {10},
 keywords = {CSS, HTML, PDF, XML, XSL, adaptive layout, constraints, dynamic programming, pagination, templates},
 location = {San Diego, California},
 series = {SIGGRAPH '03}
 }
+
 @inproceedings{Strecker2009AutomaticLOF,
-  title={Automatic Layouting of Personalized Newspaper Pages},
-  author={Thomas Strecker and Leonhard Hennig},
-  booktitle={unknown},
-  year={2009},
-  url={https://doi.org/10.1007/978-3-642-00142-0\_76}
+author="Strecker, Thomas
+and Hennig, Leonhard",
+editor="Fleischmann, Bernhard
+and Borgwardt, Karl-Heinz
+and Klein, Robert
+and Tuma, Axel",
+title="Automatic Layouting of Personalized Newspaper Pages",
+booktitle="Operations Research Proceedings 2008",
+year="2009",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="469--474",
+abstract="Layouting items in a 2D-constrained container for maximizing container value and minimizing wasted space is a 2D Cutting and Packing (C{\&}P) problem. We consider this task in the context of layouting news articles on xed-size pages in a system for delivering personalized newspapers. We propose a grid-based page structure where articles can be laid out in different variants for increased exibility. In addition, we have developed a fitness function integrating aesthetic and relevance criteria for computing the value of a solution. We evaluate our approach using well-known layouting heuristics. Our results show that with the more complex fitness function only advanced C{\&}P algorithms obtain nearly-optimal solutions, while the basic algorithms underperform",
+isbn="978-3-642-00142-0"
 }
+
+
 
 @article{Oliveira2009TwoAFE,
   title={Two algorithms for automatic page layout and possible applications},
@@ -2827,9 +2766,7 @@ volume = {3},
 number = {4},
 pages = {257-271},
 year = {1999},
-month = {11},
 doi = {10.1109/4235.797969},
-url = {https://dl.acm.org/doi/10.1109/4235.797969},
 author = {Zitzler, Eckart and Thiele, Lothar}
 }
 
@@ -2841,14 +2778,12 @@ number = {3},
 pages = {411-440},
 year = {2018},
 doi = {10.1162/evco_a_00226},
-url = {https://doi.org/10.1162/evco_a_00226},
 author = {Ishibuchi, Hisao and Imada, Ryo and Setoguchi, Yu and Nojima, Yusuke}
 }
 
 @article{wang-2017,
 author = {Wang, Handing and Olhofer, Markus and Jin, Yaochu},
 year = {2017},
-month = {08},
 pages = {233-245},
 title = {A mini-review on preference modeling and articulation in multi-objective optimization: current status and challenges},
 volume = {3},
@@ -2864,8 +2799,7 @@ number = {5},
 pages = {912-942},
 year = {2012},
 issn = {0898-1221},
-doi = {https://doi.org/10.1016/j.camwa.2011.11.057},
-url = {https://www.sciencedirect.com/science/article/pii/S0898122111010406},
+doi = {10.1016/j.camwa.2011.11.057},
 author = {G. Chiandussi and M. Codegone and S. Ferrero and F.E. Varesio},
 keywords = {Multi-objective optimization, Pareto front, Method effectiveness, Finite element method, Structural engineering},
 abstract = {Computational models describing the behavior of complex physical systems are often used in the engineering design field to identify better or optimal solutions with respect to previously defined performance criteria. Multi-objective optimization problems arise and the set of optimal compromise solutions (Pareto front) has to be identified by an effective and complete search procedure in order to let the decision maker, the designer, to carry out the best choice. Four multi-objective optimization techniques are analyzed by describing their formulation, advantages and disadvantages. The effectiveness of the selected techniques for engineering design purposes is verified by comparing the results obtained by solving a few benchmarks and a real structural engineering problem concerning an engine bracket of a car.}
@@ -2877,14 +2811,11 @@ author = {Pappas, Iosif and Avraamidou, Styliani and Katz, Justin and Burnak, Ba
 doi = {10.1021/acs.iecr.1c01175},
 number = {23},
 volume = {60},
-month = jun,
 year = {2021},
 journal = {Industrial \& Engineering Chemistry Research},
 issn = {0888-5885},
 pages = {8493--8503},
-abstract = {Industrial process systems need to be optimized, simultaneously satisfying financial, quality and safety criteria. To meet all those potentially conflicting optimization objectives, multiobjective optimization formulations can be used to derive optimal trade-off solutions. In this work, we present a framework that provides the exact Pareto front of multiobjective mixed-integer linear optimization problems through multiparametric programming. The original multiobjective optimization program is reformulated through the well-established $\epsilon$-constraint scalarization method, in which the vector of scalarization parameters is treated as a right-hand side uncertainty for the multiparametric program. The algorithmic procedure then derives the optimal solution of the resulting multiparametric mixed-integer linear programming problem as an affine function of the $\epsilon$ parameters, which explicitly generates the Pareto front of the multiobjective problem. The solution of a numerical example is analytically presented to exhibit the steps of the approach, while its practicality is shown through a simultaneous process and product design problem case study. Finally, the computational performance is benchmarked with case studies of varying dimensionality with respect to the number of objective functions and decision variables.},
-url = {https://europepmc.org/articles/PMC8248908}
-}
+abstract = {Industrial process systems need to be optimized, simultaneously satisfying financial, quality and safety criteria. To meet all those potentially conflicting optimization objectives, multiobjective optimization formulations can be used to derive optimal trade-off solutions. In this work, we present a framework that provides the exact Pareto front of multiobjective mixed-integer linear optimization problems through multiparametric programming. The original multiobjective optimization program is reformulated through the well-established $\epsilon$-constraint scalarization method, in which the vector of scalarization parameters is treated as a right-hand side uncertainty for the multiparametric program. The algorithmic procedure then derives the optimal solution of the resulting multiparametric mixed-integer linear programming problem as an affine function of the $\epsilon$ parameters, which explicitly generates the Pareto front of the multiobjective problem. The solution of a numerical example is analytically presented to exhibit the steps of the approach, while its practicality is shown through a simultaneous process and product design problem case study. Finally, the computational performance is benchmarked with case studies of varying dimensionality with respect to the number of objective functions and decision variables.}}
 
 @article{giagkiozis-2015,
 author = {Ioannis Giagkiozis and Robin C. Purshouse and Peter J. Fleming},
@@ -2906,17 +2837,16 @@ number = {1},
 pages = {32-49},
 year = {2011},
 issn = {2210-6502},
-doi = {https://doi.org/10.1016/j.swevo.2011.03.001},
-url = {https://www.sciencedirect.com/science/article/pii/S2210650211000058},
+doi = {10.1016/j.swevo.2011.03.001},
 author = {Aimin Zhou and Bo-Yang Qu and Hui Li and Shi-Zheng Zhao and Ponnuthurai Nagaratnam Suganthan and Qingfu Zhang},
 keywords = {Multiobjective optimization, Evolutionary multiobjective optimization, Multiobjective evolutionary algorithms, Multicriteria decision making},
 abstract = {A multiobjective optimization problem involves several conflicting objectives and has a set of Pareto optimal solutions. By evolving a population of solutions, multiobjective evolutionary algorithms (MOEAs) are able to approximate the Pareto optimal set in a single run. MOEAs have attracted a lot of research effort during the last 20 years, and they are still one of the hottest research areas in the field of evolutionary computation. This paper surveys the development of MOEAs primarily during the last eight years. It covers algorithmic frameworks such as decomposition-based MOEAs (MOEA/Ds), memetic MOEAs, coevolutionary MOEAs, selection and offspring reproduction operators, MOEAs with specific search methods, MOEAs for multimodal problems, constraint handling and MOEAs, computationally expensive multiobjective optimization problems (MOPs), dynamic MOPs, noisy MOPs, combinatorial and discrete MOPs, benchmark problems, performance indicators, and applications. In addition, some future research issues are also presented.}
 }
 
-@ARTICLE{deb-2002,
+@article{deb-2002,
   author={Deb, K. and Pratap, A. and Agarwal, S. and Meyarivan, T.},
   journal={IEEE Transactions on Evolutionary Computation},
-  title={A fast and elitist multiobjective genetic algorithm: NSGA-II},
+  title={A fast and elitist multiobjective genetic algorithm: {NSGA-II}},
   year={2002},
   volume={6},
   number={2},
