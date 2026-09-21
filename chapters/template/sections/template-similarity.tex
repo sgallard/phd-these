@@ -5,16 +5,16 @@ Both the single-article retrieval setting and the page-aware scoring setting req
 
 Two complementary similarity measures are proposed to address this:
 \begin{itemize}
-    \item \textbf{Template- and distance-based Intersection over Union}, an analytical, distance-IoU~\cite{zheng_distance-iou_2019} based measure that is fast to compute and requires no training data. Being analytical, however, it remains IoU-based, and therefore the misalignment issues described above can still persist.
+    \item \textbf{Template- and distance-based Intersection-over-Union}, an analytical, distance-IoU~\cite{zheng_distance-iou_2019} based measure that is fast to compute and requires no training data. Being analytical, however, it remains IoU-based, and therefore the misalignment issues described above can still persist.
     \item \textbf{Template-based Graph Matching Network}, a learned measure that captures richer topological relationships considering inner blocks and their classes. Because it requires training data, the former similarity measure is used to weakly label the triplets on which it is trained.
 \end{itemize}
 Both measures are presented in turn below, and are later compared empirically and qualitatively.
 
-\subsection{Similarity measure 1: Template- and distance-based Intersection over Union ($\tdiou{\cdot}{\cdot}$)}
+\subsection{Similarity measure 1: Template- and distance-based Intersection-over-Union}
 
 This first similarity measure is an analytical, geometry-based metric that provides a first approximation to layout similarity, without requiring any training data.
 
-This similarity metric, coined Template- and distance-based Intersection over Union ($\tdiou{\cdot}{\cdot}$), which adapts the Distance-IoU loss~\cite{zheng_distance-iou_2019} to multi-element layouts, considers both the overlap between regions and the distance between their centers, providing a continuous measure of geometric alignment.
+This similarity metric, coined Template- and distance-based Intersection-over-Union ($\tdiou{\cdot}{\cdot}$), which adapts the Distance-IoU loss~\cite{zheng_distance-iou_2019} to multi-element layouts, considers both the overlap between regions and the distance between their centers, providing a continuous measure of geometric alignment.
 
 The computation of $\tdiou{\cdot}{\cdot}$ involves three steps: rescaling templates for fair comparison, matching elements of the same class, and summing the similarity of matched elements. Formally, for templates $\templateobj{1}$ and $\templateobj{2}$:
 \begin{equation}
@@ -37,7 +37,7 @@ The rest of this section gives more details about the different terms and notion
     \label{fig:rescaling-template}
 \end{figure}
 
-\subsubsection*{Similarity measure (\diouplusone{\templateobj{1}}{\templateobj{2}})}
+\subsubsection{Adapted distance-Intersection-over-Union (\diouplusone{\templateobj{1}}{\templateobj{2}})}
 \label{sec:tdiou:diouplusone}
 
 
@@ -48,7 +48,7 @@ Starting from a reimplementation using CGAL~\cite{cgal} of \diou{\templateobj{1}
 ensuring non-negative values. 
 
 CGAL~\cite{cgal} was adopted for this reimplementation because template blocks may be arbitrary convex or concave polygons, possibly with holes, rather than simple axis-aligned rectangles. CGAL provides robust and fast C++ implementations of the polygon intersection and union operations this requires.
-\subsubsection*{Rescaling and dimensional penalty}
+\subsubsection{Rescaling and dimensional penalty}
 \label{sec:tdiou:rescaling}
 
 Templates are rescaled for element-wise comparison. Let $\tilde{\templateobj{2}}$ denote $\templateobj{2}$ rescaled to match $\templateobj{1}$ (\figref{fig:rescaling-template}). The penalty factor $C_S$ accounts for this rescaling; it reduces similarity when $\templateobj{2}$ differs substantially from $\templateobj{1}$ in area, aspect ratio, or orientation:
@@ -75,7 +75,7 @@ Each of the three factors composing $C_S$ targets a distinct source of dimension
 \end{itemize}
 Both $f_{\sigma,\gamma}$ and $g_{\sigma,\gamma}$ decay smoothly toward zero as their argument grows in magnitude, so $C_S$ approaches zero, and the overall similarity \tdiou{\templateobj{1}}{\templateobj{2}} collapses accordingly, increasing the difference between $\templateobj{1}$ and $\templateobj{2}$.
 
-\subsubsection*{Element matching and penalty}
+\subsubsection{Element matching and penalty}
 \label{sec:tdiou:matching}
 Elements $\zblock{1}{j} \in \templateobj{1}$ and $\zblockrescaled{2}{k} \in \tilde{\templateobj{2}}$ are matched based on $\diouplusone{\templateobj{1}}{\templateobj{2}}$ similarity and class correspondence, formulated as an assignment problem solvable with the Hungarian algorithm~\cite{hungarian} (\figref{fig:matching-template}). The set of matched pairs is $M$. Unmatched elements are penalized via:
 \[
@@ -90,7 +90,7 @@ This ensures \tdiou{\templateobj{1}}{\templateobj{2}} accounts for both matched 
     \label{fig:matching-template}
 \end{figure}
 
-\subsection{Similarity measure 2: Template-based Graph Matching Network ($\gmn{\cdot}{\cdot}$)}
+\subsection{Similarity measure 2: Template-based Graph Matching Network}
 
 This second similarity measure is a learned measure that captures richer topological relationships considering inner blocks and their classes, as a way to prevent the misalignment issues of IoU-based measures.
 
@@ -101,15 +101,15 @@ The use of the $\gmn{\cdot}{\cdot}$ metric varies depending on the application; 
 
 \subsection{Empirical comparison}
 
-\subsubsection*{Motivation}
+\subsubsection{Motivation}
 
 To assess which similarity measure better reflects human perception, an online study was conducted. Each trial consisted of: (1) a reference template $\templateobj{R}$ shown for 2 seconds, followed by (2) a selection scene where participants chose the template most similar to $\templateobj{R}$ between two options $\templateobj{O_1}$ and $\templateobj{O_2}$. This design specifically targets immediate perceptual judgment rather than deliberate analysis, since participants are given only a few seconds to decide.
 
-\subsubsection*{Research questions and hypothesis}
+\subsubsection{Research questions and hypothesis}
 
 This study tests whether $\tdiou{\cdot}{\cdot}$ or $\gmn{\cdot}{\cdot}$ better aligns with immediate human judgments of layout similarity.
 
-\subsubsection*{Experimental design}
+\subsubsection{Experimental design}
 
 \paragraph{Clustering using both methods}
 
@@ -130,11 +130,11 @@ Each trial involved a triplet $(R,O_1,O_2)$. $\templateobj{O_1}$ was chosen as a
 \paragraph{Experimental protocol}
 Participants completed a short questionnaire on reading habits, followed by four blocks of 40 trials each, and a post-experiment questionnaire on their experience. Responses were collected via \emph{Labvanced}~\cite{labvanced}, yielding $42 \times 4$ votes per triplet.
 
-\subsubsection*{Population}
+\subsubsection{Population}
 
 The study recruited $42$ anonymous participants via \emph{Prolific}~\cite{prolific}.
 
-\subsubsection*{Results}
+\subsubsection{Results}
 Across all trials and participants, votes were evenly split between $O_1$ and $O_2$, resulting in a global 50:50 ratio between both methods. This indicates that neither similarity measure dominates when results are aggregated.
 
 However, a finer-grained analysis at the triplet level reveals a more structured pattern. \figref{fig:online_experiment}(a) shows the percentage of $O_2$ (GMN) selections for each triplet, along with the interquartile range defined by Q1 and Q3 (25\%--75\% of responses). Only six triplets ($15\%$) fall (in average) within the 40\%--60\% range, indicating near-indifference between the two measures. In contrast, most triplets exhibit a clear preference, as reflected by asymmetric interquartile ranges.

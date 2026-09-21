@@ -10,18 +10,18 @@ This step means resolving, within that budget, the two challenges identified in 
 \subsection{Layout Generation}
 \label{sec:sota-layout-synthesis}
 
-\subsubsection*{Deep generative methods}
+\subsubsection{Deep generative methods}
 Automated layout generation has recently been framed within the broader context of Artificial Intelligence Generated Content (AIGC), where a layout is treated as one deliverable among several kinds of content a generative system may produce~\cite{shi-2023}. Across this literature, a layout is abstracted uniformly as a set of graphical primitives, each parameterized by a bounding box and a category label $(c, x, y, w, h)$, regardless of whether the target domain is a printed document, a mobile interface, or a natural scene. Four families of deep generative architecture have been applied to this representation: autoregressive models, which cast layout generation as a sequence of conditional token predictions, later challenged by non-autoregressive alternatives that predict and refine every attribute in parallel instead (LayoutTransformer~\cite{gupta_layouttransformer_2021}; BLT~\cite{kong-2022}); variational autoencoders, which learn a continuous latent space over complete layouts, often paired with a graph neural network to condition generation on structural relations between elements (Neural Design Network~\cite{Lee-2020}); generative adversarial networks, in which a generator and a discriminator are trained jointly, whether searched directly in latent space under explicit constraints (CLG-LO~\cite{kikuchi-2021}) or conditioned on the content to be laid out (ContentGAN~\cite{zheng-2019}); and, more recently, flow-based and diffusion models, which generate and edit layouts through iterative denoising or bijective mappings~\cite{shi-2023}.
 
 Most of these architectures share the underlying representation of a layout element as a bounding box tied to a category label, $(c, x, y, w, h)$, which is essentially the representation this thesis also adopts for an article placed on a page. The task posed over that shared representation, however, differs fundamentally: every system reviewed above generates the geometry itself, sampling or decoding a plausible arrangement of boxes from a learned distribution, whereas this thesis never synthesizes new boxes. Instead, within a single evolutionary search, it jointly assigns one pre-existing template, drawn from a fixed, though extensive, catalog, to each article, and packs the resulting fixed-size blocks onto the canvas, treating several explicit, conflicting editorial criteria as a Pareto trade-off~\cite{pareto} rather than folding them into a single learned or latent loss.
 
-\subsubsection*{Rule and optimization-based methods}
+\subsubsection{Rule and optimization-based methods}
 
 A different line of work treats layout as an explicit optimization or constraint-satisfaction problem instead of something to be learned. GRIDS~\cite{Dayama-2020} formulates interactive grid-based interface layout as a mixed-integer linear program, encoding alignment, packing, and overall shape directly as objectives and constraints, and additionally samples diverse near-optimal solutions to that same program to offer a designer several alternatives rather than a single one. Jacobs et al.~\cite{jacobs-2003} address adaptive document layout with a library of hand-built, page-level grid templates, pairing each page template with a batch of content and separately allocating that content across pages through constraint solving. Note that the template here denotes an entire page rather than a single article, and pairing and allocation are resolved as two distinct steps rather than one joint decision, which sets this system apart from the per-article, jointly evolved assignment used in this thesis despite the superficial similarity of the term. More recently, LayoutRectifier~\cite{shen-2025} applies optimization as a post-process, snapping elements back onto a grid and correcting overlaps left behind by deep generative layout models.
 
 Across these systems, geometric and perceptual criteria are formalized precisely, but each one is resolved either as a single scalarized objective or as a fixed hierarchy of constraints over a page-level unit, never as a trade-off among several conflicting editorial criteria, and never as a joint search deciding which template to assign to an article together with where to place it.
 
-\subsubsection*{Newspaper-specific methods}
+\subsubsection{Newspaper-specific methods}
 
 Most literature specifically targeting newspaper pages addresses segmentation of historical print for OCR rather than the generation of new layouts, which is itself telling of how little this exact problem has been studied. The few exceptions~\cite{Strecker2009AutomaticLOF, Oliveira2009TwoAFE} construct a page directly from fixed procedural rules, predating the many-objective evolutionary machinery this thesis relies on: there is no catalog of templates to select from and no search over trade-offs, since a single layout is produced deterministically and there is no objective function to trade off in the first place.
 
@@ -33,7 +33,7 @@ What this work does instead is to jointly assign one pre-existing template, draw
 \subsection{Multi-objective optimization}
 \label{sec:sota-moo}
 
-\subsubsection*{Multi-objective problems and Pareto optimality}
+\subsubsection{Multi-objective problems and Pareto optimality}
 \label{sec:sota-pareto}
 
 A multi-objective optimization problem (MOP) is defined as the simultaneous minimization, or maximization, of a vector of $m \geq 2$ objective functions, $\mathbf{F}(\mathbf{x}) = (f_1(\mathbf{x}), \dots, f_m(\mathbf{x}))$, over a feasible decision space $\mathbf{x} \in \Omega$, where $\Omega$ is delimited by the problem constraints~\cite{pareto}. The map $\mathbf{F}$ sends each decision vector in $\Omega$ to a point in the objective space, and the two spaces are generally heterogeneous: a change in $\mathbf{x}$ does not translate into a proportionate change across every $f_i$. When $\Omega$ is a discrete, combinatorial set rather than a continuous region of $\mathbb{R}^n$, the problem is termed a multi-objective combinatorial optimization problem (MOCOP); this is the class instantiated in \secref{sec:objective_formulation}, where $\Omega$ ranges over feasible template and position assignments and $\mathbf{F} = \objvector{\solution}$.
@@ -96,7 +96,7 @@ The Pareto front is nonetheless a well-defined mathematical object, and for rest
     \label{fig:sota-pareto-front}
 \end{figure}
 
-\subsubsection*{NSGA-II}
+\subsubsection{NSGA-II}
 \label{sec:sota-emo}
 
 Population-based evolutionary methods are naturally suited to multi-objective search: rather than converging toward a single point, a whole population of candidate solutions evolves in parallel, so that a single run can approximate the entire Pareto front instead of one trade-off at a time. Despite their algorithmic diversity, such methods share a common iterative skeleton: a population is initialized over $\Omega$, each member is evaluated through $\mathbf{F}(\mathbf{x})$, fitness is assigned according to that evaluation, variation operators generate offspring, and a selection step forms the next generation, repeating until a stopping criterion is reached~\cite{giagkiozis-2015, zhou-2011}. What distinguishes one algorithm from another is precisely how fitness assignment and selection are extended to a vector of conflicting objectives rather than a single scalar.
@@ -121,7 +121,7 @@ Together, rank and crowding distance define the crowded-comparison operator $\pr
 
 NSGA-III, presented next, extends this same mechanism to remain effective beyond three objectives.
 
-\subsubsection*{NSGA-III}
+\subsubsection{NSGA-III}
 \label{sec:sota-nsga3}
 
 Beyond three objectives, non-dominated sorting alone stops providing an effective selection procedure: as the number of objectives grows, the fraction of mutually non-dominated solutions in a random population grows sharply, so that most or all of a generation ends up in the first front $F_1$, leaving the crowded-comparison operator with little left to discriminate on. This regime, conventionally termed many-objective optimization when the number of objectives ranges from about four to fifteen objectives, is exactly the one Chapter~\ref{chapter:pagegen} operates in, since it evaluates four objectives simultaneously~\cite{nsga-iii-pt1}. The crowding distance compounds the problem rather than compensating for it: estimating neighbor density becomes both more expensive and less meaningful as dimensionality increases, since most candidate solutions end up roughly as sparse as one another in a high-dimensional objective space~\cite{nsga-iii-pt1}.
@@ -200,7 +200,7 @@ This preserves diversity by spreading the population evenly across reference dir
 
 
 
-\subsubsection*{Preference-guided optimization: R-NSGA-III}
+\subsubsection{Preference-guided optimization: R-NSGA-III}
 \label{sec:sota-rnsga3}
 
 Even when non-dominance and diversity are both well preserved, the resulting Pareto front can be too large or too spread out for a decision maker to review in practice, especially as the number of objectives grows. That is the motivation to inject preference information, leting the search concentrate on the regions of the front that actually matter to the decision maker, rather than spending the same effort everywhere. 
@@ -278,7 +278,7 @@ This a priori formulation is precisely what makes aspiration points the natural 
 \subsection{Two-dimensional packing}
 \label{sec:sota-packing}
 
-\subsubsection*{Problem taxonomy}
+\subsubsection{Problem taxonomy}
 \label{sec:sota-packing-taxonomy}
 
 The problem addressed by this thesis, packing a heterogeneous set of rectangular articles onto a page, is a two-dimensional, rectangular packing problem, consisting on two basic variants which are examined following the terminology established by Lodi et al.~\cite{lodi-packing-survey}:
@@ -293,14 +293,14 @@ Beyond the objective, two-dimensional packing problems are further classified by
 
 The problem addressed by this thesis departs from both 2BP and 2SP on the container side, since it packs articles onto a single page of fixed width and fixed, rather than unbounded height, so that neither the number of containers nor a container dimension is the quantity minimized; the packing decision instead consider page ocupation trade-off against other editorial criteria. Orientation, in turn, is fixed throughout: every article is printed upright, at the column width set by the page grid, and is never rotated. What sets the item side of the problem apart, however, is that an article does not arrive with a single, predetermined shape: the template assignment decision lets each article be packed under any one of several candidate templates, each with its own width and height, so that choosing which footprint to pack an item under is itself part of the decision, not a fixed input. This couples the two-dimensional, single-container packing problem examined above with a multiple-choice selection over item sizes, in the sense already formalized for the one-dimensional case by multiple-choice vector bin packing~\cite{pattshamir-multichoice-vbp}. It is precisely this coupling, a discrete choice of footprint decided jointly with a continuous placement, that sets the problem addressed by this thesis apart from the canonical formulations reviewed above.
 
-\subsubsection*{Computational complexity}
+\subsubsection{Computational complexity}
 \label{sec:sota-packing-complexity}
 
 Both 2BP and 2SP are strongly NP-hard~\cite{lodi-packing-survey}. This intractability is precisely what substantiates the challenge of combinatorial complexity raised for the page generation problem in \secref{sec:multi-objective-page-generation}: producing a complete page requires solving a two-dimensional packing problem that is already hard on its own.
 
 The problem addressed by this thesis compounds that hardness further, since the shape of an item is not a fixed input either: assigning a template to an article is decided jointly with its placement. A standard 2BP or 2SP instance already ranges over every placement of $n$ items of given, fixed dimensions; here, each of the $n$ articles additionally ranges over its own set of candidate templates, so that solving the page generation problem amounts to solving a two-dimensional packing instance selected jointly with the placement itself, out of an exponentially large family of such instances.
 
-\subsubsection*{Constructive heuristics}
+\subsubsection{Constructive heuristics}
 \label{sec:sota-packing-heuristics}
 
 Given the intractability established above, constructive heuristics that build a feasible packing directly, in polynomial time and at a bounded distance from the optimum, are the practical recourse most of the literature relies on~\cite{lodi-packing-survey}. 
@@ -316,7 +316,7 @@ The extreme-points rule generalizes this same guaranteed-free-surface idea from 
 Extreme points also lose no optimal solution when used as the only candidate positions, since there always exists an optimal packing in which every item is pushed as far down and to the left as its already-placed neighbors allow~\cite{lodi-packing-survey}; it is this completeness, and not merely their practical performance, that this thesis relies on, repurposing extreme points as the candidate-generation mechanism for an exact backtracking search rather than a purely greedy placement.
 
 
-\subsubsection*{Exact methods and their regime of viability}
+\subsubsection{Exact methods and their regime of viability}
 \label{sec:sota-packing-exact}
 
 Exact resolution methods also exist for both 2BP and 2SP, typically as branch-and-bound schemes that place items one at a time and, at each step, branch over a bounded number of candidate positions determined by the items already placed~\cite{lodi-packing-survey}. Because that bound grows with the number of items already in the instance, so does the size of the resulting search tree, which is why exact enumeration remains practical only for a comparatively small number of items~\cite{lodi-packing-survey}.

@@ -5,7 +5,7 @@
 This chapter formalizes, in precise mathematical terms, the page, web article, template, and print article entities that \melody already manipulates natively as a feature of its production system (\secref{sec:basic-elements}). This formalization underlies every contribution developed in the remainder of this thesis.
 
 \section{Core concepts and representations}
-\subsection{Newspaper page ($\page$)}.
+\subsection{Newspaper page ($\page$)}
 \label{sec:page-definition}
 
 A page $\page$  defines the empty canvas and its physical boundaries. A newspaper page is not laid out freely: it follows an underlying column grid, a fixed set of vertical bands of constant width ($\colsize$) separated by narrow blank strips called gutters ($\gutter$), to which every article and template must align (\figref{fig:page}). Articles may span one or several adjacent columns, but their horizontal boundaries always coincide with grid lines, ensuring visual alignment across the page regardless of how many articles it contains. Formally, $\page$ is represented as a tuple containing the structural dimensions:
@@ -21,7 +21,7 @@ where:
     \item $\colsize \in \mathbb{R}^+$ represents the fixed width of each column in the page layout. 
     \item $\gutter \in \mathbb{R}^+$ denotes the spacing between columns. 
 \end{itemize}
-Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$.
+Consequently, the effective width (\Weff) and height (\Heff) of the page canvas are defined as $\Weff = \Wpage - \mleft - \mright$ and $\Heff = \Hpage - \mtop - \mbottom$. Note that $\colsize$ and $\gutter$ are not subtracted from $\Weff$, since they partition the effective width itself rather than occupying space outside of it.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\widthForOneImage]{img/page-with-notation.pdf}
@@ -53,7 +53,7 @@ where:
 
 \subsection{Template ($\templateobj{j}$)}
 \label{sec:template}
-Formally, an article template $\templateobj{j} \in \templatecatalog$ (\figref{fig:template}), where $\templatecatalog$ is a set of templates, is characterized as follows:
+Formally, an article template $\templateobj{j} \in \templatecatalog$ (\figref{fig:template}), where $\templatecatalog$ is a set of templates, is a rectangular region characterized as follows:
 
 \begin{equation}
 \templateobj{j} = \langle \Wtemp{j}, \Htemp{j}, \zoning{j}, \capacity{j} \rangle,

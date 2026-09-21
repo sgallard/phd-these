@@ -27,8 +27,6 @@ Between the two variants, \methodName\ is the one best suited for production use
 
 In summary, \methodNameGeneral\ resolves the central objective of this thesis: automating the \melody web-to-print workflow, generating a complete print page from web articles without manual template assignment or placement (\secref{sec:multi-objective-page-generation}). It achieves this by directly consuming the page-aware compatibility scores produced by \neuralmethod\ (\secref{sec:gwes}) as its editorial-style objective $\objtwo$, guiding the evolutionary search toward historically coherent template assignments. 
 
-Additionally, the same underlying evolutionary re-layouting principle (positioning article blocks drawn from a structural catalog, preserving a two dimensional layout) was first explored in an earlier, single-objective form~\citemine{gallardo}, and is what makes the large-print generation studied in \secref{sec:magnification-motivation} computationally feasible.
-
 Two directions remain open for extending this method. 
 First, incorporating advertisement placement, already discussed as an architectural extension in \secref{sec:pagegen-discussion}. 
 Second, and more substantially, scaling beyond single-page composition toward full-edition generation, jointly sequencing and assigning articles across the multiple pages of an issue rather than treating each page in isolation. This latter direction is revisited in the general conclusion of this thesis.

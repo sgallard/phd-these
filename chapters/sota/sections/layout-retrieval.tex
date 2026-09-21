@@ -17,7 +17,7 @@ Historically, Information Retrieval (IR) treated documents as a sequence of bloc
 Unlike text-based IR, Document Image Retrieval (DIR) addresses the retrieval of entire page layouts based purely on their geometric and spatial arrangement, independently of textual content~\cite{yan-geometric-2013, vanbeusekom-distance-2006}. This is particularly relevant when keyword search falls short, whether because of language barriers, the absence of explicit text, or because the intent of the query relies on visual memory of the spatial distribution of the layout~\cite{yan-geometric-2013}, and recent literature confirms that pairwise comparison of layout geometric characteristics remains an effective mechanism to support this kind of retrieval~\cite{jaha-comparative-2024}.
 
 \subsection{Measuring pairwise layout similarity}
-\subsubsection*{Intersection-over-Union and its distance-based extensions}
+\subsubsection{Intersection-over-Union and its distance-based extensions}
 \label{sec:sota-geometric-similarity}
 
 Once two layouts are represented as sets of labeled blocks, comparing them geometrically first requires a measure of overlap between individual blocks. The Intersection-over-Union ratio, also known as the Jaccard index~\cite{jaccard2021}, is the default choice: it is symmetric, bounded and invariant to block size, computed as the area of overlap divided by the area of union. Comparing complete layouts, however, means aggregating many such pairwise block comparisons rather than a single one, and the ratio inherits two limitations from its block-level definition that carry over unchanged: (1) it is sensitive to small positional misalignments, penalizing near-identical placements as if they belonged to unrelated layouts, and (2) it saturates at zero whenever two blocks do not overlap at all, which no longer distinguishes a near-miss from a placement in opposite corners of the page and offers no usable gradient to an optimization procedure, for example. 
@@ -28,7 +28,7 @@ Extending any of these block-level measures to entire layouts additionally requi
 
 Even under an optimal assignment, however, the resulting layout-level score remains a sum of independently computed block-level comparisons: it reflects how well each matched pair of blocks overlaps, but not how the matched elements relate to one another. This motivates the usage of graph-structures to model layouts.
 
-\subsubsection*{Graph matching networks to measure similarity between layouts}
+\subsubsection{Graph matching networks to measure similarity between layouts}
 \label{sec:sota-gmn}
 
 Layout templates are complex structures defined by the relative context between their inner elements, such as distances and relative orientations between images, captions and titles, rather than by absolute coordinates. Their topology is therefore best captured through graph representations, in which nodes denote content blocks and edges denote spatial or hierarchical relationships. Graph Neural Networks (GNNs) have emerged as the standard framework for encoding this kind of relational data, and Graph Matching Networks~\cite{li-gmn-2019} in particular replace independently computed graph embeddings with a joint, cross-graph reasoning mechanism specifically suited to comparing near-identical structures.
@@ -87,7 +87,7 @@ Given the advantages of LayoutGMN as a deep graph-based method to compute simila
 \subsection{Beyond pairwise similarity: diversity and novelty in retrieval}
 
 
-\subsubsection*{Diversity and Novelty}
+\subsubsection{Diversity and novelty}
 \label{sec:sota-diversity}
 
 The similarity measures reviewed above solve a pairwise problem, namely how similar two layouts are to one another. Retrieval instead compiles a small candidate set from which an editor selects the layout used for one article. The usefulness of that set depends on how much its members differ from each other, in addition to how closely each one matches the query. Constructing such a set therefore raises two concerns distinct from pairwise similarity: the diversity of the retrieved candidates, and their novelty, understood as exposure to long-tail, underused designs. These are general concepts in the Information Retrieval and Recommender Systems literature, not specific to layout retrieval.
@@ -98,7 +98,7 @@ While the conceptualization of diversity varies across the literature~\cite{vrij
 \paragraph*{Novelty}
 Novelty, in contrast, aims to avoid redundancy by exposing users to new, less obvious, or \emph{long-tail} items~\cite{clarke-2008, wu-survey-2022}. This notion is grounded in how item usage is typically distributed: usage in such catalogs follows a power-law distribution, in which a ``short-head'' subset dominates interactions while a ``long-tail'' remains underutilized, a pattern often referred to as the ``super-star'' economy in recommender systems~\cite{wu-survey-2022} and documented both in the deep learning domain~\cite{longtail-deep} and in the recommender systems literature~\cite{longtail}. This imbalance produces a severe popularity bias and a cold-start problem for tail items, limiting the effective variety of the system and obscuring valuable but unpopular design options~\cite{longtail}, which novelty-promoting mechanisms aim to surface while ensuring fair catalogue exposure~\cite{wu-survey-2022}. A common methodology involves clustering-based strategies: Park and Tuzhilin~\cite{long-tail-ei-tc} employed item grouping to improve tail visibility, while more recent adaptive approaches refine this method by defining head-tail boundaries dynamically from real-time data~\cite{longtail-clustering-based}. Graph-based~\cite{graphmethod-1, graphmethod-2, graphmethod-3} and deep learning~\cite{dl-1, dl-2, dl-3, dl-4} formulations of the same problem have also been proposed. Applied to a catalog of structured layouts, the same short-head pattern means that a small subset of designs dominates historical usage, leaving structurally distinct templates effectively invisible to any retrieval mechanism that only reinforces past popularity.
 
-\subsubsection*{A specific algorithm for diversity-based retrieval: ClusDiv}
+\subsubsection{A specific algorithm for diversity-based retrieval: ClusDiv}
 \label{sec:sota-clusdiv}
 
 

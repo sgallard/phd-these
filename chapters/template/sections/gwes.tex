@@ -24,7 +24,7 @@ Given this formalism, the desired output is a compatibility matrix $\mathbf{P} \
 
 \neuralmethod\ addresses this problem by combining a Transformer-based encoder, which scores contextual editorial suitability, with the topology-aware similarity metric $\gmn{\cdot}{\cdot}$, which corrects that score for long-tail bias.
 
-\subsubsection{Transformer-based Editorial Intent Module}
+\subsubsection{Transformer Encoder module}
 \label{sec:transformer_module}
 
 The primary role of the Transformer-based encoder is to operate as a contextual network that scores the appropriateness of each template $\templatesel{i}$ given the specific metadata of each article $\articleobj{i}$ in the set of placed articles $\articleset$ (of size $\numarticles$) and their placement on the page canvas $\page$. Unlike static classification networks, this encoder evaluates the entire page context simultaneously, capturing how the spatial configuration of one article influences the editorial validity of its neighbors.
@@ -94,14 +94,14 @@ This formulation mathematically expresses the probability ``smoothing'' mechanis
 
 In this section the predictive capabilities and structural behavior of the components underlying the \neuralmethod\ metric are verified. Beyond raw predictive accuracy, this evaluation specifically targets the shape of the resulting probability landscape over template alternatives, since it is this landscape, not a single top prediction, that the evolutionary operators of Chapter~\ref{chapter:pagegen} explore across generations.
 
-\subsubsection{Implementation and Hardware Details}
+\subsubsection{Implementation and hardware details}
 \label{sec:gwes-implementation}
 
 All deep learning pipelines are powered by the \textit{PyTorch}~\cite{pytorch} ecosystem. This neural framework encompasses the dynamic sequence-level Transformer encoder responsible for predicting historical editorial intent, alongside the implementation of the Layout Graph Matching Network (GMN) utilized to calculate the pre-computed topological affinity matrix~$\gmnMatrix$.
 
 The  training phase for the Transformer Encoder was conducted on a dedicated high-performance GPU computing cluster node, powered by an Intel Xeon Silver 4110 processor, 96~GB of system RAM, and an NVIDIA Tesla T4 GPU with 15~GB of dedicated video memory (VRAM).
 
-\subsubsection{Page Layout and Template Catalog Dataset}
+\subsubsection{Page layout and template catalog dataset}
 
 To evaluate the architectural robustness and industrial applicability of the proposed framework, empirical validations were conducted using the available \laprovence archive (\secref{sec:laprovence}). The historical page dataset  provides the required historical context to train the Transformer Encoder module of \neuralmethod. Concurrently, the static template catalog~$\templatecatalog$ serves as the underlying structural dataset utilized to compute the $\gmnMatrix$ matrix.
 
@@ -122,7 +122,7 @@ This reuse is justified by construction: since $\gmn{\cdot}{\cdot}$ is trained t
 This calculation outputs a matrix with dimensions $\gmnMatrix = [s_{ij}] \in \mathbb{R}^{345 \times 345}$. Consequently, the training validation and convergence analyses presented in the following sections focus exclusively on the Transformer Encoder architecture. $\gmnMatrix$\  assumes a prominent role  within the evaluation of the unified \neuralmethod\ metric.
 
 
-\subsubsection{Transformer Encoder Training Hyperparameters}
+\subsubsection{Transformer Encoder training hyperparameters}
 \label{subsec:hyperparameter_calibration_transformer}
 
 The operational parameters governing the neural training of the Transformer Encoder in \neuralmethod\  were set through extensive empirical pilot studies over the specified dataset. 
@@ -151,12 +151,12 @@ Category & Symbol & Parameter Description & Value \\
 \label{tab:algorithmic_parameters_transformer}
 \end{table}
 
-\subsubsection{Dataset Split}
+\subsubsection{Dataset split}
 The filtered repository of $4,449$ usable pages was passed through a multi-label denoising and stratification pipeline. A global frequency census was executed across all pages to track template occurrences. To ensure that the subsequent split remains mathematically viable for stratified multi-label partitioning, a minimum threshold of three global samples per template class was enforced, guaranteeing adequate representation across the training, validation, and testing folds. Consequently, $67$ pages (representing $1.51\%$ of the corpus) containing orphan or ultra-rare template configurations were removed. 
 
 The remaining $4,382$ production pages were partitioned using an iterative multi-label stratification algorithm with the split ratio indicated in Table~\ref{tab:algorithmic_parameters}. 
 
-\subsubsection{Training Convergence}
+\subsubsection{Training convergence}
 
 The model was trained using cross-entropy loss over a maximum of $3,000$ epochs with an early stopping threshold of $40$ epochs. 
 
@@ -172,7 +172,7 @@ As illustrated in \figref{fig:loss-curves}, the  oscillations observed in the tr
 The stabilization of the validation loss at approximately $3.1$ reflects the intrinsic ambiguity of selecting a single exact template from a domain of $\catalogsize = 345$ choices, where multiple configurations can be equally appropriate for the same content. Because cross-entropy heavily penalizes this, the validation loss serves primarily as an internal training convergence guide. Consequently, the true evaluation of the network's performance shifts to the Top-$K$ accuracy rates over the test set and subsequent ablations.
 
 
-\subsubsection{Predictive Top-K Performance and Feature Ablation}
+\subsubsection{Predictive top-K performance and feature ablation}
 
 The dataset split process yielded a definitive test set consisting of $232$ high-fidelity production pages encompassing $587$ individual news articles.
 
@@ -236,7 +236,7 @@ Conversely, the unified \neuralmethod\ metric leverages the graph-matching prior
 \subsection{Discussion}
 \label{sec:gwes-discussion}
 
-\subsubsection*{Historical Data Dependency}
+\subsubsection**{Historical Data Dependency}
 
 Unlike $\gmnNetwork$, which only requires a structural template catalog and transfers directly across catalogs without retraining, the Transformer encoder of \neuralmethod\ requires a substantial, venue-specific historical page corpus to learn editorial intent. This constitutes a deployment bottleneck: press groups with a limited digital archive of past layouts, or without a systematic history of page composition, may not have sufficient historical data to train this component reliably, restricting \neuralmethod\ to venues with an established production history.
 
