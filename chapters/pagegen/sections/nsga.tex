@@ -340,7 +340,7 @@ The crossover operator applies two concurrent strategies, to account for the dif
     \draw[cutline] ([xshift=-\pgflinewidth]p1-5.north west) -- ([xshift=-\pgflinewidth]o2-5.south west);
 
     \end{tikzpicture}
-    \caption{Two-point crossover applied to a chromosome segment of length $\numarticles=6$ (e.g.\ $\chromosomeTemplateSegment$ or $\chromosomeElasticitySegment$). Two cut points (dashed lines) split Parent~1 (white) and Parent~2 (gray) into three blocks. Offspring~1 and Offspring~2 are obtained by exchanging the central block between the two parents, each box keeping the shade of the parent it was inherited from.}
+    \caption{Two-point crossover applied to a chromosome segment of length $\numarticles=6$ (e.g., \ $\chromosomeTemplateSegment$ or $\chromosomeElasticitySegment$). Two cut points (dashed lines) split Parent~1 (white) and Parent~2 (gray) into three blocks. Offspring~1 and Offspring~2 are obtained by exchanging the central block between the two parents, each box keeping the shade of the parent it was inherited from.}
     \label{fig:two_point_crossover}
 \end{figure}
 \begin{figure}[htbp]
@@ -414,7 +414,7 @@ The crossover operator applies two concurrent strategies, to account for the dif
     \draw[cutline] ([xshift=-\pgflinewidth]pa-5.north west) -- ([xshift=-\pgflinewidth]o2-5.south west);
 
     \end{tikzpicture}
-    \caption{Order Crossover (OX1) applied to the permutation segment $\chromosomePermutationSegment$ ($\numarticles=6$), using the same two cut points (dashed lines) as Figure~\ref{fig:two_point_crossover}. The segment between the cuts is copied into the corresponding offspring, keeping its position (bold border): Offspring~1 copies it from Parent~1 (white), Offspring~2 copies it from Parent~2 (gray). The remaining positions of each offspring are filled by scanning the \emph{other} parent cyclically, starting right after the second cut point (fill order labelled 1st-4th), and skipping any value already present in the copied segment so that the resulting sequence remains a valid permutation.}
+    \caption{Order Crossover (OX1) applied to the permutation segment $\chromosomePermutationSegment$ ($\numarticles=6$), using the same two cut points (dashed lines) as \figref{fig:two_point_crossover}. The segment between the cuts is copied into the corresponding offspring, keeping its position (bold border): Offspring~1 copies it from Parent~1 (white), Offspring~2 copies it from Parent~2 (gray). The remaining positions of each offspring are filled by scanning the \emph{other} parent cyclically, starting right after the second cut point (fill order labelled 1st-4th), and skipping any value already present in the copied segment so that the resulting sequence remains a valid permutation.}
     \label{fig:ox1_crossover}
 \end{figure}
 

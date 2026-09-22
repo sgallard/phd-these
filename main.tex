@@ -10,7 +10,7 @@
 % Biblio pour les pages webs
 \newcites{web}{Web Pages}
 % Biblio pour mes publications
-\newcites{mine}{My Publications}
+\newcites{mine}{Scientific Production}
 
 \def\mytt#1{{\small\texttt{#1}}}
 
@@ -25,7 +25,7 @@
 \maketitle
 
 \begin{dedicace}
-  To the reader
+  To my parents
 \end{dedicace}
 
 \cleardoublepage
@@ -87,14 +87,70 @@
 \selectlanguage{english}
 \input{english.apc}
 
+\nocitemine{gallardo-recsys}
+\nocitemine{gallardo}
+\nocitemine{arlabosse-repselect}
+\nocitemine{gallardo-pagegen}
+\nocitemine{gallardo-imx}
+\nocitemine{gallardo-lowvision-2025}
+\nocitemine{gallardo-inria-chile-2024}
+\nocitemine{gallardo-pierrelaffitte-2025}
+\nocitemine{gallardo-sophiaposter-2025}
+
 \renewcommand{\bibtitle}{\bibchapter}
 \bibliographystyle{apacite}
 \bibliography{biblio}
 
-\nocitemine{gallardo-recsys}
-\renewcommand{\bibtitle}{\bibchapter}
+% Own scientific production, listed manually below by category; this pass
+% only resolves \citemine{} keys used throughout the thesis and is never
+% rendered on the page.
+
+\begingroup
+\renewcommand{\bibtitle}{}
+\fontsize{1pt}{1pt}\selectfont\color{white}
 \bibliographystylemine{apacite}
 \bibliographymine{biblio}
+\endgroup
+
+\newpage
+%\global\@intablestrue
+\gdef\chapterTitle{\MakeUppercase{Scientific Production}}
+\chapter*{Scientific Production}
+\addcontentsline{toc}{chapter}{Scientific Production}
+
+\section*{Journal Articles}
+%\addcontentsline{toc}{section}{Journal Articles}
+\begin{callout}
+S. Gallardo, B. G\'enuit, E. Castet, \& P. Kornprobst (2026). \emph{Diversity-Aware Retrieval of Structured Layout Templates via Graph-Matching Network-Based Clustering}. Submitted to \emph{IEEE Access}, under review~\citemine{gallardo-recsys}. \url{https://inria.hal.science/hal-04801949}
+
+S. Gallardo, M.~C. Riff, D. Mazauric, \& P. Kornprobst (2026). \emph{Entry-Point-Preserving Layout Optimization for Newspaper Magnification on Small Displays}. Submitted to \emph{Displays}, under review~\citemine{gallardo}. \url{https://hal.science/hal-04210840}
+
+S. Gallardo, B. G\'enuit, D. Mazauric, \& P. Kornprobst (2026). \emph{EvoPageGEN: Multi-Objective Evolutionary Layout Generation for Automated Newspaper Page Composition}. In preparation~\citemine{gallardo-pagegen}.
+\end{callout}
+
+\section*{Conference Papers}
+%\addcontentsline{toc}{section}{Conference Papers}
+\begin{callout}
+S. Gallardo, A. Calabr\`ese, H.-Y. Wu, M. Di~Meo, S. Baillif, D. Mazauric, \& P. Kornprobst (2026). \emph{Quantifying the Cost of Manual Navigation: A Comparison of Gesture-Based Magnification versus Direct Access Reading in Digital Layout-based Documents}. In \emph{Proceedings of the 2026 ACM International Conference on Interactive Media Experiences} (IMX~'26), pp.~298--315~\citemine{gallardo-imx}. \url{https://doi.org/10.1145/3788851.3805017} \awardbadge{Best Paper Honorary Mention}
+
+
+\end{callout}
+
+\section*{Invited Talks}
+%\addcontentsline{toc}{section}{Invited Talks}
+\begin{callout}
+S. Gallardo, A. Calabr\`ese, M. Di~Meo, F. Lagniez, C. Morfin-Bourlat, S. Baillif, H.-Y. Wu, D. Mazauric, \& P. Kornprobst (2025). \emph{Reading Magnified Newspapers versus Newspapers Magnification: A New Method to Address the Local/Global Navigation Problem on Digital Devices}. The 15th International Conference on Low Vision Research and Rehabilitation, Florence, Italy~\citemine{gallardo-lowvision-2025}. \url{https://inria.hal.science/hal-05444115}
+
+S. Gallardo (2024). \emph{A Clustering Based Article Template Recommendation System for Newspaper Editors}. Invited talk, Journ\'ees Scientifiques Inria Chile, Santiago, Chile~\citemine{gallardo-inria-chile-2024}.
+
+S. Gallardo, D. Mazauric, \& P. Kornprobst (2025). \emph{Rethinking Newspaper Production: Optimizing Workflows with AI}. Invited oral presentation (finalist among 11 researchers), Prix Pierre Laffitte 2025, Campus Mines Paris -- PSL, Sophia Antipolis, France~\citemine{gallardo-pierrelaffitte-2025}. \url{https://inria.hal.science/hal-05524036}
+\end{callout}
+
+\section*{Posters}
+%\addcontentsline{toc}{section}{Posters}
+\begin{callout}
+S. Gallardo, M.~C. Riff, D. Mazauric, \& P. Kornprobst (2025). \emph{Evolutionary Newspaper Magnification with Preserved Entry Points}. Poster, SophI.A Summit~\citemine{gallardo-sophiaposter-2025}. \url{https://inria.hal.science/hal-05446160}
+\end{callout}
 
 %\renewcommand{\bibtitle}{\section*{\refname}}
 %\bibliographystyleweb{apacite}
@@ -112,7 +168,7 @@
 %\listofalgorithms
 
 
-%\appendix
-%\input{annexe/annexe}
+\appendix
+\input{chapters/annexe/annexe}
 
 \end{document}

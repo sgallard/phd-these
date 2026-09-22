@@ -182,6 +182,61 @@ At the end of this process, the proposed method returns a ranked list
 \]
 that balances usage-driven relevance with structural diversity and novelty.
 
+\subsubsection{Retrieval stability (top-$N$ preservation)}
+\label{sec:discussion:preservation}
+
+In operational settings, \trs\ is used interactively, where editors may progressively increase the number of suggested templates. In such contexts, it is desirable that expanding the list size does not invalidate previously proposed candidates. \trs\ satisfies this requirement through a Top-$N$ preservation property.
+
+Formally, let $\recolist{N}$ denote the list of $N$ retrieved templates.
+
+\begin{proposition}
+\label{proposition:trs}
+$\recolist{N} \subset \recolist{N+1}$.
+\end{proposition}
+
+The proof relies on two lemmas, both stated in terms of the cluster weight distributions $\{CW_j^{N}\}$ and $\{CW_j^{N+1}\}$ obtained after the reassignment step (Algorithm~\ref{alg:cw}, lines 10--18) when constructing $\recolist{N}$ and $\recolist{N+1}$ respectively.
+
+\begin{lemma}
+\label{lemma:cw-selection}
+Assume the distributions $\{CW_j^{N}\}$ and $\{CW_j^{N+1}\}$ used to construct $\recolist{N}$ and $\recolist{N+1}$ via the selection step (Algorithm~\ref{alg:cw}, lines 19--32) differ at a single, unique cluster $k$, with
+\begin{equation}
+CW_{k}^{N+1} = CW_{k}^{N} + 1, \qquad CW_j^{N+1} = CW_j^{N} \quad \forall j \neq k.
+\label{eq:cw-unit-increment}
+\end{equation}
+Then $\recolist{N} \subset \recolist{N+1}$.
+\end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:cw-selection}]
+Consider the $i$-th iteration of the selection step for both executions: the template selected for $\recolist{N}$ is drawn from cluster $\cluster{p}$, and the template selected for $\recolist{N+1}$ is drawn from cluster $\cluster{q}$.
+
+As long as $p \neq k$, or $p = k$ with $CW_{k}^{N} > 0$, both executions draw from the same cluster ($q = p$) and select the same template, since the two cluster weight distributions have not yet diverged at this point of the selection.
+
+Once $p = k$ and $CW_{k}^{N} = 0$, cluster $\cluster{k}$ is already exhausted for $\recolist{N}$ but not yet for $\recolist{N+1}$: a template is then selected from $\cluster{k}$ for $\recolist{N+1}$ with no counterpart selected for $\recolist{N}$ at this iteration. This is the only iteration at which the two executions diverge, since any earlier removal of neighboring templates within $\cluster{k}$ does not affect this outcome, this template being necessarily the last one selected from $\cluster{k}$.
+
+At every subsequent iteration, both executions again draw identical templates from the remaining clusters $\cluster{l}$, $l \neq k$, with the selection for $\recolist{N+1}$ offset by exactly this one additional template. Hence every template selected for $\recolist{N}$ is also selected for $\recolist{N+1}$, i.e., $\recolist{N} \subset \recolist{N+1}$.
+\end{proof}
+
+\begin{lemma}
+\label{lemma:cw-reassignment}
+Assume the distributions $\{CW_j^{N}\}$ and $\{CW_j^{N+1}\}$ satisfy condition~(\ref{eq:cw-unit-increment}) at a unique cluster $k_1$. Then, after one iteration of the reassignment step (Algorithm~\ref{alg:cw}, lines 10--18), the resulting distributions again satisfy condition~(\ref{eq:cw-unit-increment}) at a unique cluster $k_2$, possibly different from $k_1$.
+\end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{lemma:cw-reassignment}]
+Consider an iteration of the reassignment step focused on a source cluster $\cluster{k}$. Three cases arise.
+
+\paragraph{Case 1: $k_1 = k$.} If $CW_{k_1}^{N} < CW_{k_1}^{N+1} < \cwthreshold$, no reassignment occurs in either execution, and condition~(\ref{eq:cw-unit-increment}) holds with $k_2 = k_1$. If $CW_{k_1}^{N+1} > CW_{k_1}^{N} \ge \cwthreshold$, reassignment decreases $CW_{k_1}$ and increases $CW_j$ for some target cluster $\cluster{j}$ in both executions, so the condition holds with $k_2 = j$. If $CW_{k_1}^{N} = \cwthreshold$, reassignment occurs for $\recolist{N+1}$ but not for $\recolist{N}$, transferring weight to some target cluster $\cluster{j}$, so the condition again holds with $k_2 = j$.
+
+\paragraph{Case 2: $\cluster{k_1}$ is a target cluster, with $k_1 \neq k$.} If $\cluster{k_1}$ receives weight in both executions, $CW_{k_1}^{N}$ and $CW_{k_1}^{N+1}$ each increase by one, and the condition holds with $k_2 = k_1$. If $\cluster{k_1}$ receives weight only for $\recolist{N}$, then $CW_{k_1}^{N+1} = CW_{k_1}^{N}$, while some other cluster $\cluster{j}$ receives the corresponding weight for $\recolist{N+1}$, so the condition holds with $k_2 = j$.
+
+\paragraph{Case 3: $\cluster{k_1}$ is neither the source nor a target cluster.} $CW_{k_1}$ is unchanged in both executions, and the condition holds with $k_2 = k_1$.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{proposition:trs}]
+At initialization, constructing $\recolist{N+1}$ requires one additional template relative to $\recolist{N}$, which increases a single cluster weight by one; condition~(\ref{eq:cw-unit-increment}) therefore holds at some cluster $k_0$. Lemma~\ref{lemma:cw-reassignment} then guarantees that, after each iteration of the reassignment step, condition~(\ref{eq:cw-unit-increment}) continues to hold at some, possibly different, cluster index. Lemma~\ref{lemma:cw-selection} then yields $\recolist{N} \subset \recolist{N+1}$.
+\end{proof}
+
+This property guarantees that increasing the retrieval size preserves every previously selected template, while allowing their relative ordering to change. Such behavior is important in newspaper editorial workflows, as it ensures consistency across successive retrieval requests and avoids introducing instability.
+
 
 \subsection{Experimental evaluation}
 \label{section:trs-eval}
@@ -502,29 +557,3 @@ Execution time is measured as a function of \topsize for fixed $\cwthreshold=3$ 
 \end{figure}
 
 Both examples show that \trs effectively promotes diversity while complying with historical comformity. \classicclusdiv fails to achieve template diversity due to its lack of consideration for structural layout. Although \adaptedclusdiv improves diversity by accounting for layout structure, our approach goes further by leveraging inter-cluster distances and an optimized selection process to maximize structural differences and further enhance diversity.
-
-
-
-\subsection{Discussion}
-\label{sec:trs-discussion}
-\subsubsection{Retrieval stability (top-$N$ preservation)}
-\label{sec:discussion:preservation}
-
-In operational settings, \trs\ is used interactively, where editors may progressively increase the number of suggested templates. In such contexts, it is desirable that expanding the list size does not invalidate previously proposed candidates. \trs\ satisfies this requirement through a Top-$N$ preservation property.
-
-Formally, let $\recolist{N}$ denote the list of $N$ retrieved templates.
-
-\begin{proposition}
-\label{proposition:trs}
-$\recolist{N} \subset \recolist{N+1}$.
-\end{proposition}
-
-This property guarantees that increasing the retrieval size preserves every previously selected template, while allowing their relative ordering to change. Such behavior is important in newspaper editorial workflows, as it ensures consistency across successive retrieval requests and avoids introducing instability.
-
-\subsubsection{Extensibility to user-aware scenarios}
-
-\trs\ operates in a user-agnostic setting, where retrieval is driven exclusively by template characteristics rather than individual user preferences. This design choice aligns with many industrial environments, where maintaining visual consistency across content is a primary concern.
-
-Nevertheless, \trs\ can be extended to user-aware scenarios by incorporating historical usage data at the user level. In such a setting, a template--user interaction matrix could be constructed and combined with collaborative filtering techniques~\cite{cf-techniques}. Importantly, this extension would rely on additional similarity measures distinct from $\gmn{\cdot}{\cdot}$, since structural layout similarity does not necessarily reflect user preferences or popularity.
-
-This separation between structural similarity modeling and preference modeling highlights the modularity of \trs\ and suggests a clear pathway for integrating personalization mechanisms without altering its core retrieval logic. It would also allow the integration of business-driven constraints, such as prioritizing templates with higher ad-revenue potential, without compromising the core requirement of structural diversity.

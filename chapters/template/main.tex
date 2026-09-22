@@ -16,7 +16,23 @@
 \section{Discussion}
 \label{sec:template-discussion}
 
-\subsection*{\trs vs. \neuralmethod}
+\subsection*{\trs: Extensibility to user-aware scenarios}
+\label{sec:trs-discussion}
+
+\trs\ operates in a user-agnostic setting, where retrieval is driven exclusively by template characteristics rather than individual user preferences. This design choice aligns with many industrial environments, where maintaining visual consistency across content is a primary concern.
+
+Nevertheless, \trs\ can be extended to user-aware scenarios by incorporating historical usage data at the user level. In such a setting, a template--user interaction matrix could be constructed and combined with collaborative filtering techniques~\cite{cf-techniques}. Importantly, this extension would rely on additional similarity measures distinct from $\gmn{\cdot}{\cdot}$, since structural layout similarity does not necessarily reflect user preferences or popularity.
+
+This separation between structural similarity modeling and preference modeling highlights the modularity of \trs\ and suggests a clear pathway for integrating personalization mechanisms without altering its core retrieval logic. It would also allow the integration of business-driven constraints, such as prioritizing templates with higher ad-revenue potential, without compromising the core requirement of structural diversity.
+
+\subsection*{\neuralmethod: Historical Data Dependency}
+\label{sec:gwes-discussion}
+
+Unlike $\gmnNetwork$, which only requires a structural template catalog and transfers directly across catalogs without retraining, the Transformer encoder of \neuralmethod\ requires a substantial, venue-specific historical page corpus to learn editorial intent. This constitutes a deployment bottleneck: press groups with a limited digital archive of past layouts, or without a systematic history of page composition, may not have sufficient historical data to train this component reliably, restricting \neuralmethod\ to venues with an established production history.
+
+This assumption proves less restrictive in practice than it may first appear: the \laprovence archive that trained this component spans only three months of page production, far short of the multi-year history one might expect such a bottleneck to require, and it already sufficed to reach the accuracy levels reported in \secref{sec:gwes-evaluation}. Whether this data requirement generalizes as favorably to smaller or less digitized archives remains an open question for future deployments.
+
+\subsection*{ \trs\ vs. \neuralmethod}
 
 Although \trs\ (\secref{section:template-retrieval-single-article}) and \neuralmethod\ (\secref{sec:gwes}) both build on the topology-aware similarity measures introduced in \secref{section:modelling-similarity}, they address distinct scoring problems and serve distinct consumers.
 \begin{itemize}
@@ -51,6 +67,15 @@ Open directions include extending \trs\ toward user-aware personalization, and v
 
 Deployment details specific to \neuralmethod\ (\secref{sec:gwes}) are reported instead in the Deployment section of Chapter~\ref{chapter:pagegen}, since \neuralmethod\ is deployed there as part of \methodNameGeneral.
 
+
+\subsection*{Extension to representative template selection}
+
+Beyond recommending templates within an already populated catalog, the learned similarity measure $\gmn{\cdot}{\cdot}$ underlying \trs was further applied to a complementary, prior problem: initializing \templatecatalog\ itself when a CMS does not yet have one, by automatically mining a small set of representative prospect templates from a press group's historical page archive. This extension is detailed in Appendix~\ref{chapter:annexe}.
+
+\begin{callout}
+G. Arlabosse, S. Gallardo, \& P. Kornprobst (2026). \emph{Scalable Representative Selection in Non-Metric Learned Similarity Spaces: Application to News Layout Templates}. Submitted to \emph{IEEE Access}, under review~\citemine{arlabosse-repselect}. \url{https://inria.hal.science/view/index/docid/5759508}
+\end{callout}
+
 \subsection*{Publications}
 
 This chapter's contribution on topology-aware template similarity and retrieval is based on the following manuscript, currently under review. The page-aware extension developed in Section~\ref{sec:gwes} (\neuralmethod) is presented here as part of the template retrieval formalism, but is reported instead as a contribution of Chapter~\ref{chapter:pagegen}, whose manuscript is currently in preparation.
@@ -58,6 +83,8 @@ This chapter's contribution on topology-aware template similarity and retrieval 
 
 \begin{callout}
 S. Gallardo, B. G\'enuit, E. Castet, \& P. Kornprobst (2026). \emph{Diversity-Aware Retrieval of Structured Layout Templates via Graph-Matching Network-Based Clustering}. Submitted to \emph{IEEE Access}, under review~\citemine{gallardo-recsys}.
+
+S. Gallardo (2024). \emph{A Clustering Based Article Template Recommendation System for Newspaper Editors}. Invited talk, Journ\'ees Scientifiques Inria Chile, Santiago, Chile~\citemine{gallardo-inria-chile-2024}.
 \end{callout}
 
 

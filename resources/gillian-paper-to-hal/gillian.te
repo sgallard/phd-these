@@ -1,0 +1,1066 @@
+\documentclass{article}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic, algorithm}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{xspace}
+\usepackage{multirow}
+%\usepackage{sty/comments}
+
+\makeatletter
+\AtBeginDocument{\DeclareMathVersion{bold}
+\SetSymbolFont{operators}{bold}{T1}{times}{b}{n}
+\SetSymbolFont{NewLetters}{bold}{T1}{times}{b}{it}
+\SetMathAlphabet{\mathrm}{bold}{T1}{times}{b}{n}
+\SetMathAlphabet{\mathit}{bold}{T1}{times}{b}{it}
+\SetMathAlphabet{\mathbf}{bold}{T1}{times}{b}{n}
+\SetMathAlphabet{\mathtt}{bold}{OT1}{pcr}{b}{n}
+\SetSymbolFont{symbols}{bold}{OMS}{cmsy}{b}{n}
+\renewcommand\boldmath{\@nomath\boldmath\mathversion{bold}}}
+\makeatother
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+
+\newcommand{\toblack}{\color{black}}
+\newcommand{\tored}{\color{red}}
+\newcommand{\toblue}{\color{blue}}
+\newcommand{\togreen}{\color{green}}
+\newcommand{\pk}[1]{{\tored [{\bfseries Pierre}: {\itshape #1}] \toblack}}
+\newcommand{\ga}[1]{{\toblue [{\bfseries Gillian}: {\itshape #1}] \toblack}}
+\newcommand{\tofix}[1]{{\tored \textbf{[!]} {#1} \toblack}}
+\newcommand{\toreview}[2]{\toblue {#1} -> \textbf{[{#2}]}  \toblack}
+\newcommand{\addref}[1]{\togreen \textbf{[{#1}]} \toblack}
+
+% Parameters
+\newcommand{\representativeamount}{m}
+\newcommand{\maxpartitionsize}{\rho}
+\newcommand{\threshold}{\theta}
+\newcommand{\samplesize}{e}
+\newcommand{\reductionfactor}{\lambda}
+
+% Text stuff
+\newcommand{\kmedoidstheory}{$k$-medoids\xspace}
+\newcommand{\kmedoidsalg}{KMedoids\xspace}
+\newcommand{\partitioning}{FP\xspace}
+\newcommand{\inclusion}{IC\xspace}
+
+\newcommand{\temppartitioning}{{\toblue \partitioning \toblack}}
+\newcommand{\tempinclusion}{{\toblue\inclusion\toblack}}
+
+
+
+%Your document starts from here ___________________________________________________
+\begin{document}
+
+\title{Scalable Representative Selection in Non-Metric Learned Similarity Spaces: Application to News Layout Templates}
+
+\author{
+G. Arlabosse\thanks{Corresponding author: gillianz@free.fr}$^{1}$
+\and S. Gallardo$^{1,2}$
+\and P. Kornprobst$^{1}$
+\\[1ex]
+\small $^{1}$Centre Inria d'Université Côte d'Azur, France\\
+\small $^{2}$Demain un Autre Jour, Toulouse, France
+}
+\date{}
+
+\maketitle
+
+\begin{abstract}
+Representative selection is a fundamental problem when a large collection must be summarized by a compact set of representative objects. This problem becomes computationally challenging when object similarities are learned and do not satisfy classical metric properties, preventing the use of standard acceleration strategies. In this work, we propose two scalable approaches for representative selection in non-metric learned similarity spaces. The first is a feature-based partitioning strategy that recursively divides the dataset into homogeneous subsets and performs local $k$-medoids optimization, thereby restricting expensive similarity evaluations to smaller subsets. The second is an incremental coverage-based strategy that iteratively samples objects insufficiently represented by the current representatives and performs batch-wise $k$-medoids optimization on these samples. Both approaches avoid constructing the full pairwise similarity matrix while preserving representative quality. We evaluate the methods on 15,289 article layouts extracted from 6,007 newspaper pages and compare them with the standard Partitioning Around Medoids algorithm using a Graph Matching Network to compute learned layout similarities. The proposed approaches substantially reduce computation time while achieving competitive or superior representative quality. On 15,289 layouts, the partitioning approach is approximately 480 times faster than standard $k$-medoids, while the incremental coverage approach is 550 times faster. With 100 representatives, the latter represents approximately 98\% of the dataset at the selected similarity threshold, demonstrating its effectiveness for large-scale newspaper layout template extraction.
+
+% Consignes : 
+%These instructions give you guidelines for preparing papers for IEEE Access. Use this document as a template if you are using \LaTeX. Otherwise, use this document as an instruction set. The electronic file of your paper will be formatted further at IEEE. Paper titles should be written in uppercase and lowercase letters, not all uppercase. Avoid writing long formulas with subscripts in the title; short formulas that identify the elements are fine (e.g., "Nd--Fe--B"). Do not write ``(Invited)'' in the title. Full names of authors are preferred in the author field, but are not required. Put a space between authors' initials. The abstract must be a concise yet comprehensive reflection of what is in your article. In particular, the abstract must be self-contained, without abbreviations, footnotes, or references. It should be a microcosm of the full article. The abstract must be between 150--250 words. Be sure that you adhere to these limits; otherwise, you will need to edit your abstract accordingly. The abstract must be written as one paragraph, and should not contain displayed mathematical equations or tabular material. The abstract should include three or four different keywords or phrases, as this will help readers to find it. It is important to avoid over-repetition of such phrases as this can result in a page being rejected by search engines. Ensure that your abstract reads well and is grammatically correct.
+\end{abstract}
+
+\medskip
+\noindent\textbf{Keywords:} document layout analysis, graph matching, k-medoids clustering, non-metric similarity, newspaper production, representative selection, scalability, template extraction
+
+\section{Introduction}
+In the newspaper industry, article templates are widely used to accelerate page production by allowing editors to generate structured layouts from predefined designs. Modern editorial production systems increasingly rely on template-based workflows to reduce manual layout effort while maintaining editorial consistency. However, creating an initial template library remains a challenging task, especially when organizations already possess large collections of previously published documents but lack an explicit organization of their layouts.
+
+Automatically identifying a compact set of representative layouts from historical productions can facilitate the initialization of such workflows by providing editors with a meaningful starting point. Rather than manually reviewing thousands of previously generated pages, the objective is to automatically discover a small collection of representative article layouts that captures the main design patterns of a publication and can subsequently be used as templates for future productions.
+
+This problem can be formulated as representative subset selection: given a large collection of objects, the objective is to identify a small subset that preserves the characteristics of the original dataset. Representative selection problems are encountered in various fields, including clustering~\cite{frey2007clustering}, prototype selection~\cite{garcia2012prototype}, data summarization~\cite{lin2011docsummarization}, and facility location~\cite{shmoys1997facilitylocation}, where the underlying similarity between objects is typically assumed to be efficiently computable and to follow well-defined geometric properties.
+
+However, in many modern applications, object similarity is no longer defined by handcrafted distances. Recent advances in deep learning have enabled learned similarity functions that capture complex relationships between objects, including graph matching~\cite{li2019graphmatchingnetworkslearning}, visual representation learning~\cite{chen2020simpleframeworkcontrastivelearning}, and document understanding~\cite{xu2020layoutlm}. While these learned similarities provide richer representations, they often do not satisfy classical metric properties such as symmetry or the triangle inequality. As a result, representative selection algorithms that rely on geometric assumptions or metric-based acceleration strategies cannot be directly applied.
+
+Consequently, representative selection in learned similarity spaces raises a new computational challenge: existing algorithms cannot directly exploit metric-based acceleration strategies, while the cost of evaluating the similarity function prevents traditional approaches from scaling to large datasets.
+
+
+This paper addresses the problem of scalable representative selection in large-scale non-metric learned similarity spaces. We propose two complementary approaches that both aim at addressing the same computational bottleneck: the prohibitive cost of exhaustive similarity evaluations in non-metric learned similarity spaces. They avoid the construction of the full pairwise similarity matrix by restricting the number of object comparisons required during representative extraction.
+
+The first approach relies on a feature-based partition strategy. It recursively partitions the dataset according to inexpensive object attributes and performs local representative optimization on smaller subsets. By using inexpensive object features to guide the partitioning step instead of the learned similarity function, the method avoids costly global similarity computations. The subsequent local representative selection within each partition reduces the number of similarity evaluations while maintaining diversity across the selected representatives.
+
+The second approach follows an incremental coverage-based strategy. Inspired by coverage-based selection methods such as farthest-first traversal~\cite{gonzalez1985clustering}, which iteratively select individual elements to improve dataset coverage, our approach progressively expands the representative set by focusing on objects that remain insufficiently covered according to a similarity threshold. Instead of selecting single candidates greedily, it performs batch-wise representative optimization on uncovered regions, enabling local $k$-medoids optimization while avoiding exhaustive similarity evaluations over the full dataset.
+
+The proposed methods are evaluated on a large-scale newspaper articles corpus, where article layouts are represented as graphs and compared using a Graph Matching Network. This application is motivated by industrial editorial workflows, where systems such as Melody provide template-based production environments and require representative article templates to initialize page layout creation.
+
+The main contributions of this paper are summarized as follows:
+\begin{itemize}
+\item We formulate representative selection in learned similarity spaces, where classical metric assumptions such as the triangle inequality cannot be guaranteed and standard acceleration strategies become ineffective.
+\item We propose two scalable representative selection approaches for non-metric learned similarity spaces: a feature-based partition strategy that reduces the number of expensive similarity evaluations through recursive partitioning, and an incremental coverage-based strategy that progressively builds representative sets by optimizing similarity-threshold coverage.
+\item We evaluate both approaches on a real-world newspaper layout corpus using a Graph Matching Network-based similarity function, demonstrating their ability to extract compact and representative layout template sets while substantially reducing computational costs.
+\end{itemize}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related-work} reviews related work on representative selection, learned similarity spaces, and document layout analysis. Section~\ref{sec:problem-statement} formulates the representative selection problem and section~\ref{sec:algorithms} introduces the proposed partition-and-compression and incremental coverage-based approaches. Section~\ref{sec:results} presents the application to newspaper layout templates and the experimental evaluation. Finally, Section~\ref{sec:conclusion} concludes the paper.
+
+\section{Related work}
+\label{sec:related-work}
+
+% \pk{chercher des papiers sur farthest-first traversal, k-center, facility location greedy, coresets, clustering with expensive distance computations, representative selection with expensive similarity evaluations, graph edit distance clustering, budgeted clustering, distance evaluation complexity, clustering with black-box distances}
+
+\subsection{Representative selection}
+
+The task of representative selection (identifying a compact subset that minimizes the average distance to the parent dataset) is deeply rooted in discrete optimization. A classic formulation is \kmedoidstheory clustering, which restricts cluster centroids to actual data points, thereby maintaining interpretability and avoiding the artificial averages generated by $k$-means~\cite{kaufman1987clustering}. Within machine learning, this paradigm is often referred to as exemplar clustering.
+
+Partitioning Around Medoids (PAM)~\cite{kaufman1987clustering} is one of the most widely used algorithms for \kmedoidstheory clustering, largely because of its high clustering quality. Its primary limitation is its high $O(k(n-k)^2)$ complexity, where $n$ is the number of objects in the dataset and $k$ is the number of medoids to obtain. To address this limitation, recent acceleration techniques have been developed, such as FastPAM~\cite{schubert2021fastPAM}, which eliminates redundant distance computations to reduce the per-iteration runtime complexity. Further scaling was achieved with BanditPAM~\cite{tiwari2020banditpam}, which models candidate selection using multi-armed bandits to achieve $O(n\log n)$ complexity.
+
+These algorithms do not necessarily require the distance function to satisfy standard metric properties such as symmetry and the triangle inequality. However, in the absence of such properties, they require full distance computation between all pairs of objects in the dataset. Consequently, exact solutions require at least $O(dn^2)$ computational complexity due to the need to compute the full pairwise dissimilarity matrix, where $d$ is the cost of computing the distance between two objects.
+
+Acceleration methods have also been developed for cases where distance evaluation is computationally expensive~\cite{Ganti1999ClusteringLD,Nanni2005Expensivemetrics}, but these methods rely on the distance satisfying metric properties. Consequently, they cannot be directly applied to non-metric similarities, leaving distance computation at least quadratic in the absence of additional structure.
+
+\subsection{Learned similarity spaces}
+
+Evaluating representativeness requires a robust similarity measure, which is increasingly provided by learned representations rather than static geometric distance functions, particularly for complex data.
+
+Advances in deep representation learning have shifted data representations from fixed Euclidean spaces toward learned dissimilarity functions~\cite{kayabilge2019deeplearningsurvey}. However, these learned similarity functions may violate standard metric properties such as symmetry or the triangle inequality, resulting in non-metric dissimilarity spaces~\cite{skopal2007nonmetricsimilarity}.
+
+Such learned representations can be obtained using Graph Matching Networks such as LayoutGMN~\cite{patil2021layoutgmn}, which compute similarity scores between graph structures and can capture complex topological differences. Because similarity functions produced by these learned models may violate the triangle inequality, efficient representative-selection algorithms that do not rely on metric properties are needed.
+
+\subsection{Document understanding}
+
+A foundational step in document processing is document layout analysis, which segments pages into physical regions (e.g., tables, figures, and text blocks) and identifies their logical semantic roles (e.g., headers, titles, and totals)~\cite{shen2021layoutparser,pfitzmann2022doclaynet}.
+
+In newspaper design software, layout templates accelerate page creation but require significant upfront construction effort. To streamline this process, systems can rely on template extraction, clustering collections of layouts to identify a minimal set of representative exemplars~\cite{binmakhasen2020doclayoutanalysis}.
+
+Because cluster centroids generated by $k$-means produce artificial, non-existent visual layouts, $k$-medoids is a more appropriate approach for selecting real and interpretable representative document templates~\cite{kaufman1987clustering}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem statement}
+\label{sec:problem-statement}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We consider the problem of selecting a small subset of objects that provides a representative summary of a larger dataset. Let $\mathcal{X}$ denote the space of all objects that can be constructed, and let
+\[
+X = \{x_1,\ldots,x_n\}, \qquad x_i \in \mathcal{X},\quad i=1,\ldots,n,
+\]
+be the dataset from which representatives are to be selected.
+
+We assume a pairwise similarity function
+\[
+s : \mathcal{X} \times \mathcal{X} \to (-\infty,0],
+\]
+which measures the similarity between two objects. In contrast to classical distance functions, $s$ is not assumed to satisfy metric properties such as symmetry or the triangle inequality. This setting is particularly relevant when similarity is learned from data, as is the case for the Graph Matching Network considered in our application.
+
+Given a desired number of representatives $\representativeamount$, the objective is to select a subset $R \subset X$, with $|R|=\representativeamount$, such that the selected representatives provide the best possible coverage of the dataset. We measure the quality of a representative set using the sum of nearest-medoid similarities (SNMS):
+\begin{equation}
+S_R = \sum_{x \in X} \max_{r \in R} s(x,r).
+\label{eq:metric1-S_R}
+\end{equation}
+For each object $x \in X$, the term $\max_{r\in R}s(x,r)$ corresponds to its similarity to the most similar representative in $R$. The representative-selection problem can therefore be formulated as
+\begin{equation}
+\max_{R \subset X,\ |R| = \representativeamount} S_R.
+\label{eq:optimization_problem}
+\end{equation}
+
+This objective is closely related to the classical $k$-medoids formulation, with the important distinction that the similarity function considered here is not necessarily metric. In a standard $k$-medoids setting, metric properties can be exploited to reduce the number of distance evaluations required during optimization. Such acceleration strategies cannot in general be applied to the learned similarity considered in this work.
+
+A direct optimization of (\ref{eq:optimization_problem}) using a method such as PAM~\cite{kaufman1987clustering} is therefore computationally expensive on large datasets. More generally, PAM and related local-search methods require a large number of pairwise similarity evaluations to assess candidate representative configurations. When each evaluation of $s$ is computationally expensive and no metric properties can be exploited to safely discard candidate evaluations, applying such methods directly to the full dataset becomes prohibitive.
+
+The challenge addressed in this paper is consequently not the definition of the representative-selection objective itself, but its efficient optimization when similarity evaluations are expensive and do not provide the properties required by metric-based acceleration techniques. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proposed Algorithms}
+\label{sec:algorithms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The goal of the proposed methods is to obtain a set of $\representativeamount$ representatives that provides a good approximation to the solution of the representative-selection problem defined in (\ref{eq:optimization_problem}), while substantially reducing the number of expensive similarity evaluations.
+
+We propose two approaches that address this computational challenge in different ways. The first approach, referred to as \partitioning, uses inexpensive object features to recursively partition the dataset into locally homogeneous subsets and performs representative selection within each subset. The second approach, referred to as \inclusion, progressively constructs the representative set by focusing on objects that remain insufficiently covered by the representatives selected so far. Both approaches avoid applying representative selection directly to the full dataset and thereby limit the number of evaluations of the learned similarity function.
+
+Both approaches use PAM~\cite{kaufman1987clustering} as a local representative-selection procedure. We denote this procedure by
+\[
+\begin{aligned}
+\kmedoidsalg:\mathcal{P}(\mathcal{X})\times\mathbb{N}
+&\to \mathcal{P}(\mathcal{X})\\
+(S,k) &\mapsto \{s_1,\ldots,s_k\}\subset S,
+\end{aligned}
+\]
+where $\kmedoidsalg(S,k)$ returns a set of $k$ representatives selected from $S$ by applying PAM. The role of PAM in the proposed methods is therefore local: rather than applying it directly to the full dataset, where the number of similarity evaluations becomes prohibitive, it is applied to smaller subsets for which exhaustive similarity evaluation is tractable.
+
+The two approaches are described in the following subsections.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Feature-based partitioning algorithm (\partitioning)}
+\label{sec:partitioning}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The feature-based partitioning approach reduces the number of expensive similarity evaluations by decomposing the representative selection problem into a collection of smaller local problems. The underlying idea is to use inexpensive and interpretable object features to identify locally homogeneous subsets, and to perform
+representative selection independently within these subsets. These features are auxiliary information, independent of the learned similarity function, and are used only to guide the partitioning process. Their availability and choice are application-dependent and may rely on domain knowledge or problem-specific heuristics. They may not always be available or sufficiently informative for a given application.
+
+Starting from the complete dataset, the algorithm alternates between two operations. First, the current set of candidate representatives is recursively partitioned according to these features. Second, PAM is applied independently to each resulting partition to retain only a fraction of its objects as representatives. The representatives obtained from all partitions are then combined and used as the input to the next iteration. This process progressively reduces the number of candidate representatives until the desired number $\representativeamount$ is reached.
+
+This decomposition introduces an approximation with respect to the global optimization problem in (\ref{eq:optimization_problem}). Representative selection is optimized independently within each partition, so similarities between objects assigned to different partitions are not considered during the local optimization. In exchange, the expensive learned similarity function is evaluated only within the smaller local problems, substantially reducing the overall number of similarity evaluations.
+
+The complete procedure is illustrated in Figure~\ref{fig:alg-partition} and described in Algorithm~\ref{alg:partitioning}. 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/PartitionSchemaSteps.png}
+    \caption{\label{fig:alg-partition}
+    Illustration of one iteration of the feature-based partitioningalgorithm.
+    (a) The current set of candidate representatives $R^{(k)}$. The different triangle sizes schematically illustrate differences in the inexpensive object features used for partitioning.
+    (b) \textbf{Step 1:} $R^{(k)}$ is recursively partitioned into subsets $P_1,\ldots,P_p$ according to these features, resulting in groups of objects that are more homogeneous with respect to their feature values.
+    (c) \textbf{Step 2:} PAM is applied independently to each partition $P_i$ to select a reduced set of representatives. 
+    (d) The representatives selected from all partitions are combined to form $R^{(k+1)}$.
+    }
+\end{figure}
+
+\begin{algorithm}[t]
+\caption{Feature-based Partitioning algorithm (\partitioning)}
+\label{alg:partitioning}
+\begin{algorithmic}[1]
+
+\STATE \textbf{Function} \texttt{BP}($X', V', \maxpartitionsize$) -- Binary Partitioning
+\begin{ALC@g}
+\IF{$|X'| \leq \maxpartitionsize$}
+    \RETURN $\{X'\}$
+\ELSE
+    \STATE $\sigma^2_j \gets$ variance of the $j$-th coordinate
+    across all vectors in $V'$, $j=1,\dots,\dim(v_{x_1})$
+    \STATE $j^* \gets \arg\max_j(\sigma^2_j)$
+    \STATE $M \gets \operatorname{median}
+    (\{v_x[j^*] \mid x\in X'\})$
+    \STATE $X'_1 \gets \{x\in X' \mid v_x[j^*]\leq M\}$
+    \STATE $X'_2 \gets \{x\in X' \mid v_x[j^*]>M\}$
+    \RETURN
+    $BP(X'_1,\{v_x\mid x\in X'_1\},\maxpartitionsize)
+    \cup
+    BP(X'_2,\{v_x\mid x\in X'_2\},\maxpartitionsize)$
+\ENDIF
+\end{ALC@g}\vspace{\baselineskip}
+
+
+\REQUIRE
+$\representativeamount \in \mathbb{N}$: Number of desired representatives; \\
+$X =\{x_1,\dots,x_n\} \subset \mathcal{X}$: Set of objects; \\
+$V'=\{v_{x_1},\dots,v_{x_n}\}$: Feature vectors;\\
+$\maxpartitionsize \in \mathbb{N}$: Maximum partition size; \\
+$\reductionfactor \in \mathbb{N}$: Reduction factor\vspace{\baselineskip}
+
+\ENSURE
+$R$: Set of $\representativeamount$ representative objects\vspace{\baselineskip}
+
+\STATE $V \gets \{v_x \mid x\in X\}$
+\STATE $R^{(0)} \gets X$
+
+\WHILE{$|R^{(k)}| > \representativeamount$}
+
+    \STATE \textbf{Step 1: Feature-based recursive partitioning}
+    \STATE $P=\{P_1,\dots,P_p\}
+    \gets BP(R^{(k)},V,\maxpartitionsize)$
+
+    \STATE \textbf{Step 2: Local representative selection}
+    \STATE $R_i \gets
+    \kmedoidsalg\left(P_i,
+    \left\lfloor |P_i|/\reductionfactor\right\rfloor\right)$,
+    $\forall i\in\{1,\dots,p\}$
+
+    \STATE $R^{(k+1)}\gets
+    \bigcup_{i=1}^{p}R_i$
+
+\ENDWHILE
+
+\end{algorithmic}
+\end{algorithm}
+
+Each iteration consists of the following two steps.
+
+\paragraph*{Step 1: Feature-based recursive partitioning.}
+
+For every object $x \in X$, we construct a feature vector $v_x \in [0,1]^d$ from its interpretable attributes. Each feature is normalized to the interval $[0,1]$ so that its numerical scale does not by itself determine the partitioning criterion. We denote the collection of feature vectors by
+\[
+V = \{v_x \mid x \in X\}.
+\]
+
+At iteration $k$, the current set of candidate representatives is denoted by $R^{(k)}$, with $R^{(0)}=X$. We recursively partition $R^{(k)}$ until every resulting subset contains at most $\maxpartitionsize$ objects.
+
+At each iteration, the current set of candidate representatives $R^{(k)}$ is recursively partitioned using their feature vectors. The partitioning is performed by repeatedly splitting a set according to the attribute with the highest variance.
+
+More precisely, consider a subset $X'=\{x_1,\dots,x_{n'}\}$ and its corresponding feature vectors
+\[
+V'=\{v_x\mid x\in X'\}\subseteq V.
+\]
+For each feature dimension $j$, we compute its variance $\sigma_j^2$ across all vectors in $V'$. We then select the dimension with the highest variance,
+\[
+j^*=\arg\max_j \sigma_j^2,
+\]
+and split $X'$ into two subsets according to the median $M$ of the objects' values along this dimension:
+\begin{align*}
+X'_1=&\{x\in X'\mid v_x[j^*]\leq M\},\\
+X'_2=&\{x\in X'\mid v_x[j^*]>M\}.
+\end{align*}
+
+The same procedure is then recursively applied to $X'_1$ and $X'_2$.
+Note that, in practice, if there are several $x\in X'$ such that $v_x[j^*] = M$, we adapt the method to ensure that $X'$ is equally split into $X'_1$ and $X'_2$.
+
+The recursion stops when $X'$ contains at most
+$\maxpartitionsize$ objects. $X'$ is then returned unchanged as part of the final partition. 
+The complete partitioning procedure therefore produces a collection of $p$ subsets
+\[
+P=\{P_1,\ldots,P_p\},
+\qquad |P_i|\leq\maxpartitionsize,
+\]
+which are subsequently used for local representative selection.
+
+\paragraph*{Step 2: Local representative selection.}
+
+Once the partition subsets have been obtained, we apply \kmedoidsalg independently to each partition to select a number of representatives proportional to the size of the partition, as determined by the reduction factor $\reductionfactor$. For each partition $P_i$, we select
+\[
+\left\lfloor \frac{|P_i|}{\reductionfactor} \right\rfloor
+\]
+representatives:
+\[
+R_i =
+\kmedoidsalg\left(
+P_i,
+\left\lfloor \frac{|P_i|}{\reductionfactor} \right\rfloor
+\right).
+\]
+Finally, the representatives selected from all partitions are combined to form the candidate set for the next iteration:
+\[
+R^{(k+1)} = \bigcup_{i=1}^{p} R_i.
+\]
+
+Note that the regular reduction described above does not necessarily produce exactly $\representativeamount$ representatives in the final iteration. Indeed, independently applying the reduction factor to all partitions may reduce the number of candidates below the target size. To avoid this, the last iteration is handled separately. When $|R^{(k)}| \leq \reductionfactor\representativeamount$, performing another regular reduction may produce fewer than $\representativeamount$ representatives. To avoid that problem, \partitioning can be corrected by adding a check on $|R^{(k)}|$ inside of the while loop to stop partitioning if there are less than $\reductionfactor\representativeamount$ objects remaining in $R^{(k)}$ (in which case the next partitioning step would leave less than the required $\representativeamount$ representatives). On the beginning of the first iteration where $|R^{(k)}| \le \reductionfactor\representativeamount$, 
+a counter $c$ is created. We then iterate through the partition subsets, adding $\representativeamount/p$ to $c$ and selecting $\left\lfloor c \right\rfloor$ representatives from the current partition then removing $\left\lfloor c \right\rfloor$ from $c$. This method ensures that exactly $\representativeamount$ representatives are elected in the final iteration of the algorithm.
+
+\paragraph*{Similarity evaluation complexity.}
+The primary computational objective of \partitioning is to reduce the number of evaluations of the learned similarity function, which is the most expensive operation in our setting. We therefore first analyze the number of similarity evaluations independently of the specific implementation of \kmedoidsalg.
+
+During the first iteration, \kmedoidsalg is applied to partitions of size at most $\maxpartitionsize$. Assuming that the local representative-selection procedure requires a quadratic number of similarity evaluations with respect to the partition size, each partition requires
+\[
+O(\maxpartitionsize^2)
+\]
+similarity evaluations. Since there are approximately $n/\maxpartitionsize$ partitions, where $n=|X|$, the total number of similarity evaluations during the first iteration is
+\[
+O(n\maxpartitionsize).
+\]
+
+At each subsequent regular iteration, the number of candidate objects is reduced by approximately a factor of $\reductionfactor$. Consequently, the number of similarity evaluations decreases geometrically. The total number of similarity evaluations over all regular iterations is therefore bounded by
+\[
+O(n\maxpartitionsize)
+\sum_{k=0}^{\infty}
+\left(\frac{1}{\reductionfactor}\right)^k
+=
+O(n\maxpartitionsize).
+\]
+compared with the quadratic number of evaluations required when the
+similarity matrix is computed over the complete dataset.
+
+% Thus, the total complexity of the similarity computations is
+% \[
+% O(d n\maxpartitionsize),
+% \]
+% where $d$ is the cost of computing a distance between two objects, which is an extremely large constant in our use case.
+If $d$ denotes the computational cost of one evaluation of the learned similarity function, the corresponding computational cost is
+\[
+O(dn\maxpartitionsize).
+\]
+Although $d$ is a constant with respect to the dataset size, it is substantial in our application because the learned similarity function is computationally expensive. Consequently, reducing the number of similarity evaluations has a direct and significant impact on the overall computation time.
+
+
+The overall computational complexity additionally depends on the specific implementation of \kmedoidsalg. When PAM is used, its computational cost within each partition must therefore be accounted for in addition to the cost of the similarity evaluations described above.
+% \pk{dans la section resultats, indiquer que la complexite de PAM ou meme Bandit PAM si on l'avait utilisée serait de toute facon eclipsée par complexite calcul de distance.}\ga{A mettre dans les baselines}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Incremental coverage algorithm (\inclusion)}
+\label{sec:inclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The incremental coverage approach reduces the number of expensive similarity evaluations by progressively constructing the representative set from objects that are not yet covered by the representatives selected so far. Instead of decomposing the dataset into feature-based partitions, the approach uses the learned similarity function itself to identify uncovered regions of the dataset. At each iteration, a sample of such objects is extracted and a small local representative-selection problem is solved on this sample.
+
+The approach therefore targets a coverage criterion rather than directly optimizing the global objective in~(\ref{eq:optimization_problem}). More precisely, it aims to minimize the number of objects that remain
+uncovered at a given similarity threshold $\threshold$, i.e., whose similarity to every selected representative is below $\threshold$. This criterion is defined through the following optimization problem:
+\begin{equation}
+    \min_{R \subset X,\ |R|=\representativeamount}
+    |N(\threshold)|,
+    \label{eq:above-threshold-metric}
+\end{equation}
+where $N(\threshold) \subset X$ denotes the set of objects that are not covered by any representative at the threshold $\threshold$, defined as
+\begin{equation}
+    N(\threshold) =
+    \{x \in X \mid \forall r \in R,\ s(x,r) < \threshold\}.
+    \label{eq:n-theta}
+\end{equation}
+
+For an object $x$ and a representative set $R$, we define the similarity of $x$ to the set $R$ as the similarity to its most similar representative:
+\begin{equation}
+    S(x,R) = \max_{r \in R} s(x,r).
+    \label{eq:set_similarity}
+\end{equation}
+With this notation, an object is covered at threshold $\threshold$ when $S(x,R) \geq \threshold$, and belongs to $N(\threshold)$ otherwise.
+
+% Despite aiming at minimizing a different metric, \inclusion still works towards maximizing $S_R$ defined in (\ref{eq:metric1-S_R}), since $|N(\threshold)|$ and $S_R$ are intrinsically tied. 
+% The exact relation between $S_R$ and $|N(\threshold)|$ is the following:
+% \[S_R = -\int_{-\infty}^0 |N(\threshold)| \, d\threshold.\]
+% Because of this, minimizing $|N(\threshold)|$ for a given threshold $\threshold$ increases $S_R$.
+% \ga{This could also be developed more maybe}
+
+Starting from an empty representative set, the algorithm alternates between two operations. First, it samples objects that are not covered by the current representative set. Second, it applies \kmedoidsalg to this sample to select a small batch of new representatives. The selected representatives are then added to the current representative set, and the process is repeated until $\representativeamount$ representatives have been selected.
+
+This incremental construction progressively focuses the computational effort on regions of the dataset that remain insufficiently covered. It does not directly optimize the global objective (\ref{eq:optimization_problem}); rather, it optimizes the above-threshold coverage criterion in (\ref{eq:above-threshold-metric}), which is used as a surrogate objective for obtaining a representative set with good coverage of the original dataset. 
+% \pk{It would be useful to state explicitly, later in the experimental section, why minimizing $|N(\threshold)|$ is expected to provide a good solution for the original SNMS objective. In particular, the relation between the threshold-based coverage criterion and the final SNMS values should be experimentally demonstrated.} 
+% \ga{For this, the area above the representation curves is proportional to $S_R$}
+% \pk{etablir la relation integrale}
+
+The complete procedure is illustrated in Figure~\ref{fig:alg-inclusion} and described in Algorithm~\ref{alg:inclusion}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1\linewidth]
+    {ACCESS_template/Figures/InclusionSchemaSteps.png}
+    \caption{\label{fig:alg-inclusion}
+    Representation of one iteration of the incremental coverage algorithm
+    (\inclusion), illustrating its two main steps.
+    (a) shows the set of objects $X$ as circles and triangles. The triangles represent the objects in the current representative set $R^{(k)}$. Gray circles represent objects covered by a representative at threshold $\threshold$, and the segments connect each covered object to a representative that covers it. Black circles represent objects that are not covered by any representative in $R^{(k)}$. Among these uncovered objects, the circles outlined in red indicate the objects that are selected to form the sample $E$.
+    (b)--(c) \textbf{Step 1: Sampling of uncovered objects.} The current representative set $R^{(k)}$ is used to identify uncovered objects, from which a sample $E$ is constructed.
+    (d) \textbf{Step 2: Local representative selection.} The new representatives selected from $E$ are shown as triangles. The objects covered by these representatives, together with their corresponding links, are shown in gray for reference only, to indicate the coverage resulting from the updated representative set. Then the new
+    representatives $R'$ added to $R^{(k)}$ to
+    form $R^{(k+1)}$.
+    }
+\end{figure}
+
+\begin{algorithm}[t]
+\caption{Incremental coverage algorithm (\inclusion)}
+\label{alg:inclusion}
+\begin{algorithmic}[1]
+
+\REQUIRE
+$\representativeamount \in \mathbb{N}$: Number of desired representatives; \\
+$X=\{x_1,\dots,x_n\},\ x_i\in\mathcal{X}$: Set of objects; \\
+$\threshold\in\mathbb{R}^-$: Similarity threshold; \\
+$e\in\mathbb{N}$: Sampling size\vspace{\baselineskip}
+
+\ENSURE
+$R$: Set of $\representativeamount$ representative objects\vspace{\baselineskip}
+
+\STATE $R^{(0)}\gets\emptyset$
+
+\WHILE{$|R^{(k)}|<\representativeamount$}
+
+    \STATE \textbf{Step 1: Sampling of uncovered objects}
+    \STATE $E\gets e$ random objects from $X$ s.t.
+    $S(x_i,R^{(k)})<\threshold$ \COMMENT{If less than $\samplesize$}
+
+    \STATE
+
+    \STATE \textbf{Step 2: Local representative selection}
+    \STATE $n_r\gets
+    \min\left(
+    \representativeamount-|R^{(k)}|,
+    \left\lfloor\sqrt{\frac{\representativeamount}{2}}\right\rfloor
+    \right)$
+    \STATE $R'\gets\kmedoidsalg(E,n_r)$
+    \STATE $R^{(k+1)}\gets R^{(k)}\cup R'$
+
+\ENDWHILE
+
+\end{algorithmic}
+\end{algorithm}
+
+Each iteration consists of the following two steps.
+
+\paragraph*{Step 1: Sampling of uncovered objects.}
+
+At the beginning of the algorithm, the representative set is initialized
+as
+\[
+R^{(0)} = \emptyset.
+\]
+At each iteration, a sample $E \subset X$ of $e$ objects that are not
+covered by the current representative set $R^{(k)}$ is constructed.
+Objects are considered in a random order and added to $E$ only when
+their similarity to the current representative set is below the
+threshold:
+\[
+S(x,R^{(k)}) < \threshold.
+\]
+Consequently, every object $x$ included in the sample satisfies
+\[
+x \in E
+\quad\Longrightarrow\quad
+S(x,R^{(k)}) < \threshold.
+\]
+
+The sampling step therefore restricts the subsequent representative
+selection to objects that are currently outside the coverage region
+of $R^{(k)}$. Unlike the feature-based partitioning approach, this
+selection does not require auxiliary object features and is directly
+based on the learned similarity function.
+
+If fewer than $\samplesize$ non represented elements are found during the sampling phase after iterating through all the objects, all of them are used as the sample $E$ for the next step. The algorithm stops if there are less sampled objects that representatives to elect, since in that case all objects are represented with the given threshold $\threshold$.
+
+% \pk{The implementation should specify what happens if fewer than $e$
+% uncovered objects remain. In the final iterations this may occur
+% naturally, and the algorithm should either use all remaining uncovered
+% objects or define another stopping rule. The current pseudocode assumes
+% that a sample of size $e$ can always be constructed.}
+
+\paragraph*{Step 2: Local representative selection.}
+
+Once the sample $E$ has been constructed, we apply
+\kmedoidsalg to select a small batch of representatives from $E$. The
+number of representatives selected at iteration $k$ is
+\[
+n_r =
+\min\left(
+\representativeamount-|R^{(k)}|,
+\left\lfloor
+\sqrt{\frac{\representativeamount}{2}}
+\right\rfloor
+\right).
+\]
+% \pk{I propose to add some explanation for the above formula. Please check if you agree, especially for the second argument in the minimum function.}
+The first term ensures that the algorithm never selects more representatives than required: if fewer than $\left\lfloor\sqrt{\representativeamount/2}\right\rfloor$ representatives remain to be selected, only the required number is added. 
+The second term limits the size of each batch to $\left\lfloor\sqrt{\representativeamount/2}\right\rfloor$ representatives. 
+This choice provides a compromise between not selecting too many representatives at once to have better diversity of representatives, and the number of iterations required to reach the target set size. In particular, it results in approximately $\sqrt{2\representativeamount}$ iterations.
+% This choice provides a compromise between the cost of the local \kmedoidsalg optimization and the number of iterations required to reach the target set size. In particular, it results in approximately $\sqrt{2\representativeamount}$ iterations in the worst case.
+
+
+The resulting set of representatives is
+\[
+R' = \kmedoidsalg(E,n_r),
+\]
+and is added to the current representative set:
+\[
+R^{(k+1)} = R^{(k)} \cup R'.
+\]
+
+Because $E$ is constructed exclusively from objects satisfying
+$S(x,R^{(k)}) < \threshold$, every newly selected representative also
+belongs to the current uncovered set:
+\[
+R' \subseteq N(\threshold).
+\]
+Moreover, since
+\[
+R^{(k)} \subseteq R^{(k+1)},
+\]
+the set-level similarity defined in (\ref{eq:set_similarity}) satisfies
+\[
+S(x,R^{(k+1)}) \geq S(x,R^{(k)})
+\]
+for every $x \in X$. Consequently,
+\[
+N(\threshold)(R^{(k+1)})
+\subseteq
+N(\threshold)(R^{(k)}),
+\]
+so the number of uncovered objects cannot increase as new representatives are added.
+
+% \pk{This monotonicity property is an important theoretical property of the approach and is worth retaining. It is stronger and more precise than saying that the method simply "forces $N(\threshold)$ to grow smaller".}
+
+%The process is repeated until
+%\[
+%|R^{(k)}|=\representativeamount.
+%\]
+%The value of $n_r$ ensures that the final iteration selects only the number of representatives required to reach the target size.
+
+
+
+\paragraph*{Filtering of covered objects.}
+
+The sampling step can be made more efficient by removing objects from consideration once they have been found to be covered by the current representative set. This optimization does not change the result of the algorithm. Indeed, for two representative sets $R_1\subseteq R_2$, the definition of $S$ in
+(\ref{eq:set_similarity}) gives
+\[
+S(x,R_2)\geq S(x,R_1)
+\]
+for every $x\in\mathcal{X}$. Therefore, if
+\[
+S(x,R^{(k)})\geq\threshold
+\]
+at iteration $k$, the object remains covered at all subsequent iterations and can never satisfy the sampling condition again.
+
+Consequently, once an object has been identified as covered, it can be removed from the set of objects considered during subsequent sampling iterations. This prevents covered objects from being repeatedly compared with the growing representative set and reduces the sampling cost, particularly in later iterations when the number of uncovered objects becomes small.
+
+This optimization will be applied for all future experiments in section~\ref{sec:results} in order to lower computation times.
+
+% \pk{This optimization should be reflected explicitly in the implementation and, ideally, in the pseudocode. The current pseudocode samples directly from $X$, whereas the optimized implementation effectively samples from a dynamically maintained set of candidate uncovered objects. We should decide whether Algorithm \ref{alg:inclusion} describes the conceptual algorithm or the actual optimized implementation. For an IEEE Access paper, I recommend making the pseudocode match the implementation if the optimization is used in all experiments, unless this makes the pseudo code too messy to read. In that case, we should write here that this optimaization has been used in all experiments presented in result section, but for sake of clarity, we have chosen to let the the conceptual algorithm here.}
+
+\paragraph*{Similarity evaluation complexity.}
+
+The primary computational objective of \inclusion is to reduce the number of evaluations of the learned similarity function. We therefore first analyze the number of similarity evaluations independently of the specific implementation of \kmedoidsalg.
+
+% \pk{I let you make an iteration on this section following our conversation. Do it with the same philosophy as for the partition algorith. Make this section also less compact (jump lines to highlight some formulas) }
+
+% \pk{Remark: The filtering optimization can only reduce the number of evaluations in practice, but the asymptotic worst-case bound remains unchanged. This distinction should be maintained clearly in the experimental analysis.}
+
+\inclusion's iterations iterate over $X$ until $e$ objects are found. This results in
+\[O(|X|\representativeamount)\] 
+calls to the similarity function for an iteration in worst case, since every object must be compared to all the current representatives in $R^{(k)}$. 
+Once the sample is constructed, we need to compute the distance matrix, which makes $O(e^2)$ calls, resulting in 
+\[O(|X|\representativeamount+e^2)\]
+similarity computations for each iteration.
+
+Note that the filtering optimization can only reduce the number of evaluations in practice, but the sampling step's complexity remains unchanged.
+
+Over the course of the algorithm, $|R^{(k)}|$ increases by $\left\lfloor \sqrt{\representativeamount/2}\right\rfloor$ each iteration, which makes for $O(\sqrt{\representativeamount})$
+% a total of around $\left\lceil \sqrt{2m}\right\rceil$
+iterations, since the algorithm stops when $|R^{(k)}| \ge \representativeamount$.
+
+Overall, with $n=|X|$, the amount of calls the the similarity function made by \inclusion is 
+\[O(nm^{3/2}+\samplesize^2\sqrt{\representativeamount}),\]
+bringing the total complexity of the similarity evalutations to
+\[O(d(nm^{3/2}+\samplesize^2\sqrt{\representativeamount})).\]
+
+As for \partitioning, the total complexity depends on the specific implementation of KMedoids, which must be accounted for in addition to the cost of the similarity evaluations described above.
+
+% Since \kmedoidsalg is also used in every sample, the overall complexity must account for the selected \kmedoidsalg algorithm's complexity.
+% When \kmedoidsalg is PAM, the total complexity of the algorithm becomes 
+% % \[O(n\maxpartitionsize + \frac{n}{\maxpartitionsize} \frac{\maxpartitionsize}{\reductionfactor}(\maxpartitionsize - \frac{\maxpartitionsize}{\reductionfactor})^2).\]
+% \[O(nm^{3/2}+\samplesize^2\sqrt{m}+m(\samplesize-\sqrt{m})^2),\]
+% where $n$ and $k$ were respectively replaced by $\samplesize$ and $\sqrt{m}$ in PAM's $O(k(n-k)^2)$ complexity.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Application to news corpora}
+\label{sec:results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We evaluate our algorithms in the context of an industrial editorial production workflow. We consider Melody\footnote{\url{https://www.melody-360.com/en/}}, an editorial Content Management System, as a representative example of such environments, where newspapers and magazines are produced using structured layouts and reusable templates.
+
+When onboarding a new publication workflow, an initial template library is required to allow editors to experiment with and produce new pages. However, existing publications often contain a large number of previously generated layouts that reflect the editorial habits and design choices of the organization. Manually reviewing these layouts to identify a representative subset is time-consuming and may lead to incomplete template coverage.
+
+The objective of this experiment is therefore to automatically extract a compact set of representative article layouts from a corpus of previously produced pages. These layouts can be used as an initial template collection, providing a meaningful representation of the publication's editorial identity while reducing the effort required to configure a new production workflow.
+
+\subsection{Dataset and experimental setting}
+\label{sec:dataset}
+
+The experiments are conducted on a real-world editorial corpus provided by the newspaper {\itshape La Provence}. The corpus contains 6,007 newspaper pages produced over a period of 59 days, from which 15,289 article layouts were extracted.
+
+The objective is to automatically identify a compact set of representative article layouts from this historical corpus. These layouts can subsequently be used as initial templates in an editorial workflow, providing editors with representative design patterns from previous productions and reducing the need to create templates manually.
+
+The objects considered for representative selection are therefore individual article layouts. Figure~\ref{fig:page-articles} illustrates the extraction process, showing an example of a newspaper page together with the article layouts identified within it. In this representation, each article is described as a structured layout composed of visual elements, such as titles, subtitles, images, captions, and text blocks. These visual elements are assigned semantic classes according to their role in the article layout. The colors used in the figure distinguish these different element classes and are used consistently throughout the layout representations presented in this section. Figure~\ref{fig:articles}
+shows several examples of article layouts extracted from the corpus.
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/PageToLayouts.png}
+    \caption{Example of a newspaper page and the article layouts extracted from
+it.
+(a) Newspaper page composed of three articles.
+(b) Corresponding structured article layouts, where colors distinguish the different classes of visual elements.
+    }
+    \label{fig:page-articles}
+
+    \vspace{0.5em}
+    
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/ArticleRepresentations.png}
+    \caption{Examples of article layouts extracted from the corpus. The color coding of the visual elements follows the convention introduced in Figure~\ref{fig:page-articles}.
+    }
+    \label{fig:articles}
+\end{figure}
+
+In addition to the historical article layouts, the corpus is accompanied by a set of templates that were actually used by {\itshape La Provence} to produce newspaper pages. This reference set will also enables a direct comparison between the templates derived automatically from previously produced articles and the templates used in practice by the newspaper. Such a comparison will provide an additional validation of the proposed representative selection approaches beyond their computational performance.
+
+\subsection{Article layout representation}
+\label{sec:layout-representation}
+
+Each article layout is represented as a structured object describing both its global properties and its internal composition.
+
+An article layout $a$ is formalized as:
+\[
+a=(E,w_a,h_a,c_a),
+\]
+where $w_a,h_a\in\mathbb{R}^{+}$ denote the width and height of the article, respectively, and $c_a\in\mathbb{N}$ denotes its number of columns. The set $E=\{e_1,e_2,\dots,e_n\}$ contains the visual elements composing the article.
+
+Each visual element is represented as:
+\[
+e_i=(w_i,h_i,x_i,y_i,c_i),
+\]
+where $w_i,h_i\in\mathbb{R}^{+}$ denote the width and height of its bounding box, respectively, and $x_i,y_i\in\mathbb{R}$ specify its position within the article. The variable $c_i\in\mathcal{C}$ denotes the semantic class of the element, with
+\[
+\mathcal{C}=
+\{\text{Title},\text{Subtitle},\text{Image},\text{Caption},
+\text{Theme},\text{Text}\}.
+\]
+This representation captures both the global geometry of an article and the spatial arrangement and semantic classes of its constituent elements. It is subsequently used to compute the learned similarity between article layouts.
+
+\subsection{Learned similarity model}
+
+The similarity between two article layouts is computed using a Graph Matching Neural Network (GMN)~\cite{gallardo-gmn}, adapted from LayoutGMN~\cite{patil2021layoutgmn}. Each article layout is converted into a graph representation, where nodes correspond to visual elements and edges encode their spatial relationships. These graphs are then provided as input to the trained GMN, which outputs a learned similarity score $s(a_1,a_2)$.
+
+Since this similarity function is learned by a neural model rather than defined as an explicit geometric distance, it does not guarantee classical metric properties such as symmetry or the triangle inequality. This makes the resulting similarity space representative of the non-metric learned similarity setting targeted in this work.
+
+Evaluating $s(a_1,a_2)$ is also computationally expensive, making exhaustive similarity evaluation impractical for large collections of article layouts.
+% \pk{I propose to add this comment about the computational. Consider reporting the  actual evaluation time of the GMN here only if it is useful to motivate the computational bottleneck. Otherwise, keep this statement qualitative and report measured inference times and the resulting computational costs in the experimental results section.}
+
+\subsection{Results}
+
+All experiments were conducted using Python (v3.9), scikit-learn (v1.6.1), and scikit-learn-extras (v0.3.0).
+
+Unless stated otherwise, all experiments use the complete dataset of 15,289 article layouts and the following parameter settings. For \partitioning, we use $\reductionfactor=25$ and $\maxpartitionsize=50$. For \inclusion, we use $\threshold=-2$ and $\samplesize=100$. We search for $m=50$ representatives.
+
+In addition, unless stated otherwise, the 10\% most atypical articles are not considered as candidates during the local \kmedoidsalg computations. However, they remain part of the dataset throughout the entire experiment and are therefore also included in the evaluation of the resulting representative set. The motivation and evaluation of this strategy are presented in Section~\ref{sec:outlier-removal}.
+
+To evaluate the performance of the proposed algorithms, we use the objective metric $S_R$ defined in (\ref{eq:metric1-S_R}), namely the sum of nearest-medoids similarities (SNMS), together with a second metric, referred to as the representation score. For a given threshold $\threshold$, the representation score is defined as
+\begin{equation}
+    r(\threshold) =
+    \frac{|X|-|N(\threshold)|}{|X|}
+    \label{eq:representation_metric}
+\end{equation}
+and corresponds to the proportion of articles in $X$ that are represented by $R$ at threshold $\threshold$. The SNMS metric measures how well the selected representatives perform with respect to the objective of the optimization problem in (\ref{eq:optimization_problem}), while the representation score provides a complementary measure of dataset coverage for a given similarity threshold.
+
+Mathematically, these two metrics are intrinsically related, as
+$S_R$ is proportional to the total area above the curve of $r$. More
+precisely, it can be shown that
+\[S_R = -|X| \int_{-\infty}^0 \big(1 - r(\threshold)\big) \, d\threshold.\]
+
+Finally, we also report computation time to assess the trade-off between representative quality and computational cost.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Parameter selection}
+
+\paragraph*{Feature-based partitioning parameters.}
+
+For \partitioning, we first evaluate the influence of the reduction factor $\reductionfactor$. The maximum partition size is fixed to $\maxpartitionsize=50$.
+
+Table~\ref{tab:lambda} shows that increasing $\reductionfactor$ consistently improves the SNMS value while also reducing computation time. Among the tested values, $\reductionfactor=25$ provides the best SNMS value and the shortest computation time.
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{ |c|c|c| } 
+     \hline
+      $\reductionfactor$ & $S_R$ & {Comput. time (h)} \\
+     \hline
+     2  & -21775 & 6.47 \\ 
+     5  & -14591 & 4.06 \\ 
+     15 & -12401 & 3.43 \\ 
+     \textbf{25} & \textbf{-10807} & \textbf{3.38} \\ 
+     \hline
+    \end{tabular}
+\caption{\label{tab:lambda} Effect of the reduction factor $\reductionfactor$ on the SNMS and computation time of \partitioning, with $\maxpartitionsize=50$ and $\representativeamount=50$.}
+\end{table}
+
+The first result suggests that $\reductionfactor$ should be chosen as large as possible. However, the choice of $\reductionfactor$ is constrained by the recursive binary partitioning procedure. Since each partition is obtained by repeatedly splitting a set into two subsets, the size $p_s$ of a final partition satisfies
+\[
+\frac{\maxpartitionsize}{2} \leq p_s \leq \maxpartitionsize.
+\]
+For a partition of size $p_s$ to contribute at least one representative, we need
+\[
+\left\lfloor \frac{p_s}{\reductionfactor} \right\rfloor \geq 1,
+\]
+which requires $\reductionfactor \leq p_s$. To guarantee this condition for every possible final partition, we use the smallest possible partition size as a conservative bound, yielding
+\[
+\reductionfactor \leq \frac{\maxpartitionsize}{2}.
+\]
+
+In Table~\ref{tab:rho}, we next evaluate the influence of the maximum partition size $\maxpartitionsize$, using $\reductionfactor=\maxpartitionsize/2$ in each case. The results show that increasing $\maxpartitionsize$ improves the SNMS value, but also increases the computation time. We therefore use $\maxpartitionsize=50$ for the remaining experiments as a compromise between solution quality and computation time.
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{ |c|c|c| } 
+     \hline
+      $\maxpartitionsize$ & $S_R$ &
+     {Comput. time (h)}  \\
+     \hline
+     20 & -17652 & \textbf{1.77} \\ 
+     50 & -10807 & 3.38 \\ 
+     100 & \textbf{-8989} & 6.50 \\ 
+     \hline
+    \end{tabular}
+\caption{\label{tab:rho}
+Effect of the maximum partition size $\maxpartitionsize$ on the SNMS and computation time of \partitioning, with $\reductionfactor=\maxpartitionsize/2$ and $\representativeamount=50$.}
+\end{table}
+
+\paragraph*{Incremental coverage parameters.}
+
+For \inclusion, we investigate the influence of the similarity threshold $\threshold$ and the sample size $\samplesize$. 
+%Unless otherwise specified, $\threshold=-2$ and $\samplesize=100$ are used as reference values.
+%Note that the reported results correspond to a single run for each parameter setting, as repeated runs would substantially increase the computational cost of the parameter study. 
+The variability associated with the random sampling is assessed separately in the
+baseline experiments.
+
+In Table~\ref{tab:theta}, we first vary $\threshold$ while keeping $\samplesize=100$. The results show that $\threshold=-2$ provides the best SNMS value among the tested thresholds, while requiring only 11\% more computation time than $\threshold=-1$, which is the fastest setting. We therefore use $\threshold=-2$ in the subsequent experiments.
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{ |c|c|c| } 
+     \hline
+     $\threshold$ & $S_R$ &
+     {Comput. time (h)} \\
+     \hline
+     -1 & -12896 & \textbf{0.84} \\
+     \textbf{-2} & \textbf{-10264} & 0.93 \\ 
+     -3 & -14462 & 0.97 \\ 
+     \hline
+    \end{tabular}
+\caption{\label{tab:theta}Effect of $\threshold$ on SNMS and computation time for \inclusion. Among the tested values, $\threshold=-2$ provides the best SNMS value with only minor differences in computation time.}
+\end{table}
+
+% Temps calcul IC: 529+712
+
+In Table~\ref{tab:e-sample-size}, we next evaluate the influence of the sample size $\samplesize$ while keeping $\threshold=-2$. The results show that $\samplesize=100$ provides the best SNMS value among the tested configurations. However, it requires substantially more computation time than $\samplesize=50$, which is approximately 2.7 times faster. We therefore retain $\samplesize=100$ for the subsequent experiments, with the objective of maximizing SNMS. 
+% \pk{The choice of $\samplesize=100$ deliberately prioritizes SNMS over computation time. Consider making this trade-off explicit.}
+
+
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{ |c|c|c| } 
+     \hline
+      $\samplesize$ & $S_R$ &
+     {Comput. time (h)} \\
+     \hline
+     50 & -11920 & \textbf{0.35} \\ 
+     \textbf{100} & \textbf{-10264} & 0.93 \\ 
+     150 & -11495 & 2.69 \\ 
+     \hline
+    \end{tabular}
+\caption{\label{tab:e-sample-size}Effect of the sample size $\samplesize$ on SNMS and computation time for \inclusion. Among the tested values, $\samplesize=100$ provides the best SNMS value, but requires substantially more computation time.}
+\end{table}
+
+
+\subsubsection{Influence of outlier removal.}
+\label{sec:outlier-removal}
+
+In addition to the algorithm-specific parameters, we investigate whether the representative selection can be improved by reducing the influence of atypical article layouts. Although the objective is to obtain representatives that summarize the entire dataset, highly isolated layouts may correspond to rare or unusual editorial structures. Selecting representatives specifically for such layouts may therefore reduce the ability of the resulting set to capture more frequently occurring layout patterns.
+
+We consequently evaluate an outlier-removal strategy in which a fixed percentage of the most atypical articles is excluded from the local \kmedoidsalg computations. In practice, the outliers are identified as the articles with the lowest average similarity to all other articles in the dataset.
+Note that these articles are not removed from the dataset. Instead, they are only prevented from being selected or considered as candidates during the local \kmedoidsalg computations. All articles remain in the dataset and are included when evaluating the resulting representative set.  
+
+Table~\ref{tab:outlier-removal} compares the SNMS obtained without outlier removal and after removing 10\% of the most atypical articles. In most of the tested configurations, removing these articles improves the SNMS value. 
+
+% For $m=100$ and the \partitioning algorithm however, removing outliers yields a lower $S_R$. That can likely be explained by the fact that removing outliers on the last iteration essentially ignores a large portion of the original dataset, since every article in $R$ for that last iteration corresponds to the partition it belonged to.
+% \ga{Je suis pas fan de l'explication que j'en ai fait sur le paragraphe au dessus... Je vois pas vraiment comment bien expliquer ça, c'était déjà approximatif à l'oral :/}
+
+The effect of outlier removal differs between the two approaches.
+
+For \inclusion, we observe an improvement in $S_R$ for both values of $m$. This may be explained by the fact that outlier removal is only temporary: an article excluded from a sample $E$ remains available for future iterations. Since its outlier status depends on the current representative set $R^{(k)}$, an article that is atypical at one iteration may become relevant at a later iteration and eventually be selected as a representative.
+
+For \partitioning, the effect of outlier removal is more mixed. In particular, for $m=100$, removing outliers decreases $S_R$. This may be explained by the irreversible nature of the filtering in this approach. An article excluded from a partition cannot become a representative of that partition and is consequently absent from $R^{(k+1)}$. It is therefore permanently removed from the candidate set for all subsequent iterations. In particular, in the last iterations, when $R^{(k)}$ already provides a small and highly condensed representation of the original dataset, removing 10\% of the remaining candidates may discard articles that would otherwise have contributed to the final representative set.
+
+Finally, let us remark that, from an editorial perspective, a smaller representative set is also preferable, as it provides editors with a more manageable collection of candidate templates. Therefore, for a production use of the proposed approach, we would favor a target of $m=50$ representatives. We therefore retain a $10\%$ outlier-removal rate for the remaining experiments, since it is only increasing $S_R$ for $m=50$.
+
+\begin{table}[htbp]
+    \centering
+    \normalsize
+    \begin{tabular}{ |c|c|c|c| }
+        \hline
+        \textit{Algo.} & $m$ & $S_R$ (0\%) & $S_R$ (10\%) \\
+        \hline
+        \multirow{2}{*}{\partitioning}
+        & 50  & -13083 & \textbf{-10807} \\
+        & 100 & \textbf{-5310} & -6337 \\
+        \hline
+        \multirow{2}{*}{\inclusion}
+        & 50  & -12618 & \textbf{-10264} \\
+        & 100 & -8626 & \textbf{-7506} \\
+        \hline
+    \end{tabular}
+    \caption{\label{tab:outlier-removal}
+    Effect of 10\% outlier removal on SNMS for
+    \partitioning and \inclusion. The columns $S_R$ (0\%) and
+    $S_R$ (10\%) report the SNMS obtained without and with outlier
+    removal, respectively.}
+\end{table}
+
+
+\subsubsection{Baselines}
+
+We first establish a baseline using an existing implementation of the PAM algorithm, namely the \kmedoidsalg method provided by scikit-learn-extra. This baseline directly optimizes the SNMS objective used in our formulation.
+
+Since the objective of the proposed approaches is to avoid the construction of the full pairwise similarity matrix, which is required by \kmedoidsalg in our setting, applying PAM to the complete dataset would be prohibitively expensive. We therefore compute the baseline on a subset of 1,493 articles, corresponding to approximately one tenth of the original dataset of 15,289 articles. 
+This subset is obtained from the first 5 out of 59 days of publications by {\itshape La Provence}, making it representative of the global set of articles provided.
+% \pk{Indicate that the subset is selected in a way that does not introduce a bias. If it is a random subset, specify how it was sampled and whether the same subset was used for all three algorithms. If the subset was selected otherwise, briefly explain the selection criterion.}
+This reduces the number of pairwise similarity evaluations by approximately a factor of 105, making the baseline computation tractable.
+
+Table~\ref{tab:baseline} compares the three approaches on this reduced dataset for $m=50$ representatives. Despite operating on the same subset, both proposed approaches obtain substantially better SNMS values than PAM, with \inclusion achieving the best value. 
+
+The computation times reported in Table~\ref{tab:baseline} further illustrate the computational advantage of the proposed approaches. PAM requires 15.48 hours on the reduced dataset, compared with 0.61 hours for \partitioning and 0.86 hours for \inclusion, making \partitioning 25 times faster and \inclusion 18 times faster on this reduced set. 
+
+Since \inclusion uses random sampling, the values reported for \inclusion in Table~\ref{tab:baseline} are averaged over eight independent runs. Across these runs, the standard deviation of $S_R$ is 52.3, corresponding to approximately 5.2\% of the mean absolute value of $S_R$, while the standard deviation of the computation time is 146 seconds (0.04 hours), corresponding to approximately 7.2\% of the mean computation time. These relatively small variations indicate that the stochasticity introduced by random sampling has a limited impact on the measured performance. Based on this observation, and given the substantial computational cost of the experiments, we use a single execution of \inclusion for the subsequent experiments.
+
+It is worth noting that this computational cost is primarily due to the evaluation of the learned similarity rather than to the \kmedoidsalg optimization itself. For PAM, the optimization takes approximately 5 minutes, compared with 15.48 hours for the complete computation of the pairwise dissimilarity matrix and the subsequent PAM optimization. Thus, the cost of the \kmedoidsalg optimization is negligible compared with that of computing the similarities, which motivates our focus on reducing the number of similarity evaluations.
+
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{ |c|c|c| } 
+     \hline
+     \textit{Algo.} & $S_R$ & \textit{Comput. time (h)} \\
+     \hline
+     \kmedoidsalg (PAM) & -2074 & 15.48 \\ 
+     {\partitioning} & \textbf{-1012} & \textbf{0.61} \\ 
+     \inclusion &{-1056 $\pm$ 52.3} &
+ \textbf{0.86 $\pm$ 0.04} \\
+     \hline
+    \end{tabular}
+    \caption{\label{tab:baseline}
+    Baseline comparison for the three representative selection approaches on the reduced dataset ($n=1493$, $m=50$). The values of the \inclusion row have been obtained by averaging the results of 8 executions of the algorithm.
+    }
+\end{table}
+
+Figure~\ref{fig:alg-comp-metric2} provides a complementary comparison using the representation score. The curves show the proportion of articles represented by the selected set for varying values of the similarity threshold $\threshold$. \inclusion provides the highest representation scores for most thresholds, while \partitioning achieves better coverage at high similarity thresholds (above $-1.16$).
+PAM obtains the lowest representation scores across the range of thresholds considered. 
+% \pk{Check the exact crossover point between \partitioning and \inclusion in the figure. Is it exactly $-1$?}
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/BaselinesComparison.png}
+    \caption{Representation score as a function of the similarity threshold $\threshold$ for \kmedoidsalg (PAM), \partitioning, and \inclusion. \partitioning provides the highest coverage for high similarity thresholds (above $-1.16$), while \inclusion provides higher coverage at lower thresholds. PAM provides the lowest coverage across the thresholds considered.
+    % \pk{Same comment as in the text. Check the exact crossover point between \partitioning and \inclusion in the figure. Is it exactly $-1$? Also, the figure highlights a blue line at -2 which is not commented in the caption nor used in the text. I changed the figure. }
+    }
+    \label{fig:alg-comp-metric2}
+\end{figure}
+
+
+\subsubsection{Main results}
+\label{sec:main-results}
+
+\paragraph*{Overall comparison.}
+
+We first compare \partitioning and \inclusion in terms of the SNMS objective and computation time. The corresponding results are reported in Table~\ref{tab:global-comparison}. The SNMS values are those obtained in the outlier-removal experiments reported in Table~\ref{tab:outlier-removal}, using the complete dataset of 15,289 article layouts.
+
+For reference, we also report the theoretical computation time required by PAM when applied to the complete dataset. Since PAM requires the computation of the pairwise similarity matrix, we estimate this time assuming an average computation time of $0.05$~s per similarity evaluation. Considering the $15289^2$ pairwise evaluations, this corresponds to approximately
+\[
+\frac{15289 \times 15289 \times 0.05}{2 \times 3600}
+\simeq 1623~\text{h},
+\]
+or approximately 67 days of computation.
+
+For $m=50$, \inclusion achieves a slightly better SNMS value than \partitioning, while requiring substantially less computation time. For $m=100$, \partitioning obtains the better SNMS value, while the computation times of the two approaches remain of the same order of magnitude. Most importantly, both proposed approaches require only a small fraction of the theoretical computation time required to obtain the complete pairwise similarity matrix.
+
+The results also illustrate the complementary objectives of the two approaches. \partitioning uses local \kmedoidsalg optimization to approximate the global SNMS objective, whereas \inclusion explicitly targets dataset coverage at the fixed threshold $\threshold=-2$. We therefore complement the SNMS comparison with an analysis of the representation score over a range of similarity thresholds.
+
+\begin{table}[htbp]
+    \centering \normalsize
+    \begin{tabular}{|c|c|c|c|c|}
+     \hline
+     {Algo.} & $m$ & $S_R$ &
+     {Comput. time (h)} &
+     {Speed-up} \\
+     \hline
+     \partitioning & \multirow{2}{*}{50} & -10807 & 3.38 & 480 $\times$ \\
+     {\inclusion} &  & \textbf{-10264} &
+     \textbf{0.93} & \textbf{1\,740 $\times$} \\
+     \hline
+     \partitioning & \multirow{2}{*}{100} & \textbf{-6337} & 3.38 &
+     480 $\times$ \\
+     {\inclusion} &  & -7506 &
+     \textbf{2.97} & \textbf{550 $\times$} \\
+     \hline
+    \end{tabular}
+    \caption{Comparison of \partitioning and \inclusion for $m=50$ and $m=100$. The table reports the SNMS value $S_R$, the measured computation time, and the theoretical speed-up relative to PAM. The PAM computation time is estimated from the number of pairwise similarity evaluations required for the full dataset, assuming 0.05~s per similarity computation.}
+    \label{tab:global-comparison}
+\end{table}
+
+\paragraph*{Effect of the number of representatives.}
+
+Figure~\ref{fig:partition-vs-inclusion} compares the representation curves obtained with \partitioning and \inclusion for $m=50$ and $m=100$ representatives. As expected, increasing the number of representatives improves the representation score for both approaches across the range of similarity thresholds. At the reference threshold $\threshold=-2$, \partitioning represents 86\% of the dataset with $m=50$ and 93\% with $m=100$, while \inclusion reaches 93\% and 98\%, respectively.
+
+The figure also highlights the different behavior of the two approaches across similarity thresholds. \inclusion performs better around its target threshold $\threshold=-2$, whereas \partitioning provides higher representation scores for higher similarity thresholds.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/FPvIC_50v100.png}
+    \caption{\label{fig:partition-vs-inclusion}Representation curve for \partitioning and \inclusion with $m=50$ and $m=100$.}
+\end{figure}
+
+% Command: python -m scripts.toolbox similarities_cutoff results/representativity-measure/partitions/LP-Lenient50/distances.pkl+results/representativity-measure/partitions/LP-Lenient100/distances.pkl+results/representativity-measure/inclusion/LP-Lenient50/distances.pkl+results/representativity-measure/inclusion/LP-Lenient100/distances.pkl results/representativity-measure/graphs/graph_name.png "m=50 (partitioning)"+"m=100 (partitioning)"+"m=50 (\inclusion)"+"m=100 (inclusion)"
+% The command assumes that the distance.pkl files already exist. They must be created by running the algorithms then running the "distance_to_subset" command.
+% The line styles are "hard coded" in plotting.py, and may need to be changed to fit the styles of this figure.
+
+
+\paragraph*{Incremental coverage of \inclusion.}
+
+The incremental nature of \inclusion also makes it possible to examine how the representation score evolves as representatives are added. During the execution of \inclusion, we record the representation score after each iteration. Figure~\ref{fig:representation-per-representatives} shows these values for $m=100$ and $\threshold=-2$.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/representationPerNRepresentatives-inclusion100_stairPlot.png}
+    \caption{Representation score as a function of the number of
+    representatives selected by \inclusion, with $m=100$ and
+    $\threshold=-2$. The marginal gain in representation decreases as
+    additional representatives are selected.}
+    \label{fig:representation-per-representatives}
+\end{figure}
+
+% Command: python -m representation_batches data/page-extraction-results/LP-pagesLenientPrecision results/clustering-inclusion/LP-lenient100-core90,saveBatches results/representativity-measure/graphs/graph_name.png -2
+% This requires a set of representatives obtained with the inclusion algorithm, where the name of the representatives end with "_batchN"
+% The line styles are "hard coded" in plotting.py, and may need to be changed to fit the styles of this figure.
+
+At every iteration except the last, $|R|$ increases by $7$, since
+\[
+n_r =
+\min\left(
+100-|R|,
+\left\lfloor\sqrt{100/2}\right\rfloor
+\right)
+=7
+\]
+until fewer than seven representatives remain to be selected.
+Consequently, the figure provides a discrete view of the improvement in representation as the representative set grows.
+
+The first batches of representatives provide substantially larger gains in global representation than later batches. This suggests that a relatively small number of representatives can already capture a large fraction of the recurring layout patterns in the corpus.
+
+This observation is further illustrated in Figure~\ref{fig:best-representatives}, which displays the seven best representatives that individually cover the largest numbers of articles. These seven representatives alone cover more than $39\%$ of the articles. The coverage obtained by these seven representatives is slightly higher than the coverage obtained after the first iteration of \inclusion. This difference is expected because the first batch of representatives is selected jointly by \kmedoidsalg and is therefore not necessarily composed of the seven representatives with the largest individual coverage.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=1\linewidth]{ACCESS_template/Figures/Best7Representatives.png}
+    \caption{\label{fig:best-representatives}
+    The seven representatives obtained from \inclusion with
+    $m=100$ that individually cover the largest numbers of articles.
+    Together, they cover more than 39\% of the dataset.}
+\end{figure}
+
+\subsubsection{Comparison with the client's templates}
+
+We finally compare the representatives selected from the historical article corpus with the set of templates originally used by the client, {\itshape La Provence}. These templates provide an external reference for assessing whether the automatically selected representatives are consistent with existing editorial practices, although they cannot be considered a ground truth for the representative-selection problem.
+
+Among the selected representatives, 33 out of 50 are identical
+to a template from the client's original set, i.e. their layout is exactly the same as the template's.
+% \pk{If possible, report the exact numbers here rather than ``approximately two thirds'', e.g., $x/50$ representatives. Also clarify precisely what ``identical'' means: exact structural equality of the layout.} 
+The agreement is even higher among the most representative layouts: among the 19 best representatives, only one does not correspond to a template from the client's original collection. This strong overlap indicates that the proposed representative-selection approach recovers many layouts that were already considered useful in the editorial workflow.
+
+To further assess the relationship between the automatically selected representatives and the client's templates, we define the coverage of a template set by a representative $r$ as the number of client templates for which at least one article produced from that template is represented by $r$. Formally, for a representative $r$, its template coverage is the number of templates $t$ such that at least one article generated from $t$ is assigned to $r$ according to the representation criterion. The selected representatives cover a substantial number of the client's templates. In particular, the best representative alone covers 146 of the 379 templates in the client's collection. 
+This indicates that several distinct templates used in the editorial workflow give rise to article layouts that are sufficiently similar to be represented by a single automatically selected layout. The proposed approach can therefore provide a compact representation even when an existing collection of editorial templates is already available.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this work, we addressed representative selection in non-metric similarity spaces when the underlying learned similarity is computationally expensive to evaluate. We introduced two approaches that avoid the computation of the full pairwise similarity matrix while still producing compact sets of representative objects.
+
+The feature-based partitioning approach (\partitioning) decomposes the problem into smaller local $k$-medoids problems using inexpensive object features. The incremental coverage approach (\inclusion), in contrast, progressively builds the representative set by focusing on objects that remain insufficiently represented. The two approaches therefore exploit different forms of structure to reduce the number of expensive similarity evaluations. Their behavior is complementary: \inclusion provides better coverage around its target similarity threshold, whereas \partitioning can provide better coverage at higher similarity thresholds.
+
+We evaluated these approaches on a real-world editorial application using a corpus of 15,289 article layouts from {\itshape La Provence}. Both approaches substantially reduce computation time compared with standard PAM-based $k$-medoids while providing strong representation of the corpus. The comparison with the client's existing templates provides an additional validation of the selected layouts: many representatives correspond to templates already used in the editorial workflow, while individual representatives can cover articles originating from several distinct templates. This indicates that the proposed methods can both recover existing design patterns and consolidate a larger collection of templates into a more compact set.
+
+From a practical perspective, $m=50$ provides a useful compromise between representation quality and the number of candidate templates presented to editors, a choice also supported by feedback from our industrial partner regarding the practical use of the resulting template collection. For the considered editorial application, \inclusion therefore appears to be the most appropriate approach, offering the best trade-off for this target number of representatives and the reference similarity threshold $\threshold=-2$. The \partitioning approach remains relevant when representation at higher similarity thresholds is the primary objective.
+
+More generally, the results demonstrate that representative selection can remain practical in applications where similarity is learned, non-metric, and substantially more expensive to evaluate than conventional distance functions.
+
+\section*{Acknowledgment}
+
+This work was supported by the Association Nationale de la Recherche et de la Technologie (ANRT) through the CIFRE grant 2022/0927 in collaboration with Demain un Autre Jour. The authors would like to thank Bruno Génuit and Demain Un Autre Jour for providing the newspaper layout data used in this study, for their contribution to the definition of the industrial problem addressed in this work, and for their feedback on intermediate results.
+
+\bibliographystyle{plain}
+\bibliography{refs} % Entries are in the refs.bib file
+
+
+
+
+
+
+
+\end{document}

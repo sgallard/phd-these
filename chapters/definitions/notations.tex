@@ -28,7 +28,7 @@ Category & Symbol & Meaning & Formula \\
 
 \multirow{8}{*}{Web article}
            & $\articleset$    & Set of articles & \secref{sec:web-article} \\
-           & $\numarticles$   & Number of articles, $|\articleset|$ & \secref{sec:web-article} \\
+           & $\numarticles$   & Number of articles & \secref{sec:web-article} \\
            & $\articleobj{i}$ & Article object $i$ & \secref{sec:web-article} \\
            & $\Cart{i}$       & Character count of body text & \secref{sec:web-article} \\
            & $\Nimg{i}$       & Number of images in the article & \secref{sec:web-article} \\
@@ -40,14 +40,14 @@ Category & Symbol & Meaning & Formula \\
 
 \multirow{11}{*}{Template}
            & $\templatecatalog$      & Template catalog & \secref{sec:template} \\
-           & $\catalogsize$          & Size of the catalog, $|\templatecatalog|$ & \secref{sec:template} \\
+           & $\catalogsize$          & Size of the catalog & \secref{sec:template} \\
            & $\templateobj{j}$       & Template object $j$ & \secref{sec:template} \\
            & $\Wtemp{j}$             & Template nominal width & \secref{sec:template} \\
            & $\Htemp{j}$             & Template nominal height & \secref{sec:template} \\
-           & $\zoning{j}$            & Zoning topology (set of internal blocks) & \secref{sec:template} \\
-           & $\zblock{j}{k}$         & Internal block $k$ of $\zoning{j}$ & \secref{sec:template} \\
-           & $\blockgeom{\zblock{j}{k}}$ & Polygonal geometry (coordinates) of a block & \secref{sec:template} \\
-           & $\blockfeat{\zblock{j}{k}}$ & Feature class of a block (THEME, TITLE, SUBTITLE, PHOTO, CAPTION, TEXT) & \secref{sec:template} \\
+           & $\zoning{j}$            & Zoning topology: set of blocks $\zblock{j}{k}$ of template $\templateobj{j}$   & \secref{sec:template} \\
+           & $\zblock{j}{k}$         & Block $k$ of $\zoning{j}$ & \secref{sec:template} \\
+           & $\blockgeom{b}$ & Polygonal geometry (coordinates) of a block $b$ & \secref{sec:template} \\
+           & $\blockfeat{b}$ & Feature class (THEME, TITLE, SUBTITLE, PHOTO, CAPTION, TEXT)  of a block $b$ & \secref{sec:template} \\
            & $\Nimgmax{j}$           & Maximum image slots (\# PHOTO blocks) & \secref{sec:template} \\
            & $\capacity{j}$          & Text capacity matrix (rows indexed by active images $k$) & \secref{sec:template} \\
 

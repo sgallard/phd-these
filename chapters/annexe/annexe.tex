@@ -1,0 +1,36 @@
+\chapter{Initializing Template Catalogs from Historical Pages}
+\label{chapter:annexe}
+
+\section{Motivation}
+
+Beyond recommending templates within an already populated catalog \templatecatalog, as done by \trs\ (\secref{section:template-retrieval-single-article}), the learned similarity measure $\gmn{\cdot}{\cdot}$ was further applied to a prior, complementary problem: initializing \templatecatalog\ itself when a CMS does not yet have one. This situation is common in practice: when \melody onboards a new press group, or more generally when a press group's historical production has never been formalized into a reusable template catalog, editors have no existing set of templates to select from and must instead design pages from scratch for every issue.
+
+At \melody, the candidate templates proposed to seed such an empty catalog are internally referred to as \emph{prospects}: a small set of layout designs put forward for editors to review, validate, and adopt as the initial, populated catalog \templatecatalog. Rather than requiring a designer to manually create these prospects from scratch, they can instead be mined automatically from the historical archive of previously produced print pages, by identifying the small number of recurring, representative design patterns underlying that archive.
+
+\section{Problem statement}
+
+Given a large historical corpus of print articles, extracted as concrete instantiations from previously produced pages, this setting aims to automatically select a small representative subset that captures the corpus's main design patterns, so as to form the set of prospects that seed the otherwise empty template catalog \templatecatalog. This differs from the single-article retrieval setting of \trs\ in the nature of the objects under consideration: not abstract templates already present in \templatecatalog, but print articles from a historical page corpus, from which a small representative subset is subsequently distilled into \templatecatalog\ itself.
+
+As in \trs, structural similarity between two print articles is assessed with the topology-aware metric $\gmn{\cdot}{\cdot}$ (\secref{section:modelling-similarity}), since design patterns are defined by the zoning topology of the articles rather than by superficial visual attributes. However, because $\gmn{\cdot}{\cdot}$ is non-metric and computationally expensive to evaluate, it admits none of the acceleration strategies available to classical $k$-medoids-based selection procedures such as PAM~\cite{kaufman1987clustering}, and computing its full pairwise similarity matrix over a corpus of the scale considered here (10000+ print articles) is computationally prohibitive. Beyond curating the small subset of representative templates itself, avoiding this exhaustive similarity computation constitutes the main gap this contribution addresses.
+
+
+\section{Proposed methods}
+Two complementary strategies were proposed to avoid this exhaustive computation.
+
+\begin{enumerate}
+\item The first recursively partitions the corpus into locally homogeneous subsets, using auxiliary object features that are inexpensive to compute, interpretable, and independent of $\gmn{\cdot}{\cdot}$ itself. Then, $k$-medoids selection is  applied locally, independently within each of these small subsets, where exhaustive pairwise evaluation of $\gmn{\cdot}{\cdot}$ remains tractable, rather than globally over the full corpus.
+\item The second incrementally constructs the representative set by repeatedly sampling print articles not yet covered by the current representatives at a given similarity threshold, and applying $k$-medoids selection in batches over these samples.
+\end{enumerate}
+Both strategies avoid ever computing the complete pairwise similarity matrix, restricting the computationally expensive evaluation of $\gmn{\cdot}{\cdot}$ to  smaller subsets or samples iteratively.
+
+\section{Evaluation}
+Evaluated over a corpus of 15,289 print articles from \laprovence, both strategies reduced computation time by two to three orders of magnitude relative to standard $k$-medoids selection, by respectively up to $480\times$ and $1{,}740\times$.
+Additionally, the representative set of templates covers between $86\%$ and $98\%$ of the corpus at the reference similarity threshold ($\theta=-2$), depending on the strategy and the number of representatives selected.
+
+A further comparison was made against \laprovence's template catalog, which for this application comprises $379$ templates: the $\catalogsize=345$ templates defined in \secref{sec:laprovence-templates}, together with those originally excluded from that catalog, since the business-driven exclusions applied elsewhere in this thesis were not relevant to this application.
+This comparison further validated the selected representatives: 33 of the 50 of them were identical to an existing template, and only one of the nineteen most representative layouts did not correspond to an existing template, indicating that this automated procedure recovers layout patterns.
+
+This application of $\gmn{\cdot}{\cdot}$-based similarity to representative template selection is detailed in the following manuscript, currently under review, to which the author of this thesis contributed as a co-author.
+\begin{callout}
+G. Arlabosse, S. Gallardo, \& P. Kornprobst (2026). \emph{Scalable Representative Selection in Non-Metric Learned Similarity Spaces: Application to News Layout Templates}. Submitted to \emph{IEEE Access}, under review~\citemine{arlabosse-repselect}. \url{https://inria.hal.science/view/index/docid/5759508}
+\end{callout}

@@ -31,6 +31,37 @@
     {\begin{callout@box}\IfValueT{#1}{\textbf{#1}\space}}
     {\end{callout@box}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Gray blocks (neutral side notes)   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Same shape as callout, but in a neutral gray rather than violet, for notes
+% that should not carry the same visual weight as a callout (e.g. a brief
+% deployment remark).
+% Usage:
+%   \begin{graybox}[Optional run-in title.] ... \end{graybox}
+%   \begin{graybox} ... \end{graybox}
+\colorlet{grayboxrule}{black!40}
+\colorlet{grayboxbg}{black!5}
+
+\newtcolorbox{graybox@box}{%
+    enhanced,
+    breakable,
+    sharp corners,
+    colback=grayboxbg,
+    colframe=grayboxrule,
+    boxrule=0pt,
+    leftrule=2.5pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt,
+    before skip=\medskipamount,
+    after skip=\medskipamount,
+    fontupper=\small,
+    parbox=false%
+}
+
+\NewDocumentEnvironment{graybox}{o}
+    {\begin{graybox@box}\IfValueT{#1}{\textbf{#1}\space}}
+    {\end{graybox@box}}
+
 % Inline award badge: trophy icon + small-caps text in a muted gold, as a
 % lighter-weight alternative to bold for flagging a distinction (e.g. a best
 % paper mention) without competing visually with the running text.

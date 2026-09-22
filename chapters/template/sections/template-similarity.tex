@@ -111,7 +111,7 @@ This study tests whether $\tdiou{\cdot}{\cdot}$ or $\gmn{\cdot}{\cdot}$ better a
 
 \subsubsection{Experimental design}
 
-\paragraph{Clustering using both methods}
+\paragraph{$\triangleright$ Clustering using both methods}
 
 Using the distance $d(\cdot,\cdot)$ defined by:
 \begin{equation}
@@ -124,10 +124,10 @@ At the same time, a set of clusters $\gmnclusters$ can be generated using an ana
 
 Note that both $\tdiouclusterthreshold$ and $\gmnclusterthreshold$ were set to produce a reasonable, but also equivalent and comparable number of clusters between the methods. Specifically, $\tdiouclusterthreshold = 1.1$ and $\gmnclusterthreshold=2.8$, producing $|\tdiouclusters| = 80$ and $|\gmnclusters| = 81$ respectively, with a similar distribution.
 
-\paragraph{Triplet definition}
+\paragraph{$\triangleright$ Triplet definition}
 Each trial involved a triplet $(R,O_1,O_2)$. $\templateobj{O_1}$ was chosen as a neighbor of $\templateobj{R}$ according to \tdiou{\templateobj{R}}{\templateobj{O_1}} but not \gmn{\templateobj{R}}{\templateobj{O_1}}, and $O_2$ as a neighbor according to \gmn{\templateobj{R}}{\templateobj{O_2}} but not \tdiou{\templateobj{R}}{\templateobj{O_2}}.  40 randomnly-selected triplets were generated this rule (examples in \figref{fig:online_experiment}(b)).
 
-\paragraph{Experimental protocol}
+\paragraph{$\triangleright$ Experimental protocol}
 Participants completed a short questionnaire on reading habits, followed by four blocks of 40 trials each, and a post-experiment questionnaire on their experience. Responses were collected via \emph{Labvanced}~\cite{labvanced}, yielding $42 \times 4$ votes per triplet.
 
 \subsubsection{Population}
@@ -160,7 +160,7 @@ Since the quantitative results reported above proved inconclusive to highlight a
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\widthForOneImage]{img/mismatch-triplet.pdf}
+    \includegraphics[width=0.7\widthForOneImage]{img/mismatch-triplet.pdf}
     \caption{Close-up of triplet 10 (\figref{fig:online_experiment}(b)): although $O_1$ lacks a block present in the reference $\templateobj{R}$ and additionally contains a subtitle absent from $\templateobj{R}$, participants predominantly selected $O_1$ as more similar to $\templateobj{R}$ under $\tdiou{\cdot}{\cdot}$.}
     \label{fig:mismatch-triplet}
 \end{figure}
