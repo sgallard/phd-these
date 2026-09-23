@@ -547,6 +547,7 @@
     \fi
     }
   \fi
+  \vspace*{-0.5cm}
   \vfill
   \begin{center}
     \makebox[5cm]{\hrulefill}\par
@@ -569,19 +570,6 @@
   \hspace*{.6cm}\pageref{last@page@front}$+$\pageref{LastPage} p.
 
   \vfill
-  {\tiny
-    \begin{minipage}{8cm}
-      \parindent 0pt
-      Ce document a été préparé avec \LaTeX2e et
-      la classe \texttt{these-ISSS} version~\versionnumber@these.
-    \end{minipage}
-
-
-    \vspace{4\p@}
-    \textit{Impression~: \jobname.tex~--~\number\day/\number\month/%
-      \number\year~--~\timenow}
-
-    \textit{Révision pour la classe : \RCSId}}
 
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Pages des résumés	et mots clés								%

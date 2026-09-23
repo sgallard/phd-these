@@ -112,7 +112,7 @@ Each step of the method is presented incrementally, with reference to the pseudo
 
 
 \paragraph{Stage 1: Assign rating values (Alg.~\ref{alg:cw}, lines 1--3)}
-The first step in the online retrieval process is to assign a rating value to each template . Here, the rating corresponds directly to the usage history of the template. This provides a baseline measure of template popularity, which will guide the initial ranking.
+The first step in the online retrieval process is to assign a rating value to each template. Here, the rating corresponds directly to the usage history of the template. This provides a baseline measure of template popularity, which will guide the initial ranking.
 
 This step ensures that frequently used templates are initially prioritized, while still leaving room for the algorithm to promote diversity and novelty in subsequent steps.
 
@@ -142,14 +142,14 @@ Formally, a template $\templateobj{j} \in \templatecatalog$ is classified as adm
 \end{itemize}
 
 
-\paragraph{Stage 3: Cluster-weight–based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
+\paragraph{Stage 3: Cluster-weight--based template selection (Alg.~\ref{alg:cw}, lines 5--32)}
 
 This stage determines how many templates should be selected from each cluster and then instantiates these selections while enforcing diversity constraints, using the similarity metric.
 
 \paragraph{Initialize the $CW$ algorithm (Alg.~\ref{alg:cw}, lines 5--9)} 
 The objective of this step is to initialize the number of templates to select from each cluster, and prepare the algorithm for the reassignment process. Following the notation of~\cite{clusdiv}, these quantities are denoted as cluster weights ($CW$), with one weight $CW_i$ associated to each cluster $\cluster{i}$.
 
-Unlike the original ClusDiv formulation, the number of clusters is fixed and does not depend on the requested list size $\topsize$. However, the constraint $\sum_i CW_i = \topsize$ was enforced to guarantee that exactly $\topsize$ templates will be returned. We further assume that at least one admissible template exists; otherwise, the system trivially returns an empty set.
+Unlike the original ClusDiv formulation, the number of clusters is fixed and does not depend on the requested list size $\topsize$. However, the constraint $\sum_i CW_i = \topsize$ was enforced to guarantee that exactly $\topsize$ templates will be returned. It is further assumed that at least one admissible template exists; otherwise, the system trivially returns an empty set.
 
 The initialization proceeds as follows. Given the admissible template set $\admissibletemplates$, first it extracts the top-$\topsize$ templates ranked by their rating values. Then, all cluster weights are initialized to zero and then increments $CW_i$ for each occurrence of a template belonging to cluster $\cluster{i}$ in this top-$\topsize$ list.
 
@@ -331,7 +331,7 @@ As a result, the augmented dataset $\extendedtemplates$ contains 5,341 templates
 \paragraph{Template clustering.}
 The structural similarity function learned by LayoutGMN is then used as a distance metric to perform agglomerative clustering over the original template repository. Using the clustering threshold set through preliminary pilot studies and reported in Table~\ref{tab:params}, a total of 81 clusters was obtained.
 
-\figref{fig:cluster-graphs} presents an analysis of the resulting clusters in terms of both size (number of templates per cluster) and cumulative usage. This reveals that the majority of isolated clusters are concentrated near the origin, representing singletons—clusters containing a single template—with minimal cumulative usage. These points correspond to highly specialized layouts with distinctive geometries that are rarely reused in practice. Conversely, the progression toward the upper-right quadrant identifies a smaller subset of clusters that dominate usage statistics. A deeper analysis revealed that these high-usage clusters, including the highlighted outlier, effectively group generic templates, such as text-only layouts, single-image templates, or standard image-with-caption configurations of varying sizes. 
+\figref{fig:cluster-graphs} presents an analysis of the resulting clusters in terms of both size (number of templates per cluster) and cumulative usage. This reveals that the majority of isolated clusters are concentrated near the origin, representing singletons---clusters containing a single template---with minimal cumulative usage. These points correspond to highly specialized layouts with distinctive geometries that are rarely reused in practice. Conversely, the progression toward the upper-right quadrant identifies a smaller subset of clusters that dominate usage statistics. A deeper analysis revealed that these high-usage clusters, including the highlighted outlier, effectively group generic templates, such as text-only layouts, single-image templates, or standard image-with-caption configurations of varying sizes. 
 
 This clustering structure makes explicit the distinction between generic layouts and rare, specialized ones. This organization is essential for diversity-aware contexts, as it enables the system to compare and select templates within and across structurally coherent groups, instead of relying on usage statistics alone.
 
@@ -363,7 +363,7 @@ Additionally, the computational efficiency was reported as a secondary measure o
 \paragraph{Observed and Synthetic Template Usage Distributions for Evaluation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-First, it is necessary to examine how template usage is distributed across structural clusters in $\templatecatalog$. In addition to the nominal observed distribution, a controlled synthetic distribution was  designed to evaluate the robustness of diversification mechanisms under unfavorable popularity–structure correlations.
+First, it is necessary to examine how template usage is distributed across structural clusters in $\templatecatalog$. In addition to the nominal observed distribution, a controlled synthetic distribution was  designed to evaluate the robustness of diversification mechanisms under unfavorable popularity--structure correlations.
 These two distributions are illustrated in \figref{fig:cluster-usage}.
 \begin{figure}[htbp]
     \centering
@@ -392,7 +392,7 @@ To evaluate the effectiveness of \trs, three baseline strategies were proposed f
 \begin{itemize}
     \item[\textbf{Most Popular (\mostpopular)}] This simple baseline outputs the \topsize most frequently used templates in the admissible set. It serves as a reference for conformity to historical usage and reflects current and common industrial practice.
     \item[\textbf{Classic ClusDiv (\classicclusdiv)}] A state-of-the-art clustering-based method. Templates are clustered according to historical usage, using the number of clusters equal to the top-\topsize list. 
-Unlike our approach, this method does not have a specific heuristic for choosing which cluster with the minimum $CW_i$ (cluster weight) will increase during each iteration. To account for this, we run the algorithm with five different random seeds to select the cluster with minimum $CW_i$, producing five distinct versions of the same algorithm for comparison.
+Unlike the proposed approach, this method does not have a specific heuristic for choosing which cluster with the minimum $CW_i$ (cluster weight) will increase during each iteration. To account for this, the algorithm is run with five different random seeds to select the cluster with minimum $CW_i$, producing five distinct versions of the same algorithm for comparison.
 
 \item[\textbf{Adapted ClusDiv (\adaptedclusdiv)}] To bridge the gap between \classicclusdiv and \trs, \adaptedclusdiv is introduced as an ablation baseline. While \classicclusdiv fixes the number of clusters to \topsize and ignores structural similarity, this adaptation incorporates $\gmn{\cdot}{\cdot}$ structural distance for clustering and allows for a flexible number of clusters. However, it retains all other properties of \classicclusdiv: (1) it lacks a heuristic for selecting among clusters with identical minimum $CW_i$ during iterations, and (2) it does not include an intra-cluster suppression mechanism. Consequently, \adaptedclusdiv serves to isolate and evaluate the specific impact of the retrieval logic. 
 Following the protocol of \classicclusdiv, the same five random seeds weer used to resolve ties when selecting clusters with the minimum $CW_i$.
@@ -428,7 +428,7 @@ Performance is evaluated along the three core dimensions identified previously: 
 To simplify notations, and since the cluster index is no longer important in the final candidate template list,  the retrieved list is denoted as $\recolist{N} = [\templateobj{i_1}, \templateobj{i_2},..., \templateobj{i_N}]$. 
 
 \begin{itemize}
-    \item[\textbf{Conformity to Historical Usage}] \emph{Normalized Discounted Cumulative Gain} ($nDCG$) was used to measure alignment with historical usage. Relevance is defined by each template’s usage. $nDCG$ compares the ordering of the candidate template list to the ideal ordering (MostPopular list), yielding a score in $[0,1]$, where 1 indicates perfect conformity.
+    \item[\textbf{Conformity to Historical Usage}] \emph{Normalized Discounted Cumulative Gain} ($nDCG$) was used to measure alignment with historical usage. Relevance is defined by each template's usage. $nDCG$ compares the ordering of the candidate template list to the ideal ordering (MostPopular list), yielding a score in $[0,1]$, where 1 indicates perfect conformity.
 
 More precisely, the normalized Discounted Cumulative Gain ($nDCG$) evaluates how well the ordering of templates in the candidate list aligns with an ideal ranking based on historical usage. In this context, the relevance of a template $\templateobj{i}$ is given by its historical usage $\templateutilization{i}$, and the candidate list of selected templates is denoted by $\recolist{N}$.
 First, it is necessary to define the Discounted Cumulative Gain ($DCG$) of the list $\recolist{N}$ as:
@@ -484,7 +484,7 @@ Columns correspond to evaluation metrics:
 (b) Structural diversity,
 (c) Long-tail coverage.
 Rows correspond to distribution scenarios and parameter settings:
-rows 1–2: ODD, rows 3–4: ISD;
+rows 1--2: ODD, rows 3--4: ISD;
 odd rows: fixed $\topsize$, varying $\cwthreshold$;
 even rows: fixed $\cwthreshold$, varying $\topsize$.
     Methods with multiple variants (\classicclusdiv and \adaptedclusdiv) are represented by their average values (colored dots) and a shaded region indicating the range. These methods are marked with a star (*) in the legend. The black dashed lines indicate the boundary where $\cwthreshold = \topsize$. Beyond this point ($\cwthreshold \geq \topsize$), the metrics for all algorithms stabilize as no further $\cwthreshold$ reassignments occur. Instances where a curve is not apparent implies that the corresponding data is flat and coincident with the horizontal axis ($y=0$). }
@@ -494,7 +494,7 @@ even rows: fixed $\cwthreshold$, varying $\topsize$.
 
 First, it is necessary to analyze conformity to historical usage, measured using $nDCG$, because before promoting diversity or novelty, it is essential to verify that the proposed method does not excessively deviate from the historical conformity.
 
-\figref{fig:performance-analysis-three-criteria}(a1) and (a3) report $nDCG$ values as a function of $\cwthreshold$ for a fixed list size $\topsize=5$. As expected, increasing diversification constraints leads to a gradual decrease in conformity for all diversity-aware methods. This effect is more pronounced for our approach due to the local suppression mechanism, which deliberately penalizes templates that are structurally too similar to previously selected ones.
+\figref{fig:performance-analysis-three-criteria}(a1) and (a3) report $nDCG$ values as a function of $\cwthreshold$ for a fixed list size $\topsize=5$. As expected, increasing diversification constraints leads to a gradual decrease in conformity for all diversity-aware methods. This effect is more pronounced for the proposed approach due to the local suppression mechanism, which deliberately penalizes templates that are structurally too similar to previously selected ones.
 
 Importantly, this decrease remains controlled across both the Original Dataset Distribution (\ODD) and the more challenging Increasing Slope Distribution (\ISD). While \mostpopular trivially achieves the maximum $nDCG$, it does so at the expense of diversity, as commented in the next section. In contrast, \trs  maintains acceptable conformity levels while enabling substantially richer template sets. This behavior reflects the intended compromise: historical usage is respected as a baseline, but not enforced as the sole decision criterion.
 
@@ -515,7 +515,7 @@ Finally, and beyond structural diversity,  \trs ability to promote underutilized
 
 The \mostpopular baseline systematically selects templates from the short head of the distribution, resulting in zero long-tail coverage. \classicclusdiv exhibits high long-tail usage for small $\cwthreshold$, but this effect rapidly diminishes as the constraint relaxes. \adaptedclusdiv, which does not cluster by usage, shows limited ability to surface rare templates.
 
-In contrast, \trs consistently retrieves at least one low-usage template under the \ODD scenario (\figref{fig:performance-analysis-three-criteria}(c1) and (c3)), regardless of $\cwthreshold$, due to the combined effect of cluster-level diversification and local suppression . Under \ISD (\figref{fig:performance-analysis-three-criteria}(c2) and (c4)), long-tail coverage remains higher than for all baselines across the full range of parameters. Furthermore, the results in \figref{fig:performance-analysis-three-criteria}(c3) and (c4) indicate a improvement of approximately $1.5x$ over the baselines. This advantage tends to diminish for large $\cwthreshold$, as fewer constraints are available to force the exploration of low-usage regions.
+In contrast, \trs consistently retrieves at least one low-usage template under the \ODD scenario (\figref{fig:performance-analysis-three-criteria}(c1) and (c3)), regardless of $\cwthreshold$, due to the combined effect of cluster-level diversification and local suppression. Under \ISD (\figref{fig:performance-analysis-three-criteria}(c2) and (c4)), long-tail coverage remains higher than for all baselines across the full range of parameters. Furthermore, the results in \figref{fig:performance-analysis-three-criteria}(c3) and (c4) indicate an improvement of approximately $1.5x$ over the baselines. This advantage tends to diminish for large $\cwthreshold$, as fewer constraints are available to force the exploration of low-usage regions.
 
 These results confirm that the proposed selection mechanism does not merely redistribute diversity among frequent templates, but actively contributes to catalog exploration.
 
@@ -542,7 +542,7 @@ Execution time is measured as a function of \topsize for fixed $\cwthreshold=3$ 
      \includegraphics[width=\widthForOneImage]{img/example_prompt_ex_1.pdf}
     \caption{
     Comparison of the top 5 recommended templates with one title and seven images, given by baseline methods and \trs. IDs, corresponding clusters (if applicable), and usage are reported. Additionally, the GMN-based cluster is indicated for comparison.
-    The figure highlights how our method improves diversity not only through similarity-based clustering (as in \adaptedclusdiv) but also by promoting intra-cluster diversity (e.g., IDs 11219 and 5420) via the suppression mechanism. Usage values further demonstrate that our method enhances novelty (\LTP) compared to baseline methods.
+    The figure highlights how the proposed method improves diversity not only through similarity-based clustering (as in \adaptedclusdiv) but also by promoting intra-cluster diversity (e.g., IDs 11219 and 5420) via the suppression mechanism. Usage values further demonstrate that the proposed method enhances novelty (\LTP) compared to baseline methods.
     }
     \label{fig:example-1} 
 \end{figure}
@@ -551,9 +551,9 @@ Execution time is measured as a function of \topsize for fixed $\cwthreshold=3$ 
      \includegraphics[width=\widthForOneImage]{img/example_prompt_ex_4.pdf}
     \caption{
     Comparison of the top 5 recommended templates with zero images (no title requirement) generated by baseline methods and \trs. IDs, corresponding clusters (if applicable), and usage are reported. Additionally, the GMN-based cluster is indicated for comparison.
-    This figure highlights how our method improves diversity not only by similarity-based clustering (like \adaptedclusdiv), but also via our proposed cluster selection during the $CW$-reassignment step. DSTS selects the farthest cluster to break ties between the smallest $CW_i$ values, which promotes templates that are even more distinct from one another.
+    This figure highlights how the proposed method improves diversity not only by similarity-based clustering (like \adaptedclusdiv), but also via the proposed cluster selection during the $CW$-reassignment step. DSTS selects the farthest cluster to break ties between the smallest $CW_i$ values, which promotes templates that are even more distinct from one another.
      }
      \label{fig:example-2} 
 \end{figure}
 
-Both examples show that \trs effectively promotes diversity while complying with historical comformity. \classicclusdiv fails to achieve template diversity due to its lack of consideration for structural layout. Although \adaptedclusdiv improves diversity by accounting for layout structure, our approach goes further by leveraging inter-cluster distances and an optimized selection process to maximize structural differences and further enhance diversity.
+Both examples show that \trs effectively promotes diversity while complying with historical conformity. \classicclusdiv fails to achieve template diversity due to its lack of consideration for structural layout. Although \adaptedclusdiv improves diversity by accounting for layout structure, the proposed approach goes further by leveraging inter-cluster distances and an optimized selection process to maximize structural differences and further enhance diversity.

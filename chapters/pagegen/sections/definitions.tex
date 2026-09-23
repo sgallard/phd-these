@@ -18,7 +18,7 @@ Then, among feasible solutions, quality is assessed along four criteria:
     \item \textbf{page coverage}, penalizing unallocated white space;
     \item \textbf{text capacity integrity}, penalizing mismatches between an article's length and its template's capacity;
     \item \textbf{positioning quality}, penalizing improper placement of the lead article or misaligned neighbors;
-    \item \textbf{template selection editorial style}, measuring conformity with the publisher's historical template assigments through \neuralmethod\ (\secref{sec:gwes}).
+    \item \textbf{template selection editorial style}, measuring conformity with the publisher's historical template assignments through \neuralmethod\ (\secref{sec:gwes}).
 \end{itemize}
 
 These four criteria are mutually antagonistic, and coupling discrete template selection with two-dimensional packing induces a combinatorial explosion that makes exact global optimization intractable. This motivates modeling full page layout generation as a multi-objective combinatorial optimization problem, solved through a multi-objective evolutionary framework.

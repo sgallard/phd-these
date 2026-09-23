@@ -30,7 +30,7 @@ Formally, a layout solution \solution\ is defined as the configuration that aggr
     
     \item \textbf{Vertical Elasticity (\elasticity{i}):} A discrete scaling level that governs the proportional vertical adjustment applied to the assigned template.
     This notion was already introduced empirically in the dataset characterization of Chapter~\ref{chapter:definitions} (\secref{sec:dataset-preprocessing}), where it captures the percentage height difference between an article and its assigned template.
-    Vertical elasticity is introduced to mimic real-world editorial workflows, where designers subtly compress or expand template height to manage page layout tightness. Mathematically, this flexibility serves as a optimization mechanism to eliminate empty white space and structurally drive the solution to compress into the page canvas. The elasticity variable is defined as:
+    Vertical elasticity is introduced to mimic real-world editorial workflows, where designers subtly compress or expand template height to manage page layout tightness. Mathematically, this flexibility serves as an optimization mechanism to eliminate empty white space and structurally drive the solution to compress into the page canvas. The elasticity variable is defined as:
     \begin{equation}
     \elasticity{i} \in \elasticityset \subseteq \mathbb{R}, \quad \forall i \in \{1, \dots, \numarticles\}.
     \end{equation}

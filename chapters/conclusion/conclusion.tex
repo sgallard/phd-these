@@ -30,7 +30,7 @@ This similarity-based scoring was further extended to a page-aware setting throu
 \subsection*{Contribution 2: Multi-objective page generation}
 
 Automating the page generation objective was addressed through \methodNameGeneral, a multi-objective method that jointly resolves template assignment and two-dimensional packing across four editorial objectives. Its two variants, uniform \methodNameUniform and preference-guided \methodName, were shown to discover Pareto-dominating solutions over constructive and ablated baselines across the large majority of evaluated instances.
-\methodName further compressed the non-dominated frontier by an order of magnitude and concentrated up to $51.4\%$ more solutions within the acceptable range.
+\methodName further compressed the non-dominated frontier by an order of magnitude and concentrated up to $51.4\%$ more solutions within the acceptable range of historical operator-produced pages.
 
 \begin{graybox}
 \methodNameGeneral, which incorporates \neuralmethod's scoring as one of its optimization objectives, was deployed on \melody's pre-production infrastructure to be used by \laprovence press group.
@@ -42,92 +42,65 @@ Under the same automated re-layouting principle, large-print adaptation addresse
 
 A controlled user study showed that \condtwonot restores the behavioral integrity of the reading process, with reading paths remaining significantly closer to the natural, left-to-right and top-to-bottom strategy than under \condonenot, while also yielding faster task completion and lower perceived workload. In conclusion, \condtwonot can therefore be regarded as an instance of inclusive design~\cite{langdon-inclusive-design-2014}. \ \\
 
-Together, these three contributions substantiate the argument that \melody's print production workflow can be automatized through intelligent, computational methods, yielding \textbf{both industrial gains in production efficiency and a societal extension toward readibility}.
+Together, these three contributions substantiate the argument that \melody's print production workflow can be automatized through intelligent, computational methods, yielding \textbf{both industrial gains in production efficiency and a societal extension toward readability}.
 
-
-\section{Limitations}
-
-\subsection{Restrictions of the page generation method}
-\label{sec:limitations-multipage}
-
-\subsubsection*{Single-page limitation}
-The formalization of the page generation problem restricts its optimization domain to a single-page canvas. Consequently, \methodNameGeneral treats each page as an independent instance, rather than jointly sequencing and assigning articles across the multiple pages of a full edition. Addressing this limitation is a natural next step for this line of work, discussed in \secref{sec:future-perspectives}.
-
-\subsubsection*{Lack of advertisements}
-The current implementation of \methodNameGeneral also omits the placement of advertisement elements. This omission stems from a data limitation rather than a design choice: the historical layout records available at \melody lack consistent metadata regarding advertisement coordinates and dimensions. The underlying formulation is nonetheless already generalizable to incorporate advertisement elements as an additional class of placeable objects, as discussed in \secref{sec:pagegen-discussion}.
-
-\subsection{Inclusion of human-in-the-loop mechanisms}
-\label{sec:limitations-human-in-the-loop}
-
-The editorial objectives optimized by \methodNameGeneral, together with the domain-specific coefficients that weight them, were calibrated through focus-group meetings conducted with \melody experts, rather than through broader empirical studies involving end readers or a wider panel of newsroom practitioners. 
-
-More broadly, once objectives and weights are fixed, the current architecture offers no mechanism for experts to interact with individual solutions, for instance by adapting a proposed page to their own preferences after it has been generated. Incorporating such an interactive, back-and-forth loop between experts and the automated method, rather than a one-off calibration, remains an open direction for this line of work, discussed in \secref{sec:future-perspectives}.
-
-\subsection{Attachment to \melody}
-\label{sec:limitations-melody-attachment}
-
-All empirical work in this thesis is grounded in a single CMS, \melody, and validated with two of its press groups, \publihebdos\ and \laprovence, both operating within the French regional press. Extending these results to other CMSs, other markets or languages, or to architectures adapted to different industrial contexts, was not attempted.
-This validation also rests on the elasticity thresholds and admissibility rules used to classify the page corpus, that were imposed by \melody's own production guidelines rather than derived empirically from field or user studies.
-
-This attachment to \melody does not invalidate these results, since the underlying methods were designed to generalize to any structurally similar layout domain, such as magazines or user interfaces organized around comparable structures.
-Whether it applies directly to such contexts, however, remains an open question, discussed in \secref{sec:future-perspectives}.
-
-\subsection{Adaptation of the method to produce complete large prints}
-\label{sec:limitations-largeprint-adaptation}
-
-The large-print stimuli evaluated in Chapter~\ref{chapter:magnification} were synthesized by an earlier, entry-point-preserving re-layouting method that predates \methodNameGeneral\ and operates on text-only pages, enlarging headlines and body text while preserving a two-dimensional layout format. \methodNameGeneral\ itself, which composes a complete page from a full set of web articles across templates, has not been adapted to directly generate complete large-print editions, incorporating images and other non-textual elements alongside enlarged text. Bridging this gap remains an open direction for this line of work, discussed in \secref{sec:future-perspectives}.
 
 \section{Perspectives}
-\label{sec:future-perspectives}
+\label{sec:perspectives}
 
-\subsection{Extended applications of the developed methods}
-
-\subsubsection{VR-based layout display}
-
-A further, more exploratory direction concerns displaying print layouts within a virtual-reality environment, rendered in landscape orientation as a large dashboard rather than the portrait orientation currently targeted by \melody. 
-Beyond offering a wide-format display, such an environment would relax the physical screen-size constraint addressed by the large-print adaptation described in this thesis, providing an alternative avenue toward the same objective of preserving reading efficiency under space-constrained conditions. 
-
-%TODO: Cite correctly, first Eric Castet, then Aurelie Calabrese, then Johanna Delachambre.
-This direction remains speculative and has not been formalized beyond this initial framing. It could, however, build on the item-based magnification principles introduced by SASI (Select and Augment Segmented Items)~\cite{delachambre-sasi}, which lets users select individual segmented items and stabilize their magnified version in space within a dynamic, three-dimensional virtual-reality environment. A comparable selection-and-stabilization mechanism could support magnifying individual layout elements within the proposed VR dashboard.
+Each of the three contributions summarized above considers one of the scientific challenges stated in \secref{sec:scientific-challenges-contributions}, \textbf{and each one also delimits a boundary that this thesis did not cross}. The perspectives developed below follow those boundaries outwards: from extending the automated workflow to the complete newspaper, to adapting that layout to individual readers, to admitting human judgment into the optimization process itself, and finally to questioning the fixed two-dimensional page that every formulation in this thesis has taken for granted.
 
 \subsection{Generalizing the automated workflow}
+\label{sec:perspectives-workflow}
 
-\subsubsection{Multi-page and full-edition generation}
+\textbf{A broader research question raised by this thesis concerns how newspaper layout generation can be extended from the automated construction of individual pages to the end-to-end generation of complete newspaper editions.} \methodNameGeneral\ addresses several components of this process, but still treats page generation as an isolated problem: the set of articles to be composed is given, and the canvas to be filled is a single page. Producing a complete edition instead requires jointly addressing other decisions, from selecting and assigning content to pages, to determining their layouts and placing every element they carry, including classes of element that this thesis left out entirely. 
 
-The restriction of \methodNameGeneral to a single-page canvas, noted above as a limitation of this thesis, constitutes the most direct extension of the automated workflow: jointly sequencing and assigning articles across the multiple pages of a full edition, rather than treating each page as an independent instance. 
+The clearest such omission concerns advertisements, which the current implementation of \methodNameGeneral\ does not place. This omission stems from a data limitation rather than from the formulation itself: the historical layout records available at \melody\ lack consistent metadata describing advertisement coordinates and dimensions, leaving no reference against which their placement could be calibrated or evaluated. The current formulation already can accommodate them as an additional class of placeable object, as detailed in \secref{sec:pagegen-discussion}. Since their aspect ratios are predetermined, advertisements can be modeled as static, fixed-size bounding boxes that bypass the template selection and feed directly into the page placement. On the other hand, a spatial penalty, formulated analogously to the heading critical zone penalty $\HCZ$, steers them towards the quadrants reserved for them. This extension is therefore restricted by the availability of the corresponding metadata rather than by any further methodological development.
 
-This extension is not a straightforward scaling of the existing formulation, since generating a full edition additionally requires assigning each article to one of several pages according to its editorial section (e.g., sports, politics), which constitutes a third assignment problem layered on top of the template assignment and packing problems already jointly resolved by \methodNameGeneral.
+A second direction concerns the single-page restriction itself. The positional variable of the formulation already carries a page index $\pageindex{i}$, which the feasibility constraint FC~1 fixes to a single canvas for every article (\secref{sec:constraints_space}). 
+Relaxing that constraint would nonetheless not be sufficient to produce a complete edition, since generating one additionally requires assigning each article to one of several pages according to its editorial section, such as sports or politics, and to the overall structure of the edition. 
+This constitutes a third assignment problem, layered on top of the template assignment and two-dimensional packing problems that \methodNameGeneral\ already resolves jointly: the section assigned to an article determines which pages may receive it, which in turn constrains both the templates that remain admissible for it and the space left to pack them. Scaling from a single page to a complete edition therefore alters the nature of the optimization problem.
 
-\subsubsection{Advertisement placement}
+A last direction concerns generalization to other contexts. All empirical work in this thesis is grounded in a single CMS, \melody, and validated with two of its press groups, \publihebdos\ and \laprovence, both operating within the French regional press. The problem does not depend on that context: neither the representations nor the optimization mechanisms developed here are formulated in terms of a particular publisher. However, specific parameters  were imposed by \melody's experts rather than derived from user studies, and whether the four editorial objectives and the coefficients weighting them would hold in another market, language, or editorial culture remains an open question. 
+Answering this would require evaluating the proposed approaches across different CMSs, publishers, markets, and languages, or in structurally related layout domains such as magazines or user interfaces. \
+\\
+Taken together, these three directions shift the problem from automating the construction of a page to automating the production of a complete editorial layout, while asking how such an approach can remain adaptable to different content, editorial structures, and production environments.
 
-The current implementation of \methodNameGeneral omits the placement of advertisement elements, a limitation stemming from the absence of consistent metadata on advertisement coordinates and dimensions in \melody's historical layout records, rather than from a limitation of the optimization formulation itself.
+\subsection{From large-print adaptation to personalized layouts}
+\label{sec:perspectives-personalization}
 
-The underlying formulation of \methodNameGeneral is already generalizable to incorporate advertisement elements as an additional class of placeable objects, so  this extension is restricted by the availability of the corresponding metadata.
+The validation reported in Chapter~\ref{chapter:magnification} established the benefit of large-print layouts. However, the stimuli evaluated there were synthesized by an earlier, entry-point-preserving re-layouting method~\citemine{gallardo} that predates \methodNameGeneral\ and operates on text-only pages, enlarging headlines and body text while preserving a two-dimensional layout format. \methodNameGeneral\ itself, which composes a complete page from a full set of web articles across a template catalog, has not been adapted to generate complete large-print editions, incorporating images and other non-textual elements alongside enlarged text. A gap therefore separates the principle that was validated from the exact method that was deployed.
 
-\subsubsection{Generalization beyond \melody}
+Closing that gap is primarily a matter of templates rather than of the optimization method. The catalog \templatecatalog\ available at \melody\ was designed for standard print sizes: its zoning topologies, and the text capacity matrices $\capacity{j}$ derived from them, presuppose body text at its standard size, and leave correspondingly little room for a magnified font size. Producing complete large-print editions therefore requires first deriving alternative, large-print variants of the templates themselves, with fewer and larger zones and recomputed capacities. How such variants should be obtained, whether by transforming existing templates or by designing them from scratch, is left open. 
+Once such a catalog is available, \methodNameGeneral\ applies without structural modification, since neither its search nor its packing machinery assumes a particular print size. What must change is the criterion by which it selects among templates: the editorial-style objective $\objtwo$ currently rewards conformity with \melody's historical assignments, as learned by the Transformer encoder of \neuralmethod, whereas a large-print edition would require it to reward readability, for which no comparable historical corpus exists. The remaining effort thus lies in engineering the template catalog, and not in reformulating but adapting the page generation method.
 
-All empirical work in this thesis was grounded in a single CMS, \melody, and validated with two of its press groups operating within the French regional press. Extending these results to other CMSs, other press groups, other markets or languages, or to structurally similar layout domains such as magazines or user interfaces, was not attempted, and constitutes a natural direction for assessing the generality of the proposed methods beyond the specific industrial context considered here.
+A further question concerns the adaptation itself. The large-print condition evaluated in this thesis applies one common adaptation to every reader. This raises a broader research question: \textbf{how can newspaper layouts adapt to individual visual and reading needs, drawing on a reader's measured parameters, expressed preferences, and observed reading behavior?}
 
-\subsection{Extending empirical validation}
+Mechanisms of this kind already exist for plain text, where \emph{SituFont}~\cite{yue2024situfont} adjusts typographic attributes from sensor input and human-in-the-loop feedback, and where gaze-driven systems augment the reading experience in real time~\cite{aguilar-castet2017, wang_gazeprompt_2024}; what remains open is their extension to the spatial organization of a layout. 
+Pursuing this direction would also require extending the empirical validation reported here, since the reading-aloud measure captures only textual entry points (\secref{sec:magnification-discussion}).
 
-\subsubsection{Broader validation of editorial objectives} %TODO: Check previous comment on the limitations part
+Structuring such studies around a participatory design methodology~\cite{schuler-participatory-design-1993, wacnik-participatory-review-2024}, involving readers \NV\ and \LV\ throughout the design process rather than solely at the evaluation stage, would establish inclusive design~\cite{langdon-inclusive-design-2014} as an explicit priority of this line of work rather than an auxiliary consideration.
 
-The objectives optimized by \methodNameGeneral, together with the domain-specific coefficients weighting them, were validated through focus-group meetings conducted with \melody experts, rather than through broader empirical studies. Calibrating these objectives and their weights against a wider panel of newsroom practitioners, or against end readers, remains an open direction for validating the extent to which the current formulation generalizes beyond the judgment of a limited group of experts.
+\subsection{Towards human-guided layout optimization}
+\label{sec:perspectives-human-guided}
 
+The participatory framing mentioned above applies equally to the evolutionary framework itself. The editorial objectives optimized by \methodNameGeneral, together with the domain-specific coefficients weighting them, were calibrated through focus-group meetings with \melody\ experts, which constitutes a one-off consultation rather than a sustained involvement of those experts in the design of the method. Once objectives and weights were fixed, moreover, the architecture offered no mechanism for an expert to act on an individual solution, for instance by adapting a proposed page to their own judgment after it had been generated. Both the definition of the editorial objectives and the evaluation of the resulting layouts therefore rest on human judgment, yet that judgment remains external to the optimization process. \textbf{A key research question is accordingly how expert and reader feedback could become part of the optimization loop itself.}
 
-%TODO: Maybe remove this, focus only in the page generation method
-\subsubsection{Extending the large-print study to richer layouts}
+Such a mechanism is already latent in the formulation. Preferences can be articulated at three points relative to a multi-objective search: a priori, by supplying target values before it begins; interactively, by refining the search after inspecting an initial approximation of the front; or a posteriori, by selecting a solution from a fully generated front~\cite{rnsga-iii}. \methodName\ exploits the first of these, deriving its aspiration points from historical layouts, which matched \melody's immediate aim of generating pages automatically as a first step. Admitting the expert into the evolutionary search itself is the natural next one~\cite{takagi-iec-2001, afsar-interactive-moo-2021}: through the interactive mode, an editor would inspect a first frontier and reposition the aspiration points so that the following iteration concentrates solutions in the region actually sought. This is a genuine development rather than the activation of an existing option, since it requires an interaction model, a revision protocol, and a computational budget compatible with the response times expected in such a CMS. It would nonetheless replace the one-off calibration of the editorial objectives by a continuous one, and open the way to validating them against a wider panel of operators or end readers, rather than against the judgment of a limited group of experts.
 
-The controlled study reported in this thesis was conducted exclusively on text-only newspaper pages, with reading paths tracked through a reading-aloud protocol that captures only textual entry points. Extending this study to richer layouts, incorporating images and other non-textual entry points, would accordingly require an adapted protocol capable of capturing content that participants do not read aloud, so as to assess whether the behavioral benefits observed under \condtwonot generalize to  \melody's multimodal page layouts.
+\subsection{From fixed pages to spatial and wearable media}
+\label{sec:perspectives-spatial}
 
-%TODO: maybe remove this, focus only in the page generation method
-%TODO: Careful: include this idea of inclusive design in the page generation part, is in fact more natural.
-\subsubsection{Broader user studies and inclusive design as a priority}
+Every formulation in this thesis presupposes a page: a fixed, rectangular, two-dimensional surface onto which content is to be arranged. \textbf{What was never questioned is the two-dimensionality itself.} 
+The newspaper page has historically been shaped by the physical constraints of its medium, and the transition from print to desktop displays, tablets and smartphones has progressively relaxed some of those constraints while introducing others. Emerging spatial and wearable media may represent a further shift: rather than rendering a page onto a fixed rectangular surface, they could allow editorial content to be organized dynamically within the reader's visual and physical space. The question addressed throughout this thesis, namely how content should be arranged on a given page, would then give way to a different one: given a content, a reader, and a medium, how should the reading space itself be constructed?
 
-The controlled study reported in this thesis recruited a limited number of participants \LV, consistent with a broader pattern of underrepresentation of readers with disabilities in the interactive media experience literature~\cite{vatavu-imx2021}. Pursuing larger and more diverse user studies, potentially structured around a participatory design methodology involving readers \NV and \LV throughout the design process rather than solely at the evaluation stage, constitutes a natural extension of this work. 
-More broadly, establishing inclusive design as an explicit priority, rather than an auxiliary consideration, is identified as a valuable direction for future extensions of the methods proposed in this thesis~\cite{langdon-inclusive-design-2014}.
+Answering such a question would require rethinking editorial hierarchy, readability, navigation and accessibility for a medium that none of these notions was formulated for. \textbf{Where this thesis drew on a multidisciplinary schema, this last perspective would draw on at least four, none of which it engaged with.} The medium itself belongs to \emph{virtual and augmented reality} and to \emph{wearable displays}, whose editorial use is beginning to be examined under the heading of \emph{immersive journalism}~\cite{bujic-imx2023}.
+Readability belongs to \emph{the psychophysics of reading}, already medium-independent in the relevant respect, since print size is defined as a visual angle rather than as a physical dimension~\cite{legge2006} and therefore remains meaningful in a space that contains no page. 
+Navigation belongs to \emph{human-computer interaction}, whose established principles were formulated for flat screens: the progression from overview to zoom and filter, and then to details on demand~\cite{shneiderman1996}, presupposes a bounded display that a three-dimensional reading space does not provide.
+And accessibility belongs to \emph{inclusive and participatory design}~\cite{langdon-inclusive-design-2014, schuler-participatory-design-1993, vatavu-imx2021}, which would require readers \LV\ to take part in designing such media from the start, and not once they are already built.
 
-%%%%%%%%%%%%%%%%%%%%
-Taken together, these perspectives outline coherent research guidelines extending the contributions of this thesis along three directions: from single-page to full-edition automation, from a single CMS to a broader industrial context, and from expert-driven calibration to empirically validated criteria.
+This direction remains entirely speculative, and has not been formalized beyond the framing given here. It is nonetheless an interesting one, and of potentially high impact for the future of the field, where the representations and optimization tools developed in this thesis may prove useful.
 
-%TODO Include the discussion that was led from limitations about how to exactly produce  complete large prints, what is missings and is required to do
+\bigskip
+
+\noindent Taken together, these four directions trace a single trajectory, along which each one relaxes an assumption that the preceding work relied on: the page gives way to the edition, a common adaptation to a per-reader one, a fixed calibration to a continuous interaction, and a bounded rectangular surface to a reading space that must itself be constructed. What remains constant across them is the premise defended throughout this thesis, namely that the spatial organization of editorial content is a computational problem, and that automating it serves both the production of newspapers and the readers who navigate them.

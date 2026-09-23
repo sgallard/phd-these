@@ -108,6 +108,13 @@
 \begingroup
 \renewcommand{\bibtitle}{}
 \fontsize{1pt}{1pt}\selectfont\color{white}
+% hyperref recolors cite/url links inside its own internal group, which
+% overrides the \color{white} above (this is what leaves a thin colored
+% line visible, e.g. from the \url{} links in these HAL entries). Force
+% every link rendered in this invisible pass to stay white instead.
+\makeatletter
+\renewcommand{\Hy@colorlink}[1]{\begingroup\color{white}}
+\makeatother
 \bibliographystylemine{apacite}
 \bibliographymine{biblio}
 \endgroup

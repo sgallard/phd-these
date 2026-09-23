@@ -1,4 +1,4 @@
-\section{Template similarity modelling}
+\section{Template similarity modeling}
 \label{section:modelling-similarity}
 
 Both the single-article retrieval setting and the page-aware scoring setting require comparing the internal topological structure of two templates $\templateobj{1}$ and $\templateobj{2}$, in order to assess how structurally similar or distinct their zonings are. In this context, standard metrics such as Intersection-over-Union (IoU) or Jaccard index (\secref{sec:sota-geometric-similarity}) are insufficient: they are sensitive to small misalignments, and in cases with no overlap they provide zero gradients, making optimization difficult~\cite{patil_layoutgmn_2021}. 
@@ -149,7 +149,7 @@ To better understand these differences, two representative triplets (10 and 35) 
     \includegraphics[width=\widthForOneImage]{img/online_experiment.pdf}
     \caption{\label{fig:online_experiment} 
 Results of the online experiment.
-(a) Percentage of $O_2$  selections for each of the 40 triplets. Each point represents the average percentage of $O_2$ selections, with the shaded area indicating the interquartile range ($Q1$–$Q3$). Two groups are highlighted: triplets \{1,\dots,15\} (green), where participants mainly selected $O_1$ ($\tdiou{\cdot}{\cdot}$), and triplets \{23,\dots,40\} (orange), where participants mainly selected $O_2$ ($\gmn{\cdot}{\cdot}$). A central band ($40\%$–$60\%$) where no clear preference was established. The marginal histogram (right) counts the frequency of triplets in $10\%$ intervals, where each block represents a single triplet. The bold percentage labels indicate the total proportion of the triplets falling into each of the three categories.
+(a) Percentage of $O_2$  selections for each of the 40 triplets. Each point represents the average percentage of $O_2$ selections, with the shaded area indicating the interquartile range ($Q1$--$Q3$). Two groups are highlighted: triplets \{1,\dots,15\} (green), where participants mainly selected $O_1$ ($\tdiou{\cdot}{\cdot}$), and triplets \{23,\dots,40\} (orange), where participants mainly selected $O_2$ ($\gmn{\cdot}{\cdot}$). A central band ($40\%$--$60\%$) where no clear preference was established. The marginal histogram (right) counts the frequency of triplets in $10\%$ intervals, where each block represents a single triplet. The bold percentage labels indicate the total proportion of the triplets falling into each of the three categories.
 (b) Example triplets from each group. Individual participant choices are represented by a human-shaped icon.
     }
 \end{figure}

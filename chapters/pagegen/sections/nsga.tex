@@ -50,7 +50,7 @@ The proposed layout generation method, coined \methodNameGeneralLong (\methodNam
 \end{figure}
 
 %%%% Chromosome Representation %%%
-\subsection{Chromosome Representation}
+\subsection{Chromosome representation}
 \label{sec:chromosome_representation}
 
 Each candidate layout $\solution$ is encoded as a chromosome composes of three sub-vectors $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$ that captures the  design choices for the $\numarticles$ active articles, as illustrated in \figref{fig:chromosome_representation}:
@@ -125,7 +125,7 @@ Each candidate layout $\solution$ is encoded as a chromosome composes of three s
 \label{fig:chromosome_representation}
 \end{figure}
 
-\subsection{Population Initialization}
+\subsection{Population initialization}
 \label{sec:population_initialization}
 
 Because the initial population conditions the trajectory of the entire search, each chromosome segment is initialized using a dedicated, targeted strategy rather than uniform random sampling.
@@ -264,7 +264,7 @@ Crucially, the total number of pages is simply reported as an output of the deco
 \end{algorithm}
 
 %%%%%% Evolutionary Loop %%%%%%
-\subsection{Evolutionary Loop}
+\subsection{Evolutionary loop}
 \label{sec:evolutionary_operators}
 
 At each generation, $\popsize/2$ parent pairs are formed through mating selection. Then, each pair produces two offspring through the crossover and mutation operators, specialized for the three distinct genetic components of the chromosome $\chromosome = \langle \chromosomeTemplateSegment, \chromosomePermutationSegment, \chromosomeElasticitySegment \rangle$.
@@ -279,7 +279,7 @@ The crossover operator applies two concurrent strategies, to account for the dif
 
 \begin{itemize}
     \item \textbf{$\chromosomeTemplateSegment$} and \textbf{$\chromosomeElasticitySegment$} segments: standard Two-Point Crossover~\cite{crossovers} is executed.
-    \item \textbf{$\chromosomePermutationSegment: $} to maintain valid indexing constraints without duplicates in the permutation sequence, the permutation segment ($\chromosomePermutationSegment$) is crossed using Order Crossover (OX1)~\cite{crossovers}.
+    \item \textbf{$\chromosomePermutationSegment: $} to maintain valid indexing constraints without duplicates in the permutation sequence, the permutation segment ($\chromosomePermutationSegment$) is crossed using Order Crossover (OX1)~\cite{crossovers} (\figref{fig:ox1_crossover}).
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -452,7 +452,7 @@ To extract these aspiration points, the following procedure is applied offline o
 \begin{itemize}
     \item The four-dimensional objective vector $\objvector{\solution} = [\objone, \objthree, \objfour, \objtwo]$ (\secref{sec:objective_formulation}) is evaluated over every historical layout $\solution$ contained in the corpus.
     \item Because the  magnitude of each objective is intrinsically tied to the structural complexity of the page (more articles are inherently harder to fit and align into a single page) historical layouts are first grouped by their article count $\numarticles$, and the following statistics are computed independently within each resulting stratum.
-    \item Within each stratum, the marginal empirical distribution of every individual objective ($\objone, \objtwo, \objthree, \objfour$) is estimated separately, and two component-wise quantile points are extracted: one gathering the 25th percentile (first quartile) of each objective, and another gathering the 50th percentile (median).Because all objectives follow a minimization paradigm, the first vector establishes a demanding target, matched only by the best quarter of historical designs, while the second reflects the standard of typical professional practice.
+    \item Within each stratum, the marginal empirical distribution of every individual objective ($\objone, \objtwo, \objthree, \objfour$) is estimated separately, and two component-wise quantile points are extracted: one gathering the 25th percentile (first quartile) of each objective, and another gathering the 50th percentile (median). Because all objectives follow a minimization paradigm, the first vector establishes a demanding target, matched only by the best quarter of historical designs, while the second reflects the standard of typical professional practice.
     %Extending the analysis beyond these two levels was deemed unnecessary: the first quartile and median already bracket the range of ambition relevant to the search, since quantiles above the median would target below-average historical designs, contradicting the purpose of steering the search toward high-utility regions. Moreover, every additional aspiration point would require its own local mesh of reference directions (\secref{sec:sota-rnsga3}), inflating the resulting population size proportionally.
     \item This procedure produces a lookup table of aspiration point pairs indexed by article count.
 \end{itemize}
